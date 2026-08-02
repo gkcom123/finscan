@@ -1,0 +1,388 @@
+swagger: "2.0"
+info:
+  title: FinScan
+  description: >-
+    Extracts financial results from a company PDF and writes them into the blue
+    input cells of the company's Excel model, across every relevant tab, leaving
+    black formula cells calculating.
+  version: "2.0.0"
+host: REPLACE-WITH-YOUR-HOST          # e.g. finscan.azurewebsites.net
+basePath: /
+schemes:
+  - https
+consumes:
+  - multipart/form-data
+produces:
+  - application/json
+
+securityDefinitions:
+  api_key:
+    type: apiKey
+    in: header
+    name: x-api-key
+security:
+  - api_key: []
+
+paths:
+  /jobs:
+    post:
+      summary: Propose an update
+      description: >-
+        Extract the results, work out the workbook's layout, and show which rows
+        would be filled. Writes nothing. Call this first. If status comes back as
+        awaiting_confirmation, ask the user to confirm the sheet list, then call
+        ConfirmProfile followed by ApplyUpdate.
+      operationId: ProposeUpdate
+      parameters:
+        - name: pdf
+          in: formData
+          type: file
+          required: true
+          x-ms-summary: Results PDF
+        - name: workbook
+          in: formData
+          type: file
+          required: true
+          x-ms-summary: Company Excel model
+        - name: company
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Company profile key (blank = read from the PDF)
+        - name: sheets
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Comma-separated sheet names to restrict to
+        - name: period_label
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Column header override, e.g. Q1 FY2027
+      responses:
+        "200":
+          description: Proposal
+          schema:
+            $ref: "#/definitions/Job"
+
+  /jobs/{job_id}/apply:
+    post:
+      summary: Approve and write
+      description: Write the proposed column into every enabled sheet.
+      operationId: ApplyUpdate
+      parameters:
+        - name: job_id
+          in: path
+          type: string
+          required: true
+          x-ms-summary: Job id from ProposeUpdate
+      responses:
+        "200":
+          description: Written
+          schema:
+            $ref: "#/definitions/Job"
+
+  /extract-and-apply:
+    post:
+      summary: Extract and write in one step
+      description: >-
+        Straight-through processing. Honours the confirmation gate — a company
+        whose layout has never been confirmed returns awaiting_confirmation with
+        nothing written.
+      operationId: ExtractAndApply
+      parameters:
+        - name: pdf
+          in: formData
+          type: file
+          required: true
+          x-ms-summary: Results PDF
+        - name: workbook
+          in: formData
+          type: file
+          required: true
+          x-ms-summary: Company Excel model
+        - name: company
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Company profile key
+        - name: sheets
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Comma-separated sheet names
+        - name: period_label
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Column header override
+      responses:
+        "200":
+          description: Result
+          schema:
+            $ref: "#/definitions/Job"
+
+  /inspect:
+    post:
+      summary: Inspect a workbook
+      description: >-
+        What FinScan sees in a model — tabs in scope, units, blue input rows,
+        black formula rows, captions it could not place. No PDF, no AI call,
+        nothing written. Useful for onboarding a library of models.
+      operationId: InspectWorkbook
+      parameters:
+        - name: workbook
+          in: formData
+          type: file
+          required: true
+          x-ms-summary: Company Excel model
+      responses:
+        "200":
+          description: Layout
+          schema:
+            $ref: "#/definitions/Inspection"
+
+  /profiles:
+    get:
+      summary: List company profiles
+      operationId: ListProfiles
+      responses:
+        "200":
+          description: Profiles
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Profile"
+
+  /profiles/{key}:
+    get:
+      summary: Get a company profile
+      operationId: GetProfile
+      parameters:
+        - name: key
+          in: path
+          type: string
+          required: true
+          x-ms-summary: Company key
+      responses:
+        "200":
+          description: Profile
+          schema:
+            $ref: "#/definitions/Profile"
+
+  /profiles/{key}/confirm:
+    post:
+      summary: Confirm a company's layout
+      description: >-
+        One-off human sign-off. After this, uploads for this company run without
+        approval until the workbook layout changes.
+      operationId: ConfirmProfile
+      consumes:
+        - application/json
+      parameters:
+        - name: key
+          in: path
+          type: string
+          required: true
+          x-ms-summary: Company key
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              sheets:
+                type: array
+                items:
+                  type: string
+                description: Exact sheet names to enable
+              label_overrides:
+                type: object
+                description: Caption -> canonical field, for this company only
+              by:
+                type: string
+      responses:
+        "200":
+          description: Confirmed
+          schema:
+            $ref: "#/definitions/Profile"
+
+  /jobs/{job_id}/download:
+    get:
+      summary: Download the updated workbook
+      operationId: DownloadWorkbook
+      produces:
+        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      parameters:
+        - name: job_id
+          in: path
+          type: string
+          required: true
+          x-ms-summary: Job id
+      responses:
+        "200":
+          description: Workbook
+          schema:
+            type: file
+
+  /health:
+    get:
+      summary: Health check
+      operationId: Health
+      responses:
+        "200":
+          description: OK
+
+definitions:
+  Job:
+    type: object
+    properties:
+      job_id:
+        type: string
+        x-ms-summary: Job id
+      status:
+        type: string
+        description: ok | needs_review | awaiting_confirmation
+        x-ms-summary: Status
+      company_key:
+        type: string
+        x-ms-summary: Company key
+      profile_confirmed:
+        type: boolean
+        x-ms-summary: Layout confirmed
+      profile_state:
+        type: string
+        description: new | drifted | reused
+        x-ms-summary: Profile state
+      fingerprint:
+        type: string
+        x-ms-summary: Layout fingerprint
+      colors_found:
+        type: boolean
+        description: False means the model has no blue/black convention and the
+          input cells were inferred. Say so to the reviewer.
+        x-ms-summary: Colour convention found
+      period_header:
+        type: string
+        x-ms-summary: Column header
+      summary:
+        type: string
+        description: One-line result, safe to speak back to the user.
+        x-ms-summary: Summary
+      download_url:
+        type: string
+        x-ms-summary: Download path
+      report_markdown:
+        type: string
+        x-ms-summary: Full review report
+      sheets:
+        type: array
+        x-ms-summary: Sheets
+        items:
+          $ref: "#/definitions/Sheet"
+      mappings:
+        type: array
+        x-ms-summary: Mapped rows
+        items:
+          $ref: "#/definitions/Mapping"
+      issues:
+        type: array
+        x-ms-summary: Issues
+        items:
+          $ref: "#/definitions/Issue"
+
+  Sheet:
+    type: object
+    properties:
+      sheet:
+        type: string
+        x-ms-summary: Sheet name
+      in_scope:
+        type: boolean
+        x-ms-summary: Looks like a financial statement
+      enabled:
+        type: boolean
+        x-ms-summary: Enabled in the profile
+      reason:
+        type: string
+        x-ms-summary: Why
+      units:
+        type: string
+        x-ms-summary: Units
+      write_column:
+        type: string
+        x-ms-summary: Target column
+      write_mode:
+        type: string
+        description: append | fill_blank
+        x-ms-summary: Write mode
+      input_rows:
+        type: integer
+        x-ms-summary: Blue input rows
+      formula_rows:
+        type: integer
+        x-ms-summary: Formula rows
+
+  Mapping:
+    type: object
+    properties:
+      sheet:
+        type: string
+      excel_row:
+        type: integer
+      excel_label:
+        type: string
+      field:
+        type: string
+      value:
+        type: number
+        description: Null means this row is a formula row — the model's own
+          calculation was copied forward instead of a value being pasted.
+      pdf_label:
+        type: string
+      match_method:
+        type: string
+      confidence:
+        type: number
+
+  Issue:
+    type: object
+    properties:
+      severity:
+        type: string
+      code:
+        type: string
+      message:
+        type: string
+      field:
+        type: string
+
+  Profile:
+    type: object
+    properties:
+      company_key:
+        type: string
+      display_name:
+        type: string
+      confirmed:
+        type: boolean
+      fingerprint:
+        type: string
+      enabled_sheets:
+        type: array
+        items:
+          type: string
+      label_overrides:
+        type: object
+
+  Inspection:
+    type: object
+    properties:
+      fingerprint:
+        type: string
+      colors_found:
+        type: boolean
+      sheets:
+        type: array
+        items:
+          type: object

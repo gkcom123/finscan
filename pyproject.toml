@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finscan"
+version = "0.1.0"
+description = "LangGraph agent that extracts financial results from company PDFs and appends them as a new period column in the company's Excel model."
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
+
+[project.scripts]
+finscan = "finscan.cli:main"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
