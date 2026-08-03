@@ -66,6 +66,20 @@ SECTION_KEYWORDS: list[tuple[str, str]] = [
 #: Rows before any section marker belong to the statement most models open with.
 DEFAULT_SECTION = "income_statement"
 
+# Generic words that are often valid line-item prefixes. Treat these as section
+# markers only when the caption is exactly the keyword (or a very small heading
+# variant handled elsewhere), never on startswith/endswith matches.
+_EXACT_ONLY_SECTION_KEYWORDS = {
+    "valuation",
+    "assumptions",
+    "segment",
+    "kpi",
+    "guidance",
+    "capitalisation",
+    "capitalization",
+    "covenant",
+}
+
 
 def detect_section(label: str) -> str | None:
     from finscan.excel.mapper import normalize_label
@@ -74,6 +88,10 @@ def detect_section(label: str) -> str | None:
     if not norm or len(norm) > 60:
         return None
     for keyword, section in SECTION_KEYWORDS:
+        if keyword in _EXACT_ONLY_SECTION_KEYWORDS:
+            if norm == keyword:
+                return section
+            continue
         if norm == keyword or norm.startswith(keyword + " ") or norm.endswith(" " + keyword):
             return section
     return None
@@ -93,12 +111,14 @@ class RowPlan:
     section: str = DEFAULT_SECTION
     #: formula that references no other cell — hardcoded arithmetic, not a formula
     constant_formula: bool = False
+    #: captured by the second blue-row pass; matched against PDF by raw label
+    label_only: bool = False
 
     @property
     def writable(self) -> bool:
         """Blue inputs, plus rows whose "formula" is really a typed-in constant:
         those must take this period's value, not last period's arithmetic."""
-        if self.field is None:
+        if self.field is None and not self.label_only:
             return False
         return self.reference_role == Role.input.value or self.constant_formula
 
@@ -332,10 +352,29 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
     else:
         plan.write_col, plan.write_mode = plan.last_period_col + 1, "append"
 
-    # Reference column: the most recent populated column that shows the
-    # convention. Prefer one containing input cells; fall back to the last one.
+    # Reference column: the most recent populated column that best represents
+    # the workbook's input template.
+    #
+    # Some models interleave mostly-formula analysis columns between period
+    # columns. Picking the *last* column that has any blue cell can choose a
+    # formula-heavy column (e.g. 1 blue row) and make almost every row appear
+    # non-writable. Prefer the most recent column with a dense input footprint.
     with_inputs = [c for c in populated if col_stats[c]["input"]]
-    plan.reference_col = (with_inputs or populated or [plan.last_period_col])[-1]
+    if with_inputs:
+        max_inputs = max(col_stats[c]["input"] for c in with_inputs)
+        # Keep columns that are at least half as dense as the best input column.
+        # A small absolute floor avoids over-filtering tiny sheets.
+        min_dense = max(3, int(max_inputs * 0.5))
+        dense = [c for c in with_inputs if col_stats[c]["input"] >= min_dense]
+        if dense:
+            plan.reference_col = dense[-1]
+        else:
+            # Tiny-sheet fallback: choose the most recent among top-scoring
+            # input columns.
+            best = [c for c in with_inputs if col_stats[c]["input"] == max_inputs]
+            plan.reference_col = best[-1]
+    else:
+        plan.reference_col = (populated or [plan.last_period_col])[-1]
 
     # --- per-row plan ------------------------------------------------------
     ref = plan.reference_col
@@ -357,6 +396,17 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
             # signal, a cell that is not a formula is the best available guess at
             # an input. The sheet is flagged so a human always reviews it.
             rp.reference_role = Role.input.value
+
+        # Rows the canonical taxonomy could not resolve are not necessarily a
+        # dead end: if the reference cell is a blue input (or, absent a colour
+        # convention, any non-formula cell), the row is still a candidate —
+        # just matched against the PDF by its own raw label instead of a
+        # canonical field id.
+        if rp.field is None and not st.has_formula and (
+            rp.reference_role == Role.input.value or not plan.colors_found
+        ):
+            rp.label_only = True
+
         plan.rows.append(rp)
 
     plan.in_scope = True
@@ -369,7 +419,10 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
         + (f"; {', '.join(other_sections)} section(s) excluded" if other_sections else "")
     )
 
-    for r in range(1, plan.first_data_row):
+    # Unit markers are often printed on the same boundary row where dated
+    # period headers begin (e.g. '(MXN millions)'). Include first_data_row
+    # itself; excluding it misses the most common placement in some models.
+    for r in range(1, plan.first_data_row + 1):
         for c in range(1, max_col + 1):
             hit = sniff_units(_text(ws.cell(r, c).value))
             if hit:

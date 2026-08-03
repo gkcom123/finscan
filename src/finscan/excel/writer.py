@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import shutil
 from copy import copy
+from math import isfinite, log10
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -42,6 +43,65 @@ def scale_to_sheet(values: dict[str, float], units: str) -> dict[str, float]:
     """
     m = UNIT_MULTIPLIER.get(units, 1.0)
     return {k: (v if k in NON_SCALED_FIELDS else v / m) for k, v in values.items()}
+
+
+def _is_number(v: object) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _infer_units_from_reference(ws, plan: SheetPlan, base_values: dict[str, float]) -> str | None:
+    """Infer sheet scale from the reference column's numeric magnitudes.
+
+    Some workbooks carry stale unit labels (e.g. header says millions while the
+    actual period columns are in thousands). Pick the unit whose scaled values
+    best match the existing reference-column numbers.
+    """
+    ref = plan.reference_col or plan.last_period_col
+
+    anchors: list[tuple[str, float]] = []
+    for rp in plan.rows:
+        if not rp.writable or rp.carries_formula or rp.field is None:
+            continue
+        if rp.field not in base_values:
+            continue
+        cell = ws.cell(rp.row, ref)
+        if cell_has_formula(cell) or not _is_number(cell.value):
+            continue
+        rv = float(cell.value)
+        if abs(rv) < 1e-9:
+            continue
+        anchors.append((rp.field, rv))
+
+    if len(anchors) < 3:
+        return None
+
+    units = [u for u in UNIT_MULTIPLIER if u != "units"] + ["units"]
+
+    def _score(unit: str) -> float:
+        scaled = scale_to_sheet(base_values, unit)
+        errs: list[float] = []
+        for field, ref_val in anchors:
+            pred = scaled.get(field)
+            if pred is None or abs(pred) < 1e-9:
+                continue
+            errs.append(abs(log10(abs(pred) / abs(ref_val))))
+        if len(errs) < 3:
+            return float("inf")
+        errs.sort()
+        return errs[len(errs) // 2]  # median absolute log-distance
+
+    declared = plan.units if plan.units in UNIT_MULTIPLIER else "units"
+    declared_score = _score(declared)
+    best = min(units, key=_score)
+    best_score = _score(best)
+
+    if not isfinite(best_score) or not isfinite(declared_score):
+        return None
+
+    # Require a meaningful win before overriding the declared unit.
+    if best != declared and (best_score + 0.35) < declared_score:
+        return best
+    return None
 
 
 def _merged_anchor_conflict(ws, row: int, col: int) -> bool:
@@ -72,6 +132,7 @@ def write_workbook(
     min_confidence: float | None = None,
     field_confidence: dict[str, float] | None = None,
     pdf_labels: dict[str, str] | None = None,
+    label_values: dict[str, float] | None = None,
 ) -> tuple[WriteResult, list[Issue]]:
     min_confidence = settings.finscan_min_confidence if min_confidence is None else min_confidence
     field_confidence = field_confidence or {}
@@ -80,6 +141,13 @@ def write_workbook(
 
     src = Path(plan.path)
     dst = Path(output_path) if output_path else src.with_name(f"{src.stem}_updated{src.suffix}")
+    if src.suffix.lower() == ".xlsm" and dst.suffix.lower() != ".xlsm":
+        issues.append(Issue(
+            severity="warning", code="macros_stripped",
+            message=f"Source is macro-enabled ({src.suffix}) but the output path is "
+                     f"'{dst.suffix}' — VBA macros will be dropped from the written copy. "
+                     f"Use an .xlsm output path to keep them.",
+        ))
     if dst.resolve() != src.resolve():
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, dst)
@@ -94,17 +162,33 @@ def write_workbook(
 
     results: list[SheetWriteResult] = []
     for sheet_plan in targets:
+        effective_units = sheet_plan.units
+        inferred_units = _infer_units_from_reference(wb[sheet_plan.sheet], sheet_plan, values)
+        if inferred_units and inferred_units != sheet_plan.units:
+            effective_units = inferred_units
+            issues.append(Issue(
+                severity="warning", code="sheet_units_inferred_from_reference",
+                message=f"{sheet_plan.sheet}: detected '{sheet_plan.units}' in headers but "
+                        f"reference-column magnitudes match '{inferred_units}'. "
+                        f"Used '{inferred_units}' for this run.",
+            ))
+
         res, sheet_issues = _write_sheet(
             wb[sheet_plan.sheet], sheet_plan,
-            scale_to_sheet(values, sheet_plan.units), header,
+            scale_to_sheet(values, effective_units), header,
             min_confidence, field_confidence, pdf_labels,
+            scale_to_sheet(label_values, effective_units) if label_values else None,
         )
         results.append(res)
         issues.extend(sheet_issues)
 
-    if results:
-        _write_audit(wb, header, plan, results, issues)
-        wb.save(dst)
+    # Always re-serialize through openpyxl before closing, even if nothing was
+    # written — otherwise the raw byte-for-byte copy made above (which may still
+    # carry a source .xlsm's VBA project) is left on disk under the destination's
+    # extension, which is exactly what makes Excel warn that a ".xlsx" file
+    # "contains macro-enabled content".
+    _write_audit(wb, header, plan, results, issues)
+    wb.save(dst)
     wb.close()
 
     return WriteResult(workbook_path=str(dst), header_written=header, sheets=results), issues
@@ -114,6 +198,7 @@ def _write_sheet(
     ws, plan: SheetPlan, values: dict[str, float], header: str,
     min_confidence: float, field_confidence: dict[str, float],
     pdf_labels: dict[str, str],
+    label_values: dict[str, float] | None = None,
 ) -> tuple[SheetWriteResult, list[Issue]]:
     issues: list[Issue] = []
     col = plan.write_col
@@ -174,6 +259,21 @@ def _write_sheet(
             continue
 
         # Input rows: paste the extracted value.
+        # label_only rows (unresolved by taxonomy) use their raw label as the key.
+        if rp.label_only and rp.field is None:
+            val = (label_values or {}).get(rp.label)
+            if val is None or not rp.writable:
+                skipped += 1
+                continue
+            _copy_style(ws.cell(rp.row, ref), target)
+            target.value = val
+            target.comment = Comment(
+                f"FinScan\nPDF label match: '{rp.label}'\nrow match: label_only",
+                "FinScan",
+            )
+            written += 1
+            continue
+
         if not rp.writable or rp.field is None or rp.field not in values:
             skipped += 1
             if rp.constant_formula and rp.field:

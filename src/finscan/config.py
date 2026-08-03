@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     azure_openai_api_version: str = "2024-10-21"
     azure_openai_deployment: str = "gpt-4o"
 
+    # TLS: only for local dev behind a corporate SSL-inspecting proxy that
+    # re-signs traffic with an untrusted root CA. Disables certificate
+    # verification on LLM API calls — never enable this in production.
+    finscan_insecure_ssl: bool = False
+
     # Extraction
     finscan_ocr_fallback: bool = True
     finscan_max_pdf_chars: int = 120_000

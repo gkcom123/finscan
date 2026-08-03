@@ -129,10 +129,12 @@ def _inspect(a) -> int:
     for s in plan.sheets:
         print(f"  {s.summary()}")
         for rp in s.rows:
-            if not rp.field:
-                continue
-            kind = "formula" if rp.carries_formula else ("input " if rp.writable else "locked ")
-            print(f"      r{rp.row:<4} {kind} {rp.label[:34]:<34} -> {rp.field}")
+            if rp.label_only and rp.field is None:
+                kind = "input " if rp.writable else "locked "
+                print(f"      r{rp.row:<4} {kind} {rp.label[:34]:<34} -> (label match)")
+            elif rp.field:
+                kind = "formula" if rp.carries_formula else ("input " if rp.writable else "locked ")
+                print(f"      r{rp.row:<4} {kind} {rp.label[:34]:<34} -> {rp.field}")
     return 0
 
 

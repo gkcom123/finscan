@@ -7,7 +7,7 @@ from finscan.config import settings
 from finscan.excel.discovery import discover
 from finscan.excel.mapper import llm_match_labels
 from finscan.excel.writer import scale_to_sheet, write_workbook
-from finscan.extract.extractor import extract as llm_extract
+from finscan.extract.extractor import extract as llm_extract, extract_for_labels
 from finscan.extract.normalize import derive_missing, to_target_units
 from finscan.extract.pdf_reader import read_pdf
 from finscan.profiles import ProfileStore, company_key
@@ -275,6 +275,63 @@ def _flat_mappings(state: dict) -> list[RowMapping]:
     return out
 
 
+def extract_label_rows(state: dict) -> dict:
+    """For blue rows that couldn't be resolved to a canonical field, ask the LLM
+    to find matching values directly from the PDF using the row's own label."""
+    plan = state.get("plan")
+    if plan is None:
+        return {"label_values": {}}
+
+    enabled = set(state.get("enabled_sheets") or [])
+    labels: list[str] = []
+    for sheet in plan.in_scope:
+        if enabled and sheet.sheet not in enabled:
+            continue
+        for rp in sheet.rows:
+            if rp.label_only and rp.field is None and rp.label not in labels:
+                # Skip labels that look like ratio/growth/margin rows — no PDF
+                # will print a "% y-o-y growth" figure; asking wastes a call and
+                # risks the LLM fabricating a percentage.
+                if _is_ratio_label(rp.label):
+                    continue
+                labels.append(rp.label)
+
+    if not labels:
+        return {"label_values": {}}
+
+    extraction = state.get("extraction")
+    source_units = (extraction.meta.units if extraction else None) or "units"
+    doc_text = state.get("statements_text") or state.get("document_text", "")
+
+    label_values = extract_for_labels(labels, doc_text, source_units)
+    issues: list[Issue] = []
+    if label_values:
+        issues.append(Issue(
+            severity="info", code="label_match",
+            message=f"Direct PDF label match filled {len(label_values)} additional row(s): "
+                    + ", ".join(label_values.keys()),
+        ))
+    return {"label_values": label_values, "issues": issues}
+
+
+import re as _re
+
+_RATIO_PATTERNS = _re.compile(
+    r"^\s*%|"           # starts with %
+    r"\by[-\s]o[-\s]y\b|"   # y-o-y / y o y
+    r"\bmargin\b|"
+    r"\bgrowth\b|"
+    r"\bratio\b|"
+    r"\bper share\b|"
+    r"\beps\b",
+    _re.IGNORECASE,
+)
+
+
+def _is_ratio_label(label: str) -> bool:
+    return bool(_RATIO_PATTERNS.search(label))
+
+
 def check_periods(state: dict) -> dict:
     """Does this filing belong in the column we are about to write?"""
     from finscan.periods import check_continuity
@@ -403,6 +460,7 @@ def write_excel(state: dict) -> dict:
         output_path=state.get("output_path"),
         field_confidence={li.field.value: li.confidence for li in extraction.line_items},
         pdf_labels={li.field.value: li.label_in_pdf for li in extraction.line_items},
+        label_values=state.get("label_values"),
     )
     return {"write_result": result, "period_header": header, "issues": issues}
 

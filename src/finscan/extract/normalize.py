@@ -22,15 +22,18 @@ UNIT_MULTIPLIER: dict[str, float] = {
 # Currency tokens that may sit either side of the scale word. Written this way
 # because real headers say all of: "(Rs. in Lakhs)", "RMB in millions",
 # "(RMB million)", "US$ mn", "figures in ’000s".
-_CCY = r"(?:rs\.?|inr|₹|usd|us\$|\$|rmb|cny|eur|€|gbp|£|hk\$|hkd|jpy|¥|sgd|aed)"
+_CCY = (
+    r"(?:rs\.?|inr|₹|usd|us\$|\$|rmb|cny|eur|€|gbp|£|hk\$|hkd|jpy|¥|sgd|aed|"
+    r"mxn|mx\$|mex\$|pesos?|peso)"
+)
 
 _UNIT_PATTERNS: list[tuple[str, str]] = [
     (rf"\b(?:in\s+)?{_CCY}?\s*crores?\b|\bcr\.?\b", "crores"),
     (rf"\b(?:in\s+)?{_CCY}?\s*(?:lakhs?|lacs?)\b", "lakhs"),
-    (rf"\b(?:in\s+)?{_CCY}?\s*(?:millions?|mn|mm)\b", "millions"),
+    (rf"\b(?:in\s+)?{_CCY}?\s*(?:millions?|millones?|mn|mm)\b", "millions"),
     (rf"\b{_CCY}\s*in\s*millions?\b", "millions"),
     (rf"\b(?:in\s+)?{_CCY}?\s*(?:billions?|bn)\b", "billions"),
-    (rf"\b(?:in\s+)?{_CCY}?\s*(?:thousands?|'?000s?|’?000s?)\b", "thousands"),
+    (rf"\b(?:in\s+)?{_CCY}?\s*(?:thousands?|miles?|millar(?:es)?|'?000s?|’?000s?)\b", "thousands"),
 ]
 
 

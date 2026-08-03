@@ -33,6 +33,7 @@ def build_graph(checkpointer: Any = None):
     g.add_node("resolve_profile", nodes.resolve_profile)
     g.add_node("normalize", nodes.normalize)
     g.add_node("refine_mapping", nodes.refine_mapping)
+    g.add_node("extract_label_rows", nodes.extract_label_rows)
     g.add_node("check_periods", nodes.check_periods)
     g.add_node("crosscheck", nodes.crosscheck_formulas)
     g.add_node("validate", nodes.validate_node)
@@ -46,7 +47,8 @@ def build_graph(checkpointer: Any = None):
     g.add_edge("extract", "resolve_profile")
     g.add_edge("resolve_profile", "normalize")
     g.add_edge("normalize", "refine_mapping")
-    g.add_edge("refine_mapping", "check_periods")
+    g.add_edge("refine_mapping", "extract_label_rows")
+    g.add_edge("extract_label_rows", "check_periods")
     g.add_edge("check_periods", "crosscheck")
     g.add_edge("crosscheck", "validate")
     g.add_conditional_edges(

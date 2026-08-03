@@ -7,10 +7,31 @@ monkeypatch `get_chat_model` with a stub.
 """
 from __future__ import annotations
 
+import warnings
 from functools import lru_cache
 from typing import Any
 
 from finscan.config import settings
+
+
+def _http_client_kwargs() -> dict:
+    """Optional insecure httpx client for corporate SSL-inspecting proxies.
+
+    Only active when FINSCAN_INSECURE_SSL=true. Disables certificate
+    verification entirely, so it is opt-in and warns loudly every time.
+    """
+    if not settings.finscan_insecure_ssl:
+        return {}
+
+    warnings.warn(
+        "FINSCAN_INSECURE_SSL=true: TLS certificate verification is DISABLED "
+        "for LLM API calls. Only use this for local dev behind a trusted "
+        "corporate proxy — never in production.",
+        stacklevel=2,
+    )
+    import httpx
+
+    return {"http_client": httpx.Client(verify=False), "http_async_client": httpx.AsyncClient(verify=False)}
 
 
 @lru_cache(maxsize=1)
@@ -33,6 +54,7 @@ def get_chat_model() -> Any:
             temperature=settings.llm_temperature,
             max_retries=3,
             timeout=120,
+            **_http_client_kwargs(),
         )
 
     if provider == "openai":
@@ -50,6 +72,7 @@ def get_chat_model() -> Any:
             temperature=settings.llm_temperature,
             max_retries=3,
             timeout=120,
+            **_http_client_kwargs(),
         )
 
     raise RuntimeError(
