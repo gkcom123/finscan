@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     finscan_api_key: str = "change-me"
     finscan_work_dir: Path = Path("./_work")
 
+    # Local demo: Copilot reads PDF + model from test/<company>/ on disk
+    finscan_test_dir: Path = Path("./test")
+    finscan_demo_enabled: bool = True
+
     @property
     def configured(self) -> bool:
         if self.finscan_llm_provider.lower() == "azure":

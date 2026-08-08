@@ -179,7 +179,83 @@ def _to_out(job_id: str, state: dict, download: str | None) -> JobOut:
 # --------------------------------------------------------------------------- #
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "llm_configured": settings.configured}
+    return {
+        "status": "ok",
+        "llm_configured": settings.configured,
+        "demo_enabled": settings.finscan_demo_enabled,
+        "test_dir": str(settings.finscan_test_dir),
+    }
+
+
+@app.get("/demo/companies", dependencies=[Depends(auth)])
+def list_demo_companies() -> dict:
+    """Companies with a folder under test/ (for Copilot to discover)."""
+    root = Path(settings.finscan_test_dir)
+    if not root.is_dir():
+        return {"companies": []}
+    companies = []
+    for d in sorted(root.iterdir()):
+        if not d.is_dir() or d.name.startswith("."):
+            continue
+        pdfs = list(d.glob("*.pdf"))
+        books = [p for p in d.glob("*.xlsx") if "_updated" not in p.stem.lower()]
+        companies.append({
+            "company_key": d.name,
+            "pdf_count": len(pdfs),
+            "workbook": books[0].name if books else None,
+            "pdfs": [p.name for p in pdfs],
+        })
+    return {"companies": companies}
+
+
+@app.post("/demo/update", response_model=JobOut, dependencies=[Depends(auth)])
+def demo_update_from_folder(
+    company: str = Form(..., description="Company name or key, e.g. Tancent or tencent"),
+    period: str | None = Form(default=None, description="Period token, e.g. q325"),
+    period_label: str | None = Form(default=None, description="Column header override"),
+) -> JobOut:
+    """Demo endpoint: read PDF + workbook from test/<company>/ and write an updated file.
+
+    Intended for Copilot Studio + local server demos where files live on disk
+    instead of being uploaded in chat. Say: "updated excel for Q325 for Tancent".
+    """
+    if not settings.finscan_demo_enabled:
+        raise HTTPException(status_code=403, detail="Demo mode is disabled on this server.")
+
+    from finscan.demo.folder import resolve_demo_files
+
+    try:
+        files = resolve_demo_files(settings.finscan_test_dir, company, period)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    header = period_label or files.period_label
+    job_id = uuid.uuid4().hex[:12]
+    d = _job_dir(job_id)
+    pdf_path = d / files.pdf.name
+    xl_path = d / files.workbook.name
+    shutil.copy2(files.pdf, pdf_path)
+    shutil.copy2(files.workbook, xl_path)
+    suffix = f"_{files.period_token}" if files.period_token else ""
+    out_path = d / f"{xl_path.stem}_updated{suffix}{xl_path.suffix}"
+
+    state = run_graph(
+        str(pdf_path),
+        str(xl_path),
+        output_path=str(out_path),
+        company=files.company_key,
+        period_label=header,
+    )
+    _JOBS[job_id] = {
+        "pdf": str(pdf_path),
+        "xlsx": str(xl_path),
+        "company": files.company_key,
+        "sheets": None,
+        "period_label": header,
+        "state": state,
+    }
+    download = f"/jobs/{job_id}/download" if state.get("write_result") else None
+    return _to_out(job_id, state, download)
 
 
 @app.post("/inspect", dependencies=[Depends(auth)])

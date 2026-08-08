@@ -122,6 +122,53 @@ paths:
           schema:
             $ref: "#/definitions/Job"
 
+  /demo/update:
+    post:
+      summary: Demo update from test folder
+      description: >-
+        Local demo action. Reads the PDF and Excel model from test/<company>/
+        on the server (no file upload). Use when the user says something like
+        "Return an updated Excel for Q325 for Tancent". Maps Tancent → tencent
+        and q325 → 3Q2025 automatically.
+      operationId: DemoUpdateFromFolder
+      parameters:
+        - name: company
+          in: formData
+          type: string
+          required: true
+          x-ms-summary: Company name or key (e.g. Tancent, tencent)
+        - name: period
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Period code (e.g. q325, Q3 2025)
+        - name: period_label
+          in: formData
+          type: string
+          required: false
+          x-ms-summary: Column header override if period code is not enough
+      responses:
+        "200":
+          description: Result
+          schema:
+            $ref: "#/definitions/Job"
+
+  /demo/companies:
+    get:
+      summary: List demo companies
+      description: Companies that have a folder under test/ on the server.
+      operationId: ListDemoCompanies
+      responses:
+        "200":
+          description: Companies
+          schema:
+            type: object
+            properties:
+              companies:
+                type: array
+                items:
+                  type: object
+
   /inspect:
     post:
       summary: Inspect a workbook

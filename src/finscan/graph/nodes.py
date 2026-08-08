@@ -10,7 +10,7 @@ from finscan.excel.writer import scale_to_sheet, write_workbook
 from finscan.extract.extractor import extract as llm_extract, extract_for_labels
 from finscan.extract.normalize import derive_missing, to_target_units
 from finscan.extract.pdf_reader import read_pdf
-from finscan.profiles import ProfileStore, company_key
+from finscan.profiles import ProfileStore, company_key, is_weak_company_key
 from finscan.schemas import FIELD_LABELS, Issue, RowMapping
 from finscan.validate import has_blocking_errors, validate
 
@@ -87,6 +87,7 @@ def resolve_profile(state: dict) -> dict:
     key = company_key(name)
     store = ProfileStore(state.get("profile_store") or settings.finscan_profile_store)
     profile, pstate = store.resolve(key, plan, display_name=name)
+    key = profile.company_key
 
     issues: list[Issue] = []
     if pstate == "new":
@@ -98,9 +99,16 @@ def resolve_profile(state: dict) -> dict:
                             message=f"The layout of '{key}' changed since it was last confirmed "
                                     f"(rows or sheets moved). Re-confirmation required."))
     else:
+        confirmed = "confirmed" if profile.confirmed else "UNCONFIRMED"
         issues.append(Issue(severity="info", code="profile_reused",
-                            message=f"Reusing the confirmed layout profile for '{key}' "
-                                    f"(fingerprint {profile.fingerprint})."))
+                            message=f"Reusing the layout profile for '{key}' "
+                                    f"(fingerprint {profile.fingerprint}, {confirmed})."))
+        if key != company_key(name) and is_weak_company_key(company_key(name)):
+            issues.append(Issue(
+                severity="info", code="profile_fingerprint_match",
+                message=f"No reliable company name in the PDF; matched the existing "
+                        f"'{key}' profile by workbook layout (fingerprint "
+                        f"{profile.fingerprint})."))
 
     if state.get("sheets_override"):
         enabled = list(state["sheets_override"])

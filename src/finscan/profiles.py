@@ -135,6 +135,15 @@ def company_key(name: str) -> str:
     return s.strip("_") or "unknown"
 
 
+#: Keys produced when the PDF yields no usable company name. In that case we
+#: fall back to a confirmed profile with the same workbook fingerprint.
+WEAK_COMPANY_KEYS = frozenset({"unknown", "n_a", "na", "n"})
+
+
+def is_weak_company_key(key: str) -> bool:
+    return not key or key in WEAK_COMPANY_KEYS
+
+
 class ProfileStore:
     def __init__(self, root: str | Path = DEFAULT_STORE):
         self.root = Path(root)
@@ -157,10 +166,35 @@ class ProfileStore:
     def list(self) -> list[str]:
         return sorted(f.stem for f in self.root.glob("*.json"))
 
+    def find_by_fingerprint(self, fingerprint: str,
+                            *, prefer_confirmed: bool = True) -> CompanyProfile | None:
+        """Locate a stored profile for this workbook layout."""
+        matches: list[CompanyProfile] = []
+        for key in self.list():
+            pr = self.get(key)
+            if pr and pr.fingerprint == fingerprint:
+                matches.append(pr)
+        if not matches:
+            return None
+        if prefer_confirmed:
+            confirmed = [p for p in matches if p.confirmed]
+            if confirmed:
+                return confirmed[0]
+        return matches[0]
+
     def resolve(self, key: str, plan: WorkbookPlan,
                 display_name: str = "") -> tuple[CompanyProfile, str]:
         """Return (profile, state) where state is new | drifted | reused."""
         existing = self.get(key)
+
+        # Name missing from the PDF → do not create/use a throwaway "unknown"
+        # profile when a confirmed layout for this workbook already exists.
+        if is_weak_company_key(key) or (existing is not None and not existing.confirmed):
+            alt = self.find_by_fingerprint(plan.fingerprint, prefer_confirmed=True)
+            if alt and (is_weak_company_key(key) or alt.confirmed):
+                existing = alt
+                key = alt.company_key
+
         if existing is None:
             return CompanyProfile.from_plan(key, plan, display_name), "new"
         if existing.drifted(plan):
