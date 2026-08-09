@@ -50,12 +50,12 @@ def main(argv: list[str] | None = None) -> int:
 
     c = sub.add_parser(
         "company",
-        help="Process input/<company>/*.pdf + *.xlsx|*.xlsm → input/<company>_output.*",
+        help="Process inbox/<company>/*.pdf + *.xlsx|*.xlsm → inbox/<company>_output.*",
     )
-    c.add_argument("company", help="Company folder name under input/ (e.g. tencent, Tancent)")
+    c.add_argument("company_name", help="Company folder under inbox/ (e.g. tencent, Tancent)")
     c.add_argument(
-        "--input-dir",
-        help="Root folder containing company subdirs (default: FINSCAN_INPUT_DIR or ./input)",
+        "--inbox-dir",
+        help="Root folder containing company subdirs (default: FINSCAN_INBOX_DIR or ./inbox)",
     )
     _add_run_args(c)
 
@@ -112,16 +112,17 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "company":
         from finscan.demo.folder import output_path_for_company, resolve_demo_files
 
-        input_root = Path(a.input_dir or settings.finscan_input_dir)
+        inbox_root = Path(a.inbox_dir or settings.finscan_inbox_dir)
         try:
-            files = resolve_demo_files(input_root, a.company, a.period)
+            files = resolve_demo_files(inbox_root, a.company_name, a.period)
         except FileNotFoundError as exc:
             print(exc, file=sys.stderr)
             return 1
         out = Path(a.out) if a.out else output_path_for_company(
-            input_root, files.company_key, files.workbook
+            inbox_root, files.company_key, files.workbook
         )
         period = a.period or files.period_label
+        profile_key = a.company or files.company_key
         print(f"PDF:      {files.pdf}")
         print(f"Model:    {files.workbook}")
         print(f"Output:   {out}")
@@ -132,7 +133,7 @@ def main(argv: list[str] | None = None) -> int:
             str(files.workbook),
             output_path=str(out),
             dry_run=a.dry_run,
-            company=a.company or files.company_key,
+            company=profile_key,
             period_label=period,
             **{k: v for k, v in common.items() if k not in ("company", "period_label")},
         )

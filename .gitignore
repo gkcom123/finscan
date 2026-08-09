@@ -6,7 +6,6 @@ _work/
 *_updated.xlsx
 *_output.xlsx
 *_output.xlsm
-input/
 .pytest_cache/
 *.egg-info/
 profiles/

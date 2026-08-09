@@ -75,20 +75,20 @@ def _score_pdf(path: Path, period_token: str | None) -> int:
     return score
 
 
-def output_path_for_company(input_root: Path, company_key: str, workbook: Path) -> Path:
-    """Write beside input root: input/<company>_output.<same suffix as model>."""
-    return Path(input_root) / f"{company_key}_output{workbook.suffix}"
+def output_path_for_company(inbox_root: Path, company_key: str, workbook: Path) -> Path:
+    """Write beside inbox root: inbox/<company>_output.<same suffix as model>."""
+    return Path(inbox_root) / f"{company_key}_output{workbook.suffix}"
 
 
 def resolve_demo_files(
-    test_root: Path,
+    inbox_root: Path,
     company: str,
     period: str | None = None,
 ) -> DemoFiles:
-    """Locate PDF + workbook under <root>/<company>/."""
-    root = Path(test_root)
+    """Locate the single PDF + workbook under inbox/<company>/."""
+    root = Path(inbox_root)
     if not root.is_dir():
-        raise FileNotFoundError(f"Input folder not found: {root.resolve()}")
+        raise FileNotFoundError(f"Inbox folder not found: {root.resolve()}")
 
     key = normalize_company(company)
     period_token, period_label = normalize_period(period)
@@ -100,23 +100,34 @@ def resolve_demo_files(
         if not matches:
             available = sorted(p.name for p in root.iterdir() if p.is_dir())
             raise FileNotFoundError(
-                f"No test folder for company '{company}' (key '{key}'). "
+                f"No inbox folder for company '{company}' (key '{key}'). "
                 f"Available: {', '.join(available) or '(none)'}"
             )
         company_dir = matches[0]
 
     pdfs = sorted(company_dir.glob("*.pdf"))
-    workbooks = [
+    workbooks = sorted(
         p for p in list(company_dir.glob("*.xlsx")) + list(company_dir.glob("*.xlsm"))
         if not _is_output_workbook(p)
-    ]
+    )
     if not pdfs:
         raise FileNotFoundError(f"No PDF in {company_dir}")
     if not workbooks:
-        raise FileNotFoundError(f"No Excel model in {company_dir} (exclude *_updated*)")
+        raise FileNotFoundError(f"No Excel model in {company_dir} (exclude *_output*)")
+    if len(pdfs) > 1 and not period_token:
+        names = ", ".join(p.name for p in pdfs)
+        raise FileNotFoundError(
+            f"Expected one PDF in {company_dir}, found {len(pdfs)}: {names}. "
+            f"Pass --period to pick by filename."
+        )
+    if len(workbooks) > 1:
+        names = ", ".join(p.name for p in workbooks)
+        raise FileNotFoundError(
+            f"Expected one Excel model in {company_dir}, found {len(workbooks)}: {names}"
+        )
 
-    pdf = max(pdfs, key=lambda p: (_score_pdf(p, period_token), p.name))
-    workbook = workbooks[0] if len(workbooks) == 1 else min(workbooks, key=lambda p: p.name)
+    pdf = pdfs[0] if len(pdfs) == 1 else max(pdfs, key=lambda p: (_score_pdf(p, period_token), p.name))
+    workbook = workbooks[0]
 
     return DemoFiles(
         company_key=key,
