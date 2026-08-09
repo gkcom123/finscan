@@ -123,6 +123,17 @@ def _copy_style(src, dst) -> None:
     dst.fill = copy(src.fill)
 
 
+def _latest_numeric_left(ws, row: int, from_col: int, min_col: int = 2) -> tuple[float, str] | None:
+    """Find the nearest numeric non-formula value to the left in the same row."""
+    for c in range(from_col - 1, min_col - 1, -1):
+        cell = ws.cell(row, c)
+        if cell_has_formula(cell):
+            continue
+        if _is_number(cell.value):
+            return float(cell.value), f"{get_column_letter(c)}{row}"
+    return None
+
+
 def _stacked_header_start_row(ws, header_row: int, ref_col: int, line_count: int) -> int | None:
     """Return the start row for a stacked header block, or None.
 
@@ -314,40 +325,171 @@ def _write_sheet(
                                             f"{plan.sheet}!{letter}{rp.row}: {exc}"))
             continue
 
+        # Some model blocks use typed arithmetic formulas with no references
+        # (e.g. "=1.2-0.7"). For non-mapped rows we still carry these forward
+        # so the destination column is structurally complete.
+        if rp.constant_formula and rp.formula_template and rp.field is None:
+            _copy_style(ws.cell(rp.row, ref), target)
+            target.value = rp.formula_template
+            target.comment = Comment(
+                f"FinScan\nconstant formula carried from {rp.reference_cell}",
+                "FinScan",
+            )
+            copied += 1
+            continue
+
         # Input rows: paste the extracted value.
         # label_only rows (unresolved by taxonomy) use their raw label as the key.
         if rp.label_only and rp.field is None:
-            val = (label_values or {}).get(rp.label)
-            if val is None or not rp.writable:
+            if not rp.writable:
                 skipped += 1
                 continue
+            val = (label_values or {}).get(rp.label)
+            if val is not None:
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = val
+                target.comment = Comment(
+                    f"FinScan\nPDF label match: '{rp.label}'\nrow match: label_only",
+                    "FinScan",
+                )
+                written += 1
+                continue
+
+            ref_val = ws.cell(rp.row, ref).value
+            if _is_number(ref_val):
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = ref_val
+                target.comment = Comment(
+                    "FinScan\n"
+                    "No direct PDF label value was matched for this blue input row. "
+                    "Carried forward the previous period value from "
+                    f"{rp.reference_cell}.",
+                    "FinScan",
+                )
+                written += 1
+                issues.append(Issue(
+                    severity="warning", code="input_row_carried_forward", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no matched "
+                            f"filing value; copied prior-period input from {rp.reference_cell}.",
+                ))
+                continue
+
+            prev = _latest_numeric_left(ws, rp.row, ref)
+            if prev is not None:
+                prev_val, prev_cell = prev
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = prev_val
+                target.comment = Comment(
+                    "FinScan\n"
+                    "No direct PDF label value was matched for this blue input row. "
+                    "Carried forward the nearest prior period value from "
+                    f"{prev_cell}.",
+                    "FinScan",
+                )
+                written += 1
+                issues.append(Issue(
+                    severity="warning", code="input_row_carried_forward", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no matched "
+                            f"filing value; copied prior-period input from {prev_cell}.",
+                ))
+                continue
+
             _copy_style(ws.cell(rp.row, ref), target)
-            target.value = val
+            target.value = 0.0
             target.comment = Comment(
-                f"FinScan\nPDF label match: '{rp.label}'\nrow match: label_only",
+                "FinScan\n"
+                "No filing value or prior-period numeric input was found for this blue row. "
+                "Set to 0.0 to avoid leaving the input blank.",
                 "FinScan",
             )
             written += 1
+            issues.append(Issue(
+                severity="warning", code="input_row_default_zero", field=rp.field,
+                message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no matched filing "
+                        "value and no prior-period numeric input; set to 0.0.",
+            ))
             continue
 
-        if not rp.writable or rp.field is None or rp.field not in values:
+        if not rp.writable:
             skipped += 1
-            if rp.constant_formula and rp.field:
+            continue
+
+        # Canonical field missing? Fall back to direct label match if available.
+        if rp.field is not None and rp.field not in values:
+            val = (label_values or {}).get(rp.label)
+            if val is not None:
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = val
+                target.comment = Comment(
+                    f"FinScan\nfield: {rp.field}\nPDF label fallback: '{rp.label}'\n"
+                    f"row match: {rp.match_method} + label_fallback",
+                    "FinScan",
+                )
+                written += 1
+                continue
+
+        if rp.field is None or rp.field not in values:
+            ref_val = ws.cell(rp.row, ref).value
+            if _is_number(ref_val):
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = ref_val
+                target.comment = Comment(
+                    "FinScan\n"
+                    "No filing value was matched for this blue input row. "
+                    "Carried forward the previous period value from "
+                    f"{rp.reference_cell}.",
+                    "FinScan",
+                )
+                written += 1
                 issues.append(Issue(
-                    severity="warning", code="constant_formula_not_carried", field=rp.field,
-                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') left empty. "
-                            f"The previous column holds `{rp.formula_template}` — typed-in "
-                            f"arithmetic, not a reference — so copying it would repeat last "
-                            f"period's figure, and the filing gave no value for this row."))
+                    severity="warning", code="input_row_carried_forward", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no matched "
+                            f"filing value; copied prior-period input from {rp.reference_cell}.",
+                ))
+                continue
+
+            prev = _latest_numeric_left(ws, rp.row, ref)
+            if prev is not None:
+                prev_val, prev_cell = prev
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = prev_val
+                target.comment = Comment(
+                    "FinScan\n"
+                    "No filing value was matched for this blue input row. "
+                    "Carried forward the nearest prior period value from "
+                    f"{prev_cell}.",
+                    "FinScan",
+                )
+                written += 1
+                issues.append(Issue(
+                    severity="warning", code="input_row_carried_forward", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no matched "
+                            f"filing value; copied prior-period input from {prev_cell}.",
+                ))
+                continue
+
+            _copy_style(ws.cell(rp.row, ref), target)
+            target.value = 0.0
+            target.comment = Comment(
+                "FinScan\n"
+                "No filing value or prior-period numeric input was found for this blue row. "
+                "Set to 0.0 to avoid leaving the input blank.",
+                "FinScan",
+            )
+            written += 1
+            issues.append(Issue(
+                severity="warning", code="input_row_default_zero", field=rp.field,
+                message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no matched filing "
+                        "value and no prior-period numeric input; set to 0.0.",
+            ))
             continue
 
         conf = min(rp.match_score / 100.0, field_confidence.get(rp.field, 0.85))
         if conf < min_confidence:
-            skipped += 1
             issues.append(Issue(severity="warning", code="low_confidence_skipped", field=rp.field,
-                                message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') left blank: "
-                                        f"confidence {conf:.2f} < {min_confidence:.2f}."))
-            continue
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') was written "
+                        f"despite low confidence {conf:.2f} < {min_confidence:.2f}. "
+                        "Review this row."))
 
         _copy_style(ws.cell(rp.row, ref), target)
         target.value = values[rp.field]
@@ -356,7 +498,9 @@ def _write_sheet(
                 if rp.constant_formula else "blue input cell — model formulas untouched")
         target.comment = Comment(
             f"FinScan\nfield: {rp.field}\nPDF caption: {pdf_labels.get(rp.field, 'derived')}\n"
-            f"row match: {rp.match_method} ({rp.match_score:.0f})\nconfidence: {conf:.2f}\n{kind}",
+            f"row match: {rp.match_method} ({rp.match_score:.0f})\nconfidence: {conf:.2f}"
+            + (" (LOW)" if conf < min_confidence else "")
+            + f"\n{kind}",
             "FinScan",
         )
         written += 1

@@ -260,6 +260,7 @@ def _dedupe_sheets(plan, enabled: set[str]) -> list[Issue]:
 
 def _flat_mappings(state: dict) -> list[RowMapping]:
     plan, values = state["plan"], state.get("values", {})
+    label_values = state.get("label_values", {}) or {}
     enabled = set(state.get("enabled_sheets") or [])
     extraction = state.get("extraction")
     pdf_labels = {li.field.value: li.label_in_pdf for li in extraction.line_items} if extraction else {}
@@ -279,6 +280,11 @@ def _flat_mappings(state: dict) -> list[RowMapping]:
             if rp.field and rp.field in scaled and rp.writable:
                 m.value = scaled[rp.field]
                 m.pdf_label = pdf_labels.get(rp.field, "(derived)")
+            elif rp.writable and rp.label in label_values:
+                # Fallback: canonical field missing, but row label found directly in PDF.
+                m.value = scale_to_sheet(label_values, sheet.units).get(rp.label)
+                m.pdf_label = f"label match: {rp.label}"
+                m.match_method = f"{rp.match_method}/label_fallback"
             elif rp.carries_formula:
                 m.pdf_label = f"formula from {rp.reference_cell}"
                 m.match_method = f"{rp.match_method}/formula"
@@ -294,6 +300,8 @@ def extract_label_rows(state: dict) -> dict:
         return {"label_values": {}}
 
     enabled = set(state.get("enabled_sheets") or [])
+    extraction = state.get("extraction")
+    found_fields = {li.field.value for li in extraction.line_items} if extraction else set()
     labels: list[str] = []
     for sheet in plan.in_scope:
         if enabled and sheet.sheet not in enabled:
@@ -306,11 +314,21 @@ def extract_label_rows(state: dict) -> dict:
                 if _is_ratio_label(rp.label):
                     continue
                 labels.append(rp.label)
+            elif (
+                rp.writable
+                and not rp.carries_formula
+                and rp.field is not None
+                and rp.field not in found_fields
+                and rp.label not in labels
+                and not _is_ratio_label(rp.label)
+            ):
+                # Canonical row mapped, but taxonomy extraction missed this field.
+                # Try direct label matching for this specific row label.
+                labels.append(rp.label)
 
     if not labels:
         return {"label_values": {}}
 
-    extraction = state.get("extraction")
     source_units = (extraction.meta.units if extraction else None) or "units"
     doc_text = state.get("statements_text") or state.get("document_text", "")
 

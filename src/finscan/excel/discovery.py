@@ -378,11 +378,13 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
 
     # --- per-row plan ------------------------------------------------------
     ref = plan.reference_col
-    for r, m in sorted(by_row.items()):
+    for r in sorted(labels):
         if r < plan.first_data_row:
             continue
-        rp = RowPlan(row=r, label=m.excel_label, field=m.field,
-                     match_method=m.match_method, match_score=m.match_score,
+        m = by_row.get(r)
+        rp = RowPlan(row=r, label=labels[r], field=(m.field if m else None),
+                     match_method=(m.match_method if m else "unmatched"),
+                     match_score=(m.match_score if m else 0.0),
                      section=row_section.get(r, DEFAULT_SECTION))
         ref_cell = ws.cell(r, ref)
         st = probe_cell(ref_cell, theme)
