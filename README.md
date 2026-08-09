@@ -210,6 +210,13 @@ uvicorn finscan.api.main:app --port 8080     # docs at /docs
 
 Copilot Studio wiring — connector import, topic design, the SharePoint-triggered
 variant — is in [`docs/copilot_studio_setup.md`](docs/copilot_studio_setup.md).
+
+**Local demo with test folder + ngrok:** see [`docs/COPILOT_DEMO_LOCAL.md`](docs/COPILOT_DEMO_LOCAL.md).
+
+**Azure deployment (when IT blocks tunnels):**
+
+- Portal UI + access check: [`docs/AZURE_DEPLOY_PORTAL.md`](docs/AZURE_DEPLOY_PORTAL.md)
+- Azure CLI: [`docs/AZURE_DEPLOY.md`](docs/AZURE_DEPLOY.md)
 The Swagger 2.0 file Power Platform needs is
 [`docs/copilot_connector.yaml`](docs/copilot_connector.yaml).
 
@@ -260,7 +267,7 @@ src/finscan/
   graph/              state, nodes, build
   api/main.py         FastAPI service
   cli.py              run | batch | inspect | profiles
-docs/                 Copilot Studio setup + Swagger 2.0 connector
+docs/                 Copilot Studio setup, Azure deploy, Swagger 2.0 connector
 samples/              generator for the PDF and the three divergent models
 tests/                70 offline tests
 ```

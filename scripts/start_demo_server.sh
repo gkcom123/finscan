@@ -28,4 +28,4 @@ echo "  ngrok http 8080"
 echo "  → paste the https URL host into docs/copilot_connector.yaml"
 echo ""
 
-exec uvicorn finscan.api.main:app --host 0.0.0.0 --port 8080 --reload
+exec python -m uvicorn finscan.api.main:app --host 0.0.0.0 --port 8080 --reload

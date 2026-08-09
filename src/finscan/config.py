@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     finscan_api_key: str = "change-me"
     finscan_work_dir: Path = Path("./_work")
 
+    # CLI company runs: PDF + model from input/<company>/; output input/<company>_output.*
+    finscan_input_dir: Path = Path("./input")
+
     # Local demo: Copilot reads PDF + model from test/<company>/ on disk
     finscan_test_dir: Path = Path("./test")
     finscan_demo_enabled: bool = True

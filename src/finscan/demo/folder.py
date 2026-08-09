@@ -1,4 +1,4 @@
-"""Find demo PDF + Excel under test/<company>/ for Copilot Studio local demos."""
+"""Resolve PDF + Excel under <root>/<company>/ for CLI and Copilot demo runs."""
 from __future__ import annotations
 
 import re
@@ -60,9 +60,9 @@ def normalize_period(period: str | None) -> tuple[str | None, str | None]:
     return token or None, label
 
 
-def _is_updated_workbook(path: Path) -> bool:
+def _is_output_workbook(path: Path) -> bool:
     stem = path.stem.lower()
-    return "_updated" in stem or stem.endswith("_out")
+    return "_updated" in stem or stem.endswith("_out") or stem.endswith("_output")
 
 
 def _score_pdf(path: Path, period_token: str | None) -> int:
@@ -75,15 +75,20 @@ def _score_pdf(path: Path, period_token: str | None) -> int:
     return score
 
 
+def output_path_for_company(input_root: Path, company_key: str, workbook: Path) -> Path:
+    """Write beside input root: input/<company>_output.<same suffix as model>."""
+    return Path(input_root) / f"{company_key}_output{workbook.suffix}"
+
+
 def resolve_demo_files(
     test_root: Path,
     company: str,
     period: str | None = None,
 ) -> DemoFiles:
-    """Locate PDF + workbook for a demo request."""
+    """Locate PDF + workbook under <root>/<company>/."""
     root = Path(test_root)
     if not root.is_dir():
-        raise FileNotFoundError(f"Test folder not found: {root.resolve()}")
+        raise FileNotFoundError(f"Input folder not found: {root.resolve()}")
 
     key = normalize_company(company)
     period_token, period_label = normalize_period(period)
@@ -103,7 +108,7 @@ def resolve_demo_files(
     pdfs = sorted(company_dir.glob("*.pdf"))
     workbooks = [
         p for p in list(company_dir.glob("*.xlsx")) + list(company_dir.glob("*.xlsm"))
-        if not _is_updated_workbook(p)
+        if not _is_output_workbook(p)
     ]
     if not pdfs:
         raise FileNotFoundError(f"No PDF in {company_dir}")

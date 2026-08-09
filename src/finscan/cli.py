@@ -48,6 +48,17 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("excel")
     _add_run_args(r)
 
+    c = sub.add_parser(
+        "company",
+        help="Process input/<company>/*.pdf + *.xlsx|*.xlsm → input/<company>_output.*",
+    )
+    c.add_argument("company", help="Company folder name under input/ (e.g. tencent, Tancent)")
+    c.add_argument(
+        "--input-dir",
+        help="Root folder containing company subdirs (default: FINSCAN_INPUT_DIR or ./input)",
+    )
+    _add_run_args(c)
+
     b = sub.add_parser("batch", help="Process a folder of PDFs into one workbook, oldest first.")
     b.add_argument("pdf_dir")
     b.add_argument("excel")
@@ -96,6 +107,35 @@ def main(argv: list[str] | None = None) -> int:
 
     if a.cmd == "run":
         state = run_graph(a.pdf, a.excel, output_path=a.out, dry_run=a.dry_run, **common)
+        return _emit(state, Path(a.report) if a.report else None)
+
+    if a.cmd == "company":
+        from finscan.demo.folder import output_path_for_company, resolve_demo_files
+
+        input_root = Path(a.input_dir or settings.finscan_input_dir)
+        try:
+            files = resolve_demo_files(input_root, a.company, a.period)
+        except FileNotFoundError as exc:
+            print(exc, file=sys.stderr)
+            return 1
+        out = Path(a.out) if a.out else output_path_for_company(
+            input_root, files.company_key, files.workbook
+        )
+        period = a.period or files.period_label
+        print(f"PDF:      {files.pdf}")
+        print(f"Model:    {files.workbook}")
+        print(f"Output:   {out}")
+        if period:
+            print(f"Period:   {period}")
+        state = run_graph(
+            str(files.pdf),
+            str(files.workbook),
+            output_path=str(out),
+            dry_run=a.dry_run,
+            company=a.company or files.company_key,
+            period_label=period,
+            **{k: v for k, v in common.items() if k not in ("company", "period_label")},
+        )
         return _emit(state, Path(a.report) if a.report else None)
 
     pdfs = sorted(Path(a.pdf_dir).glob("*.pdf"))
