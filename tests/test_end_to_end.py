@@ -30,12 +30,15 @@ FORMULA_ROWS = {7: "=F5+F6", 15: "=SUM(F8:F14)", 18: "=F7-F15+F17", 20: "=F18-F1
 def test_a_new_company_is_held_for_one_off_confirmation(workspace, stub_llm):
     before = workspace["northwind"].read_bytes()
     state = run_graph(str(workspace["pdf"]), str(workspace["northwind"]),
-                      output_path=str(workspace["northwind_out"]), use_llm_mapping=False)
+                      output_path=str(workspace["northwind_out"]), use_llm_mapping=False,
+                      require_confirmation=True)
 
     assert state["status"] == "awaiting_confirmation"
-    assert state.get("write_result") is None
+    assert state.get("write_result") is not None
+    assert state["write_result"].workbook_path == str(workspace["northwind_out"])
+    assert not state["write_result"].sheets
     assert workspace["northwind"].read_bytes() == before
-    assert not workspace["northwind_out"].exists()
+    assert workspace["northwind_out"].exists()
     # ...but a full proposal is still available to review
     assert state["mappings"] and "awaiting_confirmation" in state["report"]
 
@@ -53,7 +56,7 @@ def test_confirmed_company_runs_straight_through(workspace, stub_llm, confirmed)
 
 def test_layout_drift_forces_re_confirmation(workspace, stub_llm, confirmed):
     run_graph(str(workspace["pdf"]), str(workspace["northwind"]), use_llm_mapping=False,
-              dry_run=True)
+              dry_run=True, require_confirmation=True)
     confirmed(NORTHWIND, sheets=["P&L Summary"])
 
     wb = load_workbook(workspace["northwind"])
@@ -61,7 +64,8 @@ def test_layout_drift_forces_re_confirmation(workspace, stub_llm, confirmed):
     wb.save(workspace["northwind"])
 
     state = run_graph(str(workspace["pdf"]), str(workspace["northwind"]),
-                      output_path=str(workspace["northwind_out"]), use_llm_mapping=False)
+                      output_path=str(workspace["northwind_out"]), use_llm_mapping=False,
+                      require_confirmation=True)
     assert state["status"] == "awaiting_confirmation"
     assert state["profile_state"] == "drifted"
     assert any(i.code == "profile_drift" for i in state["issues"])

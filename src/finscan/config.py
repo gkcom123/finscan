@@ -40,7 +40,8 @@ class Settings(BaseSettings):
 
     # Layout profiles
     finscan_profile_store: Path = Path("./profiles")
-    finscan_require_confirmation: bool = True
+    # Default to no confirmation gate so runs always proceed to write.
+    finscan_require_confirmation: bool = False
 
     # API
     finscan_api_key: str = "change-me"

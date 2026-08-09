@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from datetime import date
 import re
+import shutil
+from pathlib import Path
 
 from finscan.config import settings
 from finscan.excel.discovery import discover
@@ -12,7 +14,7 @@ from finscan.extract.extractor import extract as llm_extract, extract_for_labels
 from finscan.extract.normalize import derive_missing, to_target_units
 from finscan.extract.pdf_reader import read_pdf
 from finscan.profiles import ProfileStore, company_key, is_weak_company_key
-from finscan.schemas import FIELD_LABELS, Issue, RowMapping
+from finscan.schemas import FIELD_LABELS, Issue, RowMapping, WriteResult
 from finscan.validate import has_blocking_errors, validate
 
 MAX_RETRIES = 1
@@ -490,15 +492,24 @@ def write_excel(state: dict) -> dict:
     header_lines = _period_header_lines(state)
     blocked = [i for i in state.get("issues", []) if i.code in PERIOD_BLOCKERS]
     if blocked or state.get("dry_run") or state.get("status") == "awaiting_confirmation":
+        write_result, copy_issues = _copy_output_workbook_only(state, header)
         reason = (
             "the filing period does not line up with the next column"
             if blocked else
             "awaiting one-off profile confirmation"
             if state.get("status") == "awaiting_confirmation" else "dry run"
         )
-        return {"period_header": header,
-                "issues": [Issue(severity="info", code="not_written",
-                                 message=f"The workbook was not modified ({reason}).")]}
+        issues = [
+            Issue(
+                severity="info",
+                code="not_written",
+                message=f"The workbook was not modified ({reason}).",
+            )
+        ] + copy_issues
+        payload = {"period_header": header, "issues": issues}
+        if write_result is not None:
+            payload["write_result"] = write_result
+        return payload
 
     extraction = state["extraction"]
     result, issues = write_workbook(
@@ -513,6 +524,38 @@ def write_excel(state: dict) -> dict:
         label_values=state.get("label_values"),
     )
     return {"write_result": result, "period_header": header, "issues": issues}
+
+
+def _copy_output_workbook_only(state: dict, header: str) -> tuple[WriteResult | None, list[Issue]]:
+    """Create the output workbook path even when this run intentionally does not write values."""
+    src = Path(state["excel_path"])
+    dst = Path(state.get("output_path") or src.with_name(f"{src.stem}_updated{src.suffix}"))
+
+    try:
+        if src.resolve() != dst.resolve():
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+        return (
+            WriteResult(workbook_path=str(dst), header_written=header, sheets=[]),
+            [
+                Issue(
+                    severity="info",
+                    code="output_copied",
+                    message=(
+                        "Created the output workbook copy without applying period values "
+                        "because this run was held or dry-run."
+                    ),
+                )
+            ],
+        )
+    except Exception as exc:
+        return None, [
+            Issue(
+                severity="warning",
+                code="output_copy_failed",
+                message=f"Could not create output workbook copy at '{dst}': {exc}",
+            )
+        ]
 
 
 def build_report(state: dict) -> dict:

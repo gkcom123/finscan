@@ -28,7 +28,9 @@ def _add_run_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--profiles", help="Profile store directory")
     p.add_argument("--report", help="Write the markdown review report here")
     p.add_argument("--yes", action="store_true",
-                   help="Skip the one-off profile confirmation gate")
+                   help="Compatibility flag; confirmation is already skipped by default")
+    p.add_argument("--require-confirmation", action="store_true",
+                   help="Require one-off profile confirmation before writing (legacy behavior)")
     p.add_argument("--dry-run", action="store_true", help="Extract and map without writing")
     p.add_argument("--allow-period-gap", action="store_true",
                    help="TESTING ONLY: write even when the filing period does not follow "
@@ -88,6 +90,9 @@ def main(argv: list[str] | None = None) -> int:
         use_llm_mapping=not a.no_llm_mapping,
         allow_period_gap=a.allow_period_gap,
     )
+
+    if not a.require_confirmation:
+        common["require_confirmation"] = False
 
     if a.cmd == "run":
         state = run_graph(a.pdf, a.excel, output_path=a.out, dry_run=a.dry_run, **common)

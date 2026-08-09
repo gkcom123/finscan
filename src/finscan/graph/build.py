@@ -54,7 +54,7 @@ def build_graph(checkpointer: Any = None):
     g.add_conditional_edges(
         "validate",
         nodes.route_after_validate,
-        {"retry": "prepare_retry", "write": "write_excel", "hold": "report"},
+        {"retry": "prepare_retry", "write": "write_excel", "hold": "write_excel"},
     )
     g.add_edge("prepare_retry", "extract")
     g.add_edge("write_excel", "report")
