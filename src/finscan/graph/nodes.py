@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import date
+import re
 
 from finscan.config import settings
 from finscan.excel.discovery import discover
@@ -445,8 +446,48 @@ def _period_header(state: dict) -> str:
     return " ".join(parts)
 
 
+def _period_header_lines(state: dict) -> list[str]:
+    override = state.get("period_label_override")
+    if override:
+        return [override]
+
+    meta = state["extraction"].meta
+    if not meta:
+        return ["New period"]
+
+    cadence = {
+        "quarter": "Quarterly",
+        "half_year": "Half-year",
+        "nine_months": "Nine months",
+        "year": "Annual",
+    }.get(meta.period_type, "Period")
+
+    month_year = meta.period_label or "New period"
+    quarter_token = ""
+
+    if meta.period_end_date:
+        try:
+            d = date.fromisoformat(meta.period_end_date)
+            month_year = d.strftime("%b %Y")
+            if meta.period_type == "quarter":
+                quarter_token = f"Q{((d.month - 1) // 3) + 1}"
+        except ValueError:
+            pass
+
+    if not quarter_token and meta.period_label:
+        m = re.search(r"\bQ\s*([1-4])\b", meta.period_label, re.IGNORECASE)
+        if m:
+            quarter_token = f"Q{m.group(1)}"
+
+    lines = [cadence, month_year, "Act"]
+    if quarter_token:
+        lines.append(quarter_token)
+    return lines
+
+
 def write_excel(state: dict) -> dict:
     header = _period_header(state)
+    header_lines = _period_header_lines(state)
     blocked = [i for i in state.get("issues", []) if i.code in PERIOD_BLOCKERS]
     if blocked or state.get("dry_run") or state.get("status") == "awaiting_confirmation":
         reason = (
@@ -464,6 +505,7 @@ def write_excel(state: dict) -> dict:
         plan=state["plan"],
         values=state["values"],
         header=header,
+        header_lines=header_lines,
         enabled_sheets=set(state.get("enabled_sheets") or []) or None,
         output_path=state.get("output_path"),
         field_confidence={li.field.value: li.confidence for li in extraction.line_items},

@@ -24,6 +24,10 @@ HARD RULES
    Identify the CURRENT REPORTING PERIOD column first — normally the leftmost
    numeric column, headed by the most recent period end date — and read every
    value from that one column only. Never mix columns.
+    IMPORTANT for Spanish mixed tables titled like "Por los periodos de seis y
+    tres meses ...": for quarterly extraction choose the "Transacciones del
+    [primer/segundo/tercer/cuarto] trimestre <year>" column, not the cumulative
+    "Seis meses" column.
 2. If both Standalone and Consolidated statements are present, extract the
    CONSOLIDATED one and set meta.consolidated = true. If only standalone exists,
    use it and set consolidated = false.
@@ -73,6 +77,11 @@ def _invoke(document_text: str, hint: str) -> Extraction:
 
 
 _RAW_NUMBER = re.compile(r"\(?\s*\$?\s*(-?[0-9][0-9,\.]*)")
+_ALL_NUMBERS = re.compile(r"\(?\s*-?\$?\s*[0-9][0-9,\.]*\)?")
+_SPANISH_MIXED_QUARTER_TABLE = re.compile(
+    r"seis\s+y\s+tres\s+meses|transacciones\s+del\s+(?:primer|segundo|tercer|cuarto)\s+trimestre",
+    re.IGNORECASE,
+)
 
 
 def _parse_locale_number(text: str) -> float | None:
@@ -145,6 +154,53 @@ def _maybe_rescale_items_to_printed_units(result: Extraction) -> str | None:
     return None
 
 
+def _close(a: float, b: float) -> bool:
+    denom = max(abs(a), abs(b), 1.0)
+    return abs(a - b) / denom <= 1e-3
+
+
+def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str | None:
+    """Prefer quarter transaction values in Spanish mixed 6M/3M statements.
+
+    Some filings present rows with multiple numeric columns in this order:
+    6M current, Q current, 6M prior, Q prior. The model can choose the first
+    value (6M current) for quarterly runs. When we can detect that pattern, we
+    swap to the second value (Q current) if the extracted value matches the
+    first one.
+    """
+    if result.meta.period_type != "quarter":
+        return None
+    if not _SPANISH_MIXED_QUARTER_TABLE.search(document_text or ""):
+        return None
+
+    changed = 0
+    for item in result.line_items:
+        row = item.source_row_text or ""
+        if not row:
+            continue
+        nums: list[float] = []
+        for tok in _ALL_NUMBERS.findall(row):
+            parsed = _parse_locale_number(tok)
+            if parsed is not None:
+                nums.append(parsed)
+        if len(nums) < 2:
+            continue
+
+        first, second = nums[0], nums[1]
+        # Switch only when the model clearly picked the first numeric slot.
+        if _close(item.value, first) and not _close(item.value, second):
+            item.value = second
+            changed += 1
+
+    if changed:
+        return (
+            "Detected a Spanish mixed six-month/quarter table and switched "
+            f"{changed} line item(s) from cumulative 6M values to quarter "
+            "transaction values (second numeric column) for quarterly extraction."
+        )
+    return None
+
+
 def extract(document_text: str, hint: str = "",
             statements_text: str | None = None) -> tuple[Extraction, list[str]]:
     """Run structured extraction, repairing an empty result once.
@@ -157,6 +213,9 @@ def extract(document_text: str, hint: str = "",
     notes: list[str] = []
     result = _invoke(document_text, hint)
     if result.line_items:
+        quarter_note = _maybe_realign_quarter_values(result, statements_text or document_text)
+        if quarter_note:
+            notes.append(quarter_note)
         scale_note = _maybe_rescale_items_to_printed_units(result)
         if scale_note:
             notes.append(scale_note)
@@ -167,6 +226,9 @@ def extract(document_text: str, hint: str = "",
     focused = statements_text or document_text
     retry = _invoke(focused, (hint + " " + RETRY_HINT).strip())
     if retry.line_items:
+        quarter_note = _maybe_realign_quarter_values(retry, focused)
+        if quarter_note:
+            notes.append(quarter_note)
         scale_note = _maybe_rescale_items_to_printed_units(retry)
         if scale_note:
             notes.append(scale_note)
@@ -214,6 +276,8 @@ Use your best semantic judgement: match on meaning, not exact words.
 
 EXTRACTION RULES
 1. Use the CURRENT REPORTING PERIOD column only (the most recent period end date).
+    For Spanish mixed tables ("seis y tres meses"), quarterly mode means using
+    the "Transacciones del ... trimestre" column, not cumulative "Seis meses".
 2. Report the value exactly as printed — do NOT convert units or scale.
 3. Numbers in parentheses or with a trailing minus are negative.
 4. Return null only when you genuinely cannot find any semantically related line

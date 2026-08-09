@@ -123,10 +123,46 @@ def _copy_style(src, dst) -> None:
     dst.fill = copy(src.fill)
 
 
+def _stacked_header_start_row(ws, header_row: int, ref_col: int, line_count: int) -> int | None:
+    """Return the start row for a stacked header block, or None.
+
+    Some templates anchor header_row at the top of the 4-line block; others
+    anchor it at the bottom. Detect both using reference-column content.
+    """
+    if line_count <= 1:
+        return None
+
+    def _count_non_empty(start: int, end: int) -> int:
+        n = 0
+        for r in range(start, end + 1):
+            v = ws.cell(r, ref_col).value
+            if isinstance(v, str) and v.strip():
+                n += 1
+        return n
+
+    # Top-anchored block: header_row is first line (e.g., Quarterly).
+    top_start = header_row
+    top_end = header_row + line_count - 1
+    top_hits = _count_non_empty(top_start, top_end)
+
+    # Bottom-anchored block: header_row is last line (e.g., Q2).
+    bot_start = max(1, header_row - line_count + 1)
+    bot_end = header_row
+    bot_hits = _count_non_empty(bot_start, bot_end)
+
+    need = max(2, line_count - 1)
+    if top_hits >= need and top_hits >= bot_hits:
+        return top_start
+    if bot_hits >= need:
+        return bot_start
+    return None
+
+
 def write_workbook(
     plan: WorkbookPlan,
     values: dict[str, float],
     header: str,
+    header_lines: list[str] | None = None,
     enabled_sheets: set[str] | None = None,
     output_path: str | Path | None = None,
     min_confidence: float | None = None,
@@ -175,7 +211,7 @@ def write_workbook(
 
         res, sheet_issues = _write_sheet(
             wb[sheet_plan.sheet], sheet_plan,
-            scale_to_sheet(values, effective_units), header,
+            scale_to_sheet(values, effective_units), header, header_lines,
             min_confidence, field_confidence, pdf_labels,
             scale_to_sheet(label_values, effective_units) if label_values else None,
         )
@@ -196,6 +232,7 @@ def write_workbook(
 
 def _write_sheet(
     ws, plan: SheetPlan, values: dict[str, float], header: str,
+    header_lines: list[str] | None,
     min_confidence: float, field_confidence: dict[str, float],
     pdf_labels: dict[str, str],
     label_values: dict[str, float] | None = None,
@@ -205,13 +242,30 @@ def _write_sheet(
     ref = plan.reference_col or plan.last_period_col
     letter = get_column_letter(col)
     written = copied = skipped = 0
+    header_rows_written: set[int] = set()
 
     # --- header -----------------------------------------------------------
-    if not _merged_anchor_conflict(ws, plan.header_row, col):
+    normalized_lines = [x for x in (header_lines or []) if x and x.strip()]
+    if not normalized_lines:
+        normalized_lines = [x.strip() for x in str(header).split("/") if x.strip()] or [str(header)]
+
+    start = _stacked_header_start_row(ws, plan.header_row, ref, len(normalized_lines))
+    if len(normalized_lines) > 1 and start is not None:
+        top = start
+        for i, line in enumerate(normalized_lines):
+            row = top + i
+            if _merged_anchor_conflict(ws, row, col):
+                continue
+            hdr = ws.cell(row, col)
+            _copy_style(ws.cell(row, ref), hdr)
+            hdr.value = line
+            header_rows_written.add(row)
+    elif not _merged_anchor_conflict(ws, plan.header_row, col):
         hdr = ws.cell(plan.header_row, col)
         if not cell_has_formula(hdr):
             _copy_style(ws.cell(plan.header_row, ref), hdr)
             hdr.value = header
+            header_rows_written.add(plan.header_row)
     try:
         ws.column_dimensions[letter].width = ws.column_dimensions[get_column_letter(ref)].width
     except Exception:
@@ -219,6 +273,8 @@ def _write_sheet(
 
     # --- rows -------------------------------------------------------------
     for rp in plan.rows:
+        if rp.row in header_rows_written:
+            continue
         target = ws.cell(rp.row, col)
 
         if _merged_anchor_conflict(ws, rp.row, col):
