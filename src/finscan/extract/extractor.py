@@ -26,10 +26,15 @@ HARD RULES
    Identify the CURRENT REPORTING PERIOD column first — normally the leftmost
    numeric column, headed by the most recent period end date — and read every
    value from that one column only. Never mix columns.
-    IMPORTANT for Spanish mixed tables titled like "Por los periodos de seis y
-    tres meses ...": for quarterly extraction choose the "Transacciones del
-    [primer/segundo/tercer/cuarto] trimestre <year>" column, not the cumulative
-    "Seis meses" column.
+    IMPORTANT for mixed six-month/quarter tables, in either language — Spanish,
+    titled like "Por los periodos de seis y tres meses ..." with columns
+    "Transacciones del [primer/segundo/tercer/cuarto] trimestre <year>" vs
+    cumulative "Seis meses"; or English, titled like "For the six and
+    three-months periods ended ..." with columns "6 months as of <date>",
+    "[Ordinal]-quarter <year> transactions", "3 months as of <date>": for
+    quarterly extraction always choose the quarter/trimestre transactions
+    column, never the cumulative six-month/"seis meses" column, even though it
+    is printed first (leftmost).
 2. If both Standalone and Consolidated statements are present, extract the
    CONSOLIDATED one and set meta.consolidated = true. If only standalone exists,
    use it and set consolidated = false.
@@ -89,8 +94,11 @@ def _invoke(document_text: str, hint: str) -> Extraction:
 
 _RAW_NUMBER = re.compile(r"\(?\s*\$?\s*(-?[0-9][0-9,\.]*)")
 _ALL_NUMBERS = re.compile(r"\(?\s*-?\$?\s*[0-9][0-9,\.]*\)?")
-_SPANISH_MIXED_QUARTER_TABLE = re.compile(
-    r"seis\s+y\s+tres\s+meses|transacciones\s+del\s+(?:primer|segundo|tercer|cuarto)\s+trimestre",
+_MIXED_QUARTER_TABLE = re.compile(
+    r"seis\s+y\s+tres\s+meses"
+    r"|transacciones\s+del\s+(?:primer|segundo|tercer|cuarto)\s+trimestre"
+    r"|six\s+and\s+three[\s-]months?\s+periods?\s+ended"
+    r"|(?:first|second|third|fourth)-quarter\s+\d{4}\s+transactions",
     re.IGNORECASE,
 )
 
@@ -171,7 +179,7 @@ def _close(a: float, b: float) -> bool:
 
 
 def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str | None:
-    """Prefer quarter transaction values in Spanish mixed 6M/3M statements.
+    """Prefer quarter transaction values in mixed 6M/3M statements (Spanish or English).
 
     Some filings present rows with multiple numeric columns in this order:
     6M current, Q current, 6M prior, Q prior. The model can choose the first
@@ -181,7 +189,7 @@ def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str
     """
     if result.meta.period_type != "quarter":
         return None
-    if not _SPANISH_MIXED_QUARTER_TABLE.search(document_text or ""):
+    if not _MIXED_QUARTER_TABLE.search(document_text or ""):
         return None
 
     changed = 0
@@ -205,7 +213,7 @@ def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str
 
     if changed:
         return (
-            "Detected a Spanish mixed six-month/quarter table and switched "
+            "Detected a mixed six-month/quarter table and switched "
             f"{changed} line item(s) from cumulative 6M values to quarter "
             "transaction values (second numeric column) for quarterly extraction."
         )
@@ -490,8 +498,11 @@ Use your best semantic judgement: match on meaning, not exact words.
 
 EXTRACTION RULES
 1. Use the CURRENT REPORTING PERIOD column only (the most recent period end date).
-    For Spanish mixed tables ("seis y tres meses"), quarterly mode means using
-    the "Transacciones del ... trimestre" column, not cumulative "Seis meses".
+    For mixed six-month/quarter tables — Spanish ("seis y tres meses" /
+    "Transacciones del ... trimestre") or English ("six and three-months
+    periods ended" / "[Quarter] transactions") — quarterly mode means using
+    the quarter transactions column, not the cumulative "Seis meses" / "6 months
+    as of" column.
 2. Report the value exactly as printed — do NOT convert units or scale.
 3. Numbers in parentheses or with a trailing minus are negative.
 4. Return null only when you genuinely cannot find any semantically related line

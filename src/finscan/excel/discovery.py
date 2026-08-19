@@ -217,12 +217,28 @@ def assign_sections(labels: dict[int, str]) -> tuple[dict[int, str], dict[int, s
 
 
 def _parse_period_date(v: Any) -> str | None:
+    """Recognize both real Excel date cells and the "Mon YYYY" text line FinScan
+    itself writes into stacked period headers — writer.py has no date cell there
+    to read back, so without this, every column FinScan ever wrote is invisible
+    to the continuity check on the next run."""
+    from calendar import monthrange
     from datetime import date, datetime
 
     if isinstance(v, datetime):
         return v.date().isoformat()
     if isinstance(v, date):
         return v.isoformat()
+    if isinstance(v, str):
+        text = v.strip()
+        for fmt in ("%b %Y", "%B %Y"):
+            try:
+                d = datetime.strptime(text, fmt).date()
+            except ValueError:
+                continue
+            # Header text only carries month/year; snap to that month's last day
+            # since these headers are always quarter/period-end dates.
+            last_day = monthrange(d.year, d.month)[1]
+            return date(d.year, d.month, last_day).isoformat()
     return None
 
 
@@ -247,6 +263,20 @@ def _pick_label_col(ws, max_row: int, max_col: int) -> tuple[int, dict[int, str]
         if score > best[2]:
             best = (c, labels, score)
     return best
+
+
+def _most_recent(cols: list[int], dates: dict[int, str]) -> int:
+    """Rightmost column, unless period dates disagree.
+
+    Column order alone means "most recent" for a normal left-to-right
+    timeline, but some models append a "Restated"/comparison block after the
+    real last period — that block sits further right yet holds older dates.
+    Prefer the chronologically latest column whenever dates are known.
+    """
+    dated = [c for c in cols if c in dates]
+    if dated:
+        return max(dated, key=lambda c: dates[c])
+    return cols[-1]
 
 
 def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
@@ -349,16 +379,24 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
             plan.period_dates = dates
 
     # --- where do we write? ------------------------------------------------
+    populated = [c for c in period_cols if col_stats[c]["values"] > 0]
+    last_populated = _most_recent(populated, plan.period_dates) if populated else None
+
     # A pre-formatted but empty column means the template already reserves the
-    # slot for this quarter; filling it beats appending beside it.
+    # slot for this quarter; filling it beats appending beside it. It must sit
+    # after the most recent populated column — a stray formatted cell
+    # elsewhere in the sheet (e.g. a spacer between statement blocks) is not
+    # a reserved slot.
     blank_ready = [
         c for c in period_cols
-        if col_stats[c]["values"] == 0 and (col_stats[c]["input"] or col_stats[c]["formula"])
+        if (last_populated is None or c > last_populated)
+        and col_stats[c]["values"] == 0 and (col_stats[c]["input"] or col_stats[c]["formula"])
     ]
-    populated = [c for c in period_cols if col_stats[c]["values"] > 0]
 
     if blank_ready:
         plan.write_col, plan.write_mode = blank_ready[0], "fill_blank"
+    elif last_populated is not None:
+        plan.write_col, plan.write_mode = last_populated + 1, "append"
     else:
         plan.write_col, plan.write_mode = plan.last_period_col + 1, "append"
 
@@ -376,15 +414,10 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
         # A small absolute floor avoids over-filtering tiny sheets.
         min_dense = max(3, int(max_inputs * 0.5))
         dense = [c for c in with_inputs if col_stats[c]["input"] >= min_dense]
-        if dense:
-            plan.reference_col = dense[-1]
-        else:
-            # Tiny-sheet fallback: choose the most recent among top-scoring
-            # input columns.
-            best = [c for c in with_inputs if col_stats[c]["input"] == max_inputs]
-            plan.reference_col = best[-1]
+        candidates = dense or [c for c in with_inputs if col_stats[c]["input"] == max_inputs]
+        plan.reference_col = _most_recent(candidates, plan.period_dates)
     else:
-        plan.reference_col = (populated or [plan.last_period_col])[-1]
+        plan.reference_col = _most_recent(populated, plan.period_dates) if populated else plan.last_period_col
 
     # --- per-row plan ------------------------------------------------------
     ref = plan.reference_col

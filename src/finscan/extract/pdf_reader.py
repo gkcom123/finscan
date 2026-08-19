@@ -110,6 +110,16 @@ def _render_table(tbl: list[list[str]]) -> str:
 
 
 def _ocr_page(pdf_path: str, page_no: int) -> str:
+    """OCR a single page: local Tesseract if the host has it, else a vision-model
+    transcription (some hosts, e.g. plain Windows installs, have the Python OCR
+    packages but not the system tesseract/poppler binaries)."""
+    text = _tesseract_ocr_page(pdf_path, page_no)
+    if text.strip():
+        return text
+    return _vision_transcribe_page(pdf_path, page_no)
+
+
+def _tesseract_ocr_page(pdf_path: str, page_no: int) -> str:
     """OCR a single page. Requires poppler + tesseract on the host."""
     try:
         import pytesseract
@@ -120,6 +130,57 @@ def _ocr_page(pdf_path: str, page_no: int) -> str:
         images = convert_from_path(pdf_path, dpi=300, first_page=page_no, last_page=page_no)
         return "\n".join(pytesseract.image_to_string(im) for im in images)
     except Exception:  # pragma: no cover - host tooling missing
+        return ""
+
+
+_VISION_TRANSCRIBE_SYSTEM = """You transcribe a scanned/flattened financial statement
+page into plain text for an automated extraction pipeline.
+
+Rules:
+- Reproduce every heading, label and number exactly as printed. Do not translate,
+  summarise, round, or omit anything, including signature blocks and footnotes.
+- Render each table as one row per line, columns separated by " | ", using the
+  printed column headers (e.g. period dates) verbatim as the first row(s) of
+  that table. Keep columns in the exact left-to-right order they are printed in.
+- Keep negative numbers exactly as printed (parentheses or a minus sign).
+- Output plain text only: no markdown, no commentary, no code fences.
+"""
+
+
+def _vision_transcribe_page(pdf_path: str, page_no: int) -> str:
+    """Transcribe an image-only page with the configured vision-capable chat model.
+
+    Renders the page with pdfplumber's own PDF renderer (pypdfium2, a pure-Python
+    wheel — no poppler binary needed) and asks the model to read it back as text,
+    so a host with no local OCR engine installed can still recover pages that
+    were flattened to images (a common pattern for the signed statement pages
+    inside audited/interim filings).
+    """
+    try:
+        import base64
+        import io
+
+        import pdfplumber
+
+        from finscan.llm.factory import get_chat_model
+    except ImportError:  # pragma: no cover - optional dependency
+        return ""
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            image = pdf.pages[page_no - 1].to_image(resolution=300).original
+        buf = io.BytesIO()
+        image.save(buf, format="PNG")
+        b64 = base64.b64encode(buf.getvalue()).decode("ascii")
+        response = get_chat_model().invoke([
+            {"role": "system", "content": _VISION_TRANSCRIBE_SYSTEM},
+            {"role": "user", "content": [
+                {"type": "text", "text": f"Transcribe page {page_no} of this filing."},
+                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64}"}},
+            ]},
+        ])
+        content = (getattr(response, "content", "") or "").strip()
+        return re.sub(r"^```[a-zA-Z]*\n?|```$", "", content).strip()
+    except Exception:  # pragma: no cover - vision call failed / not configured
         return ""
 
 
