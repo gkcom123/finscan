@@ -54,6 +54,13 @@ class Field_(str, Enum):
     eps_diluted = "eps_diluted"
     paid_up_equity_share_capital = "paid_up_equity_share_capital"
 
+    # Cash flow statement. change_in_working_capital is definitional, always
+    # recomputed as net_cash_from_operating_activities minus
+    # total_before_working_capital_changes (see normalize.derive_missing).
+    total_before_working_capital_changes = "total_before_working_capital_changes"
+    net_cash_from_operating_activities = "net_cash_from_operating_activities"
+    change_in_working_capital = "change_in_working_capital"
+
 
 #: Human labels used in prompts and in the review report.
 FIELD_LABELS: dict[str, str] = {
@@ -90,6 +97,9 @@ FIELD_LABELS: dict[str, str] = {
     "eps_basic": "Earnings per share - Basic",
     "eps_diluted": "Earnings per share - Diluted",
     "paid_up_equity_share_capital": "Paid-up equity share capital",
+    "total_before_working_capital_changes": "Total before working capital changes (cash flow)",
+    "net_cash_from_operating_activities": "Net cash flow from operating activities",
+    "change_in_working_capital": "Change in working capital",
 }
 
 #: Alias vocabulary for matching messy Excel row labels and PDF captions.
@@ -196,6 +206,36 @@ FIELD_ALIASES: dict[str, list[str]] = {
     "eps_basic": ["basic eps", "earnings per share - basic", "eps (basic)", "basic (rs.)", "basic"],
     "eps_diluted": ["diluted eps", "earnings per share - diluted", "eps (diluted)", "diluted (rs.)", "diluted"],
     "paid_up_equity_share_capital": ["paid-up equity share capital", "equity share capital", "share capital"],
+    "total_before_working_capital_changes": [
+        "total before working capital changes", "operating profit before working capital changes",
+        "cash generated from operations before working capital changes",
+        "operating cash flows before movements in working capital",
+        "profit before working capital changes", "cash flows before working capital changes",
+        "funds from operations before working capital changes",
+    ],
+    "net_cash_from_operating_activities": [
+        "net cash flow from operating activities", "net cash flow from operating activity",
+        "net cash from operating activities", "net cash generated from operating activities",
+        "net cash provided by operating activities", "net cash generated from operations",
+        "net cash from operations", "cash flow from operating activities",
+        "net cash flows from operating activities",
+    ],
+    "change_in_working_capital": [
+        "change in working capital", "changes in working capital",
+        "movement in working capital", "movements in working capital",
+        "working capital changes", "net change in working capital",
+        "(increase)/decrease in working capital", "increase decrease in working capital",
+    ],
+}
+
+#: Cash-flow-statement fields. Only rows inside a workbook's cash-flow section
+#: may map to these, and P&L sections may not — the cash flow statement repeats
+#: P&L captions (depreciation, tax) as adjustments, so cross-section matching
+#: would corrupt both.
+CASH_FLOW_FIELDS: set[str] = {
+    "total_before_working_capital_changes",
+    "net_cash_from_operating_activities",
+    "change_in_working_capital",
 }
 
 #: Fields that are ratios/per-share and must NOT be rescaled by the units multiplier.

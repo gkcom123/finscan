@@ -68,3 +68,43 @@ def test_missing_component_breaks_total_expenses():
 def test_negative_revenue_flagged():
     issues = check_plausibility({"revenue_from_operations": -10.0})
     assert has_blocking_errors(issues)
+
+
+def test_change_in_working_capital_is_y_minus_x():
+    """Change in WC = net cash from operating activities (Y) - total before
+    working capital changes (X)."""
+    values = {"net_cash_from_operating_activities": 4751.585,
+              "total_before_working_capital_changes": 6778.834}
+    out, issues = derive_missing(values)
+    assert out["change_in_working_capital"] == 4751.585 - 6778.834
+    assert any(i.code == "derived" and i.field == "change_in_working_capital" for i in issues)
+
+
+def test_change_in_working_capital_definition_overrides_printed_value():
+    values = {"net_cash_from_operating_activities": 100.0,
+              "total_before_working_capital_changes": 130.0,
+              "change_in_working_capital": -12.0}   # filing's own (different) figure
+    out, issues = derive_missing(values)
+    assert out["change_in_working_capital"] == -30.0
+    assert any(i.code == "derived_override" for i in issues)
+
+
+def test_change_in_working_capital_not_derived_without_both_components():
+    out, _ = derive_missing({"net_cash_from_operating_activities": 100.0})
+    assert "change_in_working_capital" not in out
+
+
+def test_implausible_working_capital_swing_is_flagged():
+    """A movement several times operating cash flow itself is the signature of a
+    wrong-column read (e.g. cumulative vs standalone quarter), not a real swing."""
+    values = {"net_cash_from_operating_activities": 100.0,
+              "total_before_working_capital_changes": 1000.0}   # |Y-X| = 900, 9x Y
+    _, issues = derive_missing(values)
+    assert any(i.code == "implausible_working_capital_swing" for i in issues)
+
+
+def test_plausible_working_capital_swing_is_not_flagged():
+    values = {"net_cash_from_operating_activities": 4751.585,
+              "total_before_working_capital_changes": 6778.834}
+    _, issues = derive_missing(values)
+    assert not any(i.code == "implausible_working_capital_swing" for i in issues)

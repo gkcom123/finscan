@@ -106,7 +106,16 @@ DERIVATIONS: list[tuple[str, tuple[str, ...], str]] = [
     ),
     ("profit_after_tax", ("profit_before_tax", "tax_expense"), "PBT - tax"),
     ("tax_expense", ("current_tax", "deferred_tax"), "current + deferred tax"),
+    (
+        "change_in_working_capital",
+        ("net_cash_from_operating_activities", "total_before_working_capital_changes"),
+        "net cash from operating activities - total before working capital changes",
+    ),
 ]
+
+#: Relative tolerance for flagging a printed change-in-WC that disagrees with
+#: the definitional Y - X computation.
+_WC_TOLERANCE = 0.005
 
 
 def derive_missing(values: dict[str, float]) -> tuple[dict[str, float], list[Issue]]:
@@ -135,6 +144,51 @@ def derive_missing(values: dict[str, float]) -> tuple[dict[str, float], list[Iss
         out["profit_after_tax"] = out["profit_before_tax"] - out["tax_expense"]
         issues.append(Issue(severity="info", code="derived", field="profit_after_tax",
                             message="profit_after_tax derived = PBT - tax"))
+
+    # Change in working capital is DEFINITIONAL, not a fallback: whenever the
+    # filing prints both the pre-working-capital subtotal (X) and net operating
+    # cash flow (Y), the model's line is Y - X. That definition wins over a
+    # directly extracted "changes in working capital" caption, because filings
+    # break the movement into many signed sub-lines and the printed subtotal
+    # (when present at all) routinely excludes taxes/interest the model expects.
+    if has("net_cash_from_operating_activities", "total_before_working_capital_changes"):
+        y = out["net_cash_from_operating_activities"]
+        x = out["total_before_working_capital_changes"]
+        computed = y - x
+        printed = out.get("change_in_working_capital")
+        out["change_in_working_capital"] = computed
+        if printed is None:
+            issues.append(Issue(
+                severity="info", code="derived", field="change_in_working_capital",
+                message=(f"change_in_working_capital = net cash from operating activities "
+                         f"({y:,.2f}) - total before working capital changes ({x:,.2f}) "
+                         f"= {computed:,.2f}"),
+            ))
+        elif abs(printed - computed) > _WC_TOLERANCE * max(abs(printed), abs(computed), 1e-9):
+            issues.append(Issue(
+                severity="warning", code="derived_override", field="change_in_working_capital",
+                message=(f"Filing prints change in working capital as {printed:,.2f}, but the "
+                         f"definitional Y - X gives {y:,.2f} - {x:,.2f} = {computed:,.2f}. "
+                         f"Wrote the computed value; review if the gap is unexpected."),
+            ))
+
+        # X and Y are meant to come from the same column of the same table; a
+        # movement several times the size of operating cash flow itself usually
+        # means one of them was misread from a different (e.g. cumulative or
+        # prior-period) column rather than a genuinely large swing. This is the
+        # signature of a wrong-column pick when either figure was recovered by
+        # a best-effort rescue rather than the main extraction pass.
+        if abs(y) > 1e-9 and abs(computed) > 3 * abs(y):
+            issues.append(Issue(
+                severity="warning", code="implausible_working_capital_swing",
+                field="change_in_working_capital",
+                message=(f"Computed change in working capital ({computed:,.2f}) is more than "
+                         f"3x net cash from operating activities ({y:,.2f}). This often means "
+                         f"total_before_working_capital_changes or "
+                         f"net_cash_from_operating_activities was read from the wrong column "
+                         f"(e.g. a cumulative period instead of the standalone quarter). "
+                         f"Verify against the source PDF before relying on this figure."),
+            ))
 
     if "ebitda" not in out and has("profit_before_tax", "finance_costs", "depreciation_amortisation"):
         ebitda = (

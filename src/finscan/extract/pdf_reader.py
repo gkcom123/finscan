@@ -17,6 +17,9 @@ class PageText:
     text: str
     tables: list[list[list[str]]] = field(default_factory=list)
     ocr_used: bool = False
+    #: text layer was letter-spaced ("s h a t t e r e d") and re-extracted with a
+    #: wider x_tolerance
+    respaced: bool = False
 
 
 @dataclass
@@ -27,6 +30,10 @@ class PdfDoc:
     @property
     def ocr_pages(self) -> list[int]:
         return [p.page for p in self.pages if p.ocr_used]
+
+    @property
+    def respaced_pages(self) -> list[int]:
+        return [p.page for p in self.pages if p.respaced]
 
     def statement_pages(self, threshold: float = 1.5) -> list[int]:
         """Pages that look like actual financial statements, best first."""
@@ -116,6 +123,41 @@ def _ocr_page(pdf_path: str, page_no: int) -> str:
         return ""
 
 
+def _single_char_ratio(text: str) -> float:
+    tokens = text.split()
+    if not tokens:
+        return 0.0
+    return sum(1 for t in tokens if len(t) == 1) / len(tokens)
+
+
+#: Above this fraction of single-character tokens, a page's text layer is
+#: considered shattered (letters written as individually positioned glyphs, so
+#: default tolerances read "working capital" as "w o r k i n g  c a p i t a l").
+_SHATTER_THRESHOLD = 0.35
+
+
+def _extract_page_text(page) -> tuple[str, bool]:
+    """Extract a page's text, repairing letter-spaced text layers.
+
+    Some filings position every glyph individually; pdfplumber's default
+    x_tolerance then splits words into single letters and detaches numbers from
+    their captions, which silently starves the extractor of whole statements
+    (Fibra Uno's cash flow page is the canonical example). Retry with widening
+    tolerances and keep the least-shattered result.
+    """
+    text = page.extract_text() or ""
+    ratio = _single_char_ratio(text)
+    if ratio <= _SHATTER_THRESHOLD:
+        return text, False
+    best_text, best_ratio = text, ratio
+    for xt in (6, 10):
+        candidate = page.extract_text(x_tolerance=xt) or ""
+        r = _single_char_ratio(candidate)
+        if r < best_ratio:
+            best_text, best_ratio = candidate, r
+    return best_text, best_text is not text
+
+
 def read_pdf(path: str | Path) -> PdfDoc:
     """Extract text + tables from every page, OCR'ing pages with no text layer."""
     import pdfplumber
@@ -124,11 +166,12 @@ def read_pdf(path: str | Path) -> PdfDoc:
     pages: list[PageText] = []
     with pdfplumber.open(path) as pdf:
         for idx, page in enumerate(pdf.pages, start=1):
-            text = page.extract_text() or ""
+            text, respaced = _extract_page_text(page)
             tables = page.extract_tables() or []
             ocr_used = False
             if not text.strip() and not tables and settings.finscan_ocr_fallback:
                 text = _ocr_page(path, idx)
                 ocr_used = bool(text.strip())
-            pages.append(PageText(page=idx, text=text, tables=tables, ocr_used=ocr_used))
+            pages.append(PageText(page=idx, text=text, tables=tables,
+                                  ocr_used=ocr_used, respaced=respaced))
     return PdfDoc(path=path, pages=pages)

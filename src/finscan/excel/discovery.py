@@ -26,6 +26,10 @@ from openpyxl.utils import get_column_letter
 from finscan.excel.mapper import map_rows
 from finscan.excel.style_probe import Role, Theme, formula_has_references, probe_cell
 from finscan.extract.normalize import sniff_units
+from finscan.schemas import CASH_FLOW_FIELDS, FIELD_LABELS
+
+#: P&L fields: everything canonical that is not a cash-flow-statement line.
+_PL_FIELDS: set[str] = set(FIELD_LABELS) - CASH_FLOW_FIELDS
 
 MAX_SCAN_ROWS = 500
 MAX_SCAN_COLS = 60
@@ -251,15 +255,21 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
 
     label_col, labels, _ = _pick_label_col(ws, max_row, max_col)
 
-    # Only captions inside the income-statement block are eligible for P&L
-    # fields. Everything else keeps its section label for the report but is
+    # Captions are mapped section-by-section: income-statement rows against the
+    # P&L fields, cash-flow rows against the cash-flow fields only. The split is
+    # load-bearing — the cash flow statement repeats P&L captions (depreciation,
+    # tax) as adjustments, and cross-section matches would corrupt both.
+    # Balance-sheet / other sections keep their label for the report but are
     # never a write target.
     row_section, section_starts = assign_sections(labels)
     pl_labels = {r: t for r, t in labels.items()
                  if row_section.get(r, DEFAULT_SECTION) == "income_statement"}
+    cf_labels = {r: t for r, t in labels.items()
+                 if row_section.get(r, DEFAULT_SECTION) == "cash_flow"}
 
-    mapped, _ = map_rows(pl_labels, use_llm=False)
-    by_row = {m.excel_row: m for m in mapped}
+    mapped, _ = map_rows(pl_labels, use_llm=False, allowed_fields=_PL_FIELDS)
+    cf_mapped, _ = map_rows(cf_labels, use_llm=False, allowed_fields=CASH_FLOW_FIELDS)
+    by_row = {m.excel_row: m for m in [*mapped, *cf_mapped]}
     canonical_hits = sum(1 for m in mapped if m.field)
 
     plan = SheetPlan(sheet=ws.title, in_scope=False, label_col=label_col)
@@ -413,7 +423,8 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
 
     plan.in_scope = True
     plan.score = canonical_hits + (2.0 if plan.colors_found else 0.0)
-    other_sections = sorted({s for s in section_starts.values() if s != "income_statement"})
+    other_sections = sorted({s for s in section_starts.values()
+                             if s not in ("income_statement", "cash_flow")})
     plan.reason = (
         f"{canonical_hits} line items, "
         + ("blue/black convention detected" if plan.colors_found

@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import re
 
+from pydantic import BaseModel, Field
+
 from finscan.llm.factory import structured
-from finscan.schemas import FIELD_LABELS, Extraction, NON_SCALED_FIELDS
+from finscan.schemas import FIELD_LABELS, Extraction, Field_, LineItem, NON_SCALED_FIELDS
 
 _TAXONOMY = "\n".join(f"- {fid}: {label}" for fid, label in FIELD_LABELS.items())
 
@@ -45,6 +47,15 @@ HARD RULES
    you are guessing. Be honest — low confidence routes the row to human review.
 8. label_in_pdf must be the verbatim caption, and source_row_text the full raw
    line, so a reviewer can trace every number.
+9. Cash-flow fields (total_before_working_capital_changes,
+   net_cash_from_operating_activities, change_in_working_capital) come from the
+   CASH FLOW STATEMENT, not the P&L. Report them for the same period as the rest
+   of the extraction; if the cash flow statement only prints a cumulative
+   period (e.g. six months), report the printed figures and say so in notes.
+   total_before_working_capital_changes is the subtotal struck AFTER the
+   non-cash adjustments and BEFORE the working-capital movements — it is often
+   captioned just "Total" at the end of the adjustments block. Do not compute
+   change_in_working_capital yourself — only report it if printed.
 """
 
 USER = """Company results document text follows. Extract the current reporting period.
@@ -201,6 +212,203 @@ def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str
     return None
 
 
+_TOTAL_ROW = re.compile(r"(?im)^\s*total\b[^\n]*\d[^\n]*$")
+
+
+def _row_numbers(text: str) -> list[float]:
+    out: list[float] = []
+    for tok in _ALL_NUMBERS.findall(text or ""):
+        v = _parse_locale_number(tok)
+        if v is not None:
+            out.append(v)
+    return out
+
+
+def _rescue_working_capital_subtotal(result: Extraction, statements_text: str) -> str | None:
+    """Recover total_before_working_capital_changes (X) when the model skipped it.
+
+    IFRS cash-flow statements print X as a bare, uncaptioned "Total" line closing
+    the non-cash-adjustments block, right before "Changes in working capital:" —
+    a caption too generic for the taxonomy pass to reliably single out among the
+    many other "Total" rows in a filing (balance sheet, equity statement, segment
+    tables, ...), so it is worth an explicit second try rather than leaving the
+    derivation permanently short one input.
+
+    net_cash_from_operating_activities (Y) sits in the same table, a few rows
+    below X, and the model extracts it reliably because its caption is
+    unambiguous. Reuse it as a column anchor: find which numeric slot in Y's own
+    printed row holds Y, then read the value at that same slot from the nearest
+    "Total" row preceding the working-capital heading — column position is
+    consistent across rows of one statement, so this recovers X for the exact
+    period Y was already extracted for, without asking the model to guess again.
+    """
+    if any(li.field.value == "total_before_working_capital_changes" for li in result.line_items):
+        return None
+    y_item = next(
+        (li for li in result.line_items
+         if li.field.value == "net_cash_from_operating_activities" and li.source_row_text),
+        None,
+    )
+    if y_item is None:
+        return None
+
+    y_nums = _row_numbers(y_item.source_row_text)
+    idx = next((i for i, v in enumerate(y_nums) if _close(v, y_item.value)), None)
+    if idx is None:
+        return None
+
+    m = re.search(r"working capital", statements_text or "", re.IGNORECASE)
+    if not m:
+        return None
+    total_rows = list(_TOTAL_ROW.finditer(statements_text[: m.start()]))
+    if not total_rows:
+        return None
+    total_line = total_rows[-1].group(0)
+    x_nums = _row_numbers(total_line)
+    if idx >= len(x_nums):
+        return None
+
+    result.line_items.append(LineItem(
+        field=Field_.total_before_working_capital_changes,
+        label_in_pdf="Total",
+        value=x_nums[idx],
+        confidence=0.7,
+        source_row_text=total_line.strip(),
+    ))
+    return (
+        f"total_before_working_capital_changes was not directly extracted (its printed "
+        f"caption is a bare 'Total'); recovered {x_nums[idx]:,.2f} positionally, using the "
+        f"same column slot as net_cash_from_operating_activities in the adjustments "
+        f"subtotal immediately preceding 'Changes in working capital'. Review against "
+        f"the source PDF before relying on it."
+    )
+
+
+class _CashFlowSubtotals(BaseModel):
+    total_before_working_capital_changes: float | None = Field(
+        default=None,
+        description="The subtotal struck immediately after the non-cash adjustments and "
+                    "immediately before the 'Changes in / Movement in working capital' "
+                    "section. Often captioned just 'Total' at the end of that block, with "
+                    "no other words on the line.",
+    )
+    net_cash_from_operating_activities: float | None = Field(
+        default=None,
+        description="Net cash flow/generated/provided by operating activities — the "
+                    "subtotal struck after the working-capital movements, immediately "
+                    "before the investing-activities section.",
+    )
+    column_used: str = Field(
+        default="", description="Which printed column header you read the figures from."
+    )
+
+
+_CF_SYSTEM = """You read a company's Statement of Cash Flows (indirect method, operating
+section only) and extract exactly two subtotals for ONE specific reporting period.
+
+TARGET PERIOD: a single quarter — {period_hint}{end_date_clause}
+
+The table may print SIX or more period columns side by side, for example:
+  [six-months cumulative] [standalone quarter] [prior comparative quarter]
+repeated for the current year and the prior year. Critically:
+- A cumulative (six-month / nine-month / year-to-date) column and the standalone
+  quarter column can share the SAME end date in their header — do not pick a
+  column just because its date matches; a cumulative column is LARGER in
+  magnitude than the single-quarter column it contains.
+- Prefer a column whose header explicitly says "quarter" / "3 months" / a
+  specific quarter number over one labelled only with a date or "six months" /
+  "9 months" / "year to date".
+- The two figures you need sit in the same table, a few lines apart — once you
+  have identified the correct column for one, use that exact same column for
+  the other.
+
+Numbers in parentheses or with a trailing minus are negative. Return null for a
+figure only if you genuinely cannot locate it in the statement — do not guess.
+Report which column header you used in column_used, verbatim.
+"""
+
+
+def _rescue_via_focused_llm_call(
+    statements_text: str, period_hint: str, period_end_date: str | None = None
+) -> tuple[dict[str, float], str | None]:
+    """Ask for X and Y in isolation when the full extraction pass dropped either.
+
+    A single freeform pass over 20-30+ fields can lose recall on any one of them,
+    especially a subtotal with a generic caption. Narrowing the ask to just these
+    two numbers, with nothing else competing for the model's attention, recovers
+    cases the main pass missed — the same principle `extract_for_labels` already
+    uses elsewhere in this pipeline for low-recall rows.
+    """
+    llm = structured(_CashFlowSubtotals)
+    end_date_clause = f" (period ending {period_end_date})" if period_end_date else ""
+    try:
+        result: _CashFlowSubtotals = llm.invoke([
+            {"role": "system", "content": _CF_SYSTEM.format(
+                period_hint=period_hint or "the most recent quarter",
+                end_date_clause=end_date_clause,
+            )},
+            {"role": "user", "content": f"<document>\n{statements_text}\n</document>"},
+        ])
+    except Exception:
+        return {}, None
+
+    # Defensive getattr: guards against a schema mismatch (e.g. a test stub or a
+    # future LLM factory change returning the wrong shape) surfacing as an
+    # AttributeError deep in a best-effort rescue path instead of degrading.
+    found = {
+        k: v for k, v in (
+            ("total_before_working_capital_changes",
+             getattr(result, "total_before_working_capital_changes", None)),
+            ("net_cash_from_operating_activities",
+             getattr(result, "net_cash_from_operating_activities", None)),
+        ) if v is not None
+    }
+    if not found:
+        return {}, None
+    column_used = getattr(result, "column_used", "")
+    note = (
+        f"Recovered {', '.join(found)} via a focused follow-up extraction scoped to just "
+        f"these figures (the main pass did not return {'them' if len(found) > 1 else 'it'})"
+        + (f"; column used: {column_used}" if column_used else "")
+        + "."
+    )
+    return found, note
+
+
+def _ensure_working_capital_components(result: Extraction, statements_text: str) -> str | None:
+    """Fill in whichever of X (total_before_working_capital_changes) and
+    Y (net_cash_from_operating_activities) the main pass missed, so
+    normalize.derive_missing can compute change_in_working_capital = Y - X.
+
+    Tries the free, deterministic positional rescue first (works when Y was
+    extracted but X's bare "Total" caption was not); falls back to a focused
+    LLM call scoped to just these two numbers when that isn't enough — which
+    also covers the case where Y itself was dropped by the main pass.
+    """
+    notes: list[str] = []
+    positional_note = _rescue_working_capital_subtotal(result, statements_text)
+    if positional_note:
+        notes.append(positional_note)
+
+    have = {li.field.value for li in result.line_items}
+    missing = {"total_before_working_capital_changes", "net_cash_from_operating_activities"} - have
+    if missing:
+        found, note = _rescue_via_focused_llm_call(
+            statements_text, result.meta.period_label, result.meta.period_end_date
+        )
+        for fid in missing:
+            if fid in found:
+                result.line_items.append(LineItem(
+                    field=Field_(fid), label_in_pdf=FIELD_LABELS[fid],
+                    value=found[fid], confidence=0.7,
+                    source_row_text="(recovered via focused follow-up extraction)",
+                ))
+        if note:
+            notes.append(note)
+
+    return " ".join(notes) if notes else None
+
+
 def extract(document_text: str, hint: str = "",
             statements_text: str | None = None) -> tuple[Extraction, list[str]]:
     """Run structured extraction, repairing an empty result once.
@@ -219,6 +427,9 @@ def extract(document_text: str, hint: str = "",
         scale_note = _maybe_rescale_items_to_printed_units(result)
         if scale_note:
             notes.append(scale_note)
+        wc_note = _ensure_working_capital_components(result, statements_text or document_text)
+        if wc_note:
+            notes.append(wc_note)
         return result, notes
 
     notes.append("First extraction pass returned no line items; retried against the "
@@ -232,6 +443,9 @@ def extract(document_text: str, hint: str = "",
         scale_note = _maybe_rescale_items_to_printed_units(retry)
         if scale_note:
             notes.append(scale_note)
+        wc_note = _ensure_working_capital_components(retry, focused)
+        if wc_note:
+            notes.append(wc_note)
         return retry, notes
 
     notes.append("The second pass also returned nothing. Check that the PDF's statement "

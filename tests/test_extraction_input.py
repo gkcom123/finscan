@@ -81,6 +81,15 @@ def _extraction(items: bool) -> Extraction:
     )
 
 
+class _EmptyCashFlowSubtotals:
+    """Stand-in for extractor._CashFlowSubtotals: no cash-flow content in these
+    fixtures, so the working-capital rescue call should find nothing and add no
+    notes — it must not interfere with the retry-counting these tests check."""
+    total_before_working_capital_changes = None
+    net_cash_from_operating_activities = None
+    column_used = ""
+
+
 def test_an_empty_first_pass_is_retried_against_the_statements(monkeypatch):
     seen: list[str] = []
 
@@ -89,6 +98,8 @@ def test_an_empty_first_pass_is_retried_against_the_statements(monkeypatch):
             self.schema = schema
 
         def invoke(self, messages):
+            if self.schema is not Extraction:
+                return _EmptyCashFlowSubtotals()
             seen.append(messages[-1]["content"])
             return _extraction(items=len(seen) > 1)
 
@@ -111,6 +122,8 @@ def test_a_successful_first_pass_is_not_retried(monkeypatch):
             self.schema = schema
 
         def invoke(self, _m):
+            if self.schema is not Extraction:
+                return _EmptyCashFlowSubtotals()
             calls["n"] += 1
             return _extraction(items=True)
 
@@ -131,3 +144,42 @@ def test_two_empty_passes_report_an_actionable_message(monkeypatch):
     result, notes = extract("doc")
     assert not result.line_items
     assert any("text layer" in n for n in notes)
+
+
+def test_rescue_recovers_bare_total_row_before_working_capital_heading():
+    """total_before_working_capital_changes is recovered positionally using
+    net_cash_from_operating_activities' own column slot, when the main pass
+    extracted Y but not X (X's caption is a bare, ambiguous 'Total')."""
+    from finscan.extract.extractor import _rescue_working_capital_subtotal
+    from finscan.schemas import Field_, LineItem
+
+    result = Extraction(
+        meta=PeriodMeta(period_label="Q2 2026", units="thousands"),
+        line_items=[
+            LineItem(
+                field=Field_.net_cash_from_operating_activities,
+                label_in_pdf="Net cash flow provided by operating activities",
+                value=5897437.0, confidence=0.95,
+                source_row_text=("Net cash flow provided by operating activities "
+                                 "10,649,022 5,897,437 4,751,585 9,830,514 4,920,661 4,909,853"),
+            ),
+        ],
+    )
+    statements_text = (
+        "Total 12,794,972 6,016,138 6,778,834 11,298,353 5,459,194 5,839,159\n"
+        "Changes in working capital:\n(Increase) decrease in:\nLease receivables (747,113)\n"
+    )
+    note = _rescue_working_capital_subtotal(result, statements_text)
+    assert note is not None
+    x_item = next(li for li in result.line_items
+                 if li.field.value == "total_before_working_capital_changes")
+    assert x_item.value == 6016138.0
+
+
+def test_rescue_does_nothing_without_a_y_anchor():
+    from finscan.extract.extractor import _rescue_working_capital_subtotal
+
+    result = Extraction(meta=PeriodMeta(period_label="Q2 2026", units="thousands"), line_items=[])
+    note = _rescue_working_capital_subtotal(result, "Total 1 2 3\nworking capital\n")
+    assert note is None
+    assert not result.line_items

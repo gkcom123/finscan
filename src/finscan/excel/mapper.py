@@ -62,25 +62,32 @@ for _fid, _aliases in FIELD_ALIASES.items():
 _PAREN = re.compile(r"\(([^)]{2,30})\)")
 
 
-def _alias_match(label: str) -> str | None:
+def _alias_match(label: str, allowed_fields: set[str] | None = None) -> str | None:
     """Exact alias hit, with one refinement: when a caption carries a
     parenthetical that is itself a recognised term — "Operating Profit (EBITDA)",
     "Profit (PAT)" — the author is disambiguating on purpose, so that wins over
     the surrounding words. Without this, stripping brackets turns an explicit
     EBITDA row into an EBIT row."""
+    def _ok(fid: str | None) -> str | None:
+        return fid if fid and (allowed_fields is None or fid in allowed_fields) else None
+
     for inner in _PAREN.findall(label or ""):
-        hit = _ALIAS_INDEX.get(normalize_label(inner))
+        hit = _ok(_ALIAS_INDEX.get(normalize_label(inner)))
         if hit:
             return hit
-    return _ALIAS_INDEX.get(normalize_label(label))
+    return _ok(_ALIAS_INDEX.get(normalize_label(label)))
 
 
-def _fuzzy_match(label: str, threshold: int) -> tuple[str | None, float]:
+def _fuzzy_match(
+    label: str, threshold: int, allowed_fields: set[str] | None = None
+) -> tuple[str | None, float]:
     norm = normalize_label(label)
     if not norm or norm in HEADING_STOPWORDS:
         return None, 0.0
     best_fid, best_score = None, 0.0
     for alias_norm, fid in _ALIAS_INDEX.items():
+        if allowed_fields is not None and fid not in allowed_fields:
+            continue
         score = _ratio(norm, alias_norm)
         if score > best_score:
             best_fid, best_score = fid, score
@@ -90,8 +97,12 @@ def _fuzzy_match(label: str, threshold: int) -> tuple[str | None, float]:
 LLM_SYSTEM = """You align spreadsheet row captions to canonical financial fields.
 
 For each numbered caption return the canonical field id it means, or null when it
-is a heading, a blank spacer, a segment/geography breakdown, a balance-sheet or
-cash-flow line, or anything not in the list. Never force a match: a wrong
+is a heading, a blank spacer, a segment/geography breakdown, a balance-sheet
+line, or anything not in the list. Cash-flow captions may only match the
+cash-flow fields (total_before_working_capital_changes,
+net_cash_from_operating_activities, change_in_working_capital) — never map a
+cash-flow adjustment line (e.g. depreciation added back) to a P&L field.
+Never force a match: a wrong
 alignment corrupts the client's model, a null is simply reviewed by a human.
 
 Canonical fields:
@@ -143,20 +154,21 @@ def map_rows(
     row_labels: dict[int, str],
     fuzzy_threshold: int = 86,
     use_llm: bool = True,
+    allowed_fields: set[str] | None = None,
 ) -> tuple[list[RowMapping], list[Issue]]:
     issues: list[Issue] = []
     mappings: list[RowMapping] = []
     leftovers: dict[int, str] = {}
 
     for row, label in sorted(row_labels.items()):
-        fid = _alias_match(label)
+        fid = _alias_match(label, allowed_fields)
         if fid:
             mappings.append(
                 RowMapping(excel_row=row, excel_label=label, field=fid,
                            match_method="alias", match_score=100.0, confidence=1.0)
             )
             continue
-        fid, score = _fuzzy_match(label, fuzzy_threshold)
+        fid, score = _fuzzy_match(label, fuzzy_threshold, allowed_fields)
         if fid:
             mappings.append(
                 RowMapping(excel_row=row, excel_label=label, field=fid,
@@ -168,6 +180,8 @@ def map_rows(
     if use_llm and leftovers:
         try:
             for row, (fid, conf) in _llm_match(leftovers).items():
+                if fid and allowed_fields is not None and fid not in allowed_fields:
+                    fid = None
                 if fid:
                     mappings.append(
                         RowMapping(excel_row=row, excel_label=leftovers.pop(row, ""),

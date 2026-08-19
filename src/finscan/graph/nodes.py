@@ -27,6 +27,10 @@ def ingest_pdf(state: dict) -> dict:
     if doc.ocr_pages:
         issues.append(Issue(severity="info", code="ocr_used",
                             message=f"OCR was used for page(s) {doc.ocr_pages} — verify those figures."))
+    if doc.respaced_pages:
+        issues.append(Issue(severity="info", code="text_layer_repaired",
+                            message=f"Letter-spaced text layer repaired on page(s) "
+                                    f"{doc.respaced_pages} (wider glyph tolerance)."))
 
     statement_pages = doc.statement_pages()
     issues.append(Issue(
