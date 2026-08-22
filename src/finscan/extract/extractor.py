@@ -42,7 +42,10 @@ HARD RULES
    scale in meta.units ("lakhs", "crores", "millions", ...). Read it from the
    header line such as "(Rs. in lakhs)".
 4. Numbers in parentheses or with a trailing minus are negative. Strip thousands
-   separators. "-", "–", "NA", "Nil" mean the line is absent: omit it.
+   separators. "-", "–", "NA", "Nil" mean the line is absent: omit it. On an
+   OCR'd/scanned page one paren of a bracketed negative is sometimes dropped
+   (e.g. "9,532)" with no opening "("); still treat that as negative — a
+   trailing ")" with no other explanation is not a typo, it is a lost "(".
 5. EPS is per share — never rescale it, report the printed figure.
 6. Do not compute or infer values that are not printed. Subtotals like
    total_income / total_expenses / ebitda must only be reported if the document
@@ -108,7 +111,9 @@ def _parse_locale_number(text: str) -> float | None:
     if not token:
         return None
     token = token.replace("$", "").replace(" ", "")
-    neg = token.startswith("(") and token.endswith(")")
+    # OCR on a scanned page routinely drops one paren of a bracketed negative
+    # (e.g. "(9,532)" -> "9,532)"), so a lone leading/trailing paren still counts.
+    neg = token.startswith("(") or token.endswith(")")
     token = token.strip("()")
 
     if "," in token and "." in token:
@@ -333,6 +338,11 @@ repeated for the current year and the prior year. Critically:
 Numbers in parentheses or with a trailing minus are negative. Return null for a
 figure only if you genuinely cannot locate it in the statement — do not guess.
 Report which column header you used in column_used, verbatim.
+
+Report each figure EXACTLY as printed in the table — do not convert, rescale, or
+divide/multiply by 1,000 or any other factor, even if you believe a different
+scale would be more standard. Both figures must be read at the same scale as
+they are printed in the statement.
 """
 
 
@@ -383,6 +393,46 @@ def _rescue_via_focused_llm_call(
     return found, note
 
 
+_CF_RESCUE_FIELDS = ("total_before_working_capital_changes", "net_cash_from_operating_activities")
+
+
+def _reconcile_rescued_scale(result: Extraction, fids: set[str]) -> str | None:
+    """Guard against the focused rescue call returning X/Y at the wrong scale.
+
+    Unlike the main extraction pass, the focused call has no source row text to
+    cross-check against (`_maybe_rescale_items_to_printed_units` can't see it),
+    and the model has occasionally pre-divided the figure by 1000 despite being
+    told not to. Compare the newly-added items' magnitude against the median of
+    the rest of the extraction's already-scaled line items, which came from the
+    main pass and are trustworthy — if a rescued figure is ~1000x off from that
+    crowd, it was almost certainly returned at the wrong scale.
+    """
+    others = [abs(li.value) for li in result.line_items
+              if li.field.value not in fids and li.value and li.field.value not in NON_SCALED_FIELDS]
+    if len(others) < 3:
+        return None
+    others.sort()
+    median = others[len(others) // 2]
+    if median < 1e-9:
+        return None
+
+    fixed = []
+    for li in result.line_items:
+        if li.field.value in fids and li.value:
+            ratio = median / abs(li.value)
+            if 300 <= ratio <= 3000:
+                li.value *= 1000.0
+                fixed.append(li.field.value)
+    if not fixed:
+        return None
+    return (
+        f"Rescaled {', '.join(fixed)} by 1000x: the focused follow-up extraction returned "
+        f"{'it' if len(fixed) == 1 else 'them'} at a different scale than the rest of this "
+        "extraction (compared against the extraction's own median line-item size). Review "
+        "against the source PDF before relying on this figure."
+    )
+
+
 def _ensure_working_capital_components(result: Extraction, statements_text: str) -> str | None:
     """Fill in whichever of X (total_before_working_capital_changes) and
     Y (net_cash_from_operating_activities) the main pass missed, so
@@ -399,11 +449,12 @@ def _ensure_working_capital_components(result: Extraction, statements_text: str)
         notes.append(positional_note)
 
     have = {li.field.value for li in result.line_items}
-    missing = {"total_before_working_capital_changes", "net_cash_from_operating_activities"} - have
+    missing = set(_CF_RESCUE_FIELDS) - have
     if missing:
         found, note = _rescue_via_focused_llm_call(
             statements_text, result.meta.period_label, result.meta.period_end_date
         )
+        recovered = set()
         for fid in missing:
             if fid in found:
                 result.line_items.append(LineItem(
@@ -411,8 +462,13 @@ def _ensure_working_capital_components(result: Extraction, statements_text: str)
                     value=found[fid], confidence=0.7,
                     source_row_text="(recovered via focused follow-up extraction)",
                 ))
+                recovered.add(fid)
         if note:
             notes.append(note)
+        if recovered:
+            scale_note = _reconcile_rescued_scale(result, recovered)
+            if scale_note:
+                notes.append(scale_note)
 
     return " ".join(notes) if notes else None
 

@@ -183,3 +183,101 @@ def test_rescue_does_nothing_without_a_y_anchor():
     note = _rescue_working_capital_subtotal(result, "Total 1 2 3\nworking capital\n")
     assert note is None
     assert not result.line_items
+
+
+def test_reconcile_rescued_scale_fixes_a_1000x_mismatch():
+    """Regression test: the focused rescue LLM call has occasionally returned
+    net_cash_from_operating_activities already divided by 1000 (e.g. 4751.585
+    instead of 4,751,585), while total_before_working_capital_changes came back
+    at the correct scale in the same call. Left uncorrected this produces a
+    wildly wrong change_in_working_capital. The reconcile step should catch and
+    fix the mis-scaled figure by comparing it against the rest of the extraction."""
+    from finscan.extract.extractor import _reconcile_rescued_scale
+
+    result = Extraction(
+        meta=PeriodMeta(period_label="Q2 2026", units="thousands"),
+        line_items=[
+            LineItem(field=Field_.revenue_from_operations, label_in_pdf="Revenues",
+                      value=6976200.0, confidence=0.95),
+            LineItem(field=Field_.profit_after_tax, label_in_pdf="Profit for the period",
+                      value=5460180.0, confidence=0.95),
+            LineItem(field=Field_.ebitda, label_in_pdf="EBITDA",
+                      value=7200000.0, confidence=0.95),
+            LineItem(field=Field_.total_before_working_capital_changes, label_in_pdf="Total",
+                     value=6778834.0, confidence=0.7,
+                     source_row_text="(recovered via focused follow-up extraction)"),
+            LineItem(field=Field_.net_cash_from_operating_activities,
+                     label_in_pdf="Net cash from operating activities",
+                     value=4751.585, confidence=0.7,
+                     source_row_text="(recovered via focused follow-up extraction)"),
+        ],
+    )
+    fids = {"total_before_working_capital_changes", "net_cash_from_operating_activities"}
+    note = _reconcile_rescued_scale(result, fids)
+
+    assert note is not None and "net_cash_from_operating_activities" in note
+    y_item = next(li for li in result.line_items
+                 if li.field.value == "net_cash_from_operating_activities")
+    assert y_item.value == 4751585.0
+    x_item = next(li for li in result.line_items
+                 if li.field.value == "total_before_working_capital_changes")
+    assert x_item.value == 6778834.0, "an already-correctly-scaled figure must not be touched"
+
+
+def test_reconcile_rescued_scale_leaves_consistent_values_alone():
+    from finscan.extract.extractor import _reconcile_rescued_scale
+
+    result = Extraction(
+        meta=PeriodMeta(period_label="Q2 2026", units="thousands"),
+        line_items=[
+            LineItem(field=Field_.revenue_from_operations, label_in_pdf="Revenues",
+                      value=6976200.0, confidence=0.95),
+            LineItem(field=Field_.profit_after_tax, label_in_pdf="Profit for the period",
+                      value=5460180.0, confidence=0.95),
+            LineItem(field=Field_.ebitda, label_in_pdf="EBITDA",
+                      value=7200000.0, confidence=0.95),
+            LineItem(field=Field_.total_before_working_capital_changes, label_in_pdf="Total",
+                     value=6778834.0, confidence=0.7),
+            LineItem(field=Field_.net_cash_from_operating_activities,
+                     label_in_pdf="Net cash from operating activities",
+                     value=4751585.0, confidence=0.7),
+        ],
+    )
+    fids = {"total_before_working_capital_changes", "net_cash_from_operating_activities"}
+    note = _reconcile_rescued_scale(result, fids)
+    assert note is None
+
+
+def test_ensure_working_capital_components_corrects_mis_scaled_focused_rescue(monkeypatch):
+    """End-to-end: the focused LLM rescue returns Y at the wrong scale; the
+    overall helper must still leave both figures internally consistent so
+    normalize.derive_missing computes a sane change_in_working_capital."""
+    from finscan.extract.extractor import _ensure_working_capital_components
+
+    def fake_rescue(statements_text, period_hint, period_end_date=None):
+        return (
+            {"total_before_working_capital_changes": 6778834.0,
+             "net_cash_from_operating_activities": 4751.585},
+            "Recovered total_before_working_capital_changes, net_cash_from_operating_activities "
+            "via a focused follow-up extraction.",
+        )
+
+    monkeypatch.setattr("finscan.extract.extractor._rescue_via_focused_llm_call", fake_rescue)
+
+    result = Extraction(
+        meta=PeriodMeta(period_label="Q2 2026", units="thousands"),
+        line_items=[
+            LineItem(field=Field_.revenue_from_operations, label_in_pdf="Revenues",
+                      value=6976200.0, confidence=0.95),
+            LineItem(field=Field_.profit_after_tax, label_in_pdf="Profit for the period",
+                      value=5460180.0, confidence=0.95),
+            LineItem(field=Field_.ebitda, label_in_pdf="EBITDA",
+                      value=7200000.0, confidence=0.95),
+        ],
+    )
+    note = _ensure_working_capital_components(result, "some statements text")
+    assert note and "Rescaled" in note
+
+    values = {li.field.value: li.value for li in result.line_items}
+    assert values["net_cash_from_operating_activities"] == 4751585.0
+    assert values["total_before_working_capital_changes"] == 6778834.0
