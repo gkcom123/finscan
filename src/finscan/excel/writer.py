@@ -17,21 +17,31 @@ so a reviewer can eyeball the model's own calculation against the filing.
 """
 from __future__ import annotations
 
+import re
 import shutil
 from copy import copy
 from math import isfinite, log10
 from pathlib import Path
+from typing import Any
 
 from openpyxl import load_workbook
 from openpyxl.comments import Comment
 from openpyxl.formula.translate import Translator
-from openpyxl.utils import get_column_letter
+from openpyxl.utils import column_index_from_string, get_column_letter
 
 from finscan.config import settings
 from finscan.excel.discovery import SheetPlan, WorkbookPlan
 from finscan.excel.style_probe import cell_has_formula
 from finscan.extract.normalize import UNIT_MULTIPLIER
 from finscan.schemas import NON_SCALED_FIELDS, Issue, SheetWriteResult, WriteResult
+
+_COL_REF = re.compile(r"\$?([A-Za-z]{1,3})\$?[0-9]{1,7}")
+
+
+def _max_referenced_col(formula: str) -> int:
+    """Highest column referenced by a formula, or 0 if it references none."""
+    cols = [column_index_from_string(m.group(1).upper()) for m in _COL_REF.finditer(formula)]
+    return max(cols) if cols else 0
 
 
 def scale_to_sheet(values: dict[str, float], units: str) -> dict[str, float]:
@@ -200,6 +210,9 @@ def write_workbook(
         shutil.copyfile(src, dst)
 
     wb = load_workbook(dst, data_only=False, keep_vba=dst.suffix.lower() == ".xlsm")
+    # Read-only twin, cached formula results only — used to fall back to a
+    # plain value when a formula can't be safely translated into the new column.
+    wb_values = load_workbook(dst, data_only=True)
 
     targets = [s for s in plan.in_scope
                if enabled_sheets is None or s.sheet in enabled_sheets]
@@ -225,6 +238,7 @@ def write_workbook(
             scale_to_sheet(values, effective_units), header, header_lines,
             min_confidence, field_confidence, pdf_labels,
             scale_to_sheet(label_values, effective_units) if label_values else None,
+            wb_values[sheet_plan.sheet] if sheet_plan.sheet in wb_values.sheetnames else None,
         )
         results.append(res)
         issues.extend(sheet_issues)
@@ -237,6 +251,7 @@ def write_workbook(
     _write_audit(wb, header, plan, results, issues)
     wb.save(dst)
     wb.close()
+    wb_values.close()
 
     return WriteResult(workbook_path=str(dst), header_written=header, sheets=results), issues
 
@@ -247,6 +262,7 @@ def _write_sheet(
     min_confidence: float, field_confidence: dict[str, float],
     pdf_labels: dict[str, str],
     label_values: dict[str, float] | None = None,
+    ws_values: Any = None,
 ) -> tuple[SheetWriteResult, list[Issue]]:
     issues: list[Issue] = []
     col = plan.write_col
@@ -307,9 +323,33 @@ def _write_sheet(
         if rp.carries_formula:
             _copy_style(ws.cell(rp.row, ref), target)
             try:
-                target.value = Translator(
+                translated = Translator(
                     rp.formula_template, origin=rp.reference_cell
                 ).translate_formula(f"{letter}{rp.row}")
+                # A wide gap between reference and write column (e.g. writing into
+                # a quarterly block appended far past an annual/LTM reference
+                # column) can shift a relative reference clean off the sheet. A
+                # formula pointing at nothing is worse than no formula, so fall
+                # back to the reference cell's last known value instead.
+                if _max_referenced_col(translated) > ws.max_column and ws_values is not None:
+                    ref_cached = ws_values.cell(rp.row, ref).value
+                    if _is_number(ref_cached):
+                        target.value = ref_cached
+                        target.comment = Comment(
+                            "FinScan\n"
+                            f"Could not safely translate the formula from {rp.reference_cell} "
+                            "(it would reference a column past the end of the sheet). "
+                            "Carried forward its last computed value instead.",
+                            "FinScan",
+                        )
+                        written += 1
+                        issues.append(Issue(
+                            severity="warning", code="formula_translation_out_of_range", field=rp.field,
+                            message=f"{plan.sheet}!{letter}{rp.row}: translating the formula from "
+                                    f"{rp.reference_cell} would reference a column past the sheet's "
+                                    f"edge; wrote its last value ({ref_cached}) instead."))
+                        continue
+                target.value = translated
                 copied += 1
                 reported = values.get(rp.field) if rp.field else None
                 target.comment = Comment(

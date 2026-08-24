@@ -12,7 +12,41 @@ from finscan.graph.build import run as run_graph
 from finscan.profiles import ProfileStore
 
 
+def _print_summary(state: dict) -> None:
+    wr = state.get("write_result")
+    status = state.get("status", "ok")
+    issues = state.get("issues", [])
+    errors = [i for i in issues if i.severity == "error"]
+    warnings = [i for i in issues if i.severity == "warning"]
+
+    print("=" * 60)
+    if wr and wr.sheets:
+        icon = "OK" if not errors else "WARN"
+        print(f"[{icon}] status: {status}")
+        print(f"  values written : {wr.values_written}")
+        print(f"  formulas copied: {wr.formulas_copied}")
+        for s in wr.sheets:
+            print(f"  - {s.sheet}!{s.column_letter}: {s.values_written} value(s), "
+                  f"{s.formulas_copied} formula(s), {s.rows_skipped} skipped")
+    else:
+        print(f"[WARN] status: {status} - nothing written")
+
+    if errors:
+        print(f"\nErrors ({len(errors)}):")
+        for n, e in enumerate(errors, 1):
+            print(f"  {n}. [{e.code}] {e.message}")
+
+    if warnings:
+        print(f"\nWarnings ({len(warnings)}):")
+        for n, w in enumerate(warnings, 1):
+            print(f"  {n}. [{w.code}] {w.message}")
+
+    print("=" * 60)
+
+
 def _emit(state: dict, report_path: Path | None) -> int:
+    _print_summary(state)
+    print()
     print(state.get("report", ""))
     if report_path:
         report_path.write_text(state.get("report", ""), encoding="utf-8")

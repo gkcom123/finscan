@@ -32,7 +32,10 @@ from finscan.schemas import CASH_FLOW_FIELDS, FIELD_LABELS
 _PL_FIELDS: set[str] = set(FIELD_LABELS) - CASH_FLOW_FIELDS
 
 MAX_SCAN_ROWS = 500
-MAX_SCAN_COLS = 60
+# 60 truncated real models before their true last period: a quarterly block
+# starting in ~2012 reaches column BZ (78) by FY26, hiding the real last
+# quarter behind an Annual/LTM block that then got mistaken for the end of data.
+MAX_SCAN_COLS = 400
 MIN_CANONICAL_ROWS = 3      # fewer than this and the tab is not a financial statement
 
 # --------------------------------------------------------------------------- #
