@@ -89,5 +89,7 @@ def test_graph_blocks_the_write_on_a_period_gap(workspace, monkeypatch, confirme
 
     assert state["status"] == "needs_review"
     assert any(i.code == "period_gap" for i in state["issues"])
-    assert state.get("write_result") is None
-    assert not (workspace["dir"] / "dated_out.xlsx").exists()
+    # A workbook copy is still produced (hold->write_excel), but with no values applied.
+    assert state.get("write_result") is not None
+    assert not state["write_result"].sheets
+    assert (workspace["dir"] / "dated_out.xlsx").exists()

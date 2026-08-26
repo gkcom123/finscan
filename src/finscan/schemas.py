@@ -116,7 +116,7 @@ FIELD_ALIASES: dict[str, list[str]] = {
     "total_income": ["total income", "total revenue", "total income from operations"],
     "cost_of_materials": [
         "cost of materials consumed", "raw material consumed", "material cost",
-        "cost of raw materials", "cost of goods sold", "cogs",
+        "cost of raw materials",
     ],
     "purchases_of_stock_in_trade": ["purchases of stock-in-trade", "purchase of traded goods"],
     "changes_in_inventories": [

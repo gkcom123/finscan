@@ -15,7 +15,7 @@ from finscan.extract.normalize import derive_missing, to_target_units
 from finscan.extract.pdf_reader import read_pdf
 from finscan.profiles import ProfileStore, company_key, is_weak_company_key
 from finscan.schemas import FIELD_LABELS, Issue, RowMapping, WriteResult
-from finscan.validate import has_blocking_errors, validate
+from finscan.validate import enforce_sign_rules, has_blocking_errors, validate
 
 MAX_RETRIES = 1
 
@@ -133,10 +133,11 @@ def normalize(state: dict) -> dict:
     # Composites first: they change the inputs that subtotals are derived from,
     # so deriving before recombining leaves the subtotals stale.
     values, comp_issues = _apply_composites(values, state.get("profile"))
+    values, sign_issues = enforce_sign_rules(values)
     before = set(values)
     values, derive_issues = derive_missing(values)
     return {"values": values, "derived_fields": sorted(set(values) - before),
-            "issues": unit_issues + comp_issues + derive_issues}
+            "issues": unit_issues + comp_issues + sign_issues + derive_issues}
 
 
 def _apply_composites(values: dict[str, float], profile) -> tuple[dict[str, float], list[Issue]]:

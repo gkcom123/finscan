@@ -34,10 +34,26 @@ SIGNED_EXPENSE_FIELDS = [
     "tax_expense", "current_tax", "deferred_tax",
 ]
 
+#: Fields where the accounting definition leaves no room for a positive number
+#: (a cost that is subtracted to get gross/net profit, e.g. "cost of goods sold").
+#: Unlike SIGNED_EXPENSE_FIELDS above, this is not convention-dependent — the
+#: filing occasionally still prints one of these as a plain positive figure
+#: (an OCR-dropped minus sign, or a stray positive-convention line in an
+#: otherwise bracketed filing), so it is forced negative rather than trusted
+#: as printed. NB: cost_of_materials is deliberately excluded — some models
+#: (e.g. the Indian additive total_expenses = SUM(...) convention) legitimately
+#: store it positive, so it is left to the filing's own convention.
+FORCE_NEGATIVE_FIELDS = {"cost_of_revenue"}
+
 
 def detect_sign_convention(values: dict[str, float]) -> str:
-    """'bracketed' when costs are printed negative, 'positive' otherwise."""
-    present = [values[f] for f in SIGNED_EXPENSE_FIELDS if f in values]
+    """'bracketed' when costs are printed negative, 'positive' otherwise.
+
+    FORCE_NEGATIVE_FIELDS are excluded from the vote: their sign is fixed by
+    enforce_sign_rules rather than being evidence of the filing's convention.
+    """
+    voters = [f for f in SIGNED_EXPENSE_FIELDS if f not in FORCE_NEGATIVE_FIELDS]
+    present = [values[f] for f in voters if f in values]
     if not present:
         return "positive"
     negatives = sum(1 for v in present if v < 0)
@@ -46,13 +62,39 @@ def detect_sign_convention(values: dict[str, float]) -> str:
 
 def to_positive_expenses(values: dict[str, float]) -> tuple[dict[str, float], str]:
     convention = detect_sign_convention(values)
-    if convention == "positive":
-        return dict(values), convention
     out = dict(values)
-    for f in SIGNED_EXPENSE_FIELDS:
+    if convention == "bracketed":
+        for f in SIGNED_EXPENSE_FIELDS:
+            if f in out and f not in FORCE_NEGATIVE_FIELDS:
+                out[f] = -out[f]
+    # Regardless of the vote, these fields are always a cost magnitude for the
+    # purposes of an identity check (e.g. gross_profit = revenue - cost_of_revenue).
+    for f in FORCE_NEGATIVE_FIELDS:
         if f in out:
-            out[f] = -out[f]
+            out[f] = abs(out[f])
     return out, convention
+
+
+def enforce_sign_rules(values: dict[str, float]) -> tuple[dict[str, float], list[Issue]]:
+    """Force FORCE_NEGATIVE_FIELDS negative, overriding a positive printed figure.
+
+    This runs on the values that actually get written, not just on a
+    validation-only copy — so a filing that prints e.g. cost of goods sold as
+    a plain positive number gets corrected before it reaches the workbook.
+    """
+    issues: list[Issue] = []
+    out = dict(values)
+    for f in FORCE_NEGATIVE_FIELDS:
+        v = out.get(f)
+        if v is not None and v > 0:
+            out[f] = -v
+            issues.append(Issue(
+                severity="info", code="sign_override", field=f,
+                message=f"{FIELD_LABELS.get(f, f)} was printed as {v:,.2f} (positive) in the "
+                        f"filing; this field can never be positive in the income statement, so "
+                        f"it was written as {-v:,.2f}.",
+            ))
+    return out, issues
 
 
 def _close(a: float, b: float, tol_pct: float) -> bool:
