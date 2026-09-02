@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+from itertools import combinations
 
 from pydantic import BaseModel, Field
 
@@ -26,15 +27,20 @@ HARD RULES
    Identify the CURRENT REPORTING PERIOD column first — normally the leftmost
    numeric column, headed by the most recent period end date — and read every
    value from that one column only. Never mix columns.
-    IMPORTANT for mixed six-month/quarter tables, in either language — Spanish,
+    STRICT RULE for mixed six-month/quarter tables, in either language — Spanish,
     titled like "Por los periodos de seis y tres meses ..." with columns
-    "Transacciones del [primer/segundo/tercer/cuarto] trimestre <year>" vs
-    cumulative "Seis meses"; or English, titled like "For the six and
-    three-months periods ended ..." with columns "6 months as of <date>",
-    "[Ordinal]-quarter <year> transactions", "3 months as of <date>": for
-    quarterly extraction always choose the quarter/trimestre transactions
-    column, never the cumulative six-month/"seis meses" column, even though it
-    is printed first (leftmost).
+    "Transacciones del [primer/segundo/tercer/cuarto] trimestre <year>" (e.g.
+    "Transacciones del segundo trimestre 2026") vs cumulative "Seis meses"; or
+    English, titled like "For the six and three-months periods ended ..." with
+    columns "6 months as of <date>", "[Ordinal]-quarter <year> transactions"
+    (e.g. "Second-quarter 2026 transactions"), "3 months as of <date>":
+    for a quarterly extraction you MUST read every value from the quarter/
+    trimestre transactions column — e.g. "Second-quarter 2026 transactions" —
+    and NEVER from the cumulative six-month/"seis meses"/"6 months as of"
+    column, even though the cumulative column is printed first (leftmost) and
+    even if its header shows the same end date. If you cannot find a quarter-
+    only column, say so in a note rather than silently reporting the cumulative
+    figure.
 2. If both Standalone and Consolidated statements are present, extract the
    CONSOLIDATED one and set meta.consolidated = true. If only standalone exists,
    use it and set consolidated = false.
@@ -328,12 +334,15 @@ repeated for the current year and the prior year. Critically:
   quarter column can share the SAME end date in their header — do not pick a
   column just because its date matches; a cumulative column is LARGER in
   magnitude than the single-quarter column it contains.
-- Prefer a column whose header explicitly says "quarter" / "3 months" / a
-  specific quarter number over one labelled only with a date or "six months" /
-  "9 months" / "year to date".
+- STRICT RULE: you MUST use a column whose header explicitly names a quarter —
+  "quarter" / "3 months" / a specific quarter number, e.g. "Second-quarter 2026
+  transactions" or "Transacciones del segundo trimestre 2026" — and NEVER a
+  column labelled only with a date, or "six months" / "9 months" / "year to
+  date" / "seis meses", even if it is printed first (leftmost) or shares the
+  same end-date header as the quarter column.
 - The two figures you need sit in the same table, a few lines apart — once you
-  have identified the correct column for one, use that exact same column for
-  the other.
+  have identified the correct quarter column for one, use that exact same
+  column for the other.
 
 Numbers in parentheses or with a trailing minus are negative. Return null for a
 figure only if you genuinely cannot locate it in the statement — do not guess.
@@ -527,6 +536,7 @@ class _LabeledValue(_BaseModel):
     label: str
     value: float | None = None
     confidence: float = 0.5
+    source_row_text: str | None = None
 
 
 class _LabelExtraction(_BaseModel):
@@ -552,19 +562,63 @@ MATCHING RULES — the Excel label and the PDF caption will often differ in word
     * "Total revenue"         ↔  "Ingresos totales"
 Use your best semantic judgement: match on meaning, not exact words.
 
+CASH FLOW STATEMENT — a label naming an actual CASH movement (e.g. "Cash interest
+paid", "Cash interest income", "Cash tax paid") is NOT the same line as the P&L
+figure of the same name, and is usually NOT the reconciliation line either:
+  * An indirect-method cash flow statement starts from profit and, in its
+    OPERATING ACTIVITIES section, adds non-cash/reclassified P&L items back
+    (e.g. "Interest expense" printed as a positive addition) purely to reverse
+    them out of profit — that add-back is a bookkeeping step, not cash received.
+  * The real cash paid for interest is a separate line, normally further down
+    in the FINANCING ACTIVITIES section (often captioned "Interest paid" /
+    "Intereses pagados"), and is a cash outflow.
+  * When the label explicitly says "cash" (e.g. "Cash interest paid"), search
+    for that distinct financing-section line — do not settle for the
+    operating-section add-back just because it shares the word "interest".
+
+SUBTOTAL AVOIDANCE — you are given the FULL list of Excel row labels together, not
+one at a time. Use that: several labels in the list are often one analyst's
+breakdown of a single PDF total into its components (e.g. "Management fees,
+expenses", "Administrative expenses", "Property taxes", "Insurance" sitting
+alongside a vaguer "Operating expenses" label).
+  * Do NOT match a label to a PDF TOTAL/subtotal caption (e.g. "Total operating
+    expenses", or an "Operating expenses" line that is itself the sum of
+    several narrower captions below it) if that total's value already equals
+    the sum of other lines you are matching to OTHER labels in this same
+    batch — that silently double-counts everything the other labels already
+    captured.
+  * Instead, look in the PDF for the one specific, narrower caption in that
+    same expense/income breakdown that is NOT already claimed by any other
+    label in the batch (e.g. a "Maintenance" or "Maintenance expenses" line)
+    and use its value instead.
+  * If you cannot find a distinct, unclaimed specific line for that label,
+    return null rather than a subtotal — a null is reviewed by a human, a
+    wrong subtotal silently corrupts every sibling row's total.
+  * A subtotal row is often printed with NO caption at all — just a row of
+    numbers directly below the last named line in that section. A line with
+    no name printed next to it is never the right match for a label asking
+    for one specific, named category — keep looking for the actual named
+    line (it may be one you have not been asked about at all), or return null.
+
 EXTRACTION RULES
 1. Use the CURRENT REPORTING PERIOD column only (the most recent period end date).
-    For mixed six-month/quarter tables — Spanish ("seis y tres meses" /
-    "Transacciones del ... trimestre") or English ("six and three-months
-    periods ended" / "[Quarter] transactions") — quarterly mode means using
-    the quarter transactions column, not the cumulative "Seis meses" / "6 months
-    as of" column.
+    STRICT RULE for mixed six-month/quarter tables — Spanish ("seis y tres
+    meses" / "Transacciones del ... trimestre") or English ("six and
+    three-months periods ended" / "[Quarter] transactions", e.g.
+    "Second-quarter 2026 transactions"): quarterly mode means you MUST read
+    the quarter transactions column ONLY — never the cumulative "Seis meses" /
+    "6 months as of" column, even if it is printed first or shares the same
+    end-date header.
 2. Report the value exactly as printed — do NOT convert units or scale.
 3. Numbers in parentheses or with a trailing minus are negative.
 4. Return null only when you genuinely cannot find any semantically related line
    in the document. Do not return null just because the wording differs.
 5. Do not compute or infer values that are not explicitly printed in the document.
 6. Every numbered label must appear in the output, even if the value is null.
+7. source_row_text must be the full raw line the value came from, verbatim,
+   including every other number printed on that same line — this lets a
+   deterministic check confirm you used the quarter column and not a
+   neighbouring cumulative column, so do not omit it or paraphrase it.
 """
 
 _LABEL_USER = """Document:
@@ -580,14 +634,174 @@ Return every label, with null for any you genuinely cannot find.
 """
 
 
+# Cash actually paid/received is a direction the label itself asserts (money out
+# vs. money in), independent of how the source line happened to print its sign
+# — e.g. an indirect cash flow statement's operating-section "Interest expense"
+# add-back is printed positive even though it is a cost, because it is reversing
+# a non-cash item out of profit, not recording cash received. Trusting the
+# source sign for these labels carries that bookkeeping artefact into the model.
+_CASH_OUTFLOW_LABEL = re.compile(
+    r"\b(?:cash\s+)?interest\s+paid\b|\btax(?:es)?\s+paid\b|\bdividends?\s+paid\b",
+    re.IGNORECASE,
+)
+_CASH_INFLOW_LABEL = re.compile(
+    r"\b(?:cash\s+)?interest\s+(?:income|received)\b",
+    re.IGNORECASE,
+)
+
+
+def _enforce_label_direction(label: str, value: float) -> float:
+    """Force sign by what the label itself says (money out = negative, money in =
+    positive), rather than carrying over whatever sign the matched source line
+    happened to print."""
+    if _CASH_OUTFLOW_LABEL.search(label):
+        return -abs(value)
+    if _CASH_INFLOW_LABEL.search(label):
+        return abs(value)
+    return value
+
+
+def _maybe_realign_label_quarter_values(
+    matches: list[_LabeledValue], document_text: str
+) -> str | None:
+    """Same fix as _maybe_realign_quarter_values, for the label-fallback path.
+
+    extract_for_labels asks the LLM to match a raw Excel caption directly
+    against the PDF rather than a canonical field, and has none of the main
+    pass's deterministic cross-checks — the prompt's "use the quarter column"
+    rule is the only thing stopping it from reading the cumulative six-month
+    figure. Back that instruction with the same positional check: if a row
+    prints [6M current, Q current, ...] and the matched value equals the first
+    number but not the second, it picked the cumulative column — swap it.
+    """
+    if not _MIXED_QUARTER_TABLE.search(document_text or ""):
+        return None
+
+    changed = 0
+    for m in matches:
+        row = m.source_row_text or ""
+        if not row or m.value is None:
+            continue
+        nums = [v for v in (_parse_locale_number(t) for t in _ALL_NUMBERS.findall(row)) if v is not None]
+        if len(nums) < 2:
+            continue
+        first, second = nums[0], nums[1]
+        if _close(m.value, first) and not _close(m.value, second):
+            m.value = second
+            changed += 1
+
+    if changed:
+        return (
+            f"Detected a mixed six-month/quarter table and switched {changed} "
+            "label-matched row(s) from cumulative 6M values to quarter transaction "
+            "values (second numeric column) for quarterly extraction."
+        )
+    return None
+
+
+_MAX_SUBTOTAL_COMBO = 4
+_MAX_SUBTOTAL_BATCH = 40
+
+
+def _maybe_reject_subtotal_matches(matches: list[_LabeledValue]) -> str | None:
+    """Null out a match whose value is really the sum of OTHER matches in this
+    same batch — the prompt's subtotal-avoidance rule is not a guarantee, so
+    back it with a deterministic check: several sibling Excel rows already
+    breaking a PDF total into components (e.g. "Management fees, expenses",
+    "Administrative expenses", "Property taxes", "Insurance"), plus one vaguer
+    label (e.g. "Operating expenses") that the LLM matched to the PDF's TOTAL
+    line instead of the one remaining specific caption, double the other rows
+    into the model. A label whose own wording says "total" is exempt — it is
+    supposed to hold a subtotal.
+    """
+    candidates = [
+        m for m in matches
+        if m.value is not None and "total" not in (m.label or "").lower()
+    ]
+    if not candidates or len(matches) > _MAX_SUBTOTAL_BATCH:
+        return None
+
+    values = [m.value for m in matches if m.value is not None]
+    rejected: list[str] = []
+    for m in candidates:
+        others = list(values)
+        others.remove(m.value)
+        if _sums_to(m.value, others, _MAX_SUBTOTAL_COMBO):
+            rejected.append(m.label)
+            m.value = None
+
+    if not rejected:
+        return None
+    return (
+        f"Rejected {len(rejected)} label-matched value(s) that equalled the sum of "
+        f"other matched rows in this same batch — likely a PDF subtotal picked up "
+        f"instead of the one specific caption still needed: {', '.join(rejected)}. "
+        "Left null for human review rather than double-counting sibling rows."
+    )
+
+
+def _sums_to(target: float, pool: list[float], max_terms: int) -> bool:
+    for k in range(2, min(max_terms, len(pool)) + 1):
+        for combo in combinations(pool, k):
+            if _close(target, sum(combo)):
+                return True
+    return False
+
+
+_HAS_LETTER = re.compile(r"[A-Za-z\u00C0-\u024F]")
+
+
+def _maybe_reject_uncaptioned_matches(matches: list[_LabeledValue]) -> str | None:
+    """Null out a match whose source_row_text has no caption at all.
+
+    The sum-of-siblings check in _maybe_reject_subtotal_matches only catches a
+    subtotal if every one of its components was ALSO matched to some other
+    label in this batch. That fails when the true narrower line (e.g. "Maintenance
+    expenses") has no corresponding Excel row of its own to match against, so
+    the total never equals a sum the check can see, and the label silently
+    keeps the PDF's bare TOTAL line. That bare total line is recognisable on
+    its own though: in these tables an unlabeled subtotal row is rendered as
+    pure numbers with no caption before them (e.g. "(4,100,289) (2,018,911) ..."),
+    whereas every genuinely named line has the caption's words in it. A label
+    matched to a line with zero letters in source_row_text has no textual
+    justification at all — reject it rather than trust it.
+
+    A "derive by subtracting the other matched sibling lines" recovery was
+    tried here instead of a flat reject, but proved unreliable in practice:
+    which sibling values are even available in `matches` depends on an
+    unrelated part of the pipeline (whether e.g. "Administrative expenses"
+    was already claimed by the main taxonomy pass via alias matching before
+    this label-fallback batch ran), so the same PDF input produced a
+    correct residual on one run and a silently wrong one on another. Null +
+    flag for human review is safer than a plausible-looking but occasionally
+    wrong guess — do not resurrect the subtraction approach without also
+    threading in full visibility of every value claimed elsewhere in the
+    pipeline, not just this batch's `matches`.
+    """
+    rejected: list[str] = []
+    for m in matches:
+        row = (m.source_row_text or "").strip()
+        if m.value is not None and row and not _HAS_LETTER.search(row):
+            rejected.append(m.label)
+            m.value = None
+
+    if not rejected:
+        return None
+    return (
+        f"Rejected {len(rejected)} label-matched value(s) whose source line had no "
+        f"caption at all (a bare-numbers PDF subtotal row, not the named line the "
+        f"label refers to): {', '.join(rejected)}. Left null for human review."
+    )
+
+
 def extract_for_labels(
     labels: list[str],
     document_text: str,
     source_units: str = "units",
-) -> dict[str, float]:
+) -> tuple[dict[str, float], str | None]:
     """Match raw Excel row labels against the PDF and return label -> value in BASE units."""
     if not labels:
-        return {}
+        return {}, None
     from finscan.extract.normalize import UNIT_MULTIPLIER
     llm = structured(_LabelExtraction)
     numbered = "\n".join(f"{i + 1}. {lbl}" for i, lbl in enumerate(labels))
@@ -596,9 +810,15 @@ def extract_for_labels(
         {"role": "user", "content": _LABEL_USER.format(
             document=document_text, labels=numbered)},
     ])
+    notes = [n for n in (
+        _maybe_realign_label_quarter_values(result.matches, document_text),
+        _maybe_reject_subtotal_matches(result.matches),
+        _maybe_reject_uncaptioned_matches(result.matches),
+    ) if n]
     multiplier = UNIT_MULTIPLIER.get(source_units, 1.0)
-    return {
-        m.label: m.value * multiplier
+    values = {
+        m.label: _enforce_label_direction(m.label, m.value * multiplier)
         for m in result.matches
         if m.value is not None and m.confidence >= 0.5
     }
+    return values, (" ".join(notes) if notes else None)

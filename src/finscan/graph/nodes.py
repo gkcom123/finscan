@@ -304,32 +304,48 @@ def extract_label_rows(state: dict) -> dict:
     if plan is None:
         return {"label_values": {}}
 
+    profile = state.get("profile")
+    search_overrides = {
+        k.strip().lower(): v
+        for k, v in ((profile.label_search_overrides if profile else {}) or {}).items()
+    }
+
     enabled = set(state.get("enabled_sheets") or [])
     extraction = state.get("extraction")
     found_fields = {li.field.value for li in extraction.line_items} if extraction else set()
     labels: list[str] = []
+    # Search text -> original Excel row label, so a company-specific override
+    # (search for a different PDF caption than the row's own) still reports
+    # its result back under the row's own label.
+    search_to_original: dict[str, str] = {}
+
+    def _queue(label: str) -> None:
+        search = search_overrides.get(label.strip().lower(), label)
+        if search not in labels:
+            labels.append(search)
+        search_to_original.setdefault(search, label)
+
     for sheet in plan.in_scope:
         if enabled and sheet.sheet not in enabled:
             continue
         for rp in sheet.rows:
-            if rp.label_only and rp.field is None and rp.label not in labels:
+            if rp.label_only and rp.field is None:
                 # Skip labels that look like ratio/growth/margin rows — no PDF
                 # will print a "% y-o-y growth" figure; asking wastes a call and
                 # risks the LLM fabricating a percentage.
                 if _is_ratio_label(rp.label):
                     continue
-                labels.append(rp.label)
+                _queue(rp.label)
             elif (
                 rp.writable
                 and not rp.carries_formula
                 and rp.field is not None
                 and rp.field not in found_fields
-                and rp.label not in labels
                 and not _is_ratio_label(rp.label)
             ):
                 # Canonical row mapped, but taxonomy extraction missed this field.
                 # Try direct label matching for this specific row label.
-                labels.append(rp.label)
+                _queue(rp.label)
 
     if not labels:
         return {"label_values": {}}
@@ -337,7 +353,9 @@ def extract_label_rows(state: dict) -> dict:
     source_units = (extraction.meta.units if extraction else None) or "units"
     doc_text = state.get("statements_text") or state.get("document_text", "")
 
-    label_values = extract_for_labels(labels, doc_text, source_units)
+    label_values, realign_note = extract_for_labels(labels, doc_text, source_units)
+    if search_to_original:
+        label_values = {search_to_original.get(k, k): v for k, v in label_values.items()}
     issues: list[Issue] = []
     if label_values:
         issues.append(Issue(
@@ -345,7 +363,10 @@ def extract_label_rows(state: dict) -> dict:
             message=f"Direct PDF label match filled {len(label_values)} additional row(s): "
                     + ", ".join(label_values.keys()),
         ))
+    if realign_note:
+        issues.append(Issue(severity="info", code="quarter_realign", message=realign_note))
     return {"label_values": label_values, "issues": issues}
+
 
 
 import re as _re

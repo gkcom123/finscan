@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-from finscan.schemas import NON_SCALED_FIELDS, Extraction, Issue
+from finscan.schemas import FIELD_ALIASES, NON_SCALED_FIELDS, Extraction, Issue
 
 UNIT_MULTIPLIER: dict[str, float] = {
     "units": 1.0,
@@ -77,12 +77,35 @@ def to_target_units(
         )
 
     values: dict[str, float] = {}
+    chosen_labels: dict[str, str] = {}
     for item in extraction.line_items:
         fid = item.field.value
         v = item.value
         if fid not in NON_SCALED_FIELDS:
             v = convert(v, src, target_units)
         if fid in values and abs(values[fid] - v) > 1e-9:
+            # A generic taxonomy field (e.g. "other_expenses") can superficially
+            # match several distinct PDF captions in the same breakdown (e.g.
+            # "Maintenance expenses", "Property taxes", "Insurance" all loosely
+            # read as "other operating expenses"); which one the LLM lists first
+            # is not stable across runs. Prefer whichever caption is a literal
+            # alias of the field over one that only fits by loose semantics —
+            # that is a real signal, not just whatever happened to come first.
+            if _alias_hit(item.label_in_pdf, fid) and not _alias_hit(chosen_labels.get(fid, ""), fid):
+                issues.append(
+                    Issue(
+                        severity="warning",
+                        code="duplicate_field",
+                        field=fid,
+                        message=f"{fid} extracted twice with different values "
+                        f"({values[fid]:,.2f} vs {v:,.2f}); switched to "
+                        f"'{item.label_in_pdf}' — its caption is a closer match "
+                        f"for this field than '{chosen_labels.get(fid, '')}'.",
+                    )
+                )
+                values[fid] = v
+                chosen_labels[fid] = item.label_in_pdf
+                continue
             issues.append(
                 Issue(
                     severity="warning",
@@ -94,7 +117,13 @@ def to_target_units(
             )
             continue
         values[fid] = v
+        chosen_labels[fid] = item.label_in_pdf
     return values, issues
+
+
+def _alias_hit(label: str, fid: str) -> bool:
+    low = (label or "").lower()
+    return any(alias in low for alias in FIELD_ALIASES.get(fid, []))
 
 
 DERIVATIONS: list[tuple[str, tuple[str, ...], str]] = [

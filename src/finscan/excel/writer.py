@@ -34,6 +34,7 @@ from finscan.excel.discovery import SheetPlan, WorkbookPlan
 from finscan.excel.style_probe import cell_has_formula
 from finscan.extract.normalize import UNIT_MULTIPLIER
 from finscan.schemas import NON_SCALED_FIELDS, Issue, SheetWriteResult, WriteResult
+from finscan.validate import SIGNED_EXPENSE_FIELDS
 
 _COL_REF = re.compile(r"\$?([A-Za-z]{1,3})\$?[0-9]{1,7}")
 
@@ -57,6 +58,67 @@ def scale_to_sheet(values: dict[str, float], units: str) -> dict[str, float]:
 
 def _is_number(v: object) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+_LABEL_SCALE_STEPS = (1e-9, 1e-6, 1e-3, 1e3, 1e6, 1e9)
+
+
+def _maybe_rescale_label_value(val: float, ref_val: float | None) -> tuple[float, float | None]:
+    """Catch a label-matched value pulled from a differently-scaled PDF table.
+
+    extract_for_labels() matches a row's raw caption against whatever passage
+    of the PDF mentions it, and a filing does not always state every line in
+    the same units its main statement table uses (e.g. a note table in
+    absolute currency next to a summary stated in millions). That value has no
+    equivalent of the main taxonomy pass's _maybe_rescale_items_to_printed_units
+    cross-check, but the existing reference-period cell for that same row is a
+    free anchor: if the new value is a clean power-of-ten away from it, treat
+    it as a unit mismatch rather than a genuine period-over-period jump.
+    """
+    if ref_val is None or abs(ref_val) < 1e-9 or abs(val) < 1e-9:
+        return val, None
+    ratio = abs(val / ref_val)
+    step = min(_LABEL_SCALE_STEPS, key=lambda s: abs(log10(ratio / s)))
+    if abs(log10(ratio / step)) <= 0.35:
+        return val / step, step
+    return val, None
+
+
+def _maybe_fix_label_sign(val: float, ref_val: float | None) -> tuple[float, bool]:
+    """Match a label-matched value's sign to this SAME row's existing convention.
+
+    extract_for_labels() has no canonical field, so it has none of
+    validate.py's sheet-wide sign-convention detection either — whatever sign
+    the LLM/source printed goes straight through. The existing reference-period
+    cell for this exact row is a free, row-specific anchor for what this
+    particular line is supposed to look like (e.g. an expense row the model
+    has always carried negative): if the signs disagree and both numbers are
+    genuinely nonzero, flip the new value to match rather than trust the source.
+    """
+    if ref_val is None or abs(ref_val) < 1e-9 or abs(val) < 1e-9:
+        return val, False
+    if (val < 0) != (ref_val < 0):
+        return -val, True
+    return val, False
+
+
+_BIDIRECTIONAL_LABEL = re.compile(
+    r"gain.*loss|loss.*gain|profit.*loss|loss.*profit"
+    r"|valuation\s+effect|fair\s+value\s+adjustment|mark[- ]to[- ]market"
+    r"|remeasurement|revaluation",
+    re.IGNORECASE,
+)
+
+
+def _label_can_flip_sign(label: str) -> bool:
+    """A caption naming both directions (e.g. "Foreign exchange gain (loss)")
+    or a market-driven revaluation line (e.g. "Valuation effect on financial
+    instruments", "Fair value adjustment...") is telling us the sign is this
+    period's actual data, not a fixed per-row convention — these lines
+    legitimately swing between a gain and a loss quarter to quarter based on
+    real market movement, so _maybe_fix_label_sign must not force them to
+    match whatever sign the prior period happened to have."""
+    return bool(_BIDIRECTIONAL_LABEL.search(label or ""))
 
 
 def _infer_units_from_reference(ws, plan: SheetPlan, base_values: dict[str, float]) -> str | None:
@@ -386,6 +448,24 @@ def _write_sheet(
                 continue
             val = (label_values or {}).get(rp.label)
             if val is not None:
+                ref_val = ws.cell(rp.row, ref).value
+                ref_num = ref_val if _is_number(ref_val) else None
+                rescaled, step = _maybe_rescale_label_value(val, ref_num)
+                if step is not None:
+                    issues.append(Issue(
+                        severity="warning", code="label_value_rescaled", field=rp.field,
+                        message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}'): matched PDF value "
+                                f"{val:,.2f} was ~{step:,.0f}x the existing {rp.reference_cell} value "
+                                f"({ref_val:,.2f}); divided by {step:,.0f} before writing."))
+                val = rescaled
+                if not _label_can_flip_sign(rp.label):
+                    val, flipped = _maybe_fix_label_sign(val, ref_num)
+                    if flipped:
+                        issues.append(Issue(
+                            severity="warning", code="label_value_sign_flipped", field=rp.field,
+                            message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}'): matched PDF value "
+                                    f"had the opposite sign from the existing {rp.reference_cell} value "
+                                    f"({ref_val:,.2f}); flipped to match this row's convention."))
                 _copy_style(ws.cell(rp.row, ref), target)
                 target.value = val
                 target.comment = Comment(
@@ -458,6 +538,24 @@ def _write_sheet(
         if rp.field is not None and rp.field not in values:
             val = (label_values or {}).get(rp.label)
             if val is not None:
+                ref_val = ws.cell(rp.row, ref).value
+                ref_num = ref_val if _is_number(ref_val) else None
+                rescaled, step = _maybe_rescale_label_value(val, ref_num)
+                if step is not None:
+                    issues.append(Issue(
+                        severity="warning", code="label_value_rescaled", field=rp.field,
+                        message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}'): matched PDF value "
+                                f"{val:,.2f} was ~{step:,.0f}x the existing {rp.reference_cell} value "
+                                f"({ref_val:,.2f}); divided by {step:,.0f} before writing."))
+                val = rescaled
+                if not _label_can_flip_sign(rp.label):
+                    val, flipped = _maybe_fix_label_sign(val, ref_num)
+                    if flipped:
+                        issues.append(Issue(
+                            severity="warning", code="label_value_sign_flipped", field=rp.field,
+                            message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}'): matched PDF value "
+                                    f"had the opposite sign from the existing {rp.reference_cell} value "
+                                    f"({ref_val:,.2f}); flipped to match this row's convention."))
                 _copy_style(ws.cell(rp.row, ref), target)
                 target.value = val
                 target.comment = Comment(
@@ -531,8 +629,22 @@ def _write_sheet(
                         f"despite low confidence {conf:.2f} < {min_confidence:.2f}. "
                         "Review this row."))
 
+        val = values[rp.field]
+        if rp.field in SIGNED_EXPENSE_FIELDS:
+            ref_val = ws.cell(rp.row, ref).value
+            ref_num = ref_val if _is_number(ref_val) else None
+            val, flipped = _maybe_fix_label_sign(val, ref_num)
+            if flipped:
+                issues.append(Issue(
+                    severity="warning", code="value_sign_flipped", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}'): extracted value "
+                            f"had the opposite sign from the existing {rp.reference_cell} value "
+                            f"({ref_val:,.2f}); flipped to match this row's convention — this "
+                            "field is always a cost, so its sign should not flip quarter to "
+                            "quarter."))
+
         _copy_style(ws.cell(rp.row, ref), target)
-        target.value = values[rp.field]
+        target.value = val
         kind = ("previous column held typed-in arithmetic "
                 f"(`{rp.formula_template}`), replaced with this period's figure"
                 if rp.constant_formula else "blue input cell — model formulas untouched")

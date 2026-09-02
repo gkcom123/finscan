@@ -47,6 +47,15 @@ class CompanyProfile:
     sheets: list[SheetSetting] = field(default_factory=list)
     #: caption -> canonical field overrides a reviewer supplied for this company
     label_overrides: dict[str, str] = field(default_factory=dict)
+    #: Excel row label -> the actual PDF caption to search for instead, for
+    #: label-fallback rows whose Excel caption does not literally appear in the
+    #: filing (or is ambiguous, e.g. an Excel row named "Operating expenses"
+    #: that this company's filing actually itemises under "Maintenance
+    #: expenses" with no line captioned "Operating expenses" at all). A reviewer
+    #: sets this once after confirming the correct PDF line; the label-fallback
+    #: matcher then searches for the override text but still records the
+    #: result back under the row's own Excel label.
+    label_search_overrides: dict[str, str] = field(default_factory=dict)
     #: canonical field -> the fields this company's row actually adds up.
     #: A row captioned "Other gains, net" that really holds investment gains plus
     #: other gains cannot be expressed as a caption mapping — the caption is
