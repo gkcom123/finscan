@@ -84,6 +84,21 @@ def _maybe_rescale_label_value(val: float, ref_val: float | None) -> tuple[float
     return val, None
 
 
+def _ref_value_for_sign(ws, ws_values: Any, row: int, ref: int) -> Any:
+    """The reference cell's value for sign/magnitude comparison.
+
+    Many reference columns are themselves formulas (e.g. "=-12464.067-2856.022"),
+    so reading straight off the formula workbook hands back the formula string,
+    not a number — silently disabling rescale/sign-fix for that row. Prefer the
+    cached-value twin workbook, which has the last computed result instead.
+    """
+    if ws_values is not None:
+        cached = ws_values.cell(row, ref).value
+        if _is_number(cached):
+            return cached
+    return ws.cell(row, ref).value
+
+
 def _maybe_fix_label_sign(val: float, ref_val: float | None) -> tuple[float, bool]:
     """Match a label-matched value's sign to this SAME row's existing convention.
 
@@ -448,7 +463,7 @@ def _write_sheet(
                 continue
             val = (label_values or {}).get(rp.label)
             if val is not None:
-                ref_val = ws.cell(rp.row, ref).value
+                ref_val = _ref_value_for_sign(ws, ws_values, rp.row, ref)
                 ref_num = ref_val if _is_number(ref_val) else None
                 rescaled, step = _maybe_rescale_label_value(val, ref_num)
                 if step is not None:
@@ -538,7 +553,7 @@ def _write_sheet(
         if rp.field is not None and rp.field not in values:
             val = (label_values or {}).get(rp.label)
             if val is not None:
-                ref_val = ws.cell(rp.row, ref).value
+                ref_val = _ref_value_for_sign(ws, ws_values, rp.row, ref)
                 ref_num = ref_val if _is_number(ref_val) else None
                 rescaled, step = _maybe_rescale_label_value(val, ref_num)
                 if step is not None:
@@ -631,7 +646,7 @@ def _write_sheet(
 
         val = values[rp.field]
         if rp.field in SIGNED_EXPENSE_FIELDS:
-            ref_val = ws.cell(rp.row, ref).value
+            ref_val = _ref_value_for_sign(ws, ws_values, rp.row, ref)
             ref_num = ref_val if _is_number(ref_val) else None
             val, flipped = _maybe_fix_label_sign(val, ref_num)
             if flipped:

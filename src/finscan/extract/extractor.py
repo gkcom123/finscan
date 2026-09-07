@@ -701,9 +701,19 @@ def _maybe_realign_label_quarter_values(
 
 _MAX_SUBTOTAL_COMBO = 4
 _MAX_SUBTOTAL_BATCH = 40
+_SUBTOTAL_PROXIMITY_LINES = 15
 
 
-def _maybe_reject_subtotal_matches(matches: list[_LabeledValue]) -> str | None:
+def _line_number(document_text: str, row_text: str) -> int | None:
+    """Approximate line position of a match's own source line in the document."""
+    row_text = (row_text or "").strip()
+    if not row_text:
+        return None
+    idx = document_text.find(row_text)
+    return document_text.count("\n", 0, idx) if idx >= 0 else None
+
+
+def _maybe_reject_subtotal_matches(matches: list[_LabeledValue], document_text: str) -> str | None:
     """Null out a match whose value is really the sum of OTHER matches in this
     same batch — the prompt's subtotal-avoidance rule is not a guarantee, so
     back it with a deterministic check: several sibling Excel rows already
@@ -713,6 +723,19 @@ def _maybe_reject_subtotal_matches(matches: list[_LabeledValue]) -> str | None:
     line instead of the one remaining specific caption, double the other rows
     into the model. A label whose own wording says "total" is exempt — it is
     supposed to hold a subtotal.
+
+    BUG (JD 2026-09-07): the sum-of-siblings pool used to be every OTHER
+    matched value in the whole batch, regardless of which statement it came
+    from. With 30-40 unrelated matches spanning the income statement, balance
+    sheet and cash flow statement all in one label-fallback call, some 2-4
+    term combination coincidentally lands within the 0.1% tolerance of almost
+    any given value by sheer combinatorics — e.g. "Marketing" (income
+    statement) got rejected because it happened to equal the sum of some
+    unrelated combination of "Free cash flow"/"Inventory"/"Equity" (balance
+    sheet/cash-flow rows), which are obviously not its siblings. A genuine
+    subtotal's components always sit in the SAME PDF table, a few lines away
+    at most — so the pool is now restricted to other matches whose own source
+    line is within `_SUBTOTAL_PROXIMITY_LINES` lines of the candidate's.
     """
     candidates = [
         m for m in matches
@@ -721,12 +744,19 @@ def _maybe_reject_subtotal_matches(matches: list[_LabeledValue]) -> str | None:
     if not candidates or len(matches) > _MAX_SUBTOTAL_BATCH:
         return None
 
-    values = [m.value for m in matches if m.value is not None]
+    lines = {id(m): _line_number(document_text, m.source_row_text or "") for m in matches}
+
     rejected: list[str] = []
     for m in candidates:
-        others = list(values)
-        others.remove(m.value)
-        if _sums_to(m.value, others, _MAX_SUBTOTAL_COMBO):
+        my_line = lines[id(m)]
+        if my_line is None:
+            continue
+        others = [
+            other.value for other in matches
+            if other is not m and other.value is not None and lines[id(other)] is not None
+            and abs(lines[id(other)] - my_line) <= _SUBTOTAL_PROXIMITY_LINES
+        ]
+        if others and _sums_to(m.value, others, _MAX_SUBTOTAL_COMBO):
             rejected.append(m.label)
             m.value = None
 
@@ -794,6 +824,28 @@ def _maybe_reject_uncaptioned_matches(matches: list[_LabeledValue]) -> str | Non
     )
 
 
+_DECIMAL_NUMBER = re.compile(r"\d\.\d")
+
+
+def _match_is_already_absolute(m: _LabeledValue) -> bool:
+    """A label match sometimes comes from a raw-absolute-currency note table
+    (e.g. a statement-of-cash-flows XBRL note stated to the nearest peso/rupee)
+    sitting in the SAME document as a primary statement stated "in millions" —
+    the filing's one declared `source_units` does not apply to that table, so
+    blindly multiplying every match by it silently inflates these values by
+    the scale factor (e.g. 1,000,000x too big). Genuine millions-scale figures
+    routinely print a fractional part (e.g. "21,906.321") since one peso is a
+    non-trivial fraction of a million; a raw absolute-currency table's numbers
+    are whole, and rounded to a coarse absolute precision (e.g. nearest 1,000),
+    so they print as clean integers instead. Use the row's own raw text (not
+    just the parsed float, which loses this information) to tell them apart.
+    """
+    if m.value is None or m.value != int(m.value) or m.value % 1000 != 0:
+        return False
+    row = m.source_row_text or ""
+    return bool(row) and not _DECIMAL_NUMBER.search(row)
+
+
 def extract_for_labels(
     labels: list[str],
     document_text: str,
@@ -812,13 +864,25 @@ def extract_for_labels(
     ])
     notes = [n for n in (
         _maybe_realign_label_quarter_values(result.matches, document_text),
-        _maybe_reject_subtotal_matches(result.matches),
+        _maybe_reject_subtotal_matches(result.matches, document_text),
         _maybe_reject_uncaptioned_matches(result.matches),
     ) if n]
     multiplier = UNIT_MULTIPLIER.get(source_units, 1.0)
+    already_absolute = [m.label for m in result.matches if _match_is_already_absolute(m)]
+    if already_absolute:
+        notes.append(
+            f"{len(already_absolute)} label-matched value(s) looked like they came from a "
+            f"raw-absolute-currency table rather than the filing's declared '{source_units}' "
+            f"scale (whole numbers, no fractional part): {', '.join(already_absolute)}. "
+            "Used them as-is instead of applying the filing-wide unit multiplier."
+        )
+    already_absolute_set = set(already_absolute)
     values = {
-        m.label: _enforce_label_direction(m.label, m.value * multiplier)
+        m.label: _enforce_label_direction(
+            m.label, m.value * (1.0 if m.label in already_absolute_set else multiplier)
+        )
         for m in result.matches
         if m.value is not None and m.confidence >= 0.5
     }
     return values, (" ".join(notes) if notes else None)
+

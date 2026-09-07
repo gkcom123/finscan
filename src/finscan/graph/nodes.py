@@ -405,12 +405,14 @@ def check_periods(state: dict) -> dict:
                 severity="warning", code="period_gap_overridden",
                 message=f"{sheet.sheet}: {res.message} OVERRIDDEN by --allow-period-gap — "
                         f"the figures were written into a slot they do not belong in. "
-                        f"Do not use this output for anything but testing."))
+                        f"Do not use this output for anything but testing.",
+                sheet=sheet.sheet))
             continue
         issues.append(Issue(
             severity="error" if not res.ok else "info",
             code=res.code,
             message=f"{sheet.sheet}: {res.message}",
+            sheet=sheet.sheet,
         ))
     return {"issues": issues}
 
@@ -535,7 +537,18 @@ def write_excel(state: dict) -> dict:
     header = _period_header(state)
     header_lines = _period_header_lines(state)
     blocked = [i for i in state.get("issues", []) if i.code in PERIOD_BLOCKERS]
-    if blocked or state.get("dry_run") or state.get("status") == "awaiting_confirmation":
+    # A period-gap on one sheet (e.g. an annual-cadence tab) must not hold back
+    # every OTHER sheet that lines up fine — only that sheet's write is unsafe.
+    blocked_sheets = {i.sheet for i in blocked if i.sheet}
+    enabled = set(state.get("enabled_sheets") or []) or {s.sheet for s in state["plan"].in_scope}
+    writable_sheets = enabled - blocked_sheets
+
+    full_hold = (
+        state.get("dry_run")
+        or state.get("status") == "awaiting_confirmation"
+        or (blocked and not writable_sheets)
+    )
+    if full_hold:
         write_result, copy_issues = _copy_output_workbook_only(state, header)
         reason = (
             "the filing period does not line up with the next column"
@@ -556,18 +569,26 @@ def write_excel(state: dict) -> dict:
         return payload
 
     extraction = state["extraction"]
+    skip_issues = []
+    if blocked_sheets:
+        skip_issues.append(Issue(
+            severity="warning", code="sheet_skipped_period_gap",
+            message=f"Skipped writing to {', '.join(sorted(blocked_sheets))} (the filing period "
+                    f"does not line up with the next column there); other sheets were still "
+                    f"written normally.",
+        ))
     result, issues = write_workbook(
         plan=state["plan"],
         values=state["values"],
         header=header,
         header_lines=header_lines,
-        enabled_sheets=set(state.get("enabled_sheets") or []) or None,
+        enabled_sheets=writable_sheets,
         output_path=state.get("output_path"),
         field_confidence={li.field.value: li.confidence for li in extraction.line_items},
         pdf_labels={li.field.value: li.label_in_pdf for li in extraction.line_items},
         label_values=state.get("label_values"),
     )
-    return {"write_result": result, "period_header": header, "issues": issues}
+    return {"write_result": result, "period_header": header, "issues": skip_issues + issues}
 
 
 def _copy_output_workbook_only(state: dict, header: str) -> tuple[WriteResult | None, list[Issue]]:

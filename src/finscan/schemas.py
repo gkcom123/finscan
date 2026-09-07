@@ -309,6 +309,7 @@ class Issue(BaseModel):
     code: str
     message: str
     field: str | None = None
+    sheet: str | None = None
 
 
 class SheetWriteResult(BaseModel):
