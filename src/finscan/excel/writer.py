@@ -37,6 +37,7 @@ from finscan.schemas import NON_SCALED_FIELDS, Issue, SheetWriteResult, WriteRes
 from finscan.validate import SIGNED_EXPENSE_FIELDS
 
 _COL_REF = re.compile(r"\$?([A-Za-z]{1,3})\$?[0-9]{1,7}")
+_SIGNED_DEDUCTION_FIELDS = {"non_controlling_interest"}
 
 
 def _max_referenced_col(formula: str) -> int:
@@ -233,7 +234,10 @@ def _stacked_header_start_row(ws, header_row: int, ref_col: int, line_count: int
     def _count_non_empty(start: int, end: int) -> int:
         n = 0
         for r in range(start, end + 1):
-            v = ws.cell(r, ref_col).value
+            cell = ws.cell(r, ref_col)
+            if cell_has_formula(cell):
+                continue  # formula text is data, not header content
+            v = cell.value
             if isinstance(v, str) and v.strip():
                 n += 1
         return n
@@ -267,6 +271,7 @@ def write_workbook(
     field_confidence: dict[str, float] | None = None,
     pdf_labels: dict[str, str] | None = None,
     label_values: dict[str, float] | None = None,
+    leave_unmatched_label_rows_blank: bool = False,
 ) -> tuple[WriteResult, list[Issue]]:
     min_confidence = settings.finscan_min_confidence if min_confidence is None else min_confidence
     field_confidence = field_confidence or {}
@@ -316,6 +321,7 @@ def write_workbook(
             min_confidence, field_confidence, pdf_labels,
             scale_to_sheet(label_values, effective_units) if label_values else None,
             wb_values[sheet_plan.sheet] if sheet_plan.sheet in wb_values.sheetnames else None,
+            leave_unmatched_label_rows_blank,
         )
         results.append(res)
         issues.extend(sheet_issues)
@@ -340,6 +346,7 @@ def _write_sheet(
     pdf_labels: dict[str, str],
     label_values: dict[str, float] | None = None,
     ws_values: Any = None,
+    leave_unmatched_label_rows_blank: bool = False,
 ) -> tuple[SheetWriteResult, list[Issue]]:
     issues: list[Issue] = []
     col = plan.write_col
@@ -490,6 +497,16 @@ def _write_sheet(
                 written += 1
                 continue
 
+            if leave_unmatched_label_rows_blank:
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = None
+                issues.append(Issue(
+                    severity="warning", code="input_row_left_blank", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no defensible "
+                            "PDF label match; left blank for review.",
+                ))
+                continue
+
             ref_val = ws.cell(rp.row, ref).value
             if _is_number(ref_val):
                 _copy_style(ws.cell(rp.row, ref), target)
@@ -582,6 +599,15 @@ def _write_sheet(
                 continue
 
         if rp.field is None or rp.field not in values:
+            if leave_unmatched_label_rows_blank:
+                _copy_style(ws.cell(rp.row, ref), target)
+                target.value = None
+                issues.append(Issue(
+                    severity="warning", code="input_row_left_blank", field=rp.field,
+                    message=f"{plan.sheet}!{letter}{rp.row} ('{rp.label}') had no defensible "
+                            "PDF label match; left blank for review.",
+                ))
+                continue
             ref_val = ws.cell(rp.row, ref).value
             if _is_number(ref_val):
                 _copy_style(ws.cell(rp.row, ref), target)
@@ -645,7 +671,7 @@ def _write_sheet(
                         "Review this row."))
 
         val = values[rp.field]
-        if rp.field in SIGNED_EXPENSE_FIELDS:
+        if rp.field in SIGNED_EXPENSE_FIELDS or rp.field in _SIGNED_DEDUCTION_FIELDS:
             ref_val = _ref_value_for_sign(ws, ws_values, rp.row, ref)
             ref_num = ref_val if _is_number(ref_val) else None
             val, flipped = _maybe_fix_label_sign(val, ref_num)

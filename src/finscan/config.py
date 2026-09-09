@@ -37,6 +37,7 @@ class Settings(BaseSettings):
     finscan_fuzzy_threshold: int = 86
     finscan_tolerance_pct: float = 1.0
     finscan_min_confidence: float = 0.60
+    finscan_reliable_labels: bool = False
 
     # Layout profiles
     finscan_profile_store: Path = Path("./profiles")

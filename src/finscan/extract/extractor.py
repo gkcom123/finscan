@@ -886,3 +886,19 @@ def extract_for_labels(
     }
     return values, (" ".join(notes) if notes else None)
 
+
+def extract_for_labels_reliably(
+    labels: list[str],
+    document_text: str,
+    source_units: str = "units",
+) -> tuple[dict[str, float], str | None]:
+    """Resolve each label in its own focused pass to avoid batch interference."""
+    values: dict[str, float] = {}
+    notes: list[str] = []
+    for label in labels:
+        matched, note = extract_for_labels([label], document_text, source_units)
+        values.update(matched)
+        if note:
+            notes.append(f"{label}: {note}")
+    return values, (" ".join(notes) if notes else None)
+

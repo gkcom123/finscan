@@ -21,6 +21,7 @@ class GraphState(TypedDict, total=False):
     allow_period_gap: bool
     hint: str
     use_llm_mapping: bool
+    reliable_labels: bool
     dry_run: bool
 
     # --- intermediate ---

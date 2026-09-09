@@ -71,6 +71,9 @@ def _add_run_args(p: argparse.ArgumentParser) -> None:
                         "the last column. Produces a knowingly wrong model.")
     p.add_argument("--no-llm-mapping", action="store_true",
                    help="Alias+fuzzy caption matching only")
+    p.add_argument("--reliable-labels", action="store_true",
+                   help="Resolve each unmatched model label in a focused PDF pass; leave "
+                        "unresolved rows blank instead of carrying prior-period values")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -133,6 +136,7 @@ def main(argv: list[str] | None = None) -> int:
         company=a.company, sheets=a.sheets, period_label=a.period,
         profile_store=a.profiles, require_confirmation=not a.yes,
         use_llm_mapping=not a.no_llm_mapping,
+        reliable_labels=a.reliable_labels or settings.finscan_reliable_labels,
         allow_period_gap=a.allow_period_gap,
     )
 

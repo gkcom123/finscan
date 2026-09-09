@@ -73,6 +73,7 @@ def run(
     profile_store: str | None = None,
     require_confirmation: bool | None = None,
     use_llm_mapping: bool = True,
+    reliable_labels: bool | None = None,
     dry_run: bool = False,
     allow_period_gap: bool = False,
 ) -> dict:
@@ -90,6 +91,8 @@ def run(
                                      if require_confirmation is None else require_confirmation),
             "allow_period_gap": allow_period_gap,
             "use_llm_mapping": use_llm_mapping,
+            "reliable_labels": (settings.finscan_reliable_labels
+                                if reliable_labels is None else reliable_labels),
             "dry_run": dry_run,
             "hint": "",
             "issues": [],

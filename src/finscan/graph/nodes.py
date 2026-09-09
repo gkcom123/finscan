@@ -10,7 +10,11 @@ from finscan.config import settings
 from finscan.excel.discovery import discover
 from finscan.excel.mapper import llm_match_labels
 from finscan.excel.writer import scale_to_sheet, write_workbook
-from finscan.extract.extractor import extract as llm_extract, extract_for_labels
+from finscan.extract.extractor import (
+    extract as llm_extract,
+    extract_for_labels,
+    extract_for_labels_reliably,
+)
 from finscan.extract.normalize import derive_missing, to_target_units
 from finscan.extract.pdf_reader import read_pdf
 from finscan.profiles import ProfileStore, company_key, is_weak_company_key
@@ -353,7 +357,8 @@ def extract_label_rows(state: dict) -> dict:
     source_units = (extraction.meta.units if extraction else None) or "units"
     doc_text = state.get("statements_text") or state.get("document_text", "")
 
-    label_values, realign_note = extract_for_labels(labels, doc_text, source_units)
+    label_extractor = extract_for_labels_reliably if state.get("reliable_labels") else extract_for_labels
+    label_values, realign_note = label_extractor(labels, doc_text, source_units)
     if search_to_original:
         label_values = {search_to_original.get(k, k): v for k, v in label_values.items()}
     issues: list[Issue] = []
@@ -363,6 +368,15 @@ def extract_label_rows(state: dict) -> dict:
             message=f"Direct PDF label match filled {len(label_values)} additional row(s): "
                     + ", ".join(label_values.keys()),
         ))
+    if state.get("reliable_labels"):
+        unresolved = [search_to_original.get(label, label) for label in labels
+                      if search_to_original.get(label, label) not in label_values]
+        if unresolved:
+            issues.append(Issue(
+                severity="warning", code="label_match_unresolved",
+                message=f"Focused PDF matching could not establish a value for {len(unresolved)} "
+                        f"row(s); their new-period cells were left blank: {', '.join(unresolved)}.",
+            ))
     if realign_note:
         issues.append(Issue(severity="info", code="quarter_realign", message=realign_note))
     return {"label_values": label_values, "issues": issues}
@@ -587,6 +601,7 @@ def write_excel(state: dict) -> dict:
         field_confidence={li.field.value: li.confidence for li in extraction.line_items},
         pdf_labels={li.field.value: li.label_in_pdf for li in extraction.line_items},
         label_values=state.get("label_values"),
+        leave_unmatched_label_rows_blank=state.get("reliable_labels", False),
     )
     return {"write_result": result, "period_header": header, "issues": skip_issues + issues}
 
