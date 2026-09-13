@@ -1,17 +1,30 @@
 """Graph wiring.
 
-  ingest_pdf ─► discover ─► extract ─► resolve_profile ─► normalize ─► refine_mapping
-                              ▲                                                    │
-                              │                                          check_periods
-                              │                                                    │
-                              │                                               validate
-                              │                                                    │
+  ingest_pdf ─► discover ─► extract ─► resolve_profile ─► normalize
+                              ▲                                  │
+                              │                    resolve_cumulative_periods
+                              │                                  │
+                              │                          refine_mapping
+                              │                                  │
+                              │                        extract_label_rows
+                              │                                  │
+                              │                          check_periods
+                              │                                  │
+                              │                               validate
+                              │                                    │
                               └──────────── prepare_retry ◄──── arithmetic errors, once ────┤
                                                                                            │
                                             report ◄─── write_excel ◄─── ok / needs_review ─┤
                                               ▲                                            │
                                               └──────────── awaiting_confirmation ──────────┘
                                                            (nothing is written)
+
+resolve_cumulative_periods sits right after normalize and before everything else: it must
+run before crosscheck simulates the sheet's own formulas (otherwise it would check a
+still-cumulative D&A, say, against the filing) and before derive_missing (folded into this
+same node, moved out of normalize) computes anything from that field — and it must run
+before refine_mapping/extract_label_rows so the review report's value column shows the
+corrected figure too, not just the write step.
 """
 from __future__ import annotations
 
@@ -32,6 +45,7 @@ def build_graph(checkpointer: Any = None):
     g.add_node("extract", nodes.extract_financials)
     g.add_node("resolve_profile", nodes.resolve_profile)
     g.add_node("normalize", nodes.normalize)
+    g.add_node("resolve_cumulative_periods", nodes.resolve_cumulative_periods)
     g.add_node("refine_mapping", nodes.refine_mapping)
     g.add_node("extract_label_rows", nodes.extract_label_rows)
     g.add_node("check_periods", nodes.check_periods)
@@ -46,7 +60,8 @@ def build_graph(checkpointer: Any = None):
     g.add_edge("discover", "extract")
     g.add_edge("extract", "resolve_profile")
     g.add_edge("resolve_profile", "normalize")
-    g.add_edge("normalize", "refine_mapping")
+    g.add_edge("normalize", "resolve_cumulative_periods")
+    g.add_edge("resolve_cumulative_periods", "refine_mapping")
     g.add_edge("refine_mapping", "extract_label_rows")
     g.add_edge("extract_label_rows", "check_periods")
     g.add_edge("check_periods", "crosscheck")

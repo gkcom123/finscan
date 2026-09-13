@@ -52,8 +52,17 @@ def convert(value: float, from_units: str, to_units: str) -> float:
 
 def to_target_units(
     extraction: Extraction, target_units: str
-) -> tuple[dict[str, float], list[Issue]]:
-    """Flatten the extraction into {canonical_field: value} in the workbook's scale."""
+) -> tuple[dict[str, float], dict[str, int], list[Issue]]:
+    """Flatten the extraction into {canonical_field: value} in the workbook's scale.
+
+    Also returns months_covered: {canonical_field: months}, carried alongside values
+    using the exact same per-field "which duplicate line item wins" precedence as
+    chosen_labels below — there is deliberately only one place that decides which
+    duplicate line item wins, so the value and its months-covered annotation can
+    never drift apart. Only fields the extractor actually flagged (see
+    LineItem.months_covered / extractor._detect_months_covered) appear here; a field
+    absent from this dict is assumed to already be a standalone-period figure.
+    """
     issues: list[Issue] = []
     src = extraction.meta.units
     if target_units not in UNIT_MULTIPLIER:
@@ -78,6 +87,7 @@ def to_target_units(
 
     values: dict[str, float] = {}
     chosen_labels: dict[str, str] = {}
+    months_covered: dict[str, int] = {}
     for item in extraction.line_items:
         fid = item.field.value
         v = item.value
@@ -105,6 +115,10 @@ def to_target_units(
                 )
                 values[fid] = v
                 chosen_labels[fid] = item.label_in_pdf
+                if item.months_covered is not None:
+                    months_covered[fid] = item.months_covered
+                else:
+                    months_covered.pop(fid, None)
                 continue
             issues.append(
                 Issue(
@@ -118,7 +132,11 @@ def to_target_units(
             continue
         values[fid] = v
         chosen_labels[fid] = item.label_in_pdf
-    return values, issues
+        if item.months_covered is not None:
+            months_covered[fid] = item.months_covered
+        else:
+            months_covered.pop(fid, None)
+    return values, months_covered, issues
 
 
 def _alias_hit(label: str, fid: str) -> bool:

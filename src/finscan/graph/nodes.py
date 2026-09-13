@@ -42,11 +42,30 @@ def ingest_pdf(state: dict) -> dict:
         message=f"Financial statements located on page(s) {statement_pages} of "
                 f"{len(doc.pages)}; the rest was passed as context only."))
 
+    # A filing whose statement pages were flattened to images (common for the signed
+    # pages of audited/interim accounts) still yields plenty of text from its notes and
+    # narrative, so the whole-document check below never fires — the statements are
+    # simply absent, and everything downstream extracts from the notes instead. Name the
+    # unreadable pages explicitly; silently proceeding is what makes this look like a
+    # mysterious extraction failure three nodes later.
+    unread = [p.page for p in doc.pages
+              if not p.text.strip() and not p.tables and not p.ocr_used]
+    if unread:
+        issues.append(Issue(
+            severity="error", code="pages_not_read",
+            message=f"Page(s) {unread} carry no text layer and OCR recovered nothing from "
+                    f"them, so their content reached neither the statement-page scoring nor "
+                    f"the extractor. If the financial statements are on those pages, every "
+                    f"figure below was read from somewhere else. Install tesseract + poppler "
+                    f"for local OCR, or set FINSCAN_LLM_PROVIDER and the matching API key so "
+                    f"the vision-model fallback can transcribe them."))
+
     text = doc.as_prompt_text()
     if len(text.strip()) < 200:
         issues.append(Issue(severity="error", code="empty_pdf",
                             message="Almost no text recovered from the PDF. It is likely a scan "
-                                    "without OCR support installed (needs tesseract + poppler)."))
+                                    "and the vision-model OCR fallback did not recover it — check "
+                                    "that FINSCAN_LLM_PROVIDER and the matching API key are set."))
     return {
         "document_text": text,
         "statements_text": doc.as_prompt_text(statements_only=True),
@@ -81,9 +100,10 @@ def extract_financials(state: dict) -> dict:
         issues.append(Issue(
             severity="error", code="no_line_items",
             message="The model returned no line items after two attempts. Most often this "
-                    "means the statement pages are images rather than text (install "
-                    "tesseract + poppler), or the document is commentary with no statement "
-                    "in it. Run `finscan inspect-pdf <file>` to see what text was recovered."))
+                    "means the statement pages are images rather than text and the vision-"
+                    "model OCR fallback could not read them, or the document is commentary "
+                    "with no statement in it. Run `finscan inspect-pdf <file>` to see what "
+                    "text was recovered."))
     if extraction.notes:
         issues.append(Issue(severity="info", code="extractor_note", message=extraction.notes))
     return {"extraction": extraction, "issues": issues}
@@ -132,16 +152,44 @@ def resolve_profile(state: dict) -> dict:
 
 
 def normalize(state: dict) -> dict:
-    """Convert to base units once; each sheet is rescaled to its own units at write time."""
-    values, unit_issues = to_target_units(state["extraction"], "units")
+    """Convert to base units once; each sheet is rescaled to its own units at write time.
+
+    Subtotal derivation (derive_missing) deliberately does NOT happen here anymore — it
+    moved to resolve_cumulative_periods(), the next node, because a derived figure like
+    EBITDA must be computed from D&A *after* a cumulative-vs-standalone-quarter correction,
+    not before. See resolve_cumulative_periods()'s docstring.
+    """
+    values, months_covered, unit_issues = to_target_units(state["extraction"], "units")
     # Composites first: they change the inputs that subtotals are derived from,
     # so deriving before recombining leaves the subtotals stale.
     values, comp_issues = _apply_composites(values, state.get("profile"))
     values, sign_issues = enforce_sign_rules(values)
+    return {"values": values, "months_covered": months_covered,
+            "issues": unit_issues + comp_issues + sign_issues}
+
+
+def resolve_cumulative_periods(state: dict) -> dict:
+    """Correct any field the filing only disclosed as a year-to-date cumulative figure.
+
+    Must run before derive_missing (so ebitda etc. derive from the corrected figure, not
+    the raw cumulative one) and before refine_mapping/extract_label_rows (so the review
+    report's value column shows the corrected figure too) — hence its own node, positioned
+    right after normalize() and before everything else. See excel/cumulative.py.
+    """
+    from finscan.excel.cumulative import resolve_cumulative_periods as _resolve
+
+    values, cumulative_issues = _resolve(
+        state["plan"],
+        state["excel_path"],
+        state["values"],
+        state.get("months_covered") or {},
+        state.get("enabled_sheets"),
+        state["extraction"].meta,
+    )
     before = set(values)
     values, derive_issues = derive_missing(values)
     return {"values": values, "derived_fields": sorted(set(values) - before),
-            "issues": unit_issues + comp_issues + sign_issues + derive_issues}
+            "issues": cumulative_issues + derive_issues}
 
 
 def _apply_composites(values: dict[str, float], profile) -> tuple[dict[str, float], list[Issue]]:
@@ -452,11 +500,22 @@ def crosscheck_formulas(state: dict) -> dict:
     return {"issues": issues}
 
 
+#: A field-scoped cumulative-vs-standalone-quarter correction that could not be resolved
+#: safely (not enough prior-quarter history in the sheet, or that history's own dates
+#: don't fit the expected cadence). Unlike PERIOD_BLOCKERS below, this is intentionally
+#: NOT used to block a whole sheet in write_excel() — writer.py's existing missing-field
+#: fallback already handles the one affected row correctly, and every other field on that
+#: sheet should still write normally. It only needs to (a) force needs_review so the run is
+#: visibly flagged, and (b) skip a pointless retry, since re-extracting the same PDF cannot
+#: manufacture more workbook history.
+CUMULATIVE_BLOCKERS = {"cumulative_period_insufficient_history", "cumulative_period_ambiguous_history"}
+
+
 def validate_node(state: dict) -> dict:
     issues = validate(state["values"], state.get("mappings", []))
     status = "needs_review" if has_blocking_errors(issues) else "ok"
     # A period mismatch is decided before this node and must not be cleared by it.
-    if any(i.code in {"period_gap", "period_already_present"}
+    if any(i.code in {"period_gap", "period_already_present"} | CUMULATIVE_BLOCKERS
            for i in state.get("issues", [])):
         status = "needs_review"
     if not state["plan"].colors_found:
@@ -474,6 +533,13 @@ def route_after_validate(state: dict) -> str:
     # A wrong-slot write is unrecoverable by retrying the extraction — the
     # extraction was fine, the target was not. Stop and report.
     if any(i.code in PERIOD_BLOCKERS for i in state.get("issues", [])):
+        return "hold"
+    # Same idea for an unresolved cumulative-period correction: the workbook simply
+    # doesn't have the prior-quarter history needed, and retrying extraction changes
+    # nothing about that. This still routes to write_excel exactly like "write" does
+    # (see graph/build.py's conditional edges) — writer.py's own per-row fallback for
+    # the one affected field, everything else on the sheet writes as normal.
+    if any(i.code in CUMULATIVE_BLOCKERS for i in state.get("issues", [])):
         return "hold"
     if state.get("status") == "awaiting_confirmation":
         return "hold"

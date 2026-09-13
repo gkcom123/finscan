@@ -156,6 +156,10 @@ class SheetPlan:
     sections: dict[int, str] = field(default_factory=dict)       # start row -> section
     rows: list[RowPlan] = field(default_factory=list)
     score: float = 0.0
+    #: every period column that already holds real values, ascending, before write_col is
+    #: chosen. Used by excel/cumulative.py to locate this fiscal year's prior standalone
+    #: quarters when a value only arrives as a year-to-date cumulative figure.
+    populated_period_cols: list[int] = field(default_factory=list)
 
     @property
     def write_col_letter(self) -> str:
@@ -383,6 +387,7 @@ def _analyse_sheet(ws, theme: Theme) -> SheetPlan:
 
     # --- where do we write? ------------------------------------------------
     populated = [c for c in period_cols if col_stats[c]["values"] > 0]
+    plan.populated_period_cols = sorted(populated)
     last_populated = _most_recent(populated, plan.period_dates) if populated else None
 
     # A pre-formatted but empty column means the template already reserves the

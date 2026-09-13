@@ -7,7 +7,14 @@ from itertools import combinations
 from pydantic import BaseModel, Field
 
 from finscan.llm.factory import structured
-from finscan.schemas import FIELD_LABELS, Extraction, Field_, LineItem, NON_SCALED_FIELDS
+from finscan.schemas import (
+    CUMULATIVE_CORRECTION_INELIGIBLE_FIELDS,
+    FIELD_LABELS,
+    Extraction,
+    Field_,
+    LineItem,
+    NON_SCALED_FIELDS,
+)
 
 _TAXONOMY = "\n".join(f"- {fid}: {label}" for fid, label in FIELD_LABELS.items())
 
@@ -189,7 +196,9 @@ def _close(a: float, b: float) -> bool:
     return abs(a - b) / denom <= 1e-3
 
 
-def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str | None:
+def _maybe_realign_quarter_values(
+    result: Extraction, document_text: str
+) -> tuple[str | None, set[int]]:
     """Prefer quarter transaction values in mixed 6M/3M statements (Spanish or English).
 
     Some filings present rows with multiple numeric columns in this order:
@@ -197,13 +206,18 @@ def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str
     value (6M current) for quarterly runs. When we can detect that pattern, we
     swap to the second value (Q current) if the extracted value matches the
     first one.
+
+    Returns (note, changed_ids): changed_ids holds id() of every LineItem this
+    function rewrote in place, so _detect_months_covered() below can skip them —
+    a row already realigned to its standalone quarter value must not also be
+    treated as a lone cumulative figure and corrected a second time.
     """
     if result.meta.period_type != "quarter":
-        return None
+        return None, set()
     if not _MIXED_QUARTER_TABLE.search(document_text or ""):
-        return None
+        return None, set()
 
-    changed = 0
+    changed_ids: set[int] = set()
     for item in result.line_items:
         row = item.source_row_text or ""
         if not row:
@@ -220,15 +234,228 @@ def _maybe_realign_quarter_values(result: Extraction, document_text: str) -> str
         # Switch only when the model clearly picked the first numeric slot.
         if _close(item.value, first) and not _close(item.value, second):
             item.value = second
-            changed += 1
+            changed_ids.add(id(item))
 
-    if changed:
+    if changed_ids:
         return (
             "Detected a mixed six-month/quarter table and switched "
-            f"{changed} line item(s) from cumulative 6M values to quarter "
+            f"{len(changed_ids)} line item(s) from cumulative 6M values to quarter "
             "transaction values (second numeric column) for quarterly extraction."
+        ), changed_ids
+    return None, changed_ids
+
+
+_CUMULATIVE_PERIOD_PHRASE = re.compile(
+    r"\b(three|six|nine|twelve|tres|seis|nueve|doce|3|6|9|12)[\s-]"
+    r"(?:month|months|mes|meses)\b(?:[\s-]periods?)?\s*"
+    r"(?:ended|ending|terminad[oa]s?|al)\b",
+    re.IGNORECASE,
+)
+_MONTHS_WORDS = {
+    "three": 3, "3": 3, "tres": 3,
+    "six": 6, "6": 6, "seis": 6,
+    "nine": 9, "9": 9, "nueve": 9,
+    "twelve": 12, "12": 12, "doce": 12,
+}
+#: How far back (characters) to look for a table's own accumulation-period header
+#: above a data row that carries no such phrase itself. Approximate by nature —
+#: every hit is logged as an info note so real filings can tune this over time.
+_CUMULATIVE_PROXIMITY_WINDOW = 600
+
+
+def _months_from_phrase(text: str) -> int | None:
+    m = _CUMULATIVE_PERIOD_PHRASE.search(text or "")
+    return _MONTHS_WORDS.get(m.group(1).lower()) if m else None
+
+
+#: A statement whose heading announces two accumulation bases at once — e.g.
+#: "FOR THE THREE-MONTH AND NINE-MONTH PERIODS ENDED 30 SEPTEMBER 2025", the standard
+#: IAS 34 interim heading. Such a statement prints BOTH a standalone-quarter column and
+#: a year-to-date column, so a row's basis is decided by which column the value came
+#: from, never by the heading — which says both. Proximity matching must not fire here.
+_MULTI_BASIS_HEADING = re.compile(
+    r"\b(?:three|six|nine|twelve|3|6|9|12)[\s-](?:month|months)\b[^.\n]{0,40}?"
+    r"\b(?:and|y|&)\b[^.\n]{0,40}?"
+    r"\b(?:three|six|nine|twelve|3|6|9|12)[\s-](?:month|months)\b",
+    re.IGNORECASE,
+)
+
+_MONTH_NAMES = {
+    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+    "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+    "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11,
+    "diciembre": 12,
+}
+
+#: A period column header written as a month range, e.g. "July - September 2025" or
+#: "January -\nSeptember\n2025" (statement headers are routinely stacked across lines,
+#: so newlines are treated as ordinary whitespace). The span between the two months,
+#: inclusive, is how many months that column accumulates: Jul-Sep = 3, Jan-Sep = 9.
+_COLUMN_MONTH_RANGE = re.compile(
+    r"\b(" + "|".join(sorted(_MONTH_NAMES, key=len, reverse=True)) + r")\b"
+    r"\s*[-–—]\s*"
+    r"\b(" + "|".join(sorted(_MONTH_NAMES, key=len, reverse=True)) + r")\b",
+    re.IGNORECASE,
+)
+
+#: How far above a data row to look for that table's own column-header block. Wider than
+#: _CUMULATIVE_PROXIMITY_WINDOW because the header sits above every row of the table, so
+#: the last rows of a long statement are a long way from it.
+_COLUMN_HEADER_WINDOW = 2500
+
+
+#: Column headers of one statement are printed together in a single header block, so
+#: consecutive month-range labels sit close together. A larger gap than this means the
+#: earlier label belongs to a different statement further up the document.
+_HEADER_BLOCK_GAP = 200
+
+
+def _column_months(window: str) -> list[int] | None:
+    """Months accumulated by each period column, left to right, from a header block.
+
+    Only the header block nearest the row is used. A window wide enough to reach a long
+    statement's header also reaches the *previous* statement's header, and those columns
+    describe a different table: on a document where a four-column profit or loss is
+    followed by a two-column cash flow, taking every match would place the cash flow's
+    first column at index 4 of a six-entry list and read the profit or loss's basis for
+    it. Returns None when no month-range columns are found, leaving the caller with no
+    column-level signal.
+    """
+    spans: list[tuple[int, int]] = []
+    for m in _COLUMN_MONTH_RANGE.finditer(window or ""):
+        start, end = _MONTH_NAMES[m.group(1).lower()], _MONTH_NAMES[m.group(2).lower()]
+        spans.append((m.start(), (end - start) % 12 + 1))
+    if not spans:
+        return None
+
+    block = [spans[-1]]
+    for pos, months in reversed(spans[:-1]):
+        if block[0][0] - pos > _HEADER_BLOCK_GAP:
+            break
+        block.insert(0, (pos, months))
+    return [months for _, months in block]
+
+
+def _value_column_index(item: LineItem) -> int | None:
+    """Which numeric slot of its own printed row the extracted value sits in.
+
+    Matched on magnitude, not signed value: an expense row prints its figures in
+    parentheses ("Cost of Sales | (4,044,312) | ...") which parse as negative, while the
+    extractor reports the same figure positive and lets enforce_sign_rules() settle the
+    convention later. Comparing signed values there finds no column at all, which sends
+    every bracketed row — most of the cost base — down the "basis undetectable" path.
+
+    Ambiguous when the same magnitude is printed more than once in the row (e.g. a flat
+    year on year line); returning None there keeps the caller from picking a basis off
+    a coin flip.
+    """
+    nums = _row_numbers(item.source_row_text or "")
+    hits = [i for i, v in enumerate(nums) if _close(abs(v), abs(item.value))]
+    return hits[0] if len(hits) == 1 else None
+
+
+def _nearest_preceding_months(window: str) -> int | None:
+    """Closest accumulation-period phrase to the END of window (i.e. just above the row)."""
+    matches = list(_CUMULATIVE_PERIOD_PHRASE.finditer(window))
+    return _MONTHS_WORDS.get(matches[-1].group(1).lower()) if matches else None
+
+
+def _detect_months_covered(
+    result: Extraction, document_text: str, skip_ids: set[int]
+) -> str | None:
+    """Tag each line item with how many months its value actually covers.
+
+    Some fields are only disclosed as a year-to-date cumulative figure even in an
+    otherwise quarterly filing (e.g. Depreciation & Amortisation stated "for the
+    six-month period ended 30 June" with no adjoining quarter-only column at all).
+    Writing that raw cumulative number into a quarterly model column would silently
+    corrupt it and everything derived from it. This function only *tags* the value
+    with how many months it covers; excel/cumulative.py (run later, once the target
+    workbook's own prior-quarter columns are available) does the actual correction.
+
+    Deterministic and regex-only, like _maybe_realign_quarter_values above — the
+    model is never asked to self-report this (see LineItem.months_covered's
+    SkipJsonSchema annotation in schemas.py, which keeps the field out of the
+    function-calling schema entirely).
+
+    Three passes, most precise first:
+
+    1. Column position. An IAS 34 interim statement routinely prints a standalone
+       quarter column and a year-to-date column side by side under one heading that
+       names both bases ("FOR THE THREE-MONTH AND NINE-MONTH PERIODS ENDED ..."). The
+       basis is then a property of the column the value was read from, not of the page:
+       on Almarai's 3Q25 profit or loss the same heading covers Revenue read from
+       "July - September 2025" (3 months, standalone) and the very same row's
+       "January - September 2025" figure (9 months, cumulative). Month-range column
+       headers give this exactly, so it is tried first and trusted over any phrase.
+    2. The row's own text ("... for the six months ended 30 June ...").
+    3. The nearest accumulation phrase above the row — but ONLY when the surrounding
+       heading names a single basis. Under a heading naming two, proximity would tag
+       every row of a mixed table with the cumulative figure's basis and the correction
+       pass would then subtract prior quarters from figures that are already standalone.
+       Refusing to guess there is the whole point of this ordering.
+    """
+    if result.meta.period_type != "quarter":
+        return None
+    text = document_text or ""
+    tagged: list[str] = []
+    skipped_ambiguous: list[str] = []
+    for item in result.line_items:
+        if id(item) in skip_ids or item.field.value in CUMULATIVE_CORRECTION_INELIGIBLE_FIELDS:
+            continue
+
+        row = (item.source_row_text or "").strip()
+        pos = text.find(row) if row else -1
+        header_window = text[max(0, pos - _COLUMN_HEADER_WINDOW):pos] if pos > 0 else ""
+
+        months = None
+        # 1. column position within this table's own month-range headers
+        columns = _column_months(header_window)
+        if columns:
+            idx = _value_column_index(item)
+            if idx is not None and idx < len(columns):
+                months = columns[idx]
+
+        # 2. the row's own inline phrase
+        if months is None:
+            months = _months_from_phrase(row)
+
+        # 3. nearest phrase above the row, only under a single-basis heading
+        if months is None and pos > 0:
+            proximity_window = text[max(0, pos - _CUMULATIVE_PROXIMITY_WINDOW):pos]
+            if _MULTI_BASIS_HEADING.search(header_window):
+                if _nearest_preceding_months(proximity_window) is not None:
+                    skipped_ambiguous.append(item.field.value)
+            else:
+                months = _nearest_preceding_months(proximity_window)
+
+        # A three-month figure in a quarterly filing is already standalone; tagging it
+        # would claim a cumulative disclosure in the review note for a value that needs
+        # no correction at all.
+        if months is not None and months > 3:
+            item.months_covered = months
+            tagged.append(f"{item.field.value} ({months} months)")
+
+    notes: list[str] = []
+    if tagged:
+        notes.append(
+            f"Detected a cumulative (year-to-date) disclosure for {len(tagged)} line "
+            f"item(s), flagged for standalone-quarter correction against the workbook's "
+            f"own prior-period columns: {', '.join(tagged)}."
         )
-    return None
+    if skipped_ambiguous:
+        notes.append(
+            f"{len(skipped_ambiguous)} line item(s) sit under a heading naming two "
+            f"accumulation periods at once (e.g. 'three-month and nine-month periods "
+            f"ended') and their printed row gave no column position, so their basis "
+            f"could not be established from the text: "
+            f"{', '.join(sorted(set(skipped_ambiguous)))}. Left as extracted rather than "
+            f"corrected on a guess — verify these against the source PDF."
+        )
+    return "\n".join(notes) or None
 
 
 _TOTAL_ROW = re.compile(r"(?im)^\s*total\b[^\n]*\d[^\n]*$")
@@ -391,7 +618,7 @@ def _rescue_via_focused_llm_call(
         ) if v is not None
     }
     if not found:
-        return {}, None
+        return {}, None, ""
     column_used = getattr(result, "column_used", "")
     note = (
         f"Recovered {', '.join(found)} via a focused follow-up extraction scoped to just "
@@ -399,7 +626,7 @@ def _rescue_via_focused_llm_call(
         + (f"; column used: {column_used}" if column_used else "")
         + "."
     )
-    return found, note
+    return found, note, column_used
 
 
 _CF_RESCUE_FIELDS = ("total_before_working_capital_changes", "net_cash_from_operating_activities")
@@ -460,9 +687,27 @@ def _ensure_working_capital_components(result: Extraction, statements_text: str)
     have = {li.field.value for li in result.line_items}
     missing = set(_CF_RESCUE_FIELDS) - have
     if missing:
-        found, note = _rescue_via_focused_llm_call(
+        # Tolerate a 2-tuple: test stubs (and any older monkeypatch) predate column_used.
+        rescued = _rescue_via_focused_llm_call(
             statements_text, result.meta.period_label, result.meta.period_end_date
         )
+        found, note = rescued[0], rescued[1]
+        column_used = rescued[2] if len(rescued) > 2 else ""
+
+        # The rescue reports which column it read, which is the only basis signal these
+        # items will ever have: they are appended after _detect_months_covered has run,
+        # and their placeholder source_row_text cannot be located in the document, so
+        # neither the column-position nor the proximity pass can reach them. A cash flow
+        # statement routinely prints only a year-to-date column (Almarai's 2Q26 interims
+        # state "January - June 2026" and no quarter at all), so leaving these untagged
+        # writes a six- or nine-month figure into a quarterly column as though it were
+        # standalone — the exact corruption the cumulative correction exists to prevent.
+        rescued_months = None
+        if result.meta.period_type == "quarter":
+            spans = _column_months(column_used)
+            if spans and spans[0] > 3:
+                rescued_months = spans[0]
+
         recovered = set()
         for fid in missing:
             if fid in found:
@@ -470,8 +715,15 @@ def _ensure_working_capital_components(result: Extraction, statements_text: str)
                     field=Field_(fid), label_in_pdf=FIELD_LABELS[fid],
                     value=found[fid], confidence=0.7,
                     source_row_text="(recovered via focused follow-up extraction)",
+                    months_covered=rescued_months,
                 ))
                 recovered.add(fid)
+        if rescued_months and recovered:
+            notes.append(
+                f"The focused rescue read {', '.join(sorted(recovered))} from a "
+                f"{rescued_months}-month column ({column_used.strip()}); tagged for "
+                f"standalone-quarter correction against the workbook's prior columns."
+            )
         if note:
             notes.append(note)
         if recovered:
@@ -494,13 +746,17 @@ def extract(document_text: str, hint: str = "",
     notes: list[str] = []
     result = _invoke(document_text, hint)
     if result.line_items:
-        quarter_note = _maybe_realign_quarter_values(result, statements_text or document_text)
+        text = statements_text or document_text
+        quarter_note, realigned_ids = _maybe_realign_quarter_values(result, text)
         if quarter_note:
             notes.append(quarter_note)
+        months_note = _detect_months_covered(result, text, realigned_ids)
+        if months_note:
+            notes.append(months_note)
         scale_note = _maybe_rescale_items_to_printed_units(result)
         if scale_note:
             notes.append(scale_note)
-        wc_note = _ensure_working_capital_components(result, statements_text or document_text)
+        wc_note = _ensure_working_capital_components(result, text)
         if wc_note:
             notes.append(wc_note)
         return result, notes
@@ -510,9 +766,12 @@ def extract(document_text: str, hint: str = "",
     focused = statements_text or document_text
     retry = _invoke(focused, (hint + " " + RETRY_HINT).strip())
     if retry.line_items:
-        quarter_note = _maybe_realign_quarter_values(retry, focused)
+        quarter_note, realigned_ids = _maybe_realign_quarter_values(retry, focused)
         if quarter_note:
             notes.append(quarter_note)
+        months_note = _detect_months_covered(retry, focused, realigned_ids)
+        if months_note:
+            notes.append(months_note)
         scale_note = _maybe_rescale_items_to_printed_units(retry)
         if scale_note:
             notes.append(scale_note)

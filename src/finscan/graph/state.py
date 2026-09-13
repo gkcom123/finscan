@@ -35,6 +35,7 @@ class GraphState(TypedDict, total=False):
     enabled_sheets: list[str]
     values: dict[str, float]   # canonical field -> value in BASE units
     label_values: dict[str, float]  # raw Excel label -> value in BASE units (label_only rows)
+    months_covered: dict[str, int]  # canonical field -> months a cumulative figure covers
     derived_fields: list[str]
     mappings: list             # flattened schemas.RowMapping across sheets
     period_header: str

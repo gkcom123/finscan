@@ -108,6 +108,17 @@ def check_continuity(
         last_date, expected, reported, periods_off)
 
 
+def months_from_cadence_days(days: int) -> int:
+    """Snap a measured day-count cadence to the nearest sane period length in months.
+
+    A leap year makes a measured quarterly cadence 366 days instead of ~91; snapping to
+    whole months first is what keeps period arithmetic sane (see _add_days below), and the
+    same snapping is reused by excel/cumulative.py to turn a filing's own "months ended"
+    disclosure into a number of periods relative to this model's own quarter length.
+    """
+    return min((1, 3, 6, 9, 12), key=lambda m: abs(days / 30.44 - m))
+
+
 def _add_days(d: date, days: int) -> date:
     """Advance one period.
 
@@ -117,7 +128,7 @@ def _add_days(d: date, days: int) -> date:
     """
     from calendar import monthrange
 
-    months = min((1, 3, 6, 9, 12), key=lambda m: abs(days / 30.44 - m))
+    months = months_from_cadence_days(days)
     total = d.month - 1 + months
     year, month = d.year + total // 12, total % 12 + 1
     last_day = monthrange(year, month)[1]

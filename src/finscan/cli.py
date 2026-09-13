@@ -230,17 +230,29 @@ def _inspect_pdf(a) -> int:
     wanted = set(doc.statement_pages())
     print(f"{a.pdf}\n{len(doc.pages)} page(s); statements detected on "
           f"{sorted(wanted)}\n")
-    print(f"{'page':>5} {'score':>7} {'chars':>7} {'ocr':>5}  role      first line")
+    print(f"{'page':>5} {'score':>7} {'chars':>7} {'source':>7}  role      first line")
     for p in doc.pages:
         role = "STATEMENT" if p.page in wanted else "context"
         head = (p.text.strip().splitlines() or ["(no text)"])[0][:44]
+        source = "LLM" if p.ocr_used else "local"
         print(f"{p.page:>5} {statement_score(p):>7.2f} {len(p.text):>7} "
-              f"{'yes' if p.ocr_used else '-':>5}  {role:<9} {head}")
+              f"{source:>7}  {role:<9} {head}")
+
+    n_llm = len(doc.ocr_pages)
+    n_local = len(doc.pages) - n_llm
+    if n_llm:
+        print(f"\nSource: {n_local} page(s) read by the local PDF extractor (pdfplumber, "
+              f"free, no network call); {n_llm} page(s) transcribed by the configured "
+              f"vision-LLM, a paid API call each — page(s) {doc.ocr_pages}.")
+    else:
+        print(f"\nSource: all {n_local} page(s) read by the local PDF extractor "
+              f"(pdfplumber) — no LLM calls made.")
 
     empty = [p.page for p in doc.pages if not p.text.strip()]
     if empty:
-        print(f"\nPages with no text layer: {empty}. These need OCR "
-              f"(brew install tesseract poppler).")
+        print(f"\nPages with no text layer: {empty}. OCR (vision-model transcription) did "
+              f"not recover them — check FINSCAN_LLM_PROVIDER and the matching API key are "
+              f"set, and that FINSCAN_OCR_FALLBACK is not disabled.")
     if a.show:
         print("\n" + "=" * 70)
         print(doc.as_prompt_text())

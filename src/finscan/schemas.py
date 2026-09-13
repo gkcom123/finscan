@@ -11,6 +11,7 @@ from enum import Enum
 from typing import Literal
 
 from pydantic import BaseModel, Field
+from pydantic.json_schema import SkipJsonSchema
 
 
 class Field_(str, Enum):
@@ -241,6 +242,11 @@ CASH_FLOW_FIELDS: set[str] = {
 #: Fields that are ratios/per-share and must NOT be rescaled by the units multiplier.
 NON_SCALED_FIELDS = {"eps_basic", "eps_diluted"}
 
+#: Fields that are point-in-time or per-share and can never be "cumulative since the
+#: start of the year" in the sense extractor.detect_months_covered() looks for, even if a
+#: "months ended" phrase happens to sit nearby in the source text.
+CUMULATIVE_CORRECTION_INELIGIBLE_FIELDS = NON_SCALED_FIELDS | {"paid_up_equity_share_capital"}
+
 
 # --------------------------------------------------------------------------- #
 # Extraction contracts
@@ -254,6 +260,9 @@ class LineItem(BaseModel):
     source_row_text: str | None = Field(
         default=None, description="Full raw text of the source row, for audit."
     )
+    #: it is set deterministically by extractor.py after the LLM call runs, never by the
+    #: model itself (the model has no way to reliably self-report this).
+    months_covered: SkipJsonSchema[int | None] = Field(default=None)
 
 
 class PeriodMeta(BaseModel):

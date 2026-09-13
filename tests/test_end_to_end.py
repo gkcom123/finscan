@@ -240,6 +240,127 @@ def test_second_upload_appends_a_further_column(workspace, stub_llm, confirmed):
     assert abs(ws["F5"].value - 1284.50) < 0.01     # the first column survives
 
 
+# --------------------------------------------------------------------------- #
+# Cumulative-vs-standalone-quarter correction
+# --------------------------------------------------------------------------- #
+def _q2_extraction_with_cumulative_da(q2_only_component_lakhs: float):
+    """A Q2 filing whose income statement is genuinely self-consistent (as a real
+    filing's would be — the company already knows its own standalone D&A when it
+    computes its own PBT/PAT), but whose D&A *line item* happens to be sourced from a
+    cash-flow/notes disclosure that only ever prints the six-month cumulative figure.
+    total_expenses/PBT/PAT are cascaded from Q1's figures by the same delta the D&A
+    change introduces, so this fixture doesn't manufacture a *second*, unrelated
+    inconsistency crosscheck would also (correctly) catch."""
+    from conftest import Q1_FY27_LAKHS
+    from finscan.schemas import Extraction, Field_, LineItem, PeriodMeta
+
+    delta = q2_only_component_lakhs - Q1_FY27_LAKHS["depreciation_amortisation"]
+    cumulative_lakhs = Q1_FY27_LAKHS["depreciation_amortisation"] + q2_only_component_lakhs
+
+    values = dict(Q1_FY27_LAKHS)
+    values["depreciation_amortisation"] = cumulative_lakhs
+    values["total_expenses"] = Q1_FY27_LAKHS["total_expenses"] + delta
+    values["profit_before_tax"] = Q1_FY27_LAKHS["profit_before_tax"] - delta
+    values["profit_after_tax"] = Q1_FY27_LAKHS["profit_after_tax"] - delta
+    values["total_comprehensive_income"] = Q1_FY27_LAKHS["total_comprehensive_income"] - delta
+
+    items = []
+    for k, v in values.items():
+        kwargs = dict(field=Field_(k), label_in_pdf=k.replace("_", " ").title(),
+                     value=v, confidence=0.96, page=1)
+        if k == "depreciation_amortisation":
+            kwargs["source_row_text"] = (
+                f"Depreciation and amortisation for the six months ended "
+                f"30 September 2026 was {v:,.2f}."
+            )
+        items.append(LineItem(**kwargs))
+    return Extraction(
+        meta=PeriodMeta(company_name="Northwind Industries Limited",
+                        period_label="Q2 FY2027", period_end_date="2026-09-30",
+                        period_type="quarter", consolidated=True, audited=False,
+                        currency="INR", units="lakhs"),
+        line_items=items,
+    )
+
+
+def _patch_q2_stub(monkeypatch, q2_only_component_lakhs: float):
+    from finscan.schemas import Extraction
+
+    class _Q2Stub:
+        def __init__(self, schema):
+            self.schema = schema
+
+        def invoke(self, _messages):
+            if self.schema is Extraction:
+                return _q2_extraction_with_cumulative_da(q2_only_component_lakhs)
+            return self.schema(matches=[])
+
+    monkeypatch.setattr("finscan.extract.extractor.structured", lambda s: _Q2Stub(s))
+    monkeypatch.setattr("finscan.llm.factory.structured", lambda s: _Q2Stub(s))
+
+
+def test_cumulative_disclosure_is_corrected_against_the_prior_quarter_column(
+    workspace, stub_llm, confirmed, monkeypatch,
+):
+    """The core regression test for this feature: a Q2 filing that only discloses D&A
+    as a six-month cumulative figure must not have that raw number written into the
+    model. It must be corrected against Q1's own standalone figure — which the first
+    (unrelated, ordinary) run already wrote to disk — before crosscheck ever runs."""
+    first = _run_confirmed(workspace, confirmed, "northwind", NORTHWIND, ["P&L Summary"])
+    assert abs(load_workbook(first["write_result"].workbook_path)
+              ["P&L Summary"]["F13"].value - 89.20) < 0.01     # Q1's own standalone D&A
+
+    q2_only_component_crores = 92.00
+    _patch_q2_stub(monkeypatch, q2_only_component_crores * 100.0)   # crores -> lakhs
+
+    second = run_graph(str(workspace["pdf"]), first["write_result"].workbook_path,
+                       output_path=str(workspace["dir"] / "q2.xlsx"),
+                       period_label="Q2 FY2027", use_llm_mapping=False)
+
+    assert second["status"] == "ok", second["report"]
+    assert any(i.code == "cumulative_period_corrected"
+              and i.field == "depreciation_amortisation" for i in second["issues"])
+    ws = load_workbook(second["write_result"].workbook_path)["P&L Summary"]
+    assert abs(ws["G13"].value - q2_only_component_crores) < 0.01, (
+        "must be the Q2-only component, not the six-month cumulative figure"
+    )
+    assert not any(i.code == "formula_crosscheck" for i in second["issues"]), (
+        "crosscheck must evaluate the corrected D&A, not the raw cumulative figure — a "
+        "spurious error here means the correction ran too late in the pipeline"
+    )
+
+
+def test_cumulative_disclosure_without_prior_history_is_left_for_review(
+    workspace, confirmed, monkeypatch,
+):
+    """The same six-month cumulative disclosure, but the D&A row's own prior-period
+    history is missing (the pristine sample model otherwise already has one reference
+    column of history, per test_existing_columns_and_out_of_scope_sheets_are_untouched,
+    so that one row's own history is cleared rather than trying to build a workbook
+    with no history at all). There is nothing to subtract, so the raw cumulative
+    figure must not be written, the run must be flagged for review, and every OTHER
+    field on the same sheet must still write normally (field-scoped, not sheet-scoped,
+    blocking)."""
+    _patch_q2_stub(monkeypatch, q2_only_component_lakhs=9_200.00)
+
+    wb = load_workbook(workspace["northwind"])
+    wb["P&L Summary"]["E13"].value = None      # D&A's own prior-period history: gone
+    wb.save(workspace["northwind"])
+
+    run_graph(str(workspace["pdf"]), str(workspace["northwind"]), use_llm_mapping=False,
+              dry_run=True)
+    confirmed(NORTHWIND, sheets=["P&L Summary"])
+    state = run_graph(str(workspace["pdf"]), str(workspace["northwind"]),
+                      output_path=str(workspace["northwind_out"]), use_llm_mapping=False)
+
+    assert state["status"] == "needs_review"
+    assert any(i.code == "cumulative_period_insufficient_history"
+              and i.field == "depreciation_amortisation" for i in state["issues"])
+    ws = load_workbook(state["write_result"].workbook_path)["P&L Summary"]
+    assert ws["F13"].value != 181.20, "the raw six-month cumulative figure must not be written"
+    assert abs(ws["F5"].value - 1284.50) < 0.01, "every other field on the sheet still writes"
+
+
 def test_bad_extraction_retries_then_reports_needs_review(workspace, monkeypatch, confirmed):
     from conftest import Q1_FY27_LAKHS, sample_extraction
     from finscan.schemas import Extraction

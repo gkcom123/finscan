@@ -110,27 +110,23 @@ def _render_table(tbl: list[list[str]]) -> str:
 
 
 def _ocr_page(pdf_path: str, page_no: int) -> str:
-    """OCR a single page: local Tesseract if the host has it, else a vision-model
-    transcription (some hosts, e.g. plain Windows installs, have the Python OCR
-    packages but not the system tesseract/poppler binaries)."""
-    text = _tesseract_ocr_page(pdf_path, page_no)
-    if text.strip():
-        return text
+    """OCR a single page via the configured vision-capable chat model.
+
+    A local Tesseract pass used to run first here, with the vision model only as
+    a fallback for hosts without the system binary. It was removed: Tesseract
+    reads a multi-column statement table one column at a time — every label,
+    then every figure for period 1, then every figure for period 2 — instead of
+    row by row, so a caption and its own numbers are no longer adjacent anywhere
+    in the output. That is exactly the failure mode the pipe-delimited table
+    rendering elsewhere in this module exists to prevent (see the module
+    docstring), and it fails silently: Tesseract still returns non-empty text,
+    so nothing flags the row/column correspondence as lost.
+
+    The main extraction step already calls this same model on every document
+    regardless, so routing scanned pages through it too removes that failure
+    mode for a marginal cost of roughly a cent per page.
+    """
     return _vision_transcribe_page(pdf_path, page_no)
-
-
-def _tesseract_ocr_page(pdf_path: str, page_no: int) -> str:
-    """OCR a single page. Requires poppler + tesseract on the host."""
-    try:
-        import pytesseract
-        from pdf2image import convert_from_path
-    except ImportError:  # pragma: no cover - optional dependency
-        return ""
-    try:
-        images = convert_from_path(pdf_path, dpi=300, first_page=page_no, last_page=page_no)
-        return "\n".join(pytesseract.image_to_string(im) for im in images)
-    except Exception:  # pragma: no cover - host tooling missing
-        return ""
 
 
 _VISION_TRANSCRIBE_SYSTEM = """You transcribe a scanned/flattened financial statement
@@ -151,10 +147,11 @@ def _vision_transcribe_page(pdf_path: str, page_no: int) -> str:
     """Transcribe an image-only page with the configured vision-capable chat model.
 
     Renders the page with pdfplumber's own PDF renderer (pypdfium2, a pure-Python
-    wheel — no poppler binary needed) and asks the model to read it back as text,
-    so a host with no local OCR engine installed can still recover pages that
-    were flattened to images (a common pattern for the signed statement pages
-    inside audited/interim filings).
+    wheel — no poppler binary needed) and asks the model to read it back as text.
+    This is FinScan's only OCR path: it recovers pages that were flattened to
+    images (a common pattern for the signed statement pages inside audited/
+    interim filings) while preserving each row's label next to its own figures,
+    which a generic OCR engine's column-by-column reading order does not.
     """
     try:
         import base64

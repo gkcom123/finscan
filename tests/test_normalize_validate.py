@@ -18,14 +18,14 @@ def test_convert_lakhs_to_crores():
 
 
 def test_eps_is_not_rescaled():
-    values, _ = to_target_units(sample_extraction(), "crores")
+    values, _, _ = to_target_units(sample_extraction(), "crores")
     assert values["revenue_from_operations"] == 1284.50
     assert values["eps_basic"] == 31.31          # per-share stays per-share
     assert values["eps_diluted"] == 31.14
 
 
 def test_units_conversion_is_reported():
-    _, issues = to_target_units(sample_extraction(), "crores")
+    _, _, issues = to_target_units(sample_extraction(), "crores")
     assert any(i.code == "units_converted" for i in issues)
 
 
@@ -41,7 +41,7 @@ def test_derive_only_fills_absent_subtotals():
 
 
 def test_clean_extraction_passes_arithmetic():
-    values, _ = to_target_units(sample_extraction(), "crores")
+    values, _, _ = to_target_units(sample_extraction(), "crores")
     values, _ = derive_missing(values)
     issues = check_arithmetic(values) + check_plausibility(values)
     assert not has_blocking_errors(issues), [i.message for i in issues if i.severity == "error"]
@@ -51,7 +51,7 @@ def test_wrong_column_is_caught():
     """Simulate reading PAT from last year's column: identities stop matching."""
     bad = dict(Q1_FY27_LAKHS)
     bad["profit_after_tax"] = 10_120.00           # Q1 FY26 figure
-    values, _ = to_target_units(sample_extraction(bad), "crores")
+    values, _, _ = to_target_units(sample_extraction(bad), "crores")
     issues = check_arithmetic(values)
     assert has_blocking_errors(issues)
     assert any(i.code == "identity_pat" for i in issues)
@@ -60,7 +60,7 @@ def test_wrong_column_is_caught():
 def test_missing_component_breaks_total_expenses():
     bad = dict(Q1_FY27_LAKHS)
     bad["employee_benefit_expense"] = 2_176.00     # decimal slip
-    values, _ = to_target_units(sample_extraction(bad), "crores")
+    values, _, _ = to_target_units(sample_extraction(bad), "crores")
     issues = check_arithmetic(values)
     assert any(i.code == "identity_total_expenses" for i in issues)
 
