@@ -12,46 +12,79 @@ from finscan.graph.build import run as run_graph
 from finscan.profiles import ProfileStore
 
 
-def _print_summary(state: dict) -> None:
+#: Status -> (colour name, label). needs_review is amber rather than red: the run
+#: produced a workbook, it just must not be trusted unreviewed.
+_STATUS_STYLE = {
+    "ok": ("green", "OK"),
+    "needs_review": ("yellow", "NEEDS REVIEW"),
+    "awaiting_confirmation": ("yellow", "AWAITING CONFIRMATION"),
+    "failed": ("red", "FAILED"),
+}
+
+
+def _print_summary(state: dict, elapsed: float | None = None) -> None:
+    from finscan.console import Palette, supports_color
+
+    c = Palette(supports_color())
     wr = state.get("write_result")
     status = state.get("status", "ok")
     issues = state.get("issues", [])
     errors = [i for i in issues if i.severity == "error"]
     warnings = [i for i in issues if i.severity == "warning"]
 
-    print("=" * 60)
+    colour_name, label = _STATUS_STYLE.get(status, ("yellow", status.upper()))
+    paint = getattr(c, colour_name)
+
+    print(c.dim("-" * 62))
+    took = f"   {c.dim(f'({elapsed:.1f}s)')}" if elapsed is not None else ""
+    print(f"{c.bold('status')}: {paint(c.bold(label))}{took}")
+
     if wr and wr.sheets:
-        icon = "OK" if not errors else "WARN"
-        print(f"[{icon}] status: {status}")
-        print(f"  values written : {wr.values_written}")
-        print(f"  formulas copied: {wr.formulas_copied}")
+        print(f"  {c.dim('values written :')} {c.bold(str(wr.values_written))}")
+        print(f"  {c.dim('formulas copied:')} {wr.formulas_copied}")
         for s in wr.sheets:
-            print(f"  - {s.sheet}!{s.column_letter}: {s.values_written} value(s), "
-                  f"{s.formulas_copied} formula(s), {s.rows_skipped} skipped")
+            print(f"  {c.dim('-')} {c.cyan(f'{s.sheet}!{s.column_letter}')}: "
+                  f"{s.values_written} value(s), {s.formulas_copied} formula(s), "
+                  f"{s.rows_skipped} skipped")
     else:
-        print(f"[WARN] status: {status} - nothing written")
+        print(f"  {c.yellow('nothing was written')}")
 
     if errors:
-        print(f"\nErrors ({len(errors)}):")
+        print(f"\n{c.red(c.bold(f'Errors ({len(errors)}):'))}")
         for n, e in enumerate(errors, 1):
-            print(f"  {n}. [{e.code}] {e.message}")
+            print(f"  {c.red(str(n) + '.')} {c.bold(e.code)} {e.message}")
 
     if warnings:
-        print(f"\nWarnings ({len(warnings)}):")
+        print(f"\n{c.yellow(c.bold(f'Warnings ({len(warnings)}):'))}")
         for n, w in enumerate(warnings, 1):
-            print(f"  {n}. [{w.code}] {w.message}")
+            print(f"  {c.yellow(str(n) + '.')} {c.bold(w.code)} {w.message}")
 
-    print("=" * 60)
+    print(c.dim("-" * 62))
 
 
-def _emit(state: dict, report_path: Path | None) -> int:
-    _print_summary(state)
+def _emit(state: dict, report_path: Path | None, elapsed: float | None = None) -> int:
+    _print_summary(state, elapsed)
     print()
     print(state.get("report", ""))
     if report_path:
         report_path.write_text(state.get("report", ""), encoding="utf-8")
         print(f"\nReport saved to {report_path}")
     return {"ok": 0, "awaiting_confirmation": 3}.get(state.get("status"), 2)
+
+
+def _make_printer(a):
+    """A ProgressPrinter for this invocation, or None when progress is off.
+
+    Built once per run and shared by the graph (per-phase lines) and the summary
+    (elapsed time), so both agree on when the run started.
+    """
+    if getattr(a, "no_progress", False):
+        return None
+    from finscan.console import ProgressPrinter
+    from finscan.graph.build import PIPELINE_PHASES
+
+    color = False if getattr(a, "no_color", False) else None
+    return ProgressPrinter(PIPELINE_PHASES, color=color)
 
 
 def _add_run_args(p: argparse.ArgumentParser) -> None:
@@ -74,6 +107,10 @@ def _add_run_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--reliable-labels", action="store_true",
                    help="Resolve each unmatched model label in a focused PDF pass; leave "
                         "unresolved rows blank instead of carrying prior-period values")
+    p.add_argument("--no-progress", action="store_true",
+                   help="Do not print per-phase progress while the pipeline runs")
+    p.add_argument("--no-color", action="store_true",
+                   help="Plain output with no ANSI colour (also honours NO_COLOR)")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -143,9 +180,16 @@ def main(argv: list[str] | None = None) -> int:
     if not a.require_confirmation:
         common["require_confirmation"] = False
 
+    printer = _make_printer(a)
+
     if a.cmd == "run":
-        state = run_graph(a.pdf, a.excel, output_path=a.out, dry_run=a.dry_run, **common)
-        return _emit(state, Path(a.report) if a.report else None)
+        if printer:
+            printer.header("FinScan", [("PDF", a.pdf), ("Model", a.excel),
+                                       ("Output", a.out or "(alongside the model)")])
+        state = run_graph(a.pdf, a.excel, output_path=a.out, dry_run=a.dry_run,
+                          printer=printer, **common)
+        return _emit(state, Path(a.report) if a.report else None,
+                     printer.total_elapsed() if printer else None)
 
     if a.cmd == "company":
         from finscan.demo.folder import output_path_for_company, resolve_demo_files
@@ -161,11 +205,15 @@ def main(argv: list[str] | None = None) -> int:
         )
         period = a.period or files.period_label
         profile_key = a.company or files.company_key
-        print(f"PDF:      {files.pdf}")
-        print(f"Model:    {files.workbook}")
-        print(f"Output:   {out}")
+        rows = [("PDF", str(files.pdf)), ("Model", str(files.workbook)),
+                ("Output", str(out)), ("Company", profile_key)]
         if period:
-            print(f"Period:   {period}")
+            rows.append(("Period", period))
+        if printer:
+            printer.header(f"FinScan · {profile_key}", rows)
+        else:
+            for key, value in rows:
+                print(f"{key + ':':<10}{value}")
         state = run_graph(
             str(files.pdf),
             str(files.workbook),
@@ -173,9 +221,11 @@ def main(argv: list[str] | None = None) -> int:
             dry_run=a.dry_run,
             company=profile_key,
             period_label=period,
+            printer=printer,
             **{k: v for k, v in common.items() if k not in ("company", "period_label")},
         )
-        return _emit(state, Path(a.report) if a.report else None)
+        return _emit(state, Path(a.report) if a.report else None,
+                     printer.total_elapsed() if printer else None)
 
     pdfs = sorted(Path(a.pdf_dir).glob("*.pdf"))
     if not pdfs:
@@ -185,9 +235,16 @@ def main(argv: list[str] | None = None) -> int:
     out = a.out or str(Path(a.excel).with_name(Path(a.excel).stem + "_updated.xlsx"))
     worst = 0
     for pdf in pdfs:
-        print(f"\n=== {pdf.name} ===")
-        state = run_graph(str(pdf), current, output_path=out, **common)
-        worst = max(worst, _emit(state, None))
+        # A fresh printer per PDF so each one's phase counter restarts at 1 and its
+        # elapsed time is its own rather than the whole batch's.
+        step = _make_printer(a)
+        if step:
+            step.header(f"FinScan · {pdf.name}",
+                        [("PDF", str(pdf)), ("Model", str(current)), ("Output", out)])
+        else:
+            print(f"\n=== {pdf.name} ===")
+        state = run_graph(str(pdf), current, output_path=out, printer=step, **common)
+        worst = max(worst, _emit(state, None, step.total_elapsed() if step else None))
         if state.get("write_result"):
             current = out          # columns accumulate across the batch
     return worst

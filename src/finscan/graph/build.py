@@ -37,23 +37,46 @@ from finscan.graph import nodes
 from finscan.graph.state import GraphState
 
 
-def build_graph(checkpointer: Any = None):
+#: Graph nodes in execution order. The linear path is 13 nodes; prepare_retry only
+#: runs when validate routes back to extract, so it is excluded from the progress
+#: denominator and simply reported as an extra phase if it fires.
+_NODES: list[tuple[str, str]] = [
+    ("ingest_pdf", "ingest_pdf"),
+    ("discover", "discover_workbook"),
+    ("extract", "extract_financials"),
+    ("resolve_profile", "resolve_profile"),
+    ("normalize", "normalize"),
+    ("resolve_cumulative_periods", "resolve_cumulative_periods"),
+    ("refine_mapping", "refine_mapping"),
+    ("extract_label_rows", "extract_label_rows"),
+    ("check_periods", "check_periods"),
+    ("crosscheck", "crosscheck_formulas"),
+    ("validate", "validate_node"),
+    ("prepare_retry", "prepare_retry"),
+    ("write_excel", "write_excel"),
+    ("report", "build_report"),
+]
+
+#: Phases counted for the "[n/total]" progress counter.
+PIPELINE_PHASES = len(_NODES) - 1
+
+
+def build_graph(checkpointer: Any = None, printer: Any = None):
+    """Compile the pipeline.
+
+    `printer` is an optional console.ProgressPrinter; when supplied every node is
+    wrapped so it announces itself and reports the issues it raised. Passing None
+    (the default, and what the API uses) leaves the nodes completely untouched, so
+    progress reporting cannot alter pipeline behaviour.
+    """
     g = StateGraph(GraphState)
 
-    g.add_node("ingest_pdf", nodes.ingest_pdf)
-    g.add_node("discover", nodes.discover_workbook)
-    g.add_node("extract", nodes.extract_financials)
-    g.add_node("resolve_profile", nodes.resolve_profile)
-    g.add_node("normalize", nodes.normalize)
-    g.add_node("resolve_cumulative_periods", nodes.resolve_cumulative_periods)
-    g.add_node("refine_mapping", nodes.refine_mapping)
-    g.add_node("extract_label_rows", nodes.extract_label_rows)
-    g.add_node("check_periods", nodes.check_periods)
-    g.add_node("crosscheck", nodes.crosscheck_formulas)
-    g.add_node("validate", nodes.validate_node)
-    g.add_node("prepare_retry", nodes.prepare_retry)
-    g.add_node("write_excel", nodes.write_excel)
-    g.add_node("report", nodes.build_report)
+    for node_name, fn_name in _NODES:
+        fn = getattr(nodes, fn_name)
+        if printer is not None:
+            from finscan.console import instrument
+            fn = instrument(node_name, fn, printer)
+        g.add_node(node_name, fn)
 
     g.set_entry_point("ingest_pdf")
     g.add_edge("ingest_pdf", "discover")
@@ -91,8 +114,9 @@ def run(
     reliable_labels: bool | None = None,
     dry_run: bool = False,
     allow_period_gap: bool = False,
+    printer: Any = None,
 ) -> dict:
-    app = build_graph()
+    app = build_graph(printer=printer)
     return app.invoke(
         {
             "pdf_path": pdf_path,
