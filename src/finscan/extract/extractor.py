@@ -530,6 +530,62 @@ def _rescue_working_capital_subtotal(result: Extraction, statements_text: str) -
     )
 
 
+#: Anchor for locating the cash flow statement's operating section, standard IFRS
+#: wording. Used (not a generic document-wide caption search) so a segment note's own
+#: "Depreciation and Amortisation" breakdown table — a different, unrelated table that
+#: can appear elsewhere in the same filing — is never mistaken for the cash-flow line.
+_CASH_FLOW_OPERATING_HEADING = re.compile(
+    r"cash\s+flows?\s+from\s+operating\s+activities", re.IGNORECASE
+)
+#: How far past that heading to look — enough to cover "Profit for the period" plus
+#: the non-cash-adjustments block, not so far it reaches "Changes in working capital".
+_DA_CASH_FLOW_WINDOW = 1500
+_DEPRECIATION_ROW = re.compile(
+    r"(?im)^[^\n|]*\b(?:depreciation\s+and\s+amortisation|depreciation\s+and\s+amortization|"
+    r"depreciation,?\s*amortisation\s+and\s+impairment|depreciation,?\s*depletion\s*(?:&|and)\s*amortization)"
+    r"\b[^\n]*\d[^\n]*$"
+)
+
+
+def _rescue_depreciation_from_cash_flow(result: Extraction, statements_text: str) -> str | None:
+    """Recover depreciation_amortisation when the P&L has no line for it at all.
+
+    Some filings (e.g. Almarai) fold D&A into Cost of Sales/opex on the P&L with no
+    caption of its own, disclosing it only as the first non-cash adjustment in the
+    Statement of Cash Flows — the main pass then has nothing to extract it from. Reads
+    the raw row text directly (rather than asking the model) and appends it as a real
+    LineItem with genuine source_row_text, so it is found by _detect_months_covered same
+    as any other line — this filing's cash flow statement may print only a cumulative
+    (e.g. six-month) column, and standalone-quarter correction must still catch that.
+    """
+    if any(li.field.value == "depreciation_amortisation" for li in result.line_items):
+        return None
+    heading = _CASH_FLOW_OPERATING_HEADING.search(statements_text or "")
+    if not heading:
+        return None
+    window = statements_text[heading.end(): heading.end() + _DA_CASH_FLOW_WINDOW]
+    m = _DEPRECIATION_ROW.search(window)
+    if not m:
+        return None
+    row = m.group(0).strip()
+    nums = _row_numbers(row)
+    if not nums:
+        return None
+
+    result.line_items.append(LineItem(
+        field=Field_.depreciation_amortisation,
+        label_in_pdf=row.split("|")[0].strip(),
+        value=nums[0],
+        confidence=0.7,
+        source_row_text=row,
+    ))
+    return (
+        f"depreciation_amortisation was not printed as its own P&L line; recovered "
+        f"{nums[0]:,.2f} from the cash flow statement's non-cash-adjustments block "
+        f"('{row}'). Review against the source PDF."
+    )
+
+
 class _CashFlowSubtotals(BaseModel):
     total_before_working_capital_changes: float | None = Field(
         default=None,
@@ -750,6 +806,9 @@ def extract(document_text: str, hint: str = "",
         quarter_note, realigned_ids = _maybe_realign_quarter_values(result, text)
         if quarter_note:
             notes.append(quarter_note)
+        da_note = _rescue_depreciation_from_cash_flow(result, text)
+        if da_note:
+            notes.append(da_note)
         months_note = _detect_months_covered(result, text, realigned_ids)
         if months_note:
             notes.append(months_note)
@@ -769,6 +828,9 @@ def extract(document_text: str, hint: str = "",
         quarter_note, realigned_ids = _maybe_realign_quarter_values(retry, focused)
         if quarter_note:
             notes.append(quarter_note)
+        da_note = _rescue_depreciation_from_cash_flow(retry, focused)
+        if da_note:
+            notes.append(da_note)
         months_note = _detect_months_covered(retry, focused, realigned_ids)
         if months_note:
             notes.append(months_note)
@@ -1105,10 +1167,41 @@ def _match_is_already_absolute(m: _LabeledValue) -> bool:
     return bool(row) and not _DECIMAL_NUMBER.search(row)
 
 
+def _maybe_reject_duplicate_canonical_matches(
+    values: dict[str, float], claimed_values: dict[str, float]
+) -> tuple[dict[str, float], str | None]:
+    """Null a label match that exactly repeats an already-extracted canonical field's
+    value — the same PDF line claimed twice under a different caption (e.g. an Excel
+    row semantically close to an existing field, like "Non-operating income /
+    expenses, (net)" next to a canonical "other_income"), which silently double-counts
+    or, if one of the two is later subtracted, cancels that figure wherever both appear
+    in the model's own formulas. Zero is excluded on both sides: many unrelated rows are
+    legitimately (and coincidentally) blank/zero, which is not evidence of a shared
+    source line.
+    """
+    rejected = []
+    out = dict(values)
+    for label, val in values.items():
+        if val is None or abs(val) < 1e-9:
+            continue
+        if any(claimed and _close(val, claimed) for claimed in claimed_values.values()):
+            rejected.append(label)
+            del out[label]
+    if not rejected:
+        return values, None
+    return out, (
+        f"Rejected {len(rejected)} label-matched value(s) that exactly repeated an "
+        f"already-extracted canonical field's value — likely the same PDF line claimed "
+        f"twice under a different caption, which would double-count or cancel it in the "
+        f"model's own formulas: {', '.join(rejected)}. Left null for human review."
+    )
+
+
 def extract_for_labels(
     labels: list[str],
     document_text: str,
     source_units: str = "units",
+    claimed_values: dict[str, float] | None = None,
 ) -> tuple[dict[str, float], str | None]:
     """Match raw Excel row labels against the PDF and return label -> value in BASE units."""
     if not labels:
@@ -1143,6 +1236,10 @@ def extract_for_labels(
         for m in result.matches
         if m.value is not None and m.confidence >= 0.5
     }
+    if claimed_values:
+        values, dup_note = _maybe_reject_duplicate_canonical_matches(values, claimed_values)
+        if dup_note:
+            notes.append(dup_note)
     return values, (" ".join(notes) if notes else None)
 
 
@@ -1150,12 +1247,13 @@ def extract_for_labels_reliably(
     labels: list[str],
     document_text: str,
     source_units: str = "units",
+    claimed_values: dict[str, float] | None = None,
 ) -> tuple[dict[str, float], str | None]:
     """Resolve each label in its own focused pass to avoid batch interference."""
     values: dict[str, float] = {}
     notes: list[str] = []
     for label in labels:
-        matched, note = extract_for_labels([label], document_text, source_units)
+        matched, note = extract_for_labels([label], document_text, source_units, claimed_values)
         values.update(matched)
         if note:
             notes.append(f"{label}: {note}")
