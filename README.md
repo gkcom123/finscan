@@ -19,6 +19,19 @@ standalone with no server at all ⟦REVIEW src: src/finscan/cli.py, lines 79-193
 
 ---
 
+
+New Way
+---
+
+=========
+python -m finscan2.cli read 'inbox/Tencent/Tencent_q325.pdf'
+
+.venv/bin/python -m finscan2.cli company almarai read
+.venv/bin/python -m finscan2.cli company almarai learn    # → mappings/almarai.json
+.venv/bin/python -m finscan2.cli company almarai apply    # resolve + write
+
+
+
 Example to debug
 ---
 1. Extract Pdf
