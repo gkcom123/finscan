@@ -373,6 +373,8 @@ def extract_label_rows(state: dict) -> dict:
 
     def _queue(label: str) -> None:
         search = search_overrides.get(label.strip().lower(), label)
+        if not search:
+            return
         if search not in labels:
             labels.append(search)
         search_to_original.setdefault(search, label)
@@ -404,9 +406,10 @@ def extract_label_rows(state: dict) -> dict:
 
     source_units = (extraction.meta.units if extraction else None) or "units"
     doc_text = state.get("statements_text") or state.get("document_text", "")
+    claimed_values = state.get("values") or {}
 
     label_extractor = extract_for_labels_reliably if state.get("reliable_labels") else extract_for_labels
-    label_values, realign_note = label_extractor(labels, doc_text, source_units)
+    label_values, realign_note = label_extractor(labels, doc_text, source_units, claimed_values)
     if search_to_original:
         label_values = {search_to_original.get(k, k): v for k, v in label_values.items()}
     issues: list[Issue] = []
