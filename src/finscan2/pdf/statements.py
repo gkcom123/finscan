@@ -44,6 +44,8 @@ _HEADING_LINE = re.compile(
 #: optional decimals. A leading currency symbol is tolerated and discarded.
 _NUMBER = re.compile(r"\(\s*-?[\d][\d,]*(?:\.\d+)?\s*\)|-?\d[\d,]*(?:\.\d+)?")
 
+_NUMBER_OR_DASH = re.compile(_NUMBER.pattern + r"|(?<!\S)-(?!\S)")
+
 #: A statement has a body. Fewer captioned rows than this and the page is a table
 #: of contents, an index, or a stray mention of a statement's name — all of which
 #: match a title pattern and would otherwise be recorded as empty statements.
@@ -85,7 +87,7 @@ def parse_row(line: str) -> StatementRow | None:
     """Split a printed line into its caption and its numbers, in printed order."""
     raw = line.rstrip()
     body = raw.replace("|", " ")
-    matches = list(_NUMBER.finditer(body))
+    matches = list(_NUMBER_OR_DASH.finditer(body))
     if not matches:
         return None
 
@@ -93,7 +95,7 @@ def parse_row(line: str) -> StatementRow | None:
     # A note-reference column ("Revenue 10 5,868,205 ...") puts a small integer
     # between the caption and the figures. Treat a bare 1-2 digit first number as
     # the note reference when more numbers follow it.
-    values = [parse_number(m.group(0)) for m in matches]
+    values = [None if m.group(0) == "-" else parse_number(m.group(0)) for m in matches]
     if (len(values) > 1 and values[0] is not None
             and values[0].is_integer() and 0 < values[0] < 100
             and "." not in matches[0].group(0) and "," not in matches[0].group(0)):

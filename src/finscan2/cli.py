@@ -191,7 +191,7 @@ def _match(args) -> int:
     print(f"  {len(values.resolved)} resolved, {len(values.blank)} left blank\n")
     for value in values.values:
         if value.ok:
-            note = value.adjustments[0].kind if value.adjustments else ""
+            note = ", ".join(a.kind for a in value.adjustments)
             print(f"  r{value.row:<4} {value.label[:30]:<30} {value.value:>18,.2f}  {note}")
         else:
             print(f"  r{value.row:<4} {value.label[:30]:<30} {'BLANK':>18}  {value.unresolved[:40]}")
@@ -230,7 +230,7 @@ def _apply(args) -> int:
               f"{len(result.values.blank)} left blank\n")
         for value in result.values.values:
             if value.ok:
-                note = value.adjustments[0].kind if value.adjustments else ""
+                note = ", ".join(a.kind for a in value.adjustments)
                 print(f"  r{value.row:<4} {value.label[:32]:<32} "
                       f"{value.value:>18,.2f}  {note}")
             else:
