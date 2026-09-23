@@ -46,8 +46,13 @@ class MappingRow:
     occurrence: int = 1
     #: str = one caption · list = a sum · None = the filing has no such line
     pdf: str | list[str] | None = None
-    #: A constant, for a row no filing reports (an FX peg). Excludes `pdf`.
+    #: A constant, for a row no filing reports. Excludes `pdf`.
     value: float | None = None
+    #: True for a row the filing never reports at all, whose figure is instead
+    #: whatever the analyst last typed into the workbook (an FX peg, say) — carried
+    #: forward unchanged from the reference column rather than looked up or defaulted.
+    #: Excludes `pdf` and `value`.
+    carry_forward: bool = False
     note: str = ""
     #: Overrides, present only where the derived default is wrong.
     statement: str | None = None
@@ -70,6 +75,8 @@ class MappingRow:
         """The `resolve` instruction stage 3 executes for this row."""
         if self.value is not None:
             return f"const:{self.value}"
+        if self.carry_forward:
+            return f"carry:{self.note}" if self.note else "carry:"
         if self.pdf is None:
             return f"absent:{self.note}" if self.note else "absent:"
         if isinstance(self.pdf, str):
@@ -90,6 +97,8 @@ class MappingRow:
             out["occurrence"] = self.occurrence
         if self.value is not None:
             out["value"] = self.value
+        elif self.carry_forward:
+            out["carry_forward"] = True
         else:
             out["pdf"] = self.pdf
         for name in ("note", "statement", "basis", "sign"):
@@ -105,6 +114,7 @@ class MappingRow:
             occurrence=int(d.get("occurrence", 1)),
             pdf=d.get("pdf"),
             value=d.get("value"),
+            carry_forward=bool(d.get("carry_forward", False)),
             note=d.get("note", ""),
             statement=d.get("statement"),
             basis=d.get("basis"),

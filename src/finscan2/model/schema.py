@@ -64,6 +64,10 @@ class RowSpec:
     #:   const:<number>      a fixed number; never read from the filing
     #:   absent:<reason>     this filing has no such line — left blank, and reported
     #:                       every quarter, with an error if the line later appears
+    #:   carry:<reason>      this filing never reports the line at all; its figure is
+    #:                       whatever the analyst last typed into the reference column
+    #:                       (an FX peg, say) — carried forward unchanged, never read
+    #:                       from the filing
     #:   sum:<a>|<b>         several filing lines added into one row; each term is
     #:                       itself an instruction (pdf:/field:/const:), may carry a
     #:                       leading "-", and "|" separates them because captions

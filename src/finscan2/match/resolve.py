@@ -6,7 +6,9 @@ pdf.json, and the map already says what each workbook row means, so matching is 
 lookup. That is the whole point of the two stages before this one.
 
 A row that cannot be resolved is left blank with a reason. Nothing is carried
-forward from a prior period, defaulted to zero, or matched on a near-miss.
+forward from a prior period, defaulted to zero, or matched on a near-miss — except
+where a mapping explicitly says `carry:`, for a line the filing itself never
+reports at all (an FX peg the analyst maintains directly in the workbook).
 """
 from __future__ import annotations
 
@@ -143,23 +145,28 @@ def _sum_terms(instruction: str) -> list[tuple[float, str]]:
 class _Term:
     """One resolved term of a sum: enough to explain the arithmetic afterwards."""
 
-    def __init__(self, sign: float, caption: str, printed: float):
+    def __init__(self, sign: float, caption: str, printed: float, assumed_zero: bool = False):
         self.sign, self.caption, self.printed = sign, caption, printed
+        self.assumed_zero = assumed_zero
 
     def signed(self) -> float:
         return self.sign * self.printed
 
     def describe(self) -> str:
         lead = "-" if self.sign < 0 else "+"
-        return f"{lead} {self.caption} {self.printed:,.2f}"
+        note = " (no figure printed, treated as 0)" if self.assumed_zero else ""
+        return f"{lead} {self.caption} {self.printed:,.2f}{note}"
 
 
 def _lookup_sum(spec, statement, column):
     """Every term of a sum, or nothing.
 
-    A partial sum is the most dangerous possible output: it is a plausible number,
-    smaller than the truth by exactly one missing component, and nothing about it
-    looks wrong. So one unresolvable term fails the whole row.
+    A term whose caption cannot be found at all fails the whole sum: that is a
+    plausible number, smaller than the truth by exactly one missing component,
+    and nothing about it looks wrong. But a term whose caption IS found, printing
+    a dash in the wanted column, has already told us its value — the filing is
+    saying "nothing happened here this period" — so it contributes 0 rather than
+    failing the row.
     """
     terms: list[_Term] = []
     for sign, instruction in _sum_terms(spec.resolve or ""):
@@ -179,9 +186,13 @@ def _lookup_sum(spec, statement, column):
         row, why = _lookup(_Part, statement)
         if row is None:
             return None, f"the sum term '{instruction}' did not resolve: {why}"
-        if column.index >= len(row.values) or row.values[column.index] is None:
+        if column.index >= len(row.values):
             return None, (f"the sum term '{instruction}' matched '{row.caption}', which "
-                          f"has no value in the wanted column")
+                          f"has only {len(row.values)} value(s) — the wanted column is "
+                          f"number {column.index + 1}")
+        if row.values[column.index] is None:
+            terms.append(_Term(sign, row.caption, 0.0, assumed_zero=True))
+            continue
         terms.append(_Term(sign, row.caption, row.values[column.index]))
     if not terms:
         return None, "the sum has no terms"
@@ -243,6 +254,11 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
         if (spec.resolve or "").startswith("const:"):
             plans[bound.row] = (None, None, None, None)
             continue
+        if (spec.resolve or "").startswith("carry:"):
+            plans[bound.row] = (None, None, None, None)
+            if model.reference_col:
+                needed.add((bound.row, model.reference_col))
+            continue
         if (spec.resolve or "").startswith("absent:"):
             # Planned anyway, so the declaration can be checked against the filing.
             statement, why = _statement_for(spec, doc)
@@ -290,6 +306,36 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             out.values.append(value)
             out.issues.append(Issue(code="unresolved_row", severity="error",
                                     message=f"row {bound.row} '{spec.key.label}': {problem}"))
+            continue
+
+
+        if (spec.resolve or "").startswith("carry:"):
+            reason = spec.resolve.split(":", 1)[1].strip()
+            if not model.reference_col:
+                value.unresolved = "the map has no reference column to carry forward from"
+            else:
+                prior = cells.get((bound.row, model.reference_col))
+                if prior is None:
+                    value.unresolved = "the reference column has no numeric value to carry forward"
+                else:
+                    value.value = prior
+                    ref_letter = get_column_letter(model.reference_col)
+                    value.adjustments.append(Adjustment(
+                        kind="carried_forward",
+                        detail=f"carried forward unchanged from {ref_letter}{bound.row} "
+                               f"({prior:,.4f}) — not read from the filing"
+                               + (f": {reason}" if reason else "")))
+            if value.value is None:
+                out.issues.append(Issue(
+                    code="unresolved_row", severity="error",
+                    message=f"row {bound.row} '{spec.key.label}': {value.unresolved}"))
+            else:
+                out.issues.append(Issue(
+                    code="carried_forward", severity="warning",
+                    message=f"row {bound.row} '{spec.key.label}' was carried forward "
+                            f"from the reference column, not from the filing"
+                            + (f" ({reason})" if reason else "") + "."))
+            out.values.append(value)
             continue
 
         # A line the analyst has determined this filing does not report. Left blank
@@ -380,7 +426,7 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                                     message=f"row {bound.row} '{spec.key.label}': {why}"))
             continue
 
-        if column.index >= len(printed_row.values) or printed_row.values[column.index] is None:
+        if column.index >= len(printed_row.values):
             why = (f"'{printed_row.caption}' has {len(printed_row.values)} value(s) but "
                    f"the wanted column is number {column.index + 1}")
             value.unresolved = why
@@ -390,11 +436,21 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             continue
 
         printed = printed_row.values[column.index]
+        # A dash IS the filing's own answer — "nothing happened here" — not a gap
+        # in what could be read, so it is trusted as 0 rather than left unresolved.
+        printed_as_dash = printed is None
+        if printed_as_dash:
+            printed = 0.0
         if value.source is None:
             value.source = Source(statement=statement.kind, page=statement.page,
                                   caption=printed_row.caption, column_header=column.header,
                                   column_index=column.index, months=column.months,
                                   end=column.end, printed=printed)
+        if printed_as_dash:
+            value.adjustments.append(Adjustment(
+                kind="assumed_zero",
+                detail=f"'{printed_row.caption}' printed a dash in the wanted column "
+                       f"({column.header}) — treated as 0"))
 
         figure = printed
         if columns_to_subtract:
