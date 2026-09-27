@@ -145,8 +145,19 @@ class PdfDoc:
     parser_version: str = PARSER_VERSION
 
     def statement(self, kind: StatementKind) -> Statement | None:
-        """The first statement of a kind, which is what stage 3 asks for by name."""
-        return next((s for s in self.statements if s.kind == kind), None)
+        """The first statement of a kind, which is what stage 3 asks for by name.
+
+        A combined "Statement of Income and Other Comprehensive Income" is filed
+        under `comprehensive_income` (statements.py checks that title pattern
+        first). It is a superset — the income statement's own captions, then OCI
+        appended below, never the reverse — so an `income_statement` request
+        accepts it when no page was classified as `income_statement` outright.
+        """
+        found = next((s for s in self.statements if s.kind == kind), None)
+        if found is None and kind == "income_statement":
+            found = next((s for s in self.statements
+                         if s.kind == "comprehensive_income"), None)
+        return found
 
     def note(self, number: int, end: str | None = None) -> Statement | None:
         """A note table, optionally the one for a particular period end.

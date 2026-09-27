@@ -4,7 +4,7 @@
     inbox/<Company>/<anything>.xlsx         the model
     inbox/<Company>/<filing>.pdf.json       stage 1 output
     mappings/<key>.json                     the human mapping, git-tracked
-    maps/<key>.json                         the derived layout
+    models/<key>_model.json                 the derived layout
     _work/<key>_values.json                 stage 3 output
     inbox/<key>_v2_output.xlsx              stage 4 output
 
@@ -114,7 +114,7 @@ def resolve(key: str, root: Path | None = None, *, pdf: str | None = None,
         pdf=pdf_path,
         excel=excel_path,
         pdf_json=pdf_path.with_suffix(".pdf.json"),
-        map=root / "maps" / f"{slug}.json",
+        map=root / "models" / f"{slug}_model.json",
         mapping=root / "mappings" / f"{slug}.json",
         values=root / "_work" / f"{slug}_values.json",
         output=Path(sheet_out) if sheet_out

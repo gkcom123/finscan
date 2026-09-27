@@ -167,6 +167,21 @@ def _as_iso(value: Any) -> str | None:
     return None
 
 
+def _effective(worksheet, values_sheet, row: int, col: int) -> Any:
+    """A cell's own value, or its cached result when the cell holds a formula.
+
+    A period header is sometimes typed as a literal date and sometimes derived
+    ("=+EDATE(P3,3)" for a quarter that rolls forward from the one beside it).
+    Read from `worksheet` that is just formula text; `values_sheet` carries what
+    the file cached the last time Excel recalculated it, so a date is recognized
+    the same way whether it was typed in or computed.
+    """
+    value = worksheet.cell(row, col).value
+    if isinstance(value, str) and value.startswith("="):
+        return values_sheet.cell(row, col).value
+    return value
+
+
 def _caption(worksheet, values_sheet, row: int, col: int) -> str:
     """The caption a reader sees in a cell.
 
@@ -267,7 +282,15 @@ def discover_sheet(path: str, sheet: str) -> SheetLayout:
             count = 0
             for col in range(label_col + 1, max_col + 1):
                 value = worksheet.cell(row, col).value
-                if _is_number(value) or (isinstance(value, str) and value.startswith("=")):
+                is_formula = isinstance(value, str) and value.startswith("=")
+                if is_formula:
+                    # A date-valued formula (a quarter header rolling forward
+                    # off the one beside it) is a header, not a line item.
+                    if isinstance(_effective(worksheet, values_sheet, row, col),
+                                  (datetime, date)):
+                        continue
+                    count += 1
+                elif _is_number(value):
                     count += 1
             return count
 
@@ -315,8 +338,11 @@ def discover_sheet(path: str, sheet: str) -> SheetLayout:
 
         # Dates live in whichever header row carries real datetimes, which is
         # rarely the row picked as the header (that one often reads "1Q", "FY").
+        # A quarter's date is honoured whether it is typed in or rolls forward
+        # off the one beside it via a formula such as "=+EDATE(P3,3)".
         for row in range(1, layout.first_data_row):
-            found = {col: _as_iso(worksheet.cell(row, col).value) for col in layout.period_cols}
+            found = {col: _as_iso(_effective(worksheet, values_sheet, row, col))
+                     for col in layout.period_cols}
             found = {c: d for c, d in found.items() if d}
             if len(found) > len(layout.period_dates):
                 layout.period_dates = found

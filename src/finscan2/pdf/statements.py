@@ -22,7 +22,12 @@ from finscan2.schema import Column, Statement, StatementKind, StatementRow
 _TITLE_PATTERNS: list[tuple[str, StatementKind]] = [
     (r"comprehensive\s+income", "comprehensive_income"),
     (r"cash\s*flows?", "cash_flow"),
-    (r"changes\s+in\s+equity|statement\s+of\s+equity", "equity"),
+    (r"changes\s+in\s+equity|statement\s+of\s+equity"
+     # A trust/REIT reports the same roll-forward under its own capital account
+     # name instead of "equity" — Fibra Uno's is "Changes in Trustors'/
+     # Beneficiaries' Capital". Gated safely: this whole table is only checked
+     # against a line already matching `_TITLE_LINE` ("statement(s) of ...").
+     r"|changes\s+in\s+.*\bcapital\b", "equity"),
     (r"financial\s+position|balance\s+sheet", "balance_sheet"),
     (r"profit\s+or\s+loss|income\s+statement|statements?\s+of\s+(?:income|operations)"
      r"|profit\s+and\s+loss|results\s+of\s+operations", "income_statement"),
@@ -185,10 +190,27 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
         columns = dedupe_stacked(parse_columns(f"{heading}\n{header_text}"))
 
     rows: list[StatementRow] = []
+    pending_caption: str | None = None
     for line in lines[first_data:]:
         row = parse_row(line)
+        if pending_caption is not None:
+            if row is None:
+                merged = parse_row(f"{pending_caption} {line.strip()}")
+                if merged is not None:
+                    rows.append(merged)
+                    pending_caption = None
+                    continue
+            pending_caption = None
+
         if row is not None:
             rows.append(row)
+            continue
+
+        stripped = line.strip(" .·-\t")
+        if (stripped and not _NUMBER_OR_DASH.search(line)
+                and len(re.findall(r"[A-Za-z]", stripped)) >= 3
+                and not _NOISE_CAPTION.match(stripped)):
+            pending_caption = stripped
 
     if len(rows) < MIN_STATEMENT_ROWS:
         return None

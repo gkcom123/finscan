@@ -13,7 +13,7 @@ from finscan2.company import CompanyError, project_root, resolve
 def _tree(tmp_path, *, pdfs=("filing.pdf",), excels=("Model_1Q26.xlsx",), extra=()):
     folder = tmp_path / "inbox" / "Almarai"
     folder.mkdir(parents=True)
-    (tmp_path / "maps").mkdir()
+    (tmp_path / "models").mkdir()
     for name in (*pdfs, *excels, *extra):
         (folder / name).write_text("x", encoding="utf-8")
     return tmp_path
@@ -25,7 +25,7 @@ def test_every_stage_path_comes_from_the_company_key(tmp_path):
     assert paths.pdf.name == "filing.pdf"
     assert paths.excel.name == "Model_1Q26.xlsx"
     assert paths.pdf_json.name == "filing.pdf.json"
-    assert paths.map == root / "maps" / "almarai.json"
+    assert paths.map == root / "models" / "almarai_model.json"
     assert paths.values == root / "_work" / "almarai_values.json"
     assert paths.output == root / "inbox" / "almarai_v2_output.xlsx"
 

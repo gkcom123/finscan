@@ -150,7 +150,8 @@ def find_row(statement: Statement, caption: str,
     if not wanted:
         return None, "no caption to look for"
 
-    rows = [(normalize_label(r.caption), r) for r in statement.rows]
+    rows = [(normalize_label(r.caption), r) for r in statement.rows
+            if normalize_label(r.caption)]
 
     for target in wanted:
         for normalized, row in rows:

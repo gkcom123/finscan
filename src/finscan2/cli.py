@@ -11,12 +11,12 @@ values.json between them, and nothing checked its age — so editing the mapping
 running `write` produced a workbook from a stale resolution, silently. Now nothing
 persists between resolving and writing; values.json is an audit artifact only.
 
-    mappings/<company>.json   the human file. git-tracked. one row per decision.
-    maps/<company>.json       the derived layout. regenerated freely.
+    mappings/<company>.json         the human file. git-tracked. one row per decision.
+    models/<company>_model.json     the derived layout. regenerated freely.
 
 Migration from the old single map:
 
-    python -m finscan2.cli mapping-init maps/almarai.json
+    python -m finscan2.cli mapping-init models/almarai_model.json
 
 The older commands (match, write, bind, check, confirm) still work during the
 transition and take explicit paths.
@@ -89,7 +89,7 @@ def _learn(args) -> int:
                                   use_llm=not getattr(args, "no_llm", False))
 
     # The derived layout is always rewritten: nothing human lives in it.
-    out = Path(args.out) if args.out else Path("maps") / f"{args.company}.json"
+    out = Path(args.out) if args.out else Path("models") / f"{args.company}_model.json"
     model.save(out)
 
     doc = None
@@ -491,7 +491,7 @@ def main(argv: list[str] | None = None) -> int:
     lrn.add_argument("excel")
     lrn.add_argument("--company", required=True)
     lrn.add_argument("--sheet", default="Model")
-    lrn.add_argument("--out", help="Where to write the map (default: maps/<company>.json)")
+    lrn.add_argument("--out", help="Where to write the map (default: models/<company>_model.json)")
     lrn.add_argument("--rows", action="store_true", help="Print every mapped row")
     lrn.add_argument("--pdf-json", dest="pdf_json",
                      help="Bind each row to the caption this filing printed")
@@ -534,7 +534,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="Resolve and validate, print the table, write nothing")
 
     mi = sub.add_parser("mapping-init",
-                        help="Convert an existing maps/<company>.json into a mapping.")
+                        help="Convert an existing models/<company>_model.json into a mapping.")
     mi.add_argument("map")
     mi.add_argument("--out")
     mi.add_argument("--overwrite", action="store_true")

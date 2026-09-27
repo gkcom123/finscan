@@ -1,4 +1,4 @@
-"""Convert an existing maps/<company>.json into the lean mapping.
+"""Convert an existing models/<company>_model.json into the lean mapping.
 
 Migration, run once per company. The hand-work in the old map — a sum written by
 hand, a caption corrected, a sign asserted — is translated, not retyped.
