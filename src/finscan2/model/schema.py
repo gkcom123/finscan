@@ -39,6 +39,31 @@ Basis = Literal["quarter", "cumulative", "point_in_time"]
 Section = Literal["income_statement", "balance_sheet", "cash_flow", "other"]
 
 
+#: A row whose reference-column formula embeds a hand-typed number that must be
+#: rebuilt at write time instead of copied forward (see RowSpec.formula_recipe).
+#:   ttm_margin_plug — the only kind so far: current-quarter figure = an assumed
+#:                     margin times trailing-N-quarters revenue, minus the other
+#:                     quarters already in that window; swaps to the real annual
+#:                     actual column instead of the margin guess at fiscal year end.
+FormulaRecipeKind = Literal["ttm_margin_plug"]
+
+
+@dataclass
+class FormulaRecipe:
+    kind: FormulaRecipeKind
+    margin: float
+    revenue_row: int
+    trailing_quarters: int = 4
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "FormulaRecipe":
+        return cls(kind=d["kind"], margin=d["margin"], revenue_row=d["revenue_row"],
+                   trailing_quarters=d.get("trailing_quarters", 4))
+
+
 @dataclass
 class RowKey:
     label: str
@@ -88,6 +113,11 @@ class RowSpec:
     sign: Literal["positive", "negative"] | None = None
     #: Set by `learn` when a human should look at this row before it is trusted.
     review: str | None = None
+    #: For a `formula` row whose reference-column formula embeds a hand-typed
+    #: number (an analyst-maintained guidance figure, say) rather than being
+    #: purely self-shifting: how to rebuild it at write time instead of copying
+    #: it forward as-is. None for every ordinary formula row.
+    formula_recipe: FormulaRecipe | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {"key": self.key.to_dict(), "row_hint": self.row_hint,
@@ -96,10 +126,13 @@ class RowSpec:
             value = getattr(self, name)
             if value is not None:
                 out[name] = value
+        if self.formula_recipe is not None:
+            out["formula_recipe"] = self.formula_recipe.to_dict()
         return out
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> "RowSpec":
+        recipe = d.get("formula_recipe")
         return cls(
             key=RowKey(**d["key"]),
             row_hint=d.get("row_hint", 0),
@@ -110,6 +143,7 @@ class RowSpec:
             basis=d.get("basis"),
             sign=d.get("sign"),
             review=d.get("review"),
+            formula_recipe=FormulaRecipe.from_dict(recipe) if recipe else None,
         )
 
 

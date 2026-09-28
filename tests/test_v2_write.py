@@ -216,3 +216,68 @@ def test_a_formula_referencing_no_cell_is_never_copied_forward(tmp_path):
     assert "typed expression" in cell.comment.text
     assert any(i.code == "literal_formula_not_copied" for i in result.issues)
     assert result.formulas_copied == 0
+
+
+def _recipe_map_and_layout(write_col: int, *, period_dates: dict[int, str]):
+    """Revenue at row 5, a recipe-bearing 'Adj. EBITDA' row at row 10."""
+    from finscan2.model.discover import RowLayout, SheetLayout
+    from finscan2.model.schema import FormulaRecipe, ModelMap, RowKey, RowSpec
+
+    reference_col = write_col - 1
+    layout = SheetLayout(
+        sheet="Model", label_col=2, header_row=2, first_data_row=5,
+        period_dates=period_dates, period_date_row=2,
+        reference_col=reference_col, write_col=write_col, units="millions",
+        cadence_months=3,
+        rows=[RowLayout(row=5, label="Revenue", section="income_statement",
+                        role="input", has_formula=False),
+             RowLayout(row=10, label="Adj. EBITDA", section="income_statement",
+                       role="formula", has_formula=True,
+                       formula="=(22%*999)-ZZ10-ZZ10-ZZ10")])
+    model = ModelMap(
+        company="acme", sheet="Model", units="millions", cadence_months=3,
+        label_col=2, header_row=2, first_data_row=5, reference_col=reference_col,
+        write_col=write_col, write_mode="fill_blank",
+        period_dates=period_dates, period_date_row=2, confirmed_by="test",
+        rows=[RowSpec(key=RowKey(label="Revenue", section="income_statement"),
+                      row_hint=5, kind="input", resolve="pdf:Revenue"),
+             RowSpec(key=RowKey(label="Adj. EBITDA", section="income_statement"),
+                     row_hint=10, kind="formula",
+                     formula_recipe=FormulaRecipe(kind="ttm_margin_plug", margin=0.22,
+                                                  revenue_row=5, trailing_quarters=4))])
+    return model, layout
+
+
+def test_a_recipe_row_is_rebuilt_as_a_trailing_revenue_sum_not_copied_forward(tmp_path):
+    """The reference cell's own formula (a hand-typed revenue guidance number) is
+    never even read - the recipe rebuilds the formula from scratch every time."""
+    source = _workbook(tmp_path / "model.xlsx")
+    period_dates = {3: "2025-12-31", 4: "2026-03-31", 5: "2026-06-30", 6: "2026-09-30"}
+    model, layout = _recipe_map_and_layout(6, period_dates=period_dates)
+    values = Values(company="acme", sheet="Model", period_end="2026-09-30",
+                    write_col=6, units="millions")
+    out = tmp_path / "out.xlsx"
+    result = write_column(values, resolve(model, layout), str(source), str(out))
+
+    cell = load_workbook(out)["Model"].cell(10, 6)
+    assert cell.value == "=(22%*SUM(C5:F5))-E10-D10-C10"
+    assert result.formulas_copied == 1
+    assert any(i.code == "formula_recomputed" for i in result.issues)
+
+
+def test_a_recipe_row_switches_to_the_annual_actual_at_fiscal_year_end(tmp_path):
+    """December is this company's fiscal year end: the trailing-quarters guess is
+    dropped for the real annual-actual column, mirroring the analyst's own habit
+    of retyping the formula differently every fourth quarter."""
+    source = _workbook(tmp_path / "model.xlsx")
+    period_dates = {3: "2026-12-31", 5: "2026-03-31", 6: "2026-06-30",
+                    7: "2026-09-30", 8: "2026-12-31"}
+    model, layout = _recipe_map_and_layout(8, period_dates=period_dates)
+    values = Values(company="acme", sheet="Model", period_end="2026-12-31",
+                    write_col=8, units="millions")
+    out = tmp_path / "out.xlsx"
+    result = write_column(values, resolve(model, layout), str(source), str(out))
+
+    cell = load_workbook(out)["Model"].cell(10, 8)
+    assert cell.value == "=C10-G10-F10-E10"
+    assert result.formulas_copied == 1

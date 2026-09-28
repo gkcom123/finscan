@@ -44,6 +44,8 @@ def test_pdf_field_expresses_every_case():
     assert row(label="a", value=0.26645).instruction() == "const:0.26645"
     assert row(label="a", pdf=None, note="inside Other").instruction() == \
         "absent:inside Other"
+    assert row(label="a", carry_forward=True, note="an FX peg").instruction() == \
+        "carry:an FX peg"
 
 
 def test_basis_and_statement_are_derived_from_the_section():
@@ -64,6 +66,20 @@ def test_the_file_stays_lean_on_disk(tmp_path):
     text = path.read_text(encoding="utf-8")
     assert '{"label": "Revenue", "section": "income_statement", "pdf": "Revenue"}' in text
     assert "occurrence" not in text and "basis" not in text and "sign" not in text
+
+
+def test_a_carry_forward_row_round_trips_without_a_pdf_field(tmp_path):
+    """`carry_forward` and `pdf` are mutually exclusive: on disk, a carried row
+    has no `pdf` key at all, and loading it back must not mistake that for absent."""
+    mapping = Mapping(company="x", sheet="Model", rows=[
+        MappingRow(label="FX rate", section="other", carry_forward=True, note="a peg")])
+    path = mapping.save(tmp_path / "x.json")
+    text = path.read_text(encoding="utf-8")
+    assert '"carry_forward": true' in text and '"pdf"' not in text
+
+    loaded = Mapping.load(path)
+    assert loaded.rows[0].carry_forward is True
+    assert loaded.rows[0].instruction() == "carry:a peg"
 
 
 # --------------------------------------------------------------------------- #

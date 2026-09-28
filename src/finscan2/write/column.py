@@ -29,9 +29,56 @@ from openpyxl.utils import get_column_letter
 from finscan2.match.schema import Values
 from finscan2.model.discover import _references_cells
 from finscan2.model.load import ResolvedMap
+from finscan2.model.schema import FormulaRecipe, ModelMap
 from finscan2.schema import Issue
 
 AUDIT_SHEET = "FinScan_Audit"
+
+
+def _column_for_year_end(model: ModelMap, year: int) -> int | None:
+    """The lowest-numbered column dated year-12-31.
+
+    An annual archive column and a quarterly Q4 column can carry the identical
+    date; the archive column is always the smaller index, so picking the min
+    tells them apart without a separate list to maintain.
+    """
+    matches = [col for col, iso in model.period_dates.items() if iso == f"{year}-12-31"]
+    return min(matches) if matches else None
+
+
+def _ttm_margin_plug_formula(model: ModelMap, row: int, recipe: FormulaRecipe,
+                             write_col: int, period_end: str | None) -> str | None:
+    """Rebuild the analyst's trailing-12-month margin plug so it recalculates.
+
+    The reference column's own formula embeds a hand-typed revenue number
+    (e.g. "=(22%*22458)-AT51-AS51-AR51") that a plain column-shift would carry
+    forward unchanged forever. Rebuilt instead as margin * SUM(revenue over the
+    trailing N quarters) minus the other quarters already in that window - and,
+    at the fiscal year end, as the real annual actual minus those quarters,
+    matching how the analyst has always switched the pattern at year end.
+    """
+    if not period_end:
+        return None
+    year, month = int(period_end[:4]), int(period_end[5:7])
+    fiscal_year_end_month = model.fiscal_year_start_month - 1 or 12
+    prior_cols = [write_col - offset for offset in range(1, 4)]
+    if any(col < 1 for col in prior_cols):
+        return None
+    prior_refs = "".join(f"-{get_column_letter(col)}{row}" for col in prior_cols)
+
+    if month == fiscal_year_end_month:
+        annual_col = _column_for_year_end(model, year)
+        if annual_col is None:
+            return None
+        return f"={get_column_letter(annual_col)}{row}{prior_refs}"
+
+    start_col = write_col - (recipe.trailing_quarters - 1)
+    if start_col < 1:
+        return None
+    rev_range = (f"{get_column_letter(start_col)}{recipe.revenue_row}:"
+                f"{get_column_letter(write_col)}{recipe.revenue_row}")
+    margin_pct = f"{recipe.margin * 100:g}%"
+    return f"=({margin_pct}*SUM({rev_range})){prior_refs}"
 
 
 @dataclass
@@ -92,6 +139,7 @@ def write_column(values: Values, resolved_map: ResolvedMap, workbook_path: str,
 
         by_row = {v.row: v for v in values.values}
         bound_by_row = {b.row: b.spec for b in resolved_map.bound}
+        period_end = period_end or values.period_end
 
         for row, spec in sorted(bound_by_row.items()):
             target = worksheet.cell(row, write_col)
@@ -113,6 +161,19 @@ def write_column(values: Values, resolved_map: ResolvedMap, workbook_path: str,
 
             if spec.kind == "formula":
                 formula = source.value
+                if spec.formula_recipe is not None:
+                    built = _ttm_margin_plug_formula(
+                        model, row, spec.formula_recipe, write_col, period_end)
+                    if built is not None:
+                        target.value = built
+                        _copy_style(source, target)
+                        result.formulas_copied += 1
+                        result.issues.append(Issue(
+                            code="formula_recomputed", severity="info",
+                            message=f"{letter}{row} ('{spec.key.label}') rebuilt from its "
+                                    f"formula_recipe instead of copied forward, so it does "
+                                    f"not reuse a stale hand-typed number."))
+                        continue
                 # A formula referencing no cell computes nothing the model maintains;
                 # copying it forward would carry the reference period's own typed
                 # figures into the new column and report them as a formula copy.

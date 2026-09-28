@@ -322,7 +322,45 @@ def test_a_const_that_is_not_a_number_is_refused():
     assert any(i.code == "bad_constant" for i in values.issues)
 
 
-def _tiny_model(resolve: str, extra_rows=None):
+# --------------------------------------------------------------------------- #
+# carry: a line the filing never reports, held directly in the workbook
+# --------------------------------------------------------------------------- #
+
+def test_a_carried_row_takes_the_reference_columns_own_value():
+    """An FX peg: no filing reports it, so its figure is whatever the analyst
+    last typed into the workbook, carried forward unchanged."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="carry:a SAR/USD peg",
+                                          reference_value=0.2665)
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+    assert value.value == 0.2665 and value.ok
+    assert value.source is None                      # nothing was read from the filing
+    assert "carried forward" in value.adjustments[0].detail
+    assert any(i.code == "carried_forward" and i.severity == "warning"
+              for i in resolve_values(doc, resolved_map, path, "2026-06-30").issues)
+
+
+def test_a_carried_row_says_in_its_comment_that_it_is_not_from_the_filing():
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="carry:", reference_value=0.2665)
+    comment = resolve_values(doc, resolved_map, path, "2026-06-30").values[0].comment()
+    assert "not read from the filing" in comment
+
+
+def test_a_carried_row_with_nothing_to_carry_is_refused():
+    """The reference column is blank/non-numeric: there is nothing to carry, so
+    this is left unresolved rather than silently written as 0."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="carry:")
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert values.values[0].value is None
+    assert any(i.code == "unresolved_row" for i in values.issues)
+
+
+def _tiny_model(resolve: str, extra_rows=None, reference_value: float | None = None):
     """One input row in a real one-cell workbook, so resolve_values can run."""
     import tempfile
     from pathlib import Path
@@ -339,6 +377,8 @@ def _tiny_model(resolve: str, extra_rows=None):
     sheet.title = "Model"
     sheet.cell(2, 3, __import__("datetime").datetime(2026, 3, 31))
     sheet.cell(5, 2, "Exchange Gain, net")
+    if reference_value is not None:
+        sheet.cell(5, 3, reference_value)
     path = Path(tempfile.mkdtemp()) / "m.xlsx"
     book.save(path)
 
@@ -425,8 +465,9 @@ def test_a_sum_term_can_be_subtracted():
 
 
 def test_one_missing_term_fails_the_whole_sum():
-    """A partial sum is the most dangerous output there is: plausible, and short by
-    exactly one component, with nothing about it looking wrong."""
+    """A caption that cannot be found at all is a mapping problem, not a printed
+    zero, so it still fails the whole sum: plausible, and short by exactly one
+    component, with nothing about it looking wrong."""
     from finscan2.match.resolve import resolve_values
 
     doc, resolved_map, path = _tiny_model(
@@ -436,6 +477,19 @@ def test_one_missing_term_fails_the_whole_sum():
     assert values.values[0].value is None
     assert "Income Tax" in values.values[0].unresolved
     assert any(i.code == "unresolved_row" for i in values.issues)
+
+
+def test_a_term_printed_as_a_dash_contributes_zero_instead_of_failing():
+    """The caption IS found, but this column prints "-": the filing itself is
+    saying nothing happened here this period, so the sum can trust that as 0."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="sum:pdf:Zakat|pdf:Income Tax",
+        extra_rows=[("Zakat", [-26.573] * 4), ("Income Tax", [None] * 4)])
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+    assert value.ok and round(value.value, 3) == round(_scaled(-26.573), 3)
+    assert "treated as 0" in value.adjustments[0].detail
 
 
 def test_a_sum_records_the_arithmetic_in_its_comment():
@@ -457,6 +511,36 @@ def test_a_caption_containing_a_comma_survives_term_splitting():
         extra_rows=[("Other Expenses, net", [1.0] * 4), ("Zakat", [2.0] * 4)])
     value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
     assert round(value.value, 3) == round(_scaled(3.0), 3)
+
+
+# --------------------------------------------------------------------------- #
+# pdf: a single printed line, no sum
+# --------------------------------------------------------------------------- #
+
+def test_a_plain_row_printed_as_a_dash_is_treated_as_zero():
+    """Same principle as a dash inside a sum: the caption is found, this column
+    prints "-", and that is the filing's own answer of 0, not a gap."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="pdf:Exchange Gain, net",
+        extra_rows=[("Exchange Gain, net", [None, 1.0, 2.0, 3.0])])
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+    assert value.ok and value.value == 0.0
+    assert any(a.kind == "assumed_zero" for a in value.adjustments)
+
+
+def test_a_plain_row_with_too_few_columns_still_fails():
+    """A caption found but with fewer printed columns than the statement's header
+    row promises is a real misalignment, not a printed dash — still refused."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="pdf:Exchange Gain, net",
+        extra_rows=[("Exchange Gain, net", [])])
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert values.values[0].value is None
+    assert any(i.code == "unresolved_row" for i in values.issues)
 
 
 def _scaled(printed: float) -> float:
