@@ -1,6 +1,11 @@
 """finscan2 — command line for the v2 pipeline.
 
-Three commands per quarter:
+One command per quarter:
+
+    python -m finscan2.cli company almarai run      # read every PDF, learn the
+                                                    # mapping only if missing, apply
+
+which is these three, still available one at a time:
 
     python -m finscan2.cli company almarai read     # PDF -> pdf.json
     python -m finscan2.cli company almarai learn    # -> mappings/almarai.json (review it)
@@ -336,7 +341,14 @@ def _company(args) -> int:
         print(f"{error}", file=sys.stderr)
         return 1
 
-    stage = args.stage
+    stage = "run" if args.stage == "all" else args.stage
+    if stage == "run":
+        try:
+            return _run_quarter(args, paths)
+        except CompanyError as error:
+            print(f"{error}", file=sys.stderr)
+            return 1
+
     print(f"{paths.key} · stage '{stage}'")
     print(paths.describe())
     print()
@@ -422,6 +434,120 @@ def _company(args) -> int:
         return 1
 
     return 0
+
+
+def _run_quarter(args, paths) -> int:
+    """The whole quarter in one step: read, learn only if needed, apply.
+
+    * Every filing in the folder is read on every run — the PDF is the source of
+      truth, and a new quarter's PDF is new. The SHA-256 cache only returns what
+      reading these exact bytes with this exact parser already produced (and keeps
+      vision transcriptions from being re-read with different digits).
+    * The mapping is the one human decision file. It is used when it exists and
+      never overwritten; it is proposed only for a company that has none.
+    * The output workbook and this period's values/report are rewritten.
+
+    The stages run quietly; one summary is printed. Everything they would have
+    printed is in the report written beside the values.
+    """
+    import contextlib
+    import io
+    import json
+    from argparse import Namespace
+
+    from finscan2.apply import run as apply_run
+    from finscan2.apply import save_artifacts
+    from finscan2.schema import PdfDoc
+
+    quiet = contextlib.redirect_stdout(io.StringIO())
+
+    # 1. read
+    for pdf_path, pdf_json in zip(paths.pdfs or [paths.pdf], paths.pdf_jsons):
+        with contextlib.redirect_stdout(io.StringIO()):
+            code = _read_pdf_stage(Namespace(
+                cmd="read", pdf=str(pdf_path), out=str(pdf_json),
+                cache_dir=args.cache_dir, no_cache=args.no_cache,
+                no_ocr=args.no_ocr, rows=False))
+        # Stage-1 findings are judged row by row in apply; only a missing file stops.
+        if code == 1:
+            print(f"Could not read {pdf_path}.", file=sys.stderr)
+            return code
+
+    # 2. learn — only for a company with no mapping yet
+    fresh_mapping = not paths.mapping.exists()
+    if fresh_mapping:
+        pdf_json = paths.pdf_jsons[0]
+        if len(paths.pdf_jsons) > 1:
+            merged = PdfDoc.merge([PdfDoc.from_dict(json.loads(p.read_text(encoding="utf-8")))
+                                   for p in paths.pdf_jsons])
+            pdf_json = paths.values.with_name(f"{paths.key}_merged.pdf.json")
+            pdf_json.parent.mkdir(parents=True, exist_ok=True)
+            pdf_json.write_text(json.dumps(merged.to_dict(), indent=2, ensure_ascii=False),
+                                encoding="utf-8")
+        with quiet:
+            code = _learn(Namespace(
+                excel=str(paths.excel), company=paths.key, sheet=args.sheet,
+                out=str(paths.map), rows=False, pdf_json=str(pdf_json),
+                no_llm=args.no_llm, overwrite=False, mapping=str(paths.mapping)))
+        if code:
+            print(f"Could not propose a mapping for {paths.key}.", file=sys.stderr)
+            return code
+
+    # 3. apply
+    result = apply_run(",".join(str(p) for p in paths.pdf_jsons), paths.mapping,
+                       paths.excel, paths.output, args.period_end, args.dry_run)
+    artifacts = [] if args.dry_run else save_artifacts(result)
+
+    _print_run_summary(paths, result, artifacts, fresh_mapping)
+    return result.exit_code
+
+
+def _print_run_summary(paths, result, artifacts, fresh_mapping: bool) -> None:
+    """Where the column went, and where its audit trail is. Nothing else."""
+    from datetime import date
+
+    color = sys.stdout.isatty()
+
+    def paint(text: str, code: str) -> str:
+        return f"\033[{code}m{text}\033[0m" if color else text
+
+    def short(path) -> str:
+        try:
+            return str(Path(path).resolve().relative_to(Path.cwd().resolve()))
+        except ValueError:
+            return str(path)
+
+    ending = result.period_end
+    try:
+        ending = date.fromisoformat(result.period_end).strftime("%-d %b %Y")
+    except ValueError:
+        pass
+
+    print()
+    print(f"  {paint(paths.key.upper(), '1')}  ·  period ending {ending}")
+    print(f"  {paint('─' * 52, '2')}")
+
+    if result.refused or not result.write:
+        reason = result.refused or "nothing was written"
+        print(f"  {paint('✗ Not written', '1;31')}  {reason}")
+        for issue in [i for i in result.issues if i.severity == 'error'][:3]:
+            print(f"                 {issue.message}")
+    else:
+        w = result.write
+        print(f"  {paint('✓ Written', '1;32')}   {short(w.output_path)}")
+        print(f"              {paint(f'{w.sheet}!{w.column}', '1')}  ·  "
+              f"{w.values_written} values  ·  {w.formulas_copied} formulas  ·  "
+              f"{w.blanks_annotated} blank")
+
+    if artifacts:
+        label = "Audit"
+        for path in artifacts:
+            print(f"  {paint(label, '2'):<{11 + (8 if color else 0)}} {short(path)}")
+            label = ""
+    if fresh_mapping:
+        print(f"  {paint('! Review', '1;33')}    {short(paths.mapping)} was generated by "
+              f"this run; check it before trusting the column.")
+    print()
 
 
 def _bind(args) -> int:
@@ -570,8 +696,10 @@ def main(argv: list[str] | None = None) -> int:
     co = sub.add_parser("company",
                         help="Run a stage for a company, finding its files by convention.")
     co.add_argument("key", help="Company folder under inbox/ (case-insensitive)")
-    co.add_argument("stage", choices=["read", "learn", "confirm", "check", "match",
-                                      "write", "bind", "apply", "all", "paths"])
+    co.add_argument("stage", choices=["run", "read", "learn", "confirm", "check", "match",
+                                      "write", "bind", "apply", "all", "paths"],
+                    help="run = read every PDF, learn only if there is no mapping, "
+                         "apply (all is the same)")
     co.add_argument("--pdf", help="Override the filing (default: the one PDF in the folder)")
     co.add_argument("--excel", help="Override the model (default: the one workbook)")
     co.add_argument("--out", help="Override the output workbook")

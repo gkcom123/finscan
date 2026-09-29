@@ -26,8 +26,17 @@ New Way
 =========
 python -m finscan2.cli read 'inbox/Tencent/Tencent_q325.pdf'
 
+One step per quarter — drop the new PDF(s) into inbox/<Company>/ and run:
+
+.venv/bin/python -m finscan2.cli company almarai run
+    # 1. reads every PDF in the folder (always)
+    # 2. learns mappings/almarai.json only if it does not exist yet (never overwrites it)
+    # 3. applies: writes the column into inbox/almarai_v2_output.*
+
+The single stages still exist for debugging:
+
 .venv/bin/python -m finscan2.cli company almarai read
-.venv/bin/python -m finscan2.cli company almarai learn    # → mappings/almarai.json
+.venv/bin/python -m finscan2.cli company almarai learn    # → mappings/almarai.proposed.json when a mapping exists
 .venv/bin/python -m finscan2.cli company almarai apply    # resolve + write
 
 
