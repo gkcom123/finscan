@@ -8,6 +8,7 @@ shape is the interface and these classes are only a convenience for producing it
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 from typing import Any, Literal
 
 SCHEMA_VERSION = "1.0"
@@ -20,9 +21,22 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "4"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "16"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
+                            # 5: tiered headers (band row over label row) read by
+                            #    x-overlap; short rows slotted by cell position
+                            # 6: units read only from statements' table sections
+                            # 7: ISO date-range headers (BMV/XBRL reports)
+                            # 8: scale only from columned tables; XBRL rounding
+                            # 9: lines printing ISO dates are headers, not rows
+                            # 10: rounding proof tolerates counts (95%)
+                            # 11: continuation pages; BMV +/- caption markers
+                            # 12: leading sign marker is caption in the layout pass
+                            # 13: rendered-table rows the text layer already read are dropped
+                            # 14: (reverted) image-page OCR
+                            # 15: first body row from geometry; row headings kept
+                            # 16: headings survive blank-cell slotting
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,
@@ -68,6 +82,9 @@ class StatementRow:
     caption: str
     values: list[float | None]
     raw: str
+    #: A caption-only line printed directly above this row ("OTHER SUBSIDIARIES
+    #: &" over "Sales Volume (18) (21)"): the name of the block the row opens.
+    heading: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -84,12 +101,20 @@ class Statement:
     note: int | None = None
     columns: list[Column] = field(default_factory=list)
     rows: list[StatementRow] = field(default_factory=list)
+    #: The scale THIS table's figures are printed in, when it differs from the
+    #: document's. Filled when documents are merged: Gruma's BMV report prints in
+    #: whole dollars and its press release in millions, and one quarter reads both.
+    units: str | None = None
+    #: The file the table came from, when a quarter reads more than one.
+    source: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "page": self.page,
             "kind": self.kind,
             "note": self.note,
+            "units": self.units,
+            "source": self.source,
             "title": self.title,
             "heading": self.heading,
             "columns": [c.to_dict() for c in self.columns],
@@ -153,11 +178,27 @@ class PdfDoc:
         appended below, never the reverse — so an `income_statement` request
         accepts it when no page was classified as `income_statement` outright.
         """
-        found = next((s for s in self.statements if s.kind == kind), None)
-        if found is None and kind == "income_statement":
-            found = next((s for s in self.statements
-                         if s.kind == "comprehensive_income"), None)
-        return found
+        # A page matched by title but with no readable columns — a table of
+        # contents, a one-line informative block — can give no value, so it never
+        # stands in for the real statement (Gruma's BMV report opens with one).
+        for wanted in [kind] + (["comprehensive_income"] if kind == "income_statement" else []):
+            of_kind = [s for s in self.statements if s.kind == wanted]
+            found = next((s for s in of_kind if s.columns), None) or next(iter(of_kind), None)
+            if found is not None:
+                return found
+        return None
+
+    def titled(self, text: str) -> Statement | None:
+        """The first primary statement whose title contains `text`.
+
+        For filings that print several tables of one kind, where "the first
+        income statement" is the wrong one: Gruma's BMV report tags each with
+        an XBRL code ("[310000] Statement of comprehensive income"), which is
+        stable from quarter to quarter where page numbers are not.
+        """
+        needle = text.strip().lower()
+        return next((s for s in self.statements
+                     if s.note is None and needle in (s.title or "").lower()), None)
 
     def note(self, number: int, end: str | None = None) -> Statement | None:
         """A note table, optionally the one for a particular period end.
@@ -188,6 +229,41 @@ class PdfDoc:
                 if column.end and column.months:
                     spans[column.end] = max(spans.get(column.end, 0), column.months)
         return spans
+
+    @classmethod
+    def merge(cls, docs: list["PdfDoc"]) -> "PdfDoc":
+        """Several filings for one quarter, read as one.
+
+        Each table keeps the scale of the document it came from, and records that
+        document, so a figure is always scaled — and traced — by its own source.
+        The document with the most readable primary statements leads: it is the
+        one a row naming only its section ("balance_sheet") is meant to read, and
+        the order must not depend on file names.
+        """
+        if len(docs) == 1:
+            return docs[0]
+
+        def weight(doc: "PdfDoc") -> tuple:
+            return (sum(1 for s in doc.statements if s.note is None and s.columns),
+                    doc.path)
+
+        ordered = sorted(docs, key=weight, reverse=True)
+        lead = ordered[0]
+        merged = cls(path=" + ".join(d.path for d in ordered),
+                     sha256=" + ".join(d.sha256 for d in ordered),
+                     units=lead.units, currency=lead.currency)
+        for doc in ordered:
+            name = Path(doc.path).name
+            for statement in doc.statements:
+                statement.units = statement.units or doc.units
+                statement.source = statement.source or name
+                merged.statements.append(statement)
+            merged.pages.extend(doc.pages)
+            merged.ocr_pages.extend(doc.ocr_pages)
+            merged.issues.extend(
+                Issue(code=i.code, severity=i.severity, page=i.page,
+                      message=f"[{name}] {i.message}") for i in doc.issues)
+        return merged
 
     @property
     def errors(self) -> list[Issue]:
@@ -225,6 +301,7 @@ class PdfDoc:
                 Statement(
                     page=s["page"], kind=s["kind"], title=s["title"],
                     heading=s.get("heading", ""), note=s.get("note"),
+                    units=s.get("units"), source=s.get("source"),
                     columns=[Column(**c) for c in s.get("columns", [])],
                     rows=[StatementRow(**r) for r in s.get("rows", [])],
                 )

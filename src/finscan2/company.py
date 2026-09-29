@@ -17,7 +17,7 @@ route.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 #: Names that mark a workbook as something this pipeline produced, not a source.
@@ -61,10 +61,19 @@ class CompanyPaths:
     mapping: Path
     values: Path
     output: Path
+    #: Every filing for the quarter. A company may publish its figures across two
+    #: documents — Gruma's BMV report carries the cash flow, its press release the
+    #: by-subsidiary table — and both are read and merged. `pdf` is the first.
+    pdfs: list[Path] = field(default_factory=list)
+
+    @property
+    def pdf_jsons(self) -> list[Path]:
+        return [p.with_suffix(".pdf.json") for p in (self.pdfs or [self.pdf])]
 
     def describe(self) -> str:
-        rows = [("folder", self.folder), ("pdf", self.pdf), ("excel", self.excel),
-                ("pdf.json", self.pdf_json), ("mapping", self.mapping),
+        filings = [("pdf", p) for p in (self.pdfs or [self.pdf])]
+        rows = [("folder", self.folder), *filings, ("excel", self.excel),
+                *[("pdf.json", p) for p in self.pdf_jsons], ("mapping", self.mapping),
                 ("layout", self.map), ("values.json", self.values),
                 ("output", self.output)]
         return "\n".join(
@@ -94,10 +103,12 @@ def resolve(key: str, root: Path | None = None, *, pdf: str | None = None,
     folder = folders[0]
 
     if pdf:
-        pdf_path = Path(pdf)
+        pdf_paths = [Path(pdf)]
     else:
-        pdf_path = _one([p for p in folder.glob("*.pdf") if not p.name.startswith(".")],
-                        "PDF", folder, "--pdf <path>")
+        pdf_paths = sorted(p for p in folder.glob("*.pdf") if not p.name.startswith("."))
+        if not pdf_paths:
+            raise CompanyError(f"No PDF in {folder}. --pdf <path>")
+    pdf_path = pdf_paths[0]
 
     if excel:
         excel_path = Path(excel)
@@ -112,6 +123,7 @@ def resolve(key: str, root: Path | None = None, *, pdf: str | None = None,
         key=slug,
         folder=folder,
         pdf=pdf_path,
+        pdfs=pdf_paths,
         excel=excel_path,
         pdf_json=pdf_path.with_suffix(".pdf.json"),
         map=root / "models" / f"{slug}_model.json",

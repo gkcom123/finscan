@@ -12,6 +12,8 @@ reports at all (an FX peg the analyst maintains directly in the workbook).
 """
 from __future__ import annotations
 
+import re
+
 from datetime import date
 from pathlib import Path
 
@@ -23,6 +25,7 @@ from finscan2.match.schema import Adjustment, ResolvedValue, Source, Values
 from finscan2.match.select import field_aliases, find_row, select_column
 from finscan2.model.learn import _is_bidirectional
 from finscan2.model.load import ResolvedMap
+from finscan2.model.schema import normalize_label
 from finscan2.schema import Issue, PdfDoc
 
 UNIT_MULTIPLIER: dict[str, float] = {
@@ -113,6 +116,13 @@ def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
             return None, f"the filing has no note {number}"
         return statement, ""
 
+    if wanted.startswith("title:"):
+        text = wanted.split(":", 1)[1]
+        statement = doc.titled(text)
+        if statement is None:
+            return None, f"no statement's title contains '{text}'"
+        return statement, ""
+
     statement = doc.statement(wanted)
     if statement is None:
         kinds = ", ".join(sorted({s.kind for s in doc.statements})) or "none"
@@ -199,6 +209,58 @@ def _lookup_sum(spec, statement, column):
     return terms, ""
 
 
+#: "Interest paid #2": the Nth row printing exactly this caption. Gruma's cash
+#: flow prints "Interest paid" under operating AND financing activities; the
+#: model wants the financing one, which no caption alone can pick out.
+_OCCURRENCE = re.compile(r"\s*#(\d+)\s*$")
+
+
+#: "GIMSA > EBITDA": a line inside a block of the table. Gruma's "Financial
+#: Highlights by Subsidiary" repeats Net Sales / Gross Profit / EBITDA under each
+#: subsidiary, and the subsidiary is named once, on the block's first row.
+_BLOCK = " > "
+
+
+def _plain(text: str) -> str:
+    """normalize_label without accents: a heading typed "GRUMA CENTROAMERICA"
+    must find the printed "GRUMA CENTROAMÉRICA"."""
+    import unicodedata
+
+    decomposed = unicodedata.normalize("NFKD", text or "")
+    return normalize_label("".join(c for c in decomposed if not unicodedata.combining(c)))
+
+
+def _in_block(statement, anchor: str, caption: str):
+    """The first row at or after the block's heading whose caption is, or ends
+    with, `caption`. The heading must name exactly one row, and the caption must
+    match as whole words, so neither can drift onto a neighbouring block."""
+    key, target = _plain(anchor), _plain(caption)
+    rows = [_plain(r.caption) for r in statement.rows]
+    # The heading may be the row's own caption ("GRUMA USA Sales Volume") or a
+    # line printed above it ("OTHER SUBSIDIARIES &" over "Sales Volume").
+    named = [_plain(f"{getattr(r, 'heading', '')} {r.caption}") for r in statement.rows]
+    heads = [i for i, text in enumerate(named) if f" {key} " in f" {text} "]
+    if len(heads) != 1:
+        return None, (f"block heading '{anchor}' names {len(heads)} rows; it must "
+                      f"name exactly one")
+    for i in range(heads[0], len(rows)):
+        if rows[i] == target or rows[i].endswith(f" {target}"):
+            return statement.rows[i], f"'{caption}' in the '{anchor}' block"
+    return None, f"no '{caption}' line after the '{anchor}' block heading"
+
+
+def _nth_exact(statement, caption: str, n: int):
+    """The Nth row whose caption matches exactly — never a looser tier, because
+    counting fuzzy matches would make the number mean something different each
+    time the filing rewords a neighbouring line."""
+    target = normalize_label(caption)
+    hits = [r for r in statement.rows if normalize_label(r.caption) == target]
+    if len(hits) < n:
+        return None, (f"caption '{caption}' is printed {len(hits)} time(s); "
+                      f"occurrence #{n} does not exist")
+    return hits[n - 1], f"occurrence #{n} of an exact caption match"
+
+
 def _lookup(spec, statement):
     """Find the printed row for a map spec's `resolve` instruction.
 
@@ -220,6 +282,11 @@ def _lookup(spec, statement):
         return find_row(statement, spec.key.label)
     if instruction.startswith("pdf:"):
         wanted = instruction.split(":", 1)[1]
+        if _BLOCK in wanted:
+            anchor, caption = (part.strip() for part in wanted.split(_BLOCK, 1))
+            return _in_block(statement, anchor, caption)
+        if m := _OCCURRENCE.search(wanted):
+            return _nth_exact(statement, wanted[:m.start()], int(m.group(1)))
         if recorded:
             row, why = find_row(statement, recorded[0])
             if row is not None:
@@ -458,7 +525,8 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             priors = {c: cells.get((bound.row, c)) for c in columns_to_subtract}
             # The workbook's own figures are in the sheet's units; the filing's are
             # in the filing's, so both are brought to the sheet's scale first.
-            scaled_printed = _scale(printed, doc.units or model.units, model.units)
+            scaled_printed = _scale(printed, statement.units or doc.units or model.units,
+                                    model.units)
             figure, adjustment, issue = basis_mod.decumulate(
                 scaled_printed, priors, columns_to_subtract, bound.row, letters)
             if issue:
@@ -470,8 +538,9 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             value.adjustments.append(adjustment)
             value.units_from = value.units_to = model.units
         else:
-            figure = _scale(printed, doc.units or model.units, model.units)
-            value.units_from, value.units_to = (doc.units or model.units), model.units
+            figure = _scale(printed, statement.units or doc.units or model.units, model.units)
+            value.units_from = statement.units or doc.units or model.units
+            value.units_to = model.units
 
         # A sign convention is never forced onto a line the FILING presents as
         # two-directional. The map's convention was inferred from one prior column;

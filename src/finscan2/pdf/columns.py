@@ -43,10 +43,11 @@ MONTH_COUNT_WORDS: dict[str, int] = {
     "twelve": 12, "12": 12, "doce": 12,
 }
 
-#: "April - June 2026", "January – September 2025". The span between the two
+#: "April - June 2026", "1 July - 30 September 2025". The span between the two
 #: months inclusive is what the column accumulates: Apr-Jun = 3, Jan-Sep = 9.
 _RANGE = re.compile(
-    rf"\b({_MONTH_WORDS})\b\s*[-–—]\s*\b({_MONTH_WORDS})\b,?\s*(\d{{4}})",
+    rf"\b(?:\d{{1,2}}\s+)?({_MONTH_WORDS})\b\s*[-–—]\s*(?:\d{{1,2}}\s+)?"
+    rf"\b({_MONTH_WORDS})\b,?\s*(\d{{4}})",
     re.IGNORECASE,
 )
 
@@ -179,6 +180,19 @@ _ORDINALS = {
     "fourth": 4, "4th": 4, "cuarto": 4,
 }
 
+#: A year-to-date column headed only by its year: "YTD 2026", "Acumulado 2025".
+#: A variance column under the same band ("YTD VAR (%)") carries no year and so
+#: never matches.
+_YTD_YEAR = re.compile(
+    r"\b(?:YTD|year[\s-]to[\s-]date|acumulado|acum\.?)\s+((?:19|20)\d{2})\s*$",
+    re.IGNORECASE,
+)
+
+#: Two ISO dates spanning a period: "2026-04-01 - 2026-06-30". The text layer
+#: sometimes breaks the second date ("2026- 06-30"), so spaces are tolerated.
+_ISO_RANGE = re.compile(
+    r"\b(\d{4})-(\d{2})-(\d{2})\s*[-–—]\s*(\d{4})-\s*(\d{2})-\s*(\d{2})\b")
+
 #: A numeric date: 30/06/2026, 31-03-2026, 2026-06-30.
 _NUMERIC_DATE = re.compile(r"\b(\d{1,4})[/.-](\d{1,2})[/.-](\d{2,4})\b")
 
@@ -229,6 +243,15 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         months = MONTH_COUNT_WORDS[m.group(1).lower()]
 
     end: str | None = None
+    # "2026-01-01 - 2026-06-30": the BMV (XBRL) report states each column's span
+    # as two ISO dates. The second is the end; the first must not be read as one.
+    if m := _ISO_RANGE.search(text):
+        start = date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        stop = date(int(m.group(4)), int(m.group(5)), int(m.group(6)))
+        months = (stop.year - start.year) * 12 + stop.month - start.month + 1
+        return Column(index=0, header=header.strip(), kind="period",
+                      months=months, end=stop.isoformat())
+
     quarter = _ORDINAL_QUARTER.search(text)
     if quarter:
         months = months or 3
@@ -303,6 +326,18 @@ def parse_columns_from_headers(
         column = parse_single_column(header, day_first)
         column.index = len(columns)
         columns.append(column)
+
+    # "YTD 2026": a year under a year-to-date band, as Gruma prints beside "2Q26".
+    # The year alone gives no end month; the quarter columns beside it do — the
+    # year to date runs to the latest quarter end the statement reports.
+    quarter_ends = [c.end for c in columns if c.months == 3 and c.end]
+    if quarter_ends:
+        end_month = int(max(quarter_ends)[5:7])
+        for column in columns:
+            if column.end is None and (m := _YTD_YEAR.search(flatten(column.header))):
+                column.end = _month_end(int(m.group(1)), end_month)
+                column.months = (end_month - fiscal_year_start_month) % 12 + 1
+                column.kind = "period"
 
     # On a flow statement a column headed only by a date ("As of 30/06/2026") is a
     # year-to-date figure, not a position: Fibra Uno's cash flow states the span

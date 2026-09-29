@@ -120,7 +120,7 @@ def check_period(period_dates: dict[int, str], cadence_months: int,
     return target, issues
 
 
-def run(pdf_json: str | Path, mapping_path: str | Path, workbook: str | Path,
+def run(pdf_json: str | Path | list, mapping_path: str | Path, workbook: str | Path,
         output: str | Path | None = None, period_end: str | None = None,
         dry_run: bool = False) -> ApplyResult:
     """One period, end to end."""
@@ -159,7 +159,42 @@ def run(pdf_json: str | Path, mapping_path: str | Path, workbook: str | Path,
         return result
 
     # A4 — resolve.
-    doc = PdfDoc.from_dict(json.loads(Path(pdf_json).read_text(encoding="utf-8")))
+    # One quarter may be read from several filings ("a.pdf.json,b.pdf.json").
+    sources = pdf_json if isinstance(pdf_json, list) else str(pdf_json).split(",")
+    docs = [PdfDoc.from_dict(json.loads(Path(p).read_text(encoding="utf-8")))
+            for p in sources if str(p).strip()]
+    # Several filings must be one quarter. Last quarter's report left beside this
+    # one would otherwise lend its figures to any row this one does not print.
+    latest = {Path(d.path).name: max((c.end for s in d.statements if s.note is None
+                                      for c in s.columns if c.end), default=None)
+              for d in docs}
+    if len(docs) > 1 and len(set(latest.values())) > 1:
+        result.issues.append(Issue(
+            code="filings_disagree", severity="error",
+            message="The filings in the folder report different latest periods ("
+                    + ", ".join(f"{name}: {end}" for name, end in latest.items())
+                    + "). Leave only this quarter's filings in the folder."))
+        result.refused = "the filings are not for the same period"
+        return result
+    doc = PdfDoc.merge(docs)
+
+    # The filing must report the period the sheet wants next. When it does not,
+    # every row fails the same way and the run writes an empty column — which is
+    # what a mapping bound to the wrong sheet looks like (Gruma's stale Pesos
+    # "Model" sheet asks for 2022-03-31 of a 2Q26 filing).
+    reported = sorted({c.end for s in doc.statements if s.note is None
+                       for c in s.columns if c.end})
+    if reported and result.period_end[:7] not in {end[:7] for end in reported}:
+        result.issues.append(Issue(
+            code="period_not_in_filing", severity="error",
+            message=f"Sheet {mapping.sheet!r} wants {result.period_end} next (its "
+                    f"latest column is {max(model.period_dates.values())}), but the "
+                    f"filing reports only {', '.join(reported)}. Either the mapping "
+                    f"names the wrong sheet, or this filing is not the next period "
+                    f"for it."))
+        result.refused = "the filing does not report the period this sheet needs"
+        return result
+
     values = resolve_values(doc, resolved_map, str(workbook), result.period_end)
     result.values = values
 

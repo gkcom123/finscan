@@ -1,7 +1,9 @@
 """Company path resolution — the convention behind `finscan2 company <key> <stage>`.
 
 The interesting cases are the refusals. Picking one of two PDFs is how a run
-silently reads last quarter's filing, which looks exactly like a correct run.
+silently reads last quarter's filing, which looks exactly like a correct run —
+so two PDFs are both read, and `apply` refuses them unless they report the
+same period.
 """
 from __future__ import annotations
 
@@ -37,11 +39,14 @@ def test_the_folder_name_is_matched_case_insensitively(tmp_path):
     assert resolve("almarai", root).key == "almarai"
 
 
-def test_two_filings_are_refused_rather_than_one_being_picked(tmp_path):
+def test_two_filings_are_both_read_never_one_picked(tmp_path):
+    """Gruma publishes one quarter across a BMV report and a press release. Both
+    are read; that they are the SAME quarter is checked by `apply`, which is the
+    first point that knows what periods each one reports."""
     root = _tree(tmp_path, pdfs=("q1.pdf", "q2.pdf"))
-    with pytest.raises(CompanyError) as caught:
-        resolve("almarai", root)
-    assert "q1.pdf" in str(caught.value) and "--pdf" in str(caught.value)
+    paths = resolve("almarai", root)
+    assert [p.name for p in paths.pdfs] == ["q1.pdf", "q2.pdf"]
+    assert [p.name for p in paths.pdf_jsons] == ["q1.pdf.json", "q2.pdf.json"]
 
 
 def test_a_generated_workbook_is_not_mistaken_for_the_source_model(tmp_path):

@@ -548,3 +548,27 @@ def _scaled(printed: float) -> float:
     from finscan2.match.resolve import _scale
 
     return _scale(printed, "thousands", "millions")
+
+
+def test_block_caption_finds_the_line_inside_a_named_block():
+    """Gruma's by-subsidiary table repeats Net Sales / EBITDA under every
+    subsidiary; "GIMSA > EBITDA" is the one in GIMSA's block, and the heading may
+    sit on a line of its own ("OTHER SUBSIDIARIES &") or carry an accent."""
+    from finscan2.match.resolve import _in_block
+    from finscan2.schema import Statement, StatementRow
+
+    rows = [StatementRow("GRUMA USA Sales Volume", [380.0], ""),
+            StatementRow("Corn flour and other Net Sales", [850.3], ""),
+            StatementRow("EBITDA", [165.0], ""),
+            StatementRow("GIMSA Sales Volume", [520.0], ""),
+            StatementRow("EBITDA", [50.3], ""),
+            StatementRow("GRUMA CENTROAMÉRICA Sales Volume", [62.0], ""),
+            StatementRow("EBITDA", [19.7], ""),
+            StatementRow("Sales Volume", [-18.0], "", heading="OTHER SUBSIDIARIES &"),
+            StatementRow("EBITDA", [7.9], "")]
+    st = Statement(page=14, kind="income_statement", title="t", heading="", rows=rows)
+    assert _in_block(st, "GIMSA", "EBITDA")[0].values == [50.3]
+    assert _in_block(st, "GRUMA USA", "Net Sales")[0].values == [850.3]
+    assert _in_block(st, "GRUMA CENTROAMERICA", "EBITDA")[0].values == [19.7]
+    assert _in_block(st, "OTHER SUBSIDIARIES", "EBITDA")[0].values == [7.9]
+    assert _in_block(st, "GRUMA", "EBITDA")[0] is None      # names several rows

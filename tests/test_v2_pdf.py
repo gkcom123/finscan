@@ -315,3 +315,210 @@ def test_cache_is_ignored_when_the_parser_changed(tmp_path):
 
     fresh = PdfDoc(path="x.pdf", sha256="abc")
     assert fresh.parser_version == PARSER_VERSION
+
+
+# --------------------------------------------------------------------------- #
+# Tiered headers read by geometry
+#
+# Gruma's 2Q26 summary (p.13) prints a band row over the column labels, and the
+# labels share a line with the table's title:
+#
+#                                          YoY                    YTD
+#   Income Statement (USD millions)   2Q26  2Q25  VAR (%)   2026  2025  VAR (%)
+#
+# The word boxes below are the real ones from that page, trimmed.
+# --------------------------------------------------------------------------- #
+
+from finscan2.pdf.layout import table_layout  # noqa: E402
+
+
+class _Page:
+    """Just enough of a pdfplumber page: word boxes."""
+
+    def __init__(self, lines: list[tuple[float, list[tuple[str, float, float]]]]):
+        self._words = [{"text": t, "x0": x0, "x1": x1, "top": top, "bottom": top + 8}
+                       for top, words in lines for t, x0, x1 in words]
+
+    def extract_words(self, **_):
+        return list(self._words)
+
+
+_GRUMA_P13 = [
+    (84.3, [("Gruma,", 76, 100), ("Subsidiaries", 162, 200), ("YoY", 303, 314), ("YTD", 403, 414)]),
+    (96.0, [("Income", 76, 98), ("Statement", 100, 130), ("(USD", 131, 146), ("millions)", 148, 172),
+            ("2Q26", 267, 283), ("2Q25", 301, 317), ("VAR", 331, 343), ("(%)", 345, 355),
+            ("2026", 369, 384), ("2025", 403, 418), ("VAR", 431, 443), ("(%)", 444, 454)]),
+    (118.5, [("Net", 76, 87), ("Sales", 88, 103), ("1,649.9", 263, 285), ("1,600.7", 297, 319),
+             ("3", 340, 344), ("3,274.7", 364, 386), ("3,149.2", 398, 421), ("4", 440, 443)]),
+    (150.8, [("Gross", 85, 102), ("Margin", 104, 125), ("39.2%", 266, 284), ("39.4%", 300, 318),
+             ("(20)", 332, 344), ("bp", 346, 353), ("39.0%", 367, 385), ("39.6%", 401, 420),
+             ("(60)", 432, 444), ("bp", 446, 453)]),
+    (188.5, [("Operating", 76, 105), ("Income", 107, 129), ("214.8", 265, 282), ("229.8", 300, 316),
+             ("(7)", 339, 347), ("403.9", 366, 383), ("446.9", 401, 418), ("(10)", 437, 449)]),
+    (328.1, [("Depreciation", 76, 113), ("61.8", 267, 280), ("59.9", 301, 315),
+             ("123.3", 366, 383), ("118.7", 401, 418)]),
+    # The balance sheet summary below: a new table, not more rows of this one.
+    (399.7, [("Gruma,", 76, 100), ("YoY", 303, 314), ("QoQ", 387, 400)]),
+    (411.4, [("Balance", 76, 99), ("Jun-26", 264, 286), ("Jun-25", 298, 320), ("VAR", 330, 344),
+             ("Mar-26", 364, 388), ("VAR", 398, 411)]),
+    (431.7, [("Cash", 76, 91), ("484", 268, 280), ("353", 302, 314), ("37", 338, 346),
+             ("419", 369, 381), ("15", 405, 414)]),
+]
+
+
+def test_band_row_is_split_between_the_columns_beneath_it():
+    layout = table_layout(_Page(_GRUMA_P13))
+    assert layout.headers == ["YoY 2Q26", "YoY 2Q25", "YoY VAR (%)",
+                              "YTD 2026", "YTD 2025", "YTD VAR (%)"]
+    cols = parse_columns_from_headers(layout.headers, statement_kind="income_statement")
+    assert [(c.months, c.end) for c in cols] == [
+        (3, "2026-06-30"), (3, "2025-06-30"), (None, None),
+        (6, "2026-06-30"), (6, "2025-06-30"), (None, None),
+    ]
+
+
+def test_the_next_table_on_the_page_ends_the_body():
+    layout = table_layout(_Page(_GRUMA_P13))
+    assert [caption for caption, _ in layout.rows] == [
+        "Net Sales", "Gross Margin", "Operating Income", "Depreciation"]
+
+
+def test_blank_cells_keep_their_column():
+    """D&A prints no VAR: its YTD figure must stay under YTD, not slide left."""
+    layout = table_layout(_Page(_GRUMA_P13))
+    assert dict(layout.rows)["Depreciation"] == ["61.8", "59.9", None, "123.3", "118.7", None]
+    assert dict(layout.rows)["Gross Margin"][2] == "(20) bp"
+
+
+def test_a_raised_column_label_is_not_a_band():
+    """Fibra Uno prints "Second-quarter" a line above the other labels, in the
+    same position as Gruma's "YoY" — but it names one column, not a group."""
+    page = _Page([
+        (90.0, [("Second-quarter", 300, 350), ("Second-quarter", 450, 500)]),
+        (100.0, [("As of 30/06/2026", 240, 290), ("2026 flows", 305, 345),
+                 ("As of 31/03/2026", 360, 410), ("2025 flows", 455, 495)]),
+        (120.0, [("Revenue", 76, 110), ("1,000.0", 250, 290), ("500.0", 320, 345),
+                 ("400.0", 385, 410), ("450.0", 470, 495)]),
+        (130.0, [("Costs", 76, 110), ("2,000.0", 250, 290), ("600.0", 320, 345),
+                 ("300.0", 385, 410), ("350.0", 470, 495)]),
+        (140.0, [("Profit", 76, 110), ("3,000.0", 250, 290), ("700.0", 320, 345),
+                 ("200.0", 385, 410), ("250.0", 470, 495)]),
+    ])
+    layout = table_layout(page)
+    assert layout.headers[0] == "As of 30/06/2026"
+    assert layout.headers[1] == "Second-quarter 2026 flows"
+
+
+def test_ytd_year_column_takes_its_end_from_the_quarter_beside_it():
+    cols = parse_columns_from_headers(["YoY 3Q25", "YTD 2025", "YTD 2024"],
+                                      statement_kind="income_statement")
+    assert [(c.months, c.end) for c in cols] == [
+        (3, "2025-09-30"), (9, "2025-09-30"), (9, "2024-09-30")]
+
+
+def test_day_prefixed_month_range():
+    """KOC: "1 July - 30 September 2025" is a quarter, not nine months."""
+    col = parse_single_column("1 July - 30 September 2025")
+    assert (col.months, col.end) == (3, "2025-09-30")
+
+
+# --------------------------------------------------------------------------- #
+# Scale is read from the table, never from narrative
+# --------------------------------------------------------------------------- #
+
+from finscan2.pdf.read import _document_units  # noqa: E402
+from finscan2.schema import Page, PdfDoc  # noqa: E402
+
+
+def _doc(pages: dict[int, str], statements: list[Statement]) -> PdfDoc:
+    return PdfDoc(path="x.pdf", sha256="0",
+                  pages=[Page(page=n, source="text", chars=len(t), text=t)
+                         for n, t in pages.items()],
+                  statements=statements)
+
+
+def test_units_come_from_the_table_not_the_narrative():
+    """Gruma: page 4's highlights say "US$5.4 billion"; the table is in millions."""
+    narrative = _doc({4: "Balance Sheet Highlights\nTotal assets increased by 6% to "
+                         "US$5.4 billion when compared to March 2026",
+                      13: "Income Statement (USD millions) 2Q26 2Q25\n"
+                          "Net Sales 1,649.9 1,600.7"},
+                     [Statement(page=4, kind="balance_sheet", title="Balance Sheet Highlights",
+                                heading="", rows=[StatementRow(
+                                    "Total assets increased by 6% to US$5.4 billion", [5.4],
+                                    "Total assets increased by 6% to US$5.4 billion when "
+                                    "compared to March 2026")]),
+                      Statement(page=13, kind="income_statement",
+                                title="Income Statement (USD millions) 2Q26 2Q25", heading="",
+                                columns=[Column(index=0, header="2Q26", months=3)],
+                                rows=[StatementRow("Net Sales", [1649.9, 1600.7],
+                                                   "Net Sales 1,649.9 1,600.7")])])
+    units, currency, _ = _document_units(narrative)
+    assert (units, currency) == ("millions", "USD")
+
+
+def test_no_scale_in_any_table_is_unknown_not_guessed():
+    """Almarai's notes quote "share capital of 10,000 million" below a table that
+    states no scale; that sentence must not decide the scale of every figure."""
+    doc = _doc({12: "Statement of Profit or Loss\nRevenue 100 200\n"
+                    "The share capital amounted to 10,000 million"},
+               [Statement(page=12, kind="income_statement",
+                          title="Statement of Profit or Loss", heading="",
+                          rows=[StatementRow("Revenue", [100.0, 200.0], "Revenue 100 200")])])
+    units, _, _ = _document_units(doc)
+    assert units is None
+
+
+def test_note_table_scale_is_read_from_its_header_block():
+    """Almarai's segment note prints "'000" directly above its columns."""
+    doc = _doc({15: "for the period then ended, categorised by these business segments, "
+                    "is as follows and amounts are in millions elsewhere:\n"
+                    "Dairy Bakery Total\n'000 '000 '000\nRevenue 7,937,368 1,408,790 9,346,158"},
+               [Statement(page=15, kind="other", note=10, title="Note 10: SEGMENT REPORTING",
+                          heading="2026-06-30",
+                          columns=[Column(index=i, header=h) for i, h in
+                                   enumerate(["Dairy", "Bakery", "Total"])],
+                          rows=[StatementRow("Revenue", [7937368.0, 1408790.0, 9346158.0],
+                                             "Revenue 7,937,368 1,408,790 9,346,158")])])
+    units, _, _ = _document_units(doc)
+    assert units == "thousands"
+
+
+def test_iso_date_range_column():
+    """Gruma's BMV report: the span is two ISO dates, the second one the end."""
+    cols = parse_columns_from_headers(
+        ["Quarter Current Year 2026-04-01 - 2026- 06-30",
+         "Accumulated Current Year 2026-01-01 - 2026-06-30"],
+        statement_kind="income_statement")
+    assert [(c.months, c.end) for c in cols] == [(3, "2026-06-30"), (6, "2026-06-30")]
+
+
+def test_xbrl_rounding_level_means_figures_in_units():
+    """Gruma's BMV report: "Level of rounding ... THOUSAND OF DOLLARS" above
+    figures printed in full. Rounding is precision; the scale is units."""
+    rows = [StatementRow(f"Line {i}", [1_649_941_000.0 + i * 1000, 1_600_727_000.0],
+                         f"Line {i}") for i in range(12)]
+    doc = _doc({18: "Level of rounding used in financial statements: THOUSAND OF DOLLARS",
+                21: "Statement of comprehensive income\nLine 0 1"},
+               [Statement(page=21, kind="income_statement",
+                          title="Statement of comprehensive income", heading="",
+                          columns=[Column(index=0, header="a"), Column(index=1, header="b")],
+                          rows=rows)])
+    units, _, issues = _document_units(doc)
+    assert units == "units" and issues[0].code == "units_from_rounding"
+
+
+def test_rounding_level_is_ignored_when_figures_are_not_rounded_to_it():
+    rows = [StatementRow(f"Line {i}", [1_649_941.0 + i, 1_600_727.0], f"Line {i}")
+            for i in range(12)]
+    doc = _doc({18: "Level of rounding used in financial statements: THOUSAND OF DOLLARS",
+                21: "Statement of comprehensive income\nLine 0 1"},
+               [Statement(page=21, kind="income_statement",
+                          title="Statement of comprehensive income", heading="",
+                          columns=[Column(index=0, header="a"), Column(index=1, header="b")],
+                          rows=rows)])
+    assert _document_units(doc)[0] is None
+
+
+def test_iso_dated_header_line_is_not_a_row():
+    assert parse_row("Concept | Quarter Current Year | 2026-04-01 - 2026-06-30") is None

@@ -17,7 +17,11 @@ from pathlib import Path
 
 from finscan2.pdf import ocr
 from finscan2.pdf.notes import extract_notes
-from finscan2.pdf.statements import column_alignment, extract_statement
+from finscan2.pdf.statements import (
+    column_alignment,
+    extract_continuation,
+    extract_statement,
+)
 from finscan2.pdf.text import extract_page_text, render_tables
 from finscan2.schema import PARSER_VERSION, Issue, Page, PdfDoc, Statement
 
@@ -56,18 +60,126 @@ def _sniff(text: str, patterns: list[tuple[str, str]]) -> str | None:
     return None
 
 
-def _document_units(doc: PdfDoc) -> tuple[str | None, str | None]:
-    """Scale and currency, preferred from statement pages over narrative pages."""
-    statement_pages = {s.page for s in doc.statements}
-    ordered = ([p for p in doc.pages if p.page in statement_pages]
-               + [p for p in doc.pages if p.page not in statement_pages])
-    units = currency = None
-    for page in ordered:
-        units = units or _sniff(page.text, _UNIT_PATTERNS)
-        currency = currency or _sniff(page.text, _CURRENCIES)
-        if units and currency:
-            break
-    return units, currency
+#: How far above a note table's first figure row its header block can reach, and
+#: the word count that marks a line as prose rather than a column heading.
+_HEADER_BLOCK_LINES = 8
+_PROSE_WORDS = 10
+
+
+def table_section(statement: Statement, page_text: str) -> str:
+    """The text that describes a statement's table: its title line down to its
+    first figure row, plus the column headers.
+
+    This is where a filing states the scale its figures are printed in ("Income
+    Statement (USD millions)", "(Amounts in SAR '000)", "Million TL"). The rest of
+    the page is narrative, and narrative quotes figures at whatever scale reads
+    well — Gruma's "total assets of US$5.4 billion" beside a table in millions.
+    """
+    lines = (page_text or "").splitlines()
+    start = next((i for i, line in enumerate(lines)
+                  if statement.title and statement.title in line), None)
+    section: list[str] = []
+    if start is not None:
+        first_row = statement.rows[0].raw if statement.rows else None
+        for line in lines[start:]:
+            if first_row and line.strip() == first_row:
+                break
+            section.append(line)
+    else:
+        # A note table's title is synthesised ("Note 10: SEGMENT REPORTING"), so
+        # the section is the header block directly above its first figure row —
+        # Almarai prints "'000 '000 '000" there — up to the prose that
+        # introduces the table.
+        first_row = statement.rows[0].raw if statement.rows else None
+        end = next((i for i, line in enumerate(lines)
+                    if first_row and line.strip() == first_row), None)
+        section = [statement.title, statement.heading]
+        for line in reversed(lines[max(0, (end or 0) - _HEADER_BLOCK_LINES):end or 0]):
+            if len(line.split()) > _PROSE_WORDS:
+                break
+            section.append(line)
+    section.extend(c.header for c in statement.columns)
+    return "\n".join(section)
+
+
+#: An XBRL-rendered report (Mexico's BMV) states its PRECISION, not its scale:
+#: "Level of rounding used in financial statements: THOUSAND OF DOLLARS" above
+#: figures printed in full — 1,649,941,000.
+_ROUNDING = re.compile(
+    r"level\s+of\s+rounding[^:\n]*:\s*(thousands?|millions?)\b", re.IGNORECASE)
+
+
+def _xbrl_rounding(doc: PdfDoc, statements: list[Statement]) -> str | None:
+    """The declared rounding level, when the statements' figures prove it is one.
+
+    Figures printed in full and rounded to thousands are all multiples of 1,000;
+    figures printed in thousands are not. Per-share amounts and ratios are small
+    and skipped. Anything short of 95% of large figures agreeing leaves the scale
+    unknown rather than guessed.
+    """
+    match = next((m for p in doc.pages if (m := _ROUNDING.search(p.text or ""))), None)
+    if match is None:
+        return None
+    step = 1e3 if match.group(1).lower().startswith("thousand") else 1e6
+    figures = [abs(v) for s in statements if s.note is None for r in s.rows
+               for v in r.values if v is not None and abs(v) >= step]
+    # Counts ride along in these reports ("Number of employees 9,237") and are
+    # not rounded; money printed in thousands would almost never land on a
+    # multiple of 1,000. So a large majority is proof, a near-miss is not.
+    if len(figures) < 20 or sum(1 for v in figures if v % step == 0) < 0.95 * len(figures):
+        return None
+    return match.group(1).lower()
+
+
+def _document_units(doc: PdfDoc) -> tuple[str | None, str | None, list[Issue]]:
+    """Scale and currency, read only from the statements' own table sections.
+
+    Primary statements whose columns were read come first: they are the tables
+    stage 3 reads figures from. Scale is never taken from narrative text — a
+    wrong scale silently moves every figure by a factor of a thousand, while an
+    unknown one stops the run and asks. Currency falls back to page text, since
+    it does not change a figure's magnitude.
+    """
+    text_by_page = {p.page: p.text for p in doc.pages}
+    # Only tables whose columns were read: those are the figures stage 3 takes.
+    # A page matched as a statement but with no columns is usually prose (Gruma's
+    # BMV notes: "The amount of $369 thousand dollars"), and prose quotes figures
+    # at whatever scale reads well.
+    ordered = sorted((s for s in doc.statements if s.columns),
+                     key=lambda s: (s.note is not None, s.page))
+    found: list[tuple[Statement, str]] = []
+    currency = None
+    for statement in ordered:
+        section = table_section(statement, text_by_page.get(statement.page, ""))
+        if scale := _sniff(section, _UNIT_PATTERNS):
+            found.append((statement, scale))
+        currency = currency or _sniff(section, _CURRENCIES)
+
+    issues: list[Issue] = []
+    units = found[0][1] if found else None
+    if units is None and (rounded := _xbrl_rounding(doc, ordered)):
+        units = "units"
+        issues.append(Issue(
+            code="units_from_rounding", severity="info",
+            message=f"No table states a scale; the report declares its rounding "
+                    f"level as {rounded}, and its statements' figures are multiples "
+                    f"of it, so figures are printed in full (units)."))
+    if others := sorted({f"{s.kind} p.{s.page}: {scale}" for s, scale in found
+                         if scale != units}):
+        issues.append(Issue(
+            code="units_disagree", severity="warning", page=found[0][0].page,
+            message=f"The {found[0][0].kind} on page {found[0][0].page} is printed in "
+                    f"{units}, which is used; other tables state a different scale "
+                    f"({'; '.join(others)}). Figures read from those tables need "
+                    f"checking."))
+
+    if currency is None:
+        statement_pages = {s.page for s in doc.statements}
+        for page in ([p for p in doc.pages if p.page in statement_pages]
+                     + [p for p in doc.pages if p.page not in statement_pages]):
+            if currency := _sniff(page.text, _CURRENCIES):
+                break
+    return units, currency, issues
 
 
 def cache_path(cache_dir: str | Path, sha: str) -> Path:
@@ -111,6 +223,7 @@ def read_pdf(
     ocr_pages: list[int] = []
     statements: list[Statement] = []
     note_pages: list[tuple[int, str]] = []
+    last_page = 0           # the last page a primary statement was read from
 
     with pdfplumber.open(path) as pdf:
         for index, page in enumerate(pdf.pages, start=1):
@@ -138,6 +251,12 @@ def read_pdf(
             statement = extract_statement(index, text, page=page)
             if statement is not None:
                 statements.append(statement)
+                last_page = index
+            elif (statements and last_page == index - 1 and statements[-1].note is None
+                  and (carried := extract_continuation(text, page, statements[-1]))):
+                # An untitled page repeating the previous statement's columns.
+                statements[-1].rows.extend(carried)
+                last_page = index
             else:
                 # Not a primary statement. It may still hold note tables whose
                 # figures no primary statement prints — Almarai's D&A for the
@@ -188,7 +307,8 @@ def read_pdf(
     doc = PdfDoc(path=path, sha256=sha, pages=pages, statements=statements,
                  ocr_pages=ocr_pages, ocr_engine=ocr.ENGINE if ocr_pages else None,
                  issues=issues)
-    doc.units, doc.currency = _document_units(doc)
+    doc.units, doc.currency, unit_issues = _document_units(doc)
+    doc.issues.extend(unit_issues)
 
     if not statements:
         doc.issues.append(Issue(
@@ -225,8 +345,10 @@ def read_pdf(
     if doc.units is None:
         doc.issues.append(Issue(
             code="units_unknown", severity="error",
-            message="No printed scale marker (thousands, millions, ...) was found. "
-                    "Every figure would be written at the wrong magnitude."))
+            message="No statement's table section (its title, the lines above its "
+                    "first figure row, or its column headers) states a scale "
+                    "(thousands, millions, ...). Scale is not taken from narrative "
+                    "text, so every figure's magnitude is unknown."))
 
     if cache_dir:
         target = cache_path(cache_dir, sha)

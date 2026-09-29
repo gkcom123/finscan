@@ -8,13 +8,15 @@ count does not match the header count, because that mismatch is itself evidence.
 from __future__ import annotations
 
 import re
+from collections import Counter
 
 from finscan2.pdf.columns import (
     dedupe_stacked,
     parse_columns,
     parse_columns_from_headers,
 )
-from finscan2.pdf.layout import header_columns
+from finscan2.pdf.layout import TableLayout, table_layout
+from finscan2.model.schema import normalize_label
 from finscan2.schema import Column, Statement, StatementKind, StatementRow
 
 #: Title -> statement kind. Ordered: the first match wins, so the more specific
@@ -48,6 +50,10 @@ _HEADING_LINE = re.compile(
 #: A printed number: optional parentheses (negative), thousands separators,
 #: optional decimals. A leading currency symbol is tolerated and discarded.
 _NUMBER = re.compile(r"\(\s*-?[\d][\d,]*(?:\.\d+)?\s*\)|-?\d[\d,]*(?:\.\d+)?")
+
+_SIGN_MARKER = re.compile(r"^\s*[+-]\s*(?:\(\s*[-+]\s*\)\s*)?(?=[A-Za-z])")
+
+_ISO_DATE = re.compile(r"\b\d{4}-\d{2}-\s*\d{2}\b")
 
 _NUMBER_OR_DASH = re.compile(_NUMBER.pattern + r"|(?<!\S)-(?!\S)")
 
@@ -91,7 +97,14 @@ def parse_number(token: str) -> float | None:
 def parse_row(line: str) -> StatementRow | None:
     """Split a printed line into its caption and its numbers, in printed order."""
     raw = line.rstrip()
-    body = raw.replace("|", " ")
+    # "+ (-) Adjustments for ...", "- Purchase of property ...": the BMV report
+    # marks each line's sign convention in front of its caption. A leading "-"
+    # would otherwise read as a dash figure and leave the caption empty.
+    body = _SIGN_MARKER.sub("", raw).replace("|", " ")
+    # A line printing ISO dates is a column header ("Concept | Quarter Current Year
+    # | 2026-04-01 - 2026-06-30"), whose date parts would otherwise read as figures.
+    if _ISO_DATE.search(body):
+        return None
     matches = list(_NUMBER_OR_DASH.finditer(body))
     if not matches:
         return None
@@ -164,6 +177,55 @@ def _header_block(lines: list[str], body_start: int) -> tuple[str, int]:
     return "\n".join(lines[body_start:body_start + 10]), min(len(lines), body_start + 10)
 
 
+def _parse_rows(lines: list[str]) -> list[StatementRow]:
+    """Body lines to rows, joining a caption that wrapped onto the next line.
+
+    A page's text is its text layer followed by its tables rendered as pipe-
+    delimited rows (see read.py), so a table the text layer already read comes
+    twice. A rendered row is kept only when the text layer did not print the same
+    caption and figures — counted, so a line the filing genuinely prints twice
+    stays twice. Without this, "the second 'Interest paid'" is the operating line
+    again rather than the financing one.
+    """
+    rows: list[StatementRow] = []
+    pending_caption: str | None = None
+    for line in lines:
+        row = parse_row(line)
+        if pending_caption is not None:
+            if row is None:
+                merged = parse_row(f"{pending_caption} {line.strip()}")
+                if merged is not None:
+                    rows.append(merged)
+                    pending_caption = None
+                    continue
+            # Not a wrapped caption but a heading over this row: kept beside the
+            # caption, never merged into it, so matching is unchanged.
+            if row is not None:
+                row.heading = pending_caption
+            pending_caption = None
+
+        if row is not None:
+            rows.append(row)
+            continue
+
+        stripped = line.strip(" .·-\t")
+        if (stripped and not _NUMBER_OR_DASH.search(line)
+                and len(re.findall(r"[A-Za-z]", stripped)) >= 3
+                and not _NOISE_CAPTION.match(stripped)):
+            pending_caption = stripped
+
+    seen = Counter((normalize_label(r.caption), tuple(r.values))
+                   for r in rows if "|" not in r.raw)
+    kept: list[StatementRow] = []
+    for row in rows:
+        key = (normalize_label(row.caption), tuple(row.values))
+        if "|" in row.raw and seen[key] > 0:
+            seen[key] -= 1
+            continue
+        kept.append(row)
+    return kept
+
+
 def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     """Read one page into a Statement, or None when it is not a statement page.
 
@@ -182,41 +244,101 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     lines = text.splitlines()
     header_text, first_data = _header_block(lines, body_start)
     columns: list = []
-    if page is not None:
-        headers = header_columns(page)
-        if headers:
-            columns = parse_columns_from_headers(headers, statement_kind=kind)
+    layout = table_layout(page) if page is not None else None
+    if layout is not None:
+        columns = parse_columns_from_headers(layout.headers, statement_kind=kind)
     if not columns:
+        layout = None
         columns = dedupe_stacked(parse_columns(f"{heading}\n{header_text}"))
 
-    rows: list[StatementRow] = []
-    pending_caption: str | None = None
-    for line in lines[first_data:]:
-        row = parse_row(line)
-        if pending_caption is not None:
-            if row is None:
-                merged = parse_row(f"{pending_caption} {line.strip()}")
-                if merged is not None:
-                    rows.append(merged)
-                    pending_caption = None
-                    continue
-            pending_caption = None
+    # A first row of small figures only ("GRUMA USA Sales Volume 380 391 (12)")
+    # carries no amount, so the text test reads it as header. The geometry pass
+    # found the body's real first row; start there when it is earlier.
+    if layout is not None and layout.rows and layout.rows[0][0]:
+        first_caption = layout.rows[0][0]
+        for i in range(body_start, first_data):
+            if lines[i].strip().startswith(first_caption):
+                first_data = i
+                break
 
-        if row is not None:
-            rows.append(row)
-            continue
-
-        stripped = line.strip(" .·-\t")
-        if (stripped and not _NUMBER_OR_DASH.search(line)
-                and len(re.findall(r"[A-Za-z]", stripped)) >= 3
-                and not _NOISE_CAPTION.match(stripped)):
-            pending_caption = stripped
+    rows = _parse_rows(lines[first_data:])
 
     if len(rows) < MIN_STATEMENT_ROWS:
         return None
+    if layout is not None and len(layout.ranges) == len(columns):
+        rows = [_slot_by_position(row, layout) for row in rows]
 
     return Statement(page=page_no, kind=kind, title=title, heading=heading,
                      columns=columns, rows=rows)
+
+
+def _signature(columns: list[Column]) -> list[tuple]:
+    return [(c.kind, c.months, c.end) for c in columns]
+
+
+def extract_continuation(text: str, page, previous: Statement) -> list[StatementRow]:
+    """Rows of a statement carried over onto an untitled page, or none.
+
+    Gruma's BMV report prints its balance sheet across pages 19-20 and its cash
+    flow across 24-25; the second page repeats the column header but not the
+    title, so it is not a statement of its own and its rows — the liabilities,
+    the financing lines — were lost. A page continues the previous statement only
+    when its columns read as exactly the same periods, in the same order.
+    """
+    if page is None or not previous.columns:
+        return []
+    layout = table_layout(page)
+    if layout is None:
+        return []
+    columns = parse_columns_from_headers(layout.headers, statement_kind=previous.kind)
+    if _signature(columns) != _signature(previous.columns):
+        return []
+    lines = text.splitlines()
+    first_data = next((i for i, line in enumerate(lines) if looks_like_data_row(line)),
+                      len(lines))
+    rows = _parse_rows(lines[first_data:])
+    if len(rows) < MIN_STATEMENT_ROWS:
+        return []
+    if len(layout.ranges) == len(columns):
+        rows = [_slot_by_position(row, layout) for row in rows]
+    return rows
+
+
+#: Units printed after a figure, stripped before a layout cell is read as a number.
+_CELL_UNITS = re.compile(r"%|\b(?:bps?|pp|pts?)\b|\s+", re.IGNORECASE)
+
+
+def _cell_value(text: str | None) -> float | None:
+    return None if text is None else parse_number(_CELL_UNITS.sub("", text))
+
+
+def _slot_by_position(row: StatementRow, layout: TableLayout) -> StatementRow:
+    """A short row's values placed under the columns they are printed in.
+
+    A row printing fewer figures than the table has columns (Gruma's D&A leaves its
+    VAR cells blank) reads by position as if the blanks were at the end, putting
+    the year-to-date figure under the prior-quarter column. The layout pass knows
+    which column each figure sits in, so the row takes its values from there — but
+    only when exactly one layout row prints the same figures in the same order, so
+    nothing is ever guessed.
+    """
+    if len(row.values) == len(layout.ranges):
+        return row
+    matches = [
+        cells for caption, cells in layout.rows
+        if [_cell_value(c) for c in cells if c is not None] == row.values
+        and any(c is not None for c in cells)
+    ]
+    if len(matches) > 1:
+        # The same figures on two lines: the caption decides, or nothing does.
+        matches = [cells for caption, cells in layout.rows
+                   if cells in matches and caption and row.caption.startswith(
+                       caption.rstrip("0123456789").strip())]
+    if len(matches) != 1:
+        return row
+    return StatementRow(caption=row.caption,
+                        values=[_cell_value(c) for c in matches[0]], raw=row.raw,
+                        heading=row.heading)
 
 
 def column_alignment(statement: Statement) -> dict[str, int]:

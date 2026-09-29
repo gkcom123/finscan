@@ -33,6 +33,9 @@ from finscan2.pdf.statements import column_alignment
 
 DEFAULT_CACHE = "_work/pdfcache"
 
+#: The sheet learned for a company that has no mapping yet.
+DEFAULT_SHEET = "Model"
+
 
 def _severity_mark(severity: str) -> str:
     return {"error": "x", "warning": "!", "info": "+"}.get(severity, "-")
@@ -84,6 +87,17 @@ def _learn(args) -> int:
     from finscan2.mapping.schema import Mapping
     from finscan2.model.learn import learn
 
+    mapping_path = (Path(args.mapping) if getattr(args, "mapping", None)
+                    else Path("mappings") / f"{args.company}.json")
+    overwrite = getattr(args, "overwrite", False)
+
+    # The sheet is a human decision recorded in the mapping. Re-learning without
+    # naming one must keep it: a hard-coded "Model" default silently moved Gruma
+    # from its live Model_USD sheet onto a Pesos sheet that stops in 2021.
+    if not args.sheet:
+        args.sheet = (Mapping.load(mapping_path).sheet if mapping_path.exists()
+                      else DEFAULT_SHEET)
+
     pdf_json = getattr(args, "pdf_json", None)
     model, layout, counts = learn(args.excel, args.sheet, args.company, pdf_json,
                                   use_llm=not getattr(args, "no_llm", False))
@@ -99,9 +113,7 @@ def _learn(args) -> int:
     proposal, _ = propose_mapping(layout, args.company, doc,
                                   use_llm=not getattr(args, "no_llm", False))
 
-    mapping_path = (Path(args.mapping) if getattr(args, "mapping", None)
-                    else Path("mappings") / f"{args.company}.json")
-    if mapping_path.exists():
+    if mapping_path.exists() and not overwrite:
         # Never overwritten. The short list of CHANGED decisions is the review.
         beside = mapping_path.with_suffix(".proposed.json")
         proposal.save(beside)
@@ -117,6 +129,9 @@ def _learn(args) -> int:
                       f"{change.was!r} -> {change.now!r}")
         print()
     else:
+        if mapping_path.exists():
+            print(f"--overwrite: replacing {mapping_path}; its hand edits are "
+                  f"recoverable only from git.")
         proposal.save(mapping_path)
         needs = [r for r in proposal.rows if r.pdf is None and r.value is None]
         print(f"Wrote {mapping_path}  ({len(proposal.rows)} row(s), "
@@ -331,10 +346,13 @@ def _company(args) -> int:
 
     try:
         if stage in {"read", "all"}:
-            code = _read_pdf_stage(Namespace(
-                cmd="read", pdf=str(paths.pdf), out=str(paths.pdf_json),
-                cache_dir=args.cache_dir, no_cache=args.no_cache, no_ocr=args.no_ocr,
-                rows=args.rows))
+            code = 0
+            for pdf_path, pdf_json in zip(paths.pdfs or [paths.pdf], paths.pdf_jsons):
+                code = max(code, _read_pdf_stage(Namespace(
+                    cmd="read", pdf=str(pdf_path), out=str(pdf_json),
+                    cache_dir=args.cache_dir, no_cache=args.no_cache,
+                    no_ocr=args.no_ocr, rows=args.rows)))
+                print()
             if code or stage == "read":
                 return code
 
@@ -368,11 +386,15 @@ def _company(args) -> int:
                                    dry_run=args.dry_run))
 
         if stage == "apply":
-            paths.require("pdf_json", _cmd("read"))
+            for pdf_json in paths.pdf_jsons:
+                if not pdf_json.exists():
+                    raise CompanyError(f"{pdf_json} does not exist yet. Run:\n    "
+                                       f"{_cmd('read')}")
             paths.require("mapping", "python -m finscan2.cli mapping-init "
                                     + str(paths.map))
             return _apply(Namespace(
-                pdf_json=str(paths.pdf_json), mapping=str(paths.mapping),
+                pdf_json=",".join(str(p) for p in paths.pdf_jsons),
+                mapping=str(paths.mapping),
                 excel=str(paths.excel), out=str(paths.output),
                 period_end=args.period_end, dry_run=args.dry_run))
 
@@ -490,7 +512,9 @@ def main(argv: list[str] | None = None) -> int:
     lrn = sub.add_parser("learn", help="Read an Excel model and propose model.json.")
     lrn.add_argument("excel")
     lrn.add_argument("--company", required=True)
-    lrn.add_argument("--sheet", default="Model")
+    lrn.add_argument("--sheet", default=None,
+                     help="Workbook sheet (default: the mapping's sheet, else "
+                          f"{DEFAULT_SHEET!r})")
     lrn.add_argument("--out", help="Where to write the map (default: models/<company>_model.json)")
     lrn.add_argument("--rows", action="store_true", help="Print every mapped row")
     lrn.add_argument("--pdf-json", dest="pdf_json",
@@ -498,7 +522,7 @@ def main(argv: list[str] | None = None) -> int:
     lrn.add_argument("--mapping", help="Where the human mapping lives "
                                       "(default: mappings/<company>.json)")
     lrn.add_argument("--overwrite", action="store_true",
-                     help="Unused for the mapping, which is never overwritten")
+                     help="Replace an existing mapping, discarding hand edits")
     lrn.add_argument("--no-llm", action="store_true",
                      help="Deterministic matching only; leave the rest unmatched")
 
@@ -551,7 +575,8 @@ def main(argv: list[str] | None = None) -> int:
     co.add_argument("--pdf", help="Override the filing (default: the one PDF in the folder)")
     co.add_argument("--excel", help="Override the model (default: the one workbook)")
     co.add_argument("--out", help="Override the output workbook")
-    co.add_argument("--sheet", default="Model")
+    co.add_argument("--sheet", default=None,
+                    help="For `learn`: workbook sheet (default: the mapping's sheet)")
     co.add_argument("--by", help="Reviewer name, for `confirm`")
     co.add_argument("--period-end", help="ISO date of the period being written")
     co.add_argument("--cache-dir", default=DEFAULT_CACHE)
