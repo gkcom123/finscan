@@ -26,6 +26,7 @@ from finscan2.match.select import field_aliases, find_row, select_column
 from finscan2.model.learn import _is_bidirectional
 from finscan2.model.load import ResolvedMap
 from finscan2.model.schema import normalize_label
+from finscan2.model.discover import sheet_named
 from finscan2.schema import Issue, PdfDoc
 
 UNIT_MULTIPLIER: dict[str, float] = {
@@ -68,7 +69,7 @@ def _read_cells(workbook_path: str, sheet: str,
         return {}
     book = load_workbook(workbook_path, data_only=True)
     try:
-        worksheet = book[sheet]
+        worksheet = sheet_named(book, sheet)
         out: dict[tuple[int, int], float | None] = {}
         for row, col in cells:
             value = worksheet.cell(row, col).value
@@ -200,6 +201,9 @@ def _lookup_sum(spec, statement, column):
             return None, (f"the sum term '{instruction}' matched '{row.caption}', which "
                           f"has only {len(row.values)} value(s) — the wanted column is "
                           f"number {column.index + 1}")
+        if column.index in getattr(row, "unverified", []):
+            return None, (f"the sum term '{instruction}' ('{row.caption}') was read by "
+                          f"the vision model but not confirmed (see pdf/verify.py)")
         if row.values[column.index] is None:
             terms.append(_Term(sign, row.caption, 0.0, assumed_zero=True))
             continue
@@ -499,6 +503,17 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             value.unresolved = why
             out.values.append(value)
             out.issues.append(Issue(code="unresolved_row", severity="error",
+                                    message=f"row {bound.row} '{spec.key.label}': {why}"))
+            continue
+
+        if column.index in getattr(printed_row, "unverified", []):
+            why = (f"'{printed_row.caption}' was read from a scanned page by the vision "
+                   f"model ({printed_row.values[column.index]:,}), but neither the "
+                   f"scan's text layer, a second read, nor the table's arithmetic "
+                   f"confirms it — enter it by hand after checking the filing")
+            value.unresolved = why
+            out.values.append(value)
+            out.issues.append(Issue(code="unverified_figure", severity="error",
                                     message=f"row {bound.row} '{spec.key.label}': {why}"))
             continue
 

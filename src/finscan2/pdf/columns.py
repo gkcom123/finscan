@@ -193,6 +193,16 @@ _YTD_YEAR = re.compile(
 _ISO_RANGE = re.compile(
     r"\b(\d{4})-(\d{2})-(\d{2})\s*[-–—]\s*(\d{4})-\s*(\d{2})-\s*(\d{2})\b")
 
+#: "Quarter ended", "Half year ended", "Previous year ended": India's SEBI results
+#: name a column's span in words, without a month count.
+_PERIOD_MONTHS = {"quarter": 3, "half year": 6, "nine months": 9, "year": 12}
+_PERIOD_ENDED = re.compile(r"\b(quarter|half[\s-]+year|nine[\s-]+months|year)\s+ended\b",
+                           re.IGNORECASE)
+
+#: A month-first date: "June 30, 2026", the US and Indian form.
+_MONTH_FIRST_DATE = re.compile(rf"\b({_MONTH_WORDS})\s+(\d{{1,2}}),?\s*(\d{{4}})\b",
+                               re.IGNORECASE)
+
 #: A numeric date: 30/06/2026, 31-03-2026, 2026-06-30.
 _NUMERIC_DATE = re.compile(r"\b(\d{1,4})[/.-](\d{1,2})[/.-](\d{2,4})\b")
 
@@ -241,6 +251,8 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         months = MONTH_COUNT_WORDS[m.group(1).lower()]
     elif m := _MONTHS_PHRASE.search(text):
         months = MONTH_COUNT_WORDS[m.group(1).lower()]
+    elif m := _PERIOD_ENDED.search(text):
+        months = _PERIOD_MONTHS[re.sub(r"[\s-]+", " ", m.group(1).lower())]
 
     end: str | None = None
     # "2026-01-01 - 2026-06-30": the BMV (XBRL) report states each column's span
@@ -270,6 +282,10 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
             day = int(m.group(1))
             if day < 28:                          # a mid-month date is stated exactly
                 end = date(int(m.group(3)), MONTHS[m.group(2).lower()], day).isoformat()
+        elif m := _MONTH_FIRST_DATE.search(text):
+            month, day, year = MONTHS[m.group(1).lower()], int(m.group(2)), int(m.group(3))
+            end = (_month_end(year, month) if day >= 28
+                   else date(year, month, day).isoformat())
         elif iso := parse_numeric_date(text, day_first):
             end = iso
         elif m := _QUARTER.search(text):

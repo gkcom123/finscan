@@ -473,8 +473,27 @@ def _run_quarter(args, paths) -> int:
             print(f"Could not read {pdf_path}.", file=sys.stderr)
             return code
 
-    # 2. learn — only for a company with no mapping yet
+    # 2. learn — only for a company with no mapping yet, and only from filings
+    # that hold a statement: a mapping proposed from nothing is all blanks, and
+    # since a mapping is never overwritten it would outlive the fix that reads
+    # the filing properly.
     fresh_mapping = not paths.mapping.exists()
+    readable = any(json.loads(p.read_text(encoding="utf-8")).get("statements")
+                   for p in paths.pdf_jsons)
+    if not readable:
+        from finscan2.apply import ApplyResult
+        from finscan2.schema import Issue
+
+        names = ", ".join(p.name for p in (paths.pdfs or [paths.pdf]))
+        refused = ApplyResult(company=paths.key, refused=(
+            "no financial statement was found in the filing"))
+        refused.issues.append(Issue(
+            code="no_statements", severity="error",
+            message=f"Stage 1 identified no statement in {names}, so there is nothing "
+                    f"to read" + ("" if paths.mapping.exists() else
+                                  " and no mapping was proposed") + "."))
+        _print_run_summary(paths, refused, [], fresh_mapping=False)
+        return 1
     if fresh_mapping:
         pdf_json = paths.pdf_jsons[0]
         if len(paths.pdf_jsons) > 1:
@@ -524,7 +543,8 @@ def _print_run_summary(paths, result, artifacts, fresh_mapping: bool) -> None:
         pass
 
     print()
-    print(f"  {paint(paths.key.upper(), '1')}  ·  period ending {ending}")
+    print(f"  {paint(paths.key.upper(), '1')}"
+          + (f"  ·  period ending {ending}" if ending else ""))
     print(f"  {paint('─' * 52, '2')}")
 
     if result.refused or not result.write:

@@ -522,3 +522,51 @@ def test_rounding_level_is_ignored_when_figures_are_not_rounded_to_it():
 
 def test_iso_dated_header_line_is_not_a_row():
     assert parse_row("Concept | Quarter Current Year | 2026-04-01 - 2026-06-30") is None
+
+
+def test_ocr_figures_are_confirmed_only_by_independent_evidence():
+    """Airtel's scanned results: gpt-5.4 read 35,929 (twice) where the page
+    prints 36,929, and (1,082) where the scan's own OCR layer says "11,082)".
+    The text layer and the table's arithmetic settle both; nothing else counts."""
+    from finscan2.pdf.verify import verify_rows
+
+    transcription = "\n".join([
+        "Income |  |",
+        "Revenue from operations | 585,391 |",
+        "Other income | 9,066 |",
+        " | 594,457 |",
+        "Expenses |  |",
+        "Network operating expenses | 108,097 |",
+        "Access charges | 15,887 |",
+        "License fee / Spectrum charges | 41,720 |",
+        "Employee benefits expense | 21,776 |",
+        "Sales and marketing expenses | 35,929 |",
+        "Other expenses | 27,954 |",
+        " | 252,363 |",
+        "Profit before depreciation, amortisation and tax | 342,094 |",
+        "Depreciation and amortisation expenses | 142,350 |",
+        "Finance costs | 59,564 |",
+        "Share of profit of associates and joint ventures (net) | (1,082) |",
+        "Profit before exceptional items and tax | 141,262 |",
+        "Gain on investments at fair value through OCI | 465 |",
+    ])
+    layer = "\n".join([
+        "Revenue from opernlions 585,391", "other income 9 066",
+        "Network opernting expenses 108,097", "Access charges 15,887",
+        "License fee/ Spectrum charges 41,720", "Employee benefits expense 21,n6",
+        "Sales and marketing expenses 36,929", "Other expenses 27,954",
+        "exceptional items and tax 342,1194", "Depreciation and amortisation expenses 142,350",
+        "Flnanceco5ts 59,564", "Share of profit of associates and joint ventures [net) 11,082)",
+        "Profit before exceptional items and tax 141,262",
+        "Gain on Investments at fair value through o 466",
+    ])
+    rows = [r for r in (parse_row(line) for line in transcription.splitlines()) if r]
+    report = verify_rows(rows, transcription, layer)
+    by = {r.caption: r for r in rows}
+
+    assert by["Sales and marketing expenses"].values == [36929.0]       # corrected
+    assert report.corrected and report.corrected[0][3] == 36929.0
+    assert by["Employee benefits expense"].unverified == []             # by the total
+    assert by["Profit before depreciation, amortisation and tax"].unverified == []
+    assert by["Share of profit of associates and joint ventures (net)"].unverified == []
+    assert by["Gain on investments at fair value through OCI"].unverified == [0]

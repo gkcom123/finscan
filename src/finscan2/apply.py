@@ -177,6 +177,13 @@ def run(pdf_json: str | Path | list, mapping_path: str | Path, workbook: str | P
         result.refused = "the filings are not for the same period"
         return result
     doc = PdfDoc.merge(docs)
+    if not doc.statements:
+        result.issues.append(Issue(
+            code="no_statements", severity="error",
+            message="No financial statement was identified in the filing(s), so there "
+                    "is nothing to read. Writing would only produce an empty column."))
+        result.refused = "no financial statement was found in the filing"
+        return result
 
     # The filing must report the period the sheet wants next. When it does not,
     # every row fails the same way and the run writes an empty column — which is

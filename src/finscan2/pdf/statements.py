@@ -32,7 +32,10 @@ _TITLE_PATTERNS: list[tuple[str, StatementKind]] = [
      r"|changes\s+in\s+.*\bcapital\b", "equity"),
     (r"financial\s+position|balance\s+sheet", "balance_sheet"),
     (r"profit\s+or\s+loss|income\s+statement|statements?\s+of\s+(?:income|operations)"
-     r"|profit\s+and\s+loss|results\s+of\s+operations", "income_statement"),
+     r"|profit\s+and\s+loss|results\s+of\s+operations"
+     # India's SEBI format: "Statement of Audited Consolidated Financial Results for
+     # the quarter ended ..." is the profit-and-loss table of a results release.
+     r"|financial\s+results", "income_statement"),
 ]
 
 _TITLE_LINE = re.compile(
@@ -94,7 +97,7 @@ def parse_number(token: str) -> float | None:
     return -value if negative else value
 
 
-def parse_row(line: str) -> StatementRow | None:
+def parse_row(line: str, keep_first: bool = False) -> StatementRow | None:
     """Split a printed line into its caption and its numbers, in printed order."""
     raw = line.rstrip()
     # "+ (-) Adjustments for ...", "- Purchase of property ...": the BMV report
@@ -114,7 +117,7 @@ def parse_row(line: str) -> StatementRow | None:
     # between the caption and the figures. Treat a bare 1-2 digit first number as
     # the note reference when more numbers follow it.
     values = [None if m.group(0) == "-" else parse_number(m.group(0)) for m in matches]
-    if (len(values) > 1 and values[0] is not None
+    if (not keep_first and len(values) > 1 and values[0] is not None
             and values[0].is_integer() and 0 < values[0] < 100
             and "." not in matches[0].group(0) and "," not in matches[0].group(0)):
         values = values[1:]
@@ -135,7 +138,9 @@ def _title_and_heading(text: str) -> tuple[str, str, int]:
         # everything below is the statement body. Without this, a caption like
         # "Profit for the period 64,943 53,983" matches the heading pattern and
         # the column headers above it are never read.
-        if looks_like_data_row(line):
+        # Above the title a figure-bearing line is letterhead ("T.: +91-124-4222222",
+        # a registered address), not the body.
+        if title and looks_like_data_row(line):
             break
         if not title and _TITLE_LINE.match(line) and classify(line) != "other":
             title, body_start = line.strip(), i + 1
@@ -226,6 +231,28 @@ def _parse_rows(lines: list[str]) -> list[StatementRow]:
     return kept
 
 
+def _pipe_header_columns(lines: list[str], kind: str) -> list[Column]:
+    """Columns from a pipe-delimited header row, one cell per column.
+
+    A vision transcription renders each table with " | " between columns and the
+    column headers as the table's first row(s), e.g. Airtel's
+    "Particulars | Quarter ended June 30, 2026 Audited | ... | Previous year ended
+    March 31, 2026 Audited". The cells are already separated, so each is parsed
+    on its own; stacked header rows with the same number of cells are joined
+    cell by cell.
+    """
+    rows = [[c.strip() for c in line.split("|")] for line in lines if "|" in line]
+    if not rows:
+        return []
+    width = max(len(r) for r in rows)
+    stacked = [r for r in rows if len(r) == width]
+    headers = [" ".join(r[i] for r in stacked if r[i]).strip() for i in range(1, width)]
+    headers = [h for h in headers if h]
+    columns = parse_columns_from_headers(headers, statement_kind=kind)
+    dated = [c for c in columns if c.end]
+    return columns if len(dated) >= 2 else []
+
+
 def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     """Read one page into a Statement, or None when it is not a statement page.
 
@@ -250,6 +277,8 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     if not columns:
         layout = None
         columns = dedupe_stacked(parse_columns(f"{heading}\n{header_text}"))
+    if not columns:
+        columns = _pipe_header_columns(lines[:first_data], kind)
 
     # A first row of small figures only ("GRUMA USA Sales Volume 380 391 (12)")
     # carries no amount, so the text test reads it as header. The geometry pass
@@ -265,6 +294,22 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
 
     if len(rows) < MIN_STATEMENT_ROWS:
         return None
+    # A small first figure was taken for a note reference ("Revenue 10 5,868,205").
+    # When keeping it gives the row exactly one figure per column, it is a figure:
+    # Airtel's "Net gain / (loss) on net investment hedge | 53 | (289) | 357 | 47".
+    # Only in a pipe-delimited table (a transcription), where each figure has its
+    # own cell, and never where the header names a Notes column — KOC's text-layer
+    # rows print "Investment properties 51 59 ..." with 51 the note.
+    notes_column = any(re.fullmatch(r"notes?|nota?s?", cell.strip(), re.IGNORECASE)
+                       for line in lines[:first_data] if "|" in line
+                       for cell in line.split("|"))
+    if columns and not notes_column:
+        for i, row in enumerate(rows):
+            if "|" in row.raw and len(row.values) == len(columns) - 1:
+                full = parse_row(row.raw, keep_first=True)
+                if full is not None and len(full.values) == len(columns):
+                    full.heading = row.heading
+                    rows[i] = full
     if layout is not None and len(layout.ranges) == len(columns):
         rows = [_slot_by_position(row, layout) for row in rows]
 
@@ -338,7 +383,7 @@ def _slot_by_position(row: StatementRow, layout: TableLayout) -> StatementRow:
         return row
     return StatementRow(caption=row.caption,
                         values=[_cell_value(c) for c in matches[0]], raw=row.raw,
-                        heading=row.heading)
+                        heading=row.heading, unverified=row.unverified)
 
 
 def column_alignment(statement: Statement) -> dict[str, int]:

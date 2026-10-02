@@ -21,7 +21,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "16"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "23"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -37,6 +37,13 @@ PARSER_VERSION = "16"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 14: (reverted) image-page OCR
                             # 15: first body row from geometry; row headings kept
                             # 16: headings survive blank-cell slotting
+                            # 17: scanned pages re-read by vision, figures verified; SEBI titles
+                            # 18: letterhead figures above a title do not end the search
+                            # 19: OCR verified against the text layer + arithmetic only; note-ref kept when it fills a column
+                            # 20: income - expenses identity; unclosed "(" read as negative
+                            # 21: note-ref kept only in pipe tables without a Notes column
+                            # 22: OCR figures confirmed by the profit chain
+                            # 23: text-layer line matched by figures, then caption words
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,
@@ -85,6 +92,9 @@ class StatementRow:
     #: A caption-only line printed directly above this row ("OTHER SUBSIDIARIES
     #: &" over "Sales Volume (18) (21)"): the name of the block the row opens.
     heading: str = ""
+    #: Positions in `values` that a vision transcription read but nothing else
+    #: confirmed (see pdf/verify.py). Stage 3 never writes such a figure.
+    unverified: list[int] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -296,7 +306,8 @@ class PdfDoc:
             schema_version=d.get("schema_version", SCHEMA_VERSION),
             parser_version=d.get("parser_version", ""),
             issues=[Issue(**i) for i in d.get("issues", [])],
-            pages=[Page(**p) for p in d.get("pages", [])],
+            pages=[Page(**{k: v for k, v in p.items() if k in Page.__dataclass_fields__})
+                   for p in d.get("pages", [])],
             statements=[
                 Statement(
                     page=s["page"], kind=s["kind"], title=s["title"],

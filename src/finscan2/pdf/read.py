@@ -23,6 +23,7 @@ from finscan2.pdf.statements import (
     extract_statement,
 )
 from finscan2.pdf.text import extract_page_text, render_tables
+from finscan2.pdf.verify import verify_rows
 from finscan2.schema import PARSER_VERSION, Issue, Page, PdfDoc, Statement
 
 #: Printed scale markers. Checked in this order so "SAR '000" is read as thousands
@@ -42,6 +43,27 @@ _CURRENCIES: list[tuple[str, str]] = [
     (r"\bEUR\b|€", "EUR"), (r"\bGBP\b|£", "GBP"),
     (r"\bMXN\b|\bMX\$", "MXN"), (r"\bTRY\b", "TRY"), (r"\bKRW\b", "KRW"),
 ]
+
+
+#: A scanned table: one image covers the page, and the text layer is somebody
+#: else's OCR of it — Airtel's results carry "21,n6" and "105,{)44" in theirs.
+#: Only pages dense with figures are re-read; a scanned auditor's letter is not.
+_SCAN_COVER = 0.9
+_SCAN_MIN_FIGURES = 100
+
+
+def _is_scanned_table(page, text: str) -> bool:
+    if not text.strip():
+        return False
+    try:
+        area = float(page.width) * float(page.height)
+        cover = max(((float(i["x1"]) - float(i["x0"])) * (float(i["bottom"]) - float(i["top"]))
+                     for i in page.images or []), default=0.0)
+    except Exception:       # pragma: no cover - malformed page
+        return False
+    if not area or cover < _SCAN_COVER * area:
+        return False
+    return len(re.findall(r"\d[\d,]*\.?\d*", text)) >= _SCAN_MIN_FIGURES
 
 
 def sha256_of(path: str | Path) -> str:
@@ -218,6 +240,7 @@ def read_pdf(
                            for p in payload.get("pages", [])
                            if p.get("source") == "vision" and p.get("text")}
 
+
     pages: list[Page] = []
     issues: list[Issue] = []
     ocr_pages: list[int] = []
@@ -233,27 +256,54 @@ def read_pdf(
                 text = f"{text}\n{render_tables(tables)}".strip()
 
             source = "text_respaced" if respaced else "text"
-            if not text.strip():
+            layer = text
+            scanned = _is_scanned_table(page, text)
+            if not text.strip() or scanned:
                 if index in transcribed:
                     # Kept verbatim from the earlier cache; see `transcribed` above.
-                    text = transcribed[index]
+                    vision = transcribed[index]
                 elif ocr_enabled:
-                    text = ocr.transcribe(path, index)
-                if text.strip():
-                    source, _ = "vision", ocr_pages.append(index)
+                    vision = ocr.transcribe(path, index)
                 else:
+                    vision = ""
+                if vision.strip():
+                    text, source = vision, "vision"
+                    ocr_pages.append(index)
+                elif not text.strip():
                     source = "empty"
 
             pages.append(Page(page=index, source=source, chars=len(text),
                               text=text, tables=len(tables)))
             # Keep the pdfplumber page for the layout pass; it is only valid
-            # inside this `with` block, so statements are built here too.
-            statement = extract_statement(index, text, page=page)
+            # inside this `with` block, so statements are built here too. A
+            # transcribed page's geometry belongs to the scan's own text layer,
+            # not to the transcription, so it is not offered.
+            geometry = None if source == "vision" else page
+            statement = extract_statement(index, text, page=geometry)
+            if statement is not None and scanned and source == "vision":
+                # The scan's own text layer is the independent witness.
+                checked = verify_rows(statement.rows, text, layer)
+                for caption, _, was, now in checked.corrected:
+                    issues.append(Issue(
+                        code="ocr_corrected", severity="warning", page=index,
+                        message=f"'{caption[:50]}': the vision model read {was:,.0f}; the "
+                                f"scan's text layer prints {now:,.0f} on the same line and "
+                                f"only that makes the table's subtotal add up, so "
+                                f"{now:,.0f} is used."))
+                if flagged := [r for r in statement.rows if r.unverified]:
+                    issues.append(Issue(
+                        code="ocr_unverified", severity="warning", page=index,
+                        message=f"{sum(len(r.unverified) for r in flagged)} figure(s) on "
+                                f"page {index} were read by the vision model but "
+                                f"confirmed neither by the scan's text layer nor the "
+                                f"table's arithmetic, and will not be written: "
+                                + "; ".join(f"'{r.caption[:40]}'" for r in flagged[:8])
+                                + ("…" if len(flagged) > 8 else "")))
             if statement is not None:
                 statements.append(statement)
                 last_page = index
             elif (statements and last_page == index - 1 and statements[-1].note is None
-                  and (carried := extract_continuation(text, page, statements[-1]))):
+                  and (carried := extract_continuation(text, geometry, statements[-1]))):
                 # An untitled page repeating the previous statement's columns.
                 statements[-1].rows.extend(carried)
                 last_page = index

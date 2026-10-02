@@ -257,6 +257,26 @@ def _most_recent(cols: list[int], dates: dict[int, str]) -> int | None:
     return max(cols)
 
 
+def sheet_named(book, name: str):
+    """The worksheet called `name`, tolerating surrounding spaces and case.
+
+    Workbooks are typed by hand: Airtel's model sheet is "Model " with a
+    trailing space, and asking for "Model" raised KeyError. Exact wins; otherwise
+    exactly one sheet must match once spaces and case are set aside.
+    """
+    if name in book.sheetnames:
+        return book[name]
+    wanted = (name or "").strip().lower()
+    hits = [n for n in book.sheetnames if n.strip().lower() == wanted]
+    if len(hits) == 1:
+        return book[hits[0]]
+    names = ", ".join(repr(n) for n in book.sheetnames)
+    if hits:
+        raise KeyError(f"Sheet {name!r} matches {len(hits)} sheets ({names}); "
+                       f"name it exactly.")
+    raise KeyError(f"No sheet {name!r} in this workbook. Its sheets are: {names}.")
+
+
 def discover_sheet(path: str, sheet: str) -> SheetLayout:
     """Describe one sheet's layout. Opens the workbook read-only; writes nothing."""
     from finscan.excel.style_probe import Role, Theme, probe_cell
@@ -265,8 +285,8 @@ def discover_sheet(path: str, sheet: str) -> SheetLayout:
     values_book = load_workbook(path, data_only=True)
     try:
         theme = Theme.from_workbook(workbook)
-        worksheet = workbook[sheet]
-        values_sheet = values_book[sheet]
+        worksheet = sheet_named(workbook, sheet)
+        values_sheet = sheet_named(values_book, sheet)
 
         max_row = min(worksheet.max_row or 1, MAX_SCAN_ROWS)
         max_col = min(worksheet.max_column or 1, MAX_SCAN_COLS)

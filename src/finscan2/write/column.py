@@ -26,6 +26,7 @@ from openpyxl.comments import Comment
 from openpyxl.formula.translate import Translator
 from openpyxl.utils import get_column_letter
 
+from finscan2.model.discover import sheet_named
 from finscan2.match.schema import Values
 from finscan2.model.discover import _references_cells
 from finscan2.model.load import ResolvedMap
@@ -134,7 +135,7 @@ def write_column(values: Values, resolved_map: ResolvedMap, workbook_path: str,
     keep_vba = Path(output_path).suffix.lower() in {".xlsm", ".xltm"}
     book = load_workbook(output_path, data_only=False, keep_vba=keep_vba)
     try:
-        worksheet = book[sheet_name]
+        worksheet = sheet_named(book, sheet_name)
         reference = model.reference_col
 
         by_row = {v.row: v for v in values.values}
