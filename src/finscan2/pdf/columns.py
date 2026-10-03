@@ -199,6 +199,12 @@ _PERIOD_MONTHS = {"quarter": 3, "half year": 6, "nine months": 9, "year": 12}
 _PERIOD_ENDED = re.compile(r"\b(quarter|half[\s-]+year|nine[\s-]+months|year)\s+ended\b",
                            re.IGNORECASE)
 
+#: "Jun-26", "Mar-26": a month and a two-digit year, as Airtel's IR Pack heads
+#: its columns.
+_MONTH_YEAR = re.compile(
+    r"\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[-'’](\d{2})\b",
+    re.IGNORECASE)
+
 #: A month-first date: "June 30, 2026", the US and Indian form.
 _MONTH_FIRST_DATE = re.compile(rf"\b({_MONTH_WORDS})\s+(\d{{1,2}}),?\s*(\d{{4}})\b",
                                re.IGNORECASE)
@@ -282,6 +288,9 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
             day = int(m.group(1))
             if day < 28:                          # a mid-month date is stated exactly
                 end = date(int(m.group(3)), MONTHS[m.group(2).lower()], day).isoformat()
+        elif m := _MONTH_YEAR.search(text):
+            # "Jun-26": the IR Pack's column header is a month and a two-digit year.
+            end = _month_end(2000 + int(m.group(2)), MONTHS[m.group(1).lower()])
         elif m := _MONTH_FIRST_DATE.search(text):
             month, day, year = MONTHS[m.group(1).lower()], int(m.group(2)), int(m.group(3))
             end = (_month_end(year, month) if day >= 28
@@ -321,7 +330,8 @@ def _infer_fiscal_year_start(columns: list[Column]) -> int | None:
 
 
 def parse_columns_from_headers(
-    headers: list[str], *, statement_kind: str = "", fiscal_year_start_month: int = 1
+    headers: list[str], *, statement_kind: str = "", fiscal_year_start_month: int = 1,
+    default_months: int | None = None,
 ) -> list[Column]:
     """Columns from per-column header strings produced by the layout pass."""
     # Settle day/month order once for the statement: if any column's numeric date
@@ -342,6 +352,13 @@ def parse_columns_from_headers(
         column = parse_single_column(header, day_first)
         column.index = len(columns)
         columns.append(column)
+
+    # A span the table states once above its dated columns ("Quarter Ended" over
+    # "Jun-26  Jun-25"), passed in by the caller who saw the header block.
+    if default_months:
+        for column in columns:
+            if column.end and column.months is None:
+                column.months, column.kind = default_months, "period"
 
     # "YTD 2026": a year under a year-to-date band, as Gruma prints beside "2Q26".
     # The year alone gives no end month; the quarter columns beside it do — the

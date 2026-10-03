@@ -572,3 +572,16 @@ def test_block_caption_finds_the_line_inside_a_named_block():
     assert _in_block(st, "GRUMA CENTROAMERICA", "EBITDA")[0].values == [19.7]
     assert _in_block(st, "OTHER SUBSIDIARIES", "EBITDA")[0].values == [7.9]
     assert _in_block(st, "GRUMA", "EBITDA")[0] is None      # names several rows
+
+
+def test_a_unit_printed_on_the_row_outranks_the_tables():
+    """Airtel's IR Pack summary prints "Market Capitalization Rs Bn 11,559" among
+    rows in Rs Mn; that row is billions, and only that row."""
+    from finscan2.match.resolve import _row_units
+    from finscan2.schema import StatementRow
+
+    assert _row_units(StatementRow("Market Capitalization Rs Bn", [11559.0], "")) == "billions"
+    assert _row_units(StatementRow("Total revenues Rs Mn", [585391.0], "")) == "millions"
+    assert _row_units(StatementRow("Market Capitalization US$ Bn", [122.5], "")) == "billions"
+    assert _row_units(StatementRow("Total Customer Base", [680889.0], "")) is None
+    assert _row_units(StatementRow("Revenue", [585391.0], "")) is None

@@ -38,6 +38,33 @@ UNIT_MULTIPLIER: dict[str, float] = {
 _FLOW_SECTIONS = {"income_statement", "cash_flow"}
 
 
+#: A unit printed on the row itself, as its caption's last words: Airtel's IR Pack
+#: summary prints "Market Capitalization  Rs Bn  11,559" beside rows in "Rs Mn".
+_ROW_UNIT = re.compile(r"\b(?:rs\.?|inr|₹|us\$|usd)\s*(mn|million|bn|billion|cr|crore)s?\s*$",
+                       re.IGNORECASE)
+_ROW_UNIT_SCALE = {"mn": "millions", "million": "millions", "bn": "billions",
+                   "billion": "billions", "cr": "crores", "crore": "crores"}
+
+
+def _row_units(row) -> str | None:
+    """The scale a row states for itself, which outranks its table's."""
+    m = _ROW_UNIT.search(getattr(row, "caption", "") or "")
+    return _ROW_UNIT_SCALE[m.group(1).lower()] if m else None
+
+
+def _carry_source(model) -> int | None:
+    """The previous period's column: the one right before the column written.
+
+    Usually that is the reference column too, but not when the previous period
+    is derived — Airtel's 4Q column is "=FY − 9M", so its reference is the 3Q
+    column, while the rate to carry forward is 4Q's.
+    """
+    before = (model.write_col or 0) - 1
+    if before in (model.period_dates or {}):
+        return before
+    return model.reference_col
+
+
 def expected_period_end(period_dates: dict[int, str], cadence_months: int) -> str | None:
     """The period the write column is for: the latest column plus one cadence."""
     dated = []
@@ -327,8 +354,8 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             continue
         if (spec.resolve or "").startswith("carry:"):
             plans[bound.row] = (None, None, None, None)
-            if model.reference_col:
-                needed.add((bound.row, model.reference_col))
+            if source := _carry_source(model):
+                needed.add((bound.row, source))
             continue
         if (spec.resolve or "").startswith("absent:"):
             # Planned anyway, so the declaration can be checked against the filing.
@@ -382,15 +409,16 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
 
         if (spec.resolve or "").startswith("carry:"):
             reason = spec.resolve.split(":", 1)[1].strip()
-            if not model.reference_col:
-                value.unresolved = "the map has no reference column to carry forward from"
+            source = _carry_source(model)
+            if not source:
+                value.unresolved = "the map has no previous period column to carry forward from"
             else:
-                prior = cells.get((bound.row, model.reference_col))
+                prior = cells.get((bound.row, source))
                 if prior is None:
-                    value.unresolved = "the reference column has no numeric value to carry forward"
+                    value.unresolved = "the previous period has no numeric value to carry forward"
                 else:
                     value.value = prior
-                    ref_letter = get_column_letter(model.reference_col)
+                    ref_letter = get_column_letter(source)
                     value.adjustments.append(Adjustment(
                         kind="carried_forward",
                         detail=f"carried forward unchanged from {ref_letter}{bound.row} "
@@ -540,8 +568,8 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             priors = {c: cells.get((bound.row, c)) for c in columns_to_subtract}
             # The workbook's own figures are in the sheet's units; the filing's are
             # in the filing's, so both are brought to the sheet's scale first.
-            scaled_printed = _scale(printed, statement.units or doc.units or model.units,
-                                    model.units)
+            scaled_printed = _scale(printed, _row_units(printed_row) or statement.units
+                                    or doc.units or model.units, model.units)
             figure, adjustment, issue = basis_mod.decumulate(
                 scaled_printed, priors, columns_to_subtract, bound.row, letters)
             if issue:
@@ -553,8 +581,10 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             value.adjustments.append(adjustment)
             value.units_from = value.units_to = model.units
         else:
-            figure = _scale(printed, statement.units or doc.units or model.units, model.units)
-            value.units_from = statement.units or doc.units or model.units
+            source_units = (_row_units(printed_row) or statement.units or doc.units
+                            or model.units)
+            figure = _scale(printed, source_units, model.units)
+            value.units_from = source_units
             value.units_to = model.units
 
         # A sign convention is never forced onto a line the FILING presents as

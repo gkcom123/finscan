@@ -31,6 +31,20 @@ def extract_page_text(page) -> tuple[str, bool]:
         r = single_char_ratio(candidate)
         if r < best_ratio:
             best_text, best_ratio = candidate, r
+
+    # Reading in content-stream order instead of by position. Airtel's IR Pack
+    # gives its glyphs wrong x-positions ("5 85,391"), so sorting by position
+    # tears every figure off its caption — the repaired text lists all captions,
+    # then all numbers. The stream itself is in reading order: "Revenue 585,391
+    # 494,626 18%". Kept only when it yields more caption-and-figures rows.
+    from finscan2.pdf.statements import looks_like_data_row
+
+    def rows(candidate: str) -> int:
+        return sum(1 for line in candidate.splitlines() if looks_like_data_row(line))
+
+    flow = page.extract_text(x_tolerance=3, use_text_flow=True) or ""
+    if rows(flow) > rows(best_text) and single_char_ratio(flow) <= SHATTER_THRESHOLD:
+        best_text = flow
     return best_text, best_text != text
 
 

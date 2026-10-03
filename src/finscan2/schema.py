@@ -21,7 +21,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "23"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "28"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -44,6 +44,11 @@ PARSER_VERSION = "23"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 21: note-ref kept only in pipe tables without a Notes column
                             # 22: OCR figures confirmed by the profit chain
                             # 23: text-layer line matched by figures, then caption words
+                            # 24: stream-order text for shattered pages; "Jun-26" columns
+                            # 25: one-line "Mon-YY" header split at its dates
+                            # 26: "Schedule of Net Debt" read as a balance-sheet table
+                            # 27: one-line header of month-first dates
+                            # 28: "Performance at a glance" read as a summary table
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,
@@ -56,6 +61,7 @@ StatementKind = Literal[
     "balance_sheet",
     "cash_flow",
     "equity",
+    "summary",
     "other",
 ]
 
@@ -207,8 +213,11 @@ class PdfDoc:
         stable from quarter to quarter where page numbers are not.
         """
         needle = text.strip().lower()
-        return next((s for s in self.statements
-                     if s.note is None and needle in (s.title or "").lower()), None)
+        titled = [s for s in self.statements
+                  if s.note is None and needle in (s.title or "").lower()]
+        # A table of contents names the same section ("Section 1 ... Performance
+        # at a glance ... 3") but has no columns; the real table does.
+        return next((s for s in titled if s.columns), None) or next(iter(titled), None)
 
     def note(self, number: int, end: str | None = None) -> Statement | None:
         """A note table, optionally the one for a particular period end.

@@ -241,6 +241,33 @@ def _cadence_months(dates: list[str]) -> int:
     return min((3, 6, 12), key=lambda candidate: abs(candidate - median))
 
 
+def _block_of(period_cols: list[int], write_col: int | None, dates: dict[int, str],
+              cadence: int | None) -> set[int]:
+    """The period columns the new one continues: walking left from the column
+    before it while each step back is one cadence earlier.
+
+    Airtel's annual block (FY24, FY25, FY26) sits directly beside its quarterly
+    block, so adjacency cannot separate them; the dates can — quarter to quarter
+    is three months, quarter to fiscal year is not.
+    """
+    from datetime import date
+
+    def months(a: str, b: str) -> int:
+        x, y = date.fromisoformat(a), date.fromisoformat(b)
+        return (y.year - x.year) * 12 + y.month - x.month
+
+    if write_col is None or not cadence:
+        return set(period_cols)
+    anchor = write_col if write_col in dates else write_col - 1
+    if anchor not in dates:
+        return set(period_cols)
+    block, col = {anchor}, anchor
+    while (col - 1) in dates and months(dates[col - 1], dates[col]) == cadence:
+        col -= 1
+        block.add(col)
+    return block
+
+
 def _most_recent(cols: list[int], dates: dict[int, str]) -> int | None:
     """The column holding the latest period, by date rather than by position.
 
@@ -390,14 +417,22 @@ def discover_sheet(path: str, sheet: str) -> SheetLayout:
         # Reference column: the most recent populated column with a dense input
         # footprint. Picking merely the last column with any blue cell can land on
         # a formula-heavy analysis column and make every row look unwritable.
-        with_inputs = [c for c in populated if stats[c]["input"]]
+        # And from the block the new column joins. A model with an annual block
+        # beside its quarterly one dates both FY26 and 4Q26 at 2026-03-31; Airtel's
+        # 4Q column is derived (=FY - 9M) and so not dense, which left the ANNUAL
+        # column as "most recent" — and a quarterly column copied its formulas
+        # (=AVERAGE of four quarters for the FX rate, FY growth for growth).
+        block = _block_of(layout.period_cols, layout.write_col, layout.period_dates,
+                          layout.cadence_months)
+        populated_in_block = [c for c in populated if c in block] or populated
+        with_inputs = [c for c in populated_in_block if stats[c]["input"]]
         if with_inputs:
             densest = max(stats[c]["input"] for c in with_inputs)
             floor = max(3, int(densest * 0.5))
             dense = [c for c in with_inputs if stats[c]["input"] >= floor] or with_inputs
             layout.reference_col = _most_recent(dense, layout.period_dates)
         elif populated:
-            layout.reference_col = last_populated
+            layout.reference_col = _most_recent(populated_in_block, layout.period_dates)
 
         layout.units = _sniff_units(worksheet, max_row, max_col, layout.first_data_row)
 

@@ -30,7 +30,15 @@ _TITLE_PATTERNS: list[tuple[str, StatementKind]] = [
      # Beneficiaries' Capital". Gated safely: this whole table is only checked
      # against a line already matching `_TITLE_LINE` ("statement(s) of ...").
      r"|changes\s+in\s+.*\bcapital\b", "equity"),
-    (r"financial\s+position|balance\s+sheet", "balance_sheet"),
+    (r"financial\s+position|balance\s+sheet"
+     # Airtel's IR Pack: "Consolidated Schedule of Net Debt" — balances as at a date
+     # (lease obligation, cash, investments) the balance sheet summary omits.
+     r"|schedule\s+of\s+net\s+debt", "balance_sheet"),
+    # Airtel's IR Pack "SECTION 1- PERFORMANCE AT A GLANCE": a multi-period summary
+    # of operating and financial figures, each row in its own printed unit (Rs Mn,
+    # Rs Bn, US$ Mn, Nos). Its own kind, so no row lands there unless a mapping
+    # names it by title.
+    (r"performance\s+at\s+a\s+glance", "summary"),
     (r"profit\s+or\s+loss|income\s+statement|statements?\s+of\s+(?:income|operations)"
      r"|profit\s+and\s+loss|results\s+of\s+operations"
      # India's SEBI format: "Statement of Audited Consolidated Financial Results for
@@ -39,7 +47,7 @@ _TITLE_PATTERNS: list[tuple[str, StatementKind]] = [
 ]
 
 _TITLE_LINE = re.compile(
-    r"^[^\n]*(?:\b(?:statement|statements)\s+of\b"
+    r"^[^\n]*(?:\b(?:statement|statements|schedule)\s+of\b|\bperformance\s+at\s+a\s+glance\b"
     r"|\b(?:income\s+statements?|balance\s+sheets?)\b)[^\n]*$",
     re.IGNORECASE,
 )
@@ -231,6 +239,42 @@ def _parse_rows(lines: list[str]) -> list[StatementRow]:
     return kept
 
 
+def _stated_span(header_block: str) -> int | None:
+    """A span printed once over all the columns, and only one: "Quarter Ended"."""
+    low = (header_block or "").lower()
+    if re.search(r"\bquarter\s+ended\b", low) and not re.search(
+            r"\b(?:year|half[\s-]year|months?)\s+ended\b", low):
+        return 3
+    return None
+
+
+#: A header line of dated columns: "Jun-26 Jun-25 Y-o-Y Growth", or
+#: "Jun 30, 2026 Jun 30, 2025".
+_MONTH_YEAR_TOKEN = re.compile(
+    r"\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*"
+    r"(?:[-'’]\d{2}|\s+\d{1,2},?\s*\d{4})\b", re.IGNORECASE)
+
+
+def _month_year_header_columns(lines: list[str], kind: str,
+                               span: int | None) -> list[Column]:
+    """Columns from one header line of "Mon-YY" dates, split at each date.
+
+    The IR Pack prints its column headers on one line; when its glyph positions
+    are unusable there is no geometry to separate them, but the dates themselves
+    are the separators. Whatever follows the last date ("Y-o-Y Growth") is one
+    more column.
+    """
+    for line in lines:
+        dates = list(_MONTH_YEAR_TOKEN.finditer(line))
+        if len(dates) < 2:
+            continue
+        headers = [m.group(0) for m in dates]
+        if tail := line[dates[-1].end():].strip():
+            headers.append(tail)
+        return parse_columns_from_headers(headers, statement_kind=kind, default_months=span)
+    return []
+
+
 def _pipe_header_columns(lines: list[str], kind: str) -> list[Column]:
     """Columns from a pipe-delimited header row, one cell per column.
 
@@ -273,12 +317,17 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     columns: list = []
     layout = table_layout(page) if page is not None else None
     if layout is not None:
-        columns = parse_columns_from_headers(layout.headers, statement_kind=kind)
+        columns = parse_columns_from_headers(
+            layout.headers, statement_kind=kind,
+            default_months=_stated_span(f"{heading}\n{header_text}"))
     if not columns:
         layout = None
         columns = dedupe_stacked(parse_columns(f"{heading}\n{header_text}"))
     if not columns:
         columns = _pipe_header_columns(lines[:first_data], kind)
+    if not columns:
+        columns = _month_year_header_columns(lines[body_start:first_data], kind,
+                                             _stated_span(f"{heading}\n{header_text}"))
 
     # A first row of small figures only ("GRUMA USA Sales Volume 380 391 (12)")
     # carries no amount, so the text test reads it as header. The geometry pass
