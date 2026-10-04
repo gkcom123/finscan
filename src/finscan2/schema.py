@@ -21,7 +21,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "28"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "29"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -49,6 +49,7 @@ PARSER_VERSION = "28"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 26: "Schedule of Net Debt" read as a balance-sheet table
                             # 27: one-line header of month-first dates
                             # 28: "Performance at a glance" read as a summary table
+                            # 29: "Financial Period Ended" columns stay year to date
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,

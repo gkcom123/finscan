@@ -214,12 +214,22 @@ def read_pdf(
     cache_dir: str | Path | None = None,
     use_cache: bool = True,
     ocr_enabled: bool = True,
+    reader: str | None = None,
 ) -> PdfDoc:
-    """Read a filing into a PdfDoc, reusing a cached pdf.json when one matches."""
+    """Read a filing into a PdfDoc, reusing a cached pdf.json when one matches.
+
+    `reader="llm"` (a company's mapping opts in) hands the whole document to the
+    vision model instead; see pdf/llm_read.py. Anything else is this reader.
+    """
     import pdfplumber
 
     path = str(path)
     sha = sha256_of(path)
+    if reader == "llm":
+        from finscan2.pdf.llm_read import read_pdf_llm
+
+        return read_pdf_llm(path, sha, cache_dir=cache_dir if use_cache else None,
+                            enabled=ocr_enabled)
 
     # Vision transcriptions recovered from a cache written by an EARLIER parser.
     # Parsing is deterministic and cheap to redo; a vision transcription is neither,

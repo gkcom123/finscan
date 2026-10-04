@@ -208,6 +208,9 @@ _MONTH_YEAR = re.compile(
 #: A month-first date: "June 30, 2026", the US and Indian form.
 _MONTH_FIRST_DATE = re.compile(rf"\b({_MONTH_WORDS})\s+(\d{{1,2}}),?\s*(\d{{4}})\b",
                                re.IGNORECASE)
+_YEAR_TO_DATE_WORDS = re.compile(
+    r"\b(?:financial\s+)?period\s+ended\b|\byear[\s-]+to[\s-]+date\b|\bytd\b"
+    r"|\bcumulative\b|\bacumulado\b", re.IGNORECASE)
 
 #: A numeric date: 30/06/2026, 31-03-2026, 2026-06-30.
 _NUMERIC_DATE = re.compile(r"\b(\d{1,4})[/.-](\d{1,2})[/.-](\d{2,4})\b")
@@ -357,7 +360,8 @@ def parse_columns_from_headers(
     # "Jun-26  Jun-25"), passed in by the caller who saw the header block.
     if default_months:
         for column in columns:
-            if column.end and column.months is None:
+            if (column.end and column.months is None
+                    and not _YEAR_TO_DATE_WORDS.search(flatten(column.header))):
                 column.months, column.kind = default_months, "period"
 
     # "YTD 2026": a year under a year-to-date band, as Gruma prints beside "2Q26".

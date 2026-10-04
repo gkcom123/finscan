@@ -111,6 +111,8 @@ class RowSpec:
     statement: Statement | None = None
     basis: Basis | None = None
     sign: Literal["positive", "negative"] | None = None
+    #: Text the chosen column's header must contain (see MappingRow.column).
+    column: str | None = None
     #: Set by `learn` when a human should look at this row before it is trusted.
     review: str | None = None
     #: For a `formula` row whose reference-column formula embeds a hand-typed
@@ -122,7 +124,7 @@ class RowSpec:
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {"key": self.key.to_dict(), "row_hint": self.row_hint,
                                "kind": self.kind}
-        for name in ("resolve", "pdf_caption", "statement", "basis", "sign", "review"):
+        for name in ("resolve", "pdf_caption", "statement", "basis", "sign", "column", "review"):
             value = getattr(self, name)
             if value is not None:
                 out[name] = value
@@ -142,6 +144,7 @@ class RowSpec:
             statement=d.get("statement"),
             basis=d.get("basis"),
             sign=d.get("sign"),
+            column=d.get("column"),
             review=d.get("review"),
             formula_recipe=FormulaRecipe.from_dict(recipe) if recipe else None,
         )

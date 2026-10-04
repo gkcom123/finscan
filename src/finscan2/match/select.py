@@ -18,10 +18,29 @@ from finscan2.schema import Column, Statement, StatementRow
 
 
 def select_column(statement: Statement, period_end: str,
-                  cadence_months: int, point_in_time: bool) -> tuple[Column | None, str]:
-    """The column to read, and why it was chosen or refused."""
+                  cadence_months: int, point_in_time: bool,
+                  header_contains: str | None = None) -> tuple[Column | None, str]:
+    """The column to read, and why it was chosen or refused.
+
+    `header_contains` narrows the choice to columns whose header holds that text,
+    for tables that print several columns per date ("Current" / "Non-current").
+    """
     if not statement.columns:
         return None, "the statement's column headers could not be read"
+    if header_contains:
+        wanted = normalize_label(header_contains)
+        def holds(header: str) -> bool:
+            text = f" {normalize_label(header)} "
+            # "Current" is not "Non-current": the negated form only when asked for.
+            if not wanted.startswith("non ") and f" non {wanted} " in text:
+                text = text.replace(f" non {wanted} ", " ")
+            return f" {wanted} " in text
+
+        narrowed = [c for c in statement.columns if holds(c.header)]
+        if not narrowed:
+            return None, f"no column header contains '{header_contains}'"
+        statement = Statement(page=statement.page, kind=statement.kind, title=statement.title,
+                              heading=statement.heading, columns=narrowed, rows=statement.rows)
 
     if point_in_time:
         matches = [c for c in statement.columns

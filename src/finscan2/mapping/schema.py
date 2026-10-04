@@ -58,6 +58,10 @@ class MappingRow:
     statement: str | None = None
     basis: str | None = None
     sign: str | None = None
+    #: Text the chosen column's header must contain, where one date has several
+    #: columns: a borrowings note prints "30 June 2026 Current" and
+    #: "30 June 2026 Non-current" side by side.
+    column: str | None = None
 
     @property
     def key(self) -> tuple[str, str, int]:
@@ -101,7 +105,7 @@ class MappingRow:
             out["carry_forward"] = True
         else:
             out["pdf"] = self.pdf
-        for name in ("note", "statement", "basis", "sign"):
+        for name in ("note", "statement", "basis", "sign", "column"):
             if getattr(self, name):
                 out[name] = getattr(self, name)
         return out
@@ -119,6 +123,7 @@ class MappingRow:
             statement=d.get("statement"),
             basis=d.get("basis"),
             sign=d.get("sign"),
+            column=d.get("column"),
         )
 
 
@@ -128,16 +133,24 @@ class Mapping:
     sheet: str
     rows: list[MappingRow] = field(default_factory=list)
     mapping_version: str = MAPPING_VERSION
+    #: How this company's filings are read. Absent: the rule-based reader.
+    #: "llm": every table page is read by the vision model instead (pdf/llm_read.py).
+    reader: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {"mapping_version": self.mapping_version, "company": self.company,
-                "sheet": self.sheet, "rows": [r.to_dict() for r in self.rows]}
+        out = {"mapping_version": self.mapping_version, "company": self.company,
+               "sheet": self.sheet}
+        if self.reader:
+            out["reader"] = self.reader
+        out["rows"] = [r.to_dict() for r in self.rows]
+        return out
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> "Mapping":
         return cls(company=d["company"], sheet=d["sheet"],
                    rows=[MappingRow.from_dict(r) for r in d.get("rows", [])],
-                   mapping_version=d.get("mapping_version", MAPPING_VERSION))
+                   mapping_version=d.get("mapping_version", MAPPING_VERSION),
+                   reader=d.get("reader"))
 
     def save(self, path: str | Path) -> Path:
         """One row per physical line, so a diff is one line per decision."""
@@ -145,9 +158,11 @@ class Mapping:
         path.parent.mkdir(parents=True, exist_ok=True)
         rows = ",\n".join("    " + json.dumps(r.to_dict(), ensure_ascii=False)
                           for r in self.rows)
+        reader = f'  "reader": {json.dumps(self.reader)},\n' if self.reader else ""
         text = (f'{{\n  "mapping_version": "{self.mapping_version}",\n'
                 f'  "company": {json.dumps(self.company)},\n'
                 f'  "sheet": {json.dumps(self.sheet)},\n'
+                f'{reader}'
                 f'  "rows": [\n{rows}\n  ]\n}}\n')
         path.write_text(text, encoding="utf-8")
         return path

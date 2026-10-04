@@ -368,7 +368,8 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
         if statement is None:
             plans[bound.row] = (None, None, None, why)
             continue
-        column, reason = select_column(statement, target, model.cadence_months, point_in_time)
+        column, reason = select_column(statement, target, model.cadence_months, point_in_time,
+                                       getattr(spec, "column", None))
         if column is None:
             plans[bound.row] = (statement, None, None, reason)
             continue
