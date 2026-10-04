@@ -585,3 +585,18 @@ def test_a_unit_printed_on_the_row_outranks_the_tables():
     assert _row_units(StatementRow("Market Capitalization US$ Bn", [122.5], "")) == "billions"
     assert _row_units(StatementRow("Total Customer Base", [680889.0], "")) is None
     assert _row_units(StatementRow("Revenue", [585391.0], "")) is None
+
+
+def test_a_column_can_be_chosen_by_its_header_text():
+    """A borrowings note prints Current and Non-current for each date; "Current"
+    must not also pick "Non-current"."""
+    from finscan2.match.select import select_column
+    from finscan2.schema import Column, Statement
+
+    cols = [Column(index=i, header=h, kind="point_in_time", end=e) for i, (h, e) in enumerate([
+        ("30 June 2026 Current", "2026-06-30"), ("30 June 2026 Non-current", "2026-06-30"),
+        ("31 December 2025 Current", "2025-12-31"), ("31 December 2025 Non-current", "2025-12-31")])]
+    st = Statement(page=32, kind="other", title="Borrowings", heading="", columns=cols)
+    assert select_column(st, "2026-06-30", 3, True)[0] is None          # ambiguous without it
+    assert select_column(st, "2026-06-30", 3, True, "Current")[0].index == 0
+    assert select_column(st, "2026-06-30", 3, True, "Non-current")[0].index == 1

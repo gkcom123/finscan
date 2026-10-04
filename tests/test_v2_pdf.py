@@ -570,3 +570,21 @@ def test_ocr_figures_are_confirmed_only_by_independent_evidence():
     assert by["Profit before depreciation, amortisation and tax"].unverified == []
     assert by["Share of profit of associates and joint ventures (net)"].unverified == []
     assert by["Gain on investments at fair value through OCI"].unverified == [0]
+
+
+def test_quarter_ended_is_the_quarter_and_financial_period_ended_is_year_to_date():
+    """Axiata: one table prints both. The table-wide "Quarter Ended" must not turn
+    the "Financial Period Ended" (January–June) columns into quarters as well."""
+    headers = ["2ⁿᵈ Quarter Ended 30/06/2026 RM'000", "2ⁿᵈ Quarter Ended 30/06/2025 RM'000",
+               "Financial Period Ended 30/06/2026 RM'000", "Financial Period Ended 30/06/2025 RM'000"]
+    cols = parse_columns_from_headers(headers, statement_kind="comprehensive_income",
+                                      default_months=3)
+    assert [(c.months, c.end) for c in cols] == [
+        (3, "2026-06-30"), (3, "2025-06-30"), (6, "2026-06-30"), (6, "2025-06-30")]
+
+
+def test_quarter_ended_default_still_applies_to_bare_month_columns():
+    """Airtel's IR Pack: "Quarter Ended" once over "Jun-26  Jun-25"."""
+    cols = parse_columns_from_headers(["Jun-26", "Jun-25", "Y-o-Y Growth"],
+                                      statement_kind="income_statement", default_months=3)
+    assert [(c.months, c.end) for c in cols[:2]] == [(3, "2026-06-30"), (3, "2025-06-30")]
