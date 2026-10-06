@@ -366,6 +366,51 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
                      columns=columns, rows=rows)
 
 
+#: A table introduced mid-page by prose rather than a "Statement of" title. CCU's
+#: segment note prints "The following is a reconciliation of our Net income ... to
+#: Adjusted Operating Result" below two other tables; its rows are the only place the
+#: filing prints consolidated D&A and ORBDA for the quarter.
+_EMBEDDED_TITLE = re.compile(r"\breconciliation\s+of\b", re.IGNORECASE)
+
+
+def extract_embedded(page_no: int, text: str, page=None) -> Statement | None:
+    """A reconciliation table that starts mid-page, read as a `summary` table.
+
+    Only offered for a page holding no primary statement, and its kind is
+    `summary`, so no row reaches it unless a mapping names it by title. The page's
+    pipe-rendered tables belong to every table on it, so only the text layer is
+    read; the column-major header ("For the six-months periods ended / of June 30,
+    / 2026") needs geometry, taken from the page cropped to below the title so the
+    tables printed above it are not mistaken for this one.
+    """
+    if page is None:
+        return None
+    lines = [line for line in text.splitlines() if "|" not in line]
+    for i, line in enumerate(lines):
+        if not _EMBEDDED_TITLE.search(line) or looks_like_data_row(line):
+            continue
+        try:
+            anchor = next(w for w in page.extract_words()
+                          if w["text"].lower() == "reconciliation")
+            layout = table_layout(page.crop((0, anchor["top"], page.width, page.height)))
+        except (StopIteration, ValueError):
+            return None
+        if layout is None:
+            return None
+        columns = parse_columns_from_headers(layout.headers, statement_kind="summary")
+        first_data = next((j for j in range(i + 1, len(lines))
+                           if looks_like_data_row(lines[j])), len(lines))
+        rows = _parse_rows(lines[first_data:])
+        if len([c for c in columns if c.end]) < 1 or len(rows) < MIN_STATEMENT_ROWS:
+            return None
+        if len(layout.ranges) == len(columns):
+            rows = [_slot_by_position(row, layout) for row in rows]
+        return Statement(page=page_no, kind="summary", title=line.strip(),
+                         heading=lines[i + 1].strip() if i + 1 < len(lines) else "",
+                         columns=columns, rows=rows)
+    return None
+
+
 def _signature(columns: list[Column]) -> list[tuple]:
     return [(c.kind, c.months, c.end) for c in columns]
 
