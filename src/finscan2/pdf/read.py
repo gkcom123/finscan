@@ -20,6 +20,7 @@ from finscan2.pdf.notes import extract_notes
 from finscan2.pdf.statements import (
     column_alignment,
     extract_continuation,
+    extract_embedded,
     extract_statement,
 )
 from finscan2.pdf.text import extract_page_text, render_tables
@@ -322,6 +323,8 @@ def read_pdf(
                 # figures no primary statement prints — Almarai's D&A for the
                 # period appears only in the segment note.
                 note_pages.append((index, text))
+                if (embedded := extract_embedded(index, text, page=geometry)) is not None:
+                    statements.append(embedded)
 
     # Notes come last: a note reports "the period then ended", and only the primary
     # statements say how long that period is.
