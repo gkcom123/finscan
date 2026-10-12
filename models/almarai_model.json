@@ -24,6 +24,7 @@
       "10": "2023-12-31",
       "11": "2024-12-31",
       "12": "2025-12-31",
+      "13": "2026-03-30",
       "15": "2018-03-30",
       "16": "2018-06-30",
       "17": "2018-09-30",
@@ -211,7 +212,7 @@
       "statement": "income_statement",
       "basis": "quarter",
       "sign": "negative",
-      "review": "a model chose 'Finance Cost, net' from the filing's income_statement (The 'Financial Cost, net' matches 'Finance Cost, net' as they both refer to net finance costs.) — CONFIRM before use"
+      "review": "a model chose 'Finance Cost, net' from the filing's income_statement (The workbook caption directly matches the candidate caption.) — CONFIRM before use"
     },
     {
       "key": {
@@ -245,10 +246,11 @@
       "row_hint": 21,
       "kind": "input",
       "resolve": "pdf:Zakat and Income Tax",
-      "statement": "income_statement",
+      "pdf_caption": "Zakat",
+      "statement": "balance_sheet",
       "basis": "quarter",
       "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-26.573-10.578', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's income_statement matched this caption: caption 'Zakat and Income Tax' matches 3 rows ('Profit before Zakat and Income Tax', 'Zakat', 'Income Tax')"
+      "review": "the reference cell is a hand-typed expression '=-26.573-10.578', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · matched 'Zakat' in the balance_sheet (printed in the balance_sheet, not the income_statement) — confirm the sign convention matches the workbook's, since statements differ on it"
     },
     {
       "key": {
@@ -433,9 +435,9 @@
       "kind": "input",
       "resolve": "pdf:Depreciation & amortisation",
       "pdf_caption": "Depreciation and Amortisation",
-      "statement": "note:10",
+      "statement": "cash_flow",
       "basis": "quarter",
-      "review": "matched 'Depreciation and Amortisation' in the notes (found in Note 10: SEGMENT REPORTING (period ending 2026-06-30); not printed in the income_statement) — confirm it is the same line and the right period"
+      "review": "matched 'Depreciation and Amortisation' in the cash_flow (printed in the cash_flow, not the income_statement) — confirm the sign convention matches the workbook's, since statements differ on it"
     },
     {
       "key": {
@@ -542,10 +544,11 @@
       "row_hint": 58,
       "kind": "input",
       "resolve": "pdf:Taxes, net",
+      "pdf_caption": "Income Tax",
       "statement": "cash_flow",
       "basis": "quarter",
       "sign": "negative",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Taxes, net'"
+      "review": "a model chose 'Income Tax' from the filing's cash_flow (Matches the financial line for taxes.) — CONFIRM before use"
     },
     {
       "key": {
@@ -560,7 +563,7 @@
       "statement": "cash_flow",
       "basis": "quarter",
       "sign": "negative",
-      "review": "a model chose 'Finance Cost Paid' from the filing's cash_flow ('Finance Cost Paid' is the closest match for 'Cash interest paid'.) — CONFIRM before use"
+      "review": "a model chose 'Finance Cost Paid' from the filing's cash_flow (Specifically mentions cash interest paid.) — CONFIRM before use"
     },
     {
       "key": {
@@ -598,7 +601,7 @@
       "statement": "cash_flow",
       "basis": "quarter",
       "sign": "negative",
-      "review": "a model chose 'Additions to Intangible Assets' from the filing's cash_flow ('Additions to Intangible Assets' matches 'Purchase and development of intangible assets'.) — CONFIRM before use"
+      "review": "a model chose 'Additions to Intangible Assets' from the filing's cash_flow (Directly corresponds to the purchase and development of intangible assets.) — CONFIRM before use"
     },
     {
       "key": {
@@ -647,7 +650,7 @@
       "pdf_caption": "Settlement of Treasury Shares",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "a model chose 'Settlement of Treasury Shares' from the filing's cash_flow ('Settlement of Treasury Shares' is the closest match for 'Equity Issuance/Buyback'.) — CONFIRM before use"
+      "review": "a model chose 'Settlement of Treasury Shares' from the filing's cash_flow (Relates to equity issuance or buyback activities.) — CONFIRM before use"
     },
     {
       "key": {
@@ -661,7 +664,7 @@
       "pdf_caption": "Dividend Paid",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "a model chose 'Dividend Paid' from the filing's cash_flow ('Dividend Paid' matches 'Dividends Paid'.) — CONFIRM before use"
+      "review": "a model chose 'Dividend Paid' from the filing's cash_flow (Directly matches dividends paid.) — CONFIRM before use"
     },
     {
       "key": {
@@ -711,7 +714,7 @@
       "pdf_caption": "Effect of Movements in Exchange Rates on Cash and Cash Equivalents",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'Effect of Movements in Exchange Rates on Cash and Cash Equivalents' from the filing's cash_flow ('Effect of Movements in Exchange Rates on Cash and Cash Equivalents' matches 'FX impact'.) — CONFIRM before use"
+      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'Effect of Movements in Exchange Rates on Cash and Cash Equivalents' from the filing's cash_flow (Directly corresponds to foreign exchange impact.) — CONFIRM before use"
     },
     {
       "key": {
@@ -851,7 +854,7 @@
       "pdf_caption": "Property, Plant and Equipment",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=26561.364+547.305+1815.887', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · a model chose 'Property, Plant and Equipment' from the filing's balance_sheet (Tangible fixed assets are typically reported as Property, Plant and Equipment.) — CONFIRM before use"
+      "review": "the reference cell is a hand-typed expression '=26561.364+547.305+1815.887', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · a model chose 'Property, Plant and Equipment' from the filing's balance_sheet (This caption matches the workbook caption as it refers to tangible fixed assets.) — CONFIRM before use"
     },
     {
       "key": {
@@ -865,7 +868,7 @@
       "pdf_caption": "Inventories",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Inventories' from the filing's balance_sheet (Inventory is directly matched to Inventories.) — CONFIRM before use"
+      "review": "a model chose 'Inventories' from the filing's balance_sheet (This caption matches the workbook caption as it refers to inventory.) — CONFIRM before use"
     },
     {
       "key": {
@@ -876,9 +879,10 @@
       "row_hint": 92,
       "kind": "input",
       "resolve": "pdf:Trade accounts receivables, net",
+      "pdf_caption": "Trade Receivables, Prepayments and Other Receivables",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade accounts receivables, net'"
+      "review": "a model chose 'Trade Receivables, Prepayments and Other Receivables' from the filing's balance_sheet (This caption matches the workbook caption as it refers to trade accounts receivables.) — CONFIRM before use"
     },
     {
       "key": {
@@ -892,7 +896,7 @@
       "pdf_caption": "Trade and Other Payables",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Trade and Other Payables' from the filing's balance_sheet (Trade creditors/payables are typically included in Trade and Other Payables.) — CONFIRM before use"
+      "review": "a model chose 'Trade and Other Payables' from the filing's balance_sheet (This caption matches the workbook caption as it refers to trade creditors/payables.) — CONFIRM before use"
     },
     {
       "key": {
@@ -1078,7 +1082,7 @@
       "pdf_caption": "TOTAL EQUITY",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'TOTAL EQUITY' from the filing's balance_sheet (Equity as reported on balance sheet matches TOTAL EQUITY.) — CONFIRM before use"
+      "review": "a model chose 'TOTAL EQUITY' from the filing's balance_sheet (This caption matches the workbook caption as it refers to equity reported on the balance sheet.) — CONFIRM before use"
     },
     {
       "key": {

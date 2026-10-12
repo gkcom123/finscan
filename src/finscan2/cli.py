@@ -317,7 +317,8 @@ def _read_pdf_stage(args) -> int:
                    cache_dir=None if args.no_cache else args.cache_dir,
                    use_cache=not args.no_cache,
                    ocr_enabled=not args.no_ocr,
-                   reader=getattr(args, "reader", None))
+                   reader=getattr(args, "reader", None),
+                   extra_statements=getattr(args, "extra_statements", None))
 
     if args.cmd == "read":
         out = Path(args.out) if args.out else pdf_path.with_suffix(".pdf.json")
@@ -364,7 +365,8 @@ def _company(args) -> int:
                 code = max(code, _read_pdf_stage(Namespace(
                     cmd="read", pdf=str(pdf_path), out=str(pdf_json),
                     cache_dir=args.cache_dir, no_cache=args.no_cache,
-                    no_ocr=args.no_ocr, rows=args.rows, reader=_company_reader(paths))))
+                    no_ocr=args.no_ocr, rows=args.rows, reader=_company_reader(paths),
+                    extra_statements=_company_extra_statements(paths))))
                 print()
             if code or stage == "read":
                 return code
@@ -446,6 +448,15 @@ def _company_reader(paths) -> str | None:
     return Mapping.load(paths.mapping).reader
 
 
+def _company_extra_statements(paths) -> list[dict] | None:
+    """The company's extra note titles (mapping's `extra_statements`), or None."""
+    from finscan2.mapping.schema import Mapping
+
+    if not paths.mapping.exists():
+        return None
+    return Mapping.load(paths.mapping).extra_statements or None
+
+
 def _run_quarter(args, paths) -> int:
     """The whole quarter in one step: read, learn only if needed, apply.
 
@@ -477,7 +488,8 @@ def _run_quarter(args, paths) -> int:
             code = _read_pdf_stage(Namespace(
                 cmd="read", pdf=str(pdf_path), out=str(pdf_json),
                 cache_dir=args.cache_dir, no_cache=args.no_cache,
-                no_ocr=args.no_ocr, rows=False, reader=_company_reader(paths)))
+                no_ocr=args.no_ocr, rows=False, reader=_company_reader(paths),
+                extra_statements=_company_extra_statements(paths)))
         # Stage-1 findings are judged row by row in apply; only a missing file stops.
         if code == 1:
             print(f"Could not read {pdf_path}.", file=sys.stderr)

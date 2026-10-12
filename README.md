@@ -39,6 +39,10 @@ The single stages still exist for debugging:
 .venv/bin/python -m finscan2.cli company almarai learn    # → mappings/almarai.proposed.json when a mapping exists
 .venv/bin/python -m finscan2.cli company almarai apply    # resolve + write
 
+The presentation diagram is in [docs/finscan2_architecture.md](docs/finscan2_architecture.md).
+
+![FinScan 2 architecture](docs/finscan2_architecture.svg)
+
 
 
 Example to debug

@@ -175,7 +175,7 @@ or:
 FINSCAN_RELIABLE_LABELS=true
 ```
 
-Reliable-label mode resolves each queued label in an individual focused extraction call and reports unresolved rows. In this mode, unresolved label-fallback rows are left blank rather than copied from a prior period or defaulted to zero. This prevents stale values from appearing to be freshly extracted.
+Reliable-label mode resolves each queued label in an individual focused extraction call (rather than one shared batch call) and reports unresolved rows explicitly. Note: leaving a row blank instead of copying it from a prior period or defaulting it to zero is unconditional behavior, in every mode, not something reliable-label mode turns on — an input row with no defensible PDF value is always left blank (`input_row_left_blank`) so the gap is visible instead of looking like a freshly extracted figure.
 
 The reliable mode is currently a rollout path. Validate it against real company workbooks before making it the global default.
 
@@ -271,7 +271,7 @@ Every run produces a markdown report containing:
 - errors and warnings;
 - extraction and profile notes;
 - formula crosschecks;
-- rows carried forward, defaulted, skipped, or left blank.
+- rows with copied formulas, left blank, or skipped (input values are never carried forward or defaulted — only the model's own formulas are carried forward).
 
 Every written cell receives an Excel comment describing its field, PDF caption, match method, confidence, or formula origin. The writer also maintains a `FinScan_Audit` sheet.
 
@@ -282,7 +282,8 @@ When a value looks wrong, inspect the cell comment and report before changing co
 - label fallback;
 - profile override;
 - formula copy;
-- carry-forward/default behavior.
+- left-blank behavior (`input_row_left_blank`) when no defensible value exists.
+- formula carry-forward (the model's own calculation, not an extracted value).
 
 ## Debugging Workflow
 
@@ -292,7 +293,7 @@ When a value looks wrong, inspect the cell comment and report before changing co
 4. Read the cell comment to identify the extraction path.
 5. Inspect the raw PDF text directly with `read_pdf(...).as_prompt_text(statements_only=False)`.
 6. Compare the printed value, period column, sign, and units with the workbook value.
-7. Check whether the row was canonical, label fallback, carried forward, defaulted, or formula-derived.
+7. Check whether the row was canonical, label fallback, left blank, or formula-derived (formulas are the only thing ever carried forward from a prior period).
 8. Prefer a deterministic guard at the source path that produced the value. Do not patch only the final Excel cell.
 9. Add a focused test and rerun the full suite.
 
@@ -346,7 +347,7 @@ For changes to extraction or writing, validation should include:
 - LLM caption mapping is nondeterministic unless constrained by profile data or explicit candidates.
 - A raw PDF may have both cumulative and quarterly columns.
 - OCR can drop parentheses or alter punctuation.
-- Carry-forward behavior in legacy label mode can hide an unresolved extraction by making the output look complete.
+- Carry-forward/default-to-zero for unresolved input rows was removed project-wide (2026-09-16): an unmatched input row is now always left blank (`input_row_left_blank`), in every mode, so an extraction gap is always visible instead of looking like a freshly extracted figure.
 - An open Excel output file prevents regeneration and can create a stale-file false alarm.
 - A workbook can contain a sheet with a different cadence from the main model; period checks must remain sheet-scoped.
 

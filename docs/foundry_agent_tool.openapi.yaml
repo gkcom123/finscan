@@ -1,0 +1,203 @@
+openapi: 3.0.1
+info:
+  title: FinScan
+  description: >-
+    Extracts financial results from a company PDF and writes them into the blue
+    input cells of the company's Excel model, across every relevant tab,
+    leaving black formula cells calculating. Same API used by the Copilot
+    Studio connector (docs/copilot_connector.yaml, Swagger 2.0) — this file is
+    the OpenAPI 3.0 equivalent for Azure AI Foundry Agent Service's OpenAPI
+    tool, which (unlike Power Platform) accepts OpenAPI 3.0 directly.
+  version: "2.0.0"
+servers:
+  - url: https://REPLACE-WITH-YOUR-CONTAINER-APP.azurecontainerapps.io
+security:
+  - apiKeyAuth: []
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas:
+    Job:
+      type: object
+      properties:
+        job_id: { type: string }
+        status: { type: string, description: "ok | needs_review | awaiting_confirmation" }
+        company_key: { type: string, nullable: true }
+        profile_confirmed: { type: boolean }
+        colors_found: { type: boolean }
+        period_header: { type: string, nullable: true }
+        summary: { type: string }
+        report_markdown: { type: string }
+        download_url: { type: string, nullable: true }
+        sheets:
+          type: array
+          items:
+            type: object
+            properties:
+              sheet: { type: string }
+              in_scope: { type: boolean }
+              enabled: { type: boolean }
+              units: { type: string }
+              input_rows: { type: integer }
+              formula_rows: { type: integer }
+        mappings:
+          type: array
+          items:
+            type: object
+            properties:
+              sheet: { type: string }
+              excel_label: { type: string }
+              field: { type: string, nullable: true }
+              value: { type: number, nullable: true }
+              match_method: { type: string }
+              confidence: { type: number }
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              severity: { type: string }
+              code: { type: string }
+              message: { type: string }
+              field: { type: string, nullable: true }
+paths:
+  /health:
+    get:
+      operationId: Health
+      summary: Check whether the API and its LLM configuration are ready
+      security: []
+      responses:
+        "200":
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  llm_configured: { type: boolean }
+
+  /jobs:
+    post:
+      operationId: ProposeUpdate
+      summary: Propose an update from an uploaded PDF and workbook
+      description: >-
+        Extract the results, work out the workbook's layout, and show which
+        rows would be filled. Writes nothing. Call this first. If status comes
+        back as awaiting_confirmation, ask the user to confirm the sheet list
+        (from the sheets array), then call ConfirmProfile followed by
+        ApplyUpdate.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [pdf, workbook]
+              properties:
+                pdf: { type: string, format: binary, description: Results PDF }
+                workbook: { type: string, format: binary, description: Company Excel model }
+                company: { type: string, description: "Company profile key (blank = read from the PDF)" }
+                sheets: { type: string, description: Comma-separated sheet names to restrict to }
+                period_label: { type: string, description: "Column header override, e.g. Q1 FY2027" }
+      responses:
+        "200":
+          description: Proposal
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Job" }
+
+  /jobs/{job_id}/apply:
+    post:
+      operationId: ApplyUpdate
+      summary: Approve and write the proposed column into every enabled sheet
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Written
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Job" }
+
+  /jobs/{job_id}/download:
+    get:
+      operationId: DownloadWorkbook
+      summary: Download the updated workbook for a job
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Workbook file
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+
+  /profiles/{company_key}/confirm:
+    post:
+      operationId: ConfirmProfile
+      summary: Confirm a company's sheet layout, once per company
+      parameters:
+        - name: company_key
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sheets:
+                  type: array
+                  items: { type: string }
+                  description: Sheet names to enable for this company
+                label_overrides:
+                  type: object
+                  additionalProperties: { type: string }
+                by:
+                  type: string
+                  default: foundry-agent
+      responses:
+        "200":
+          description: Confirmed profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company_key: { type: string }
+                  confirmed: { type: boolean }
+                  enabled_sheets:
+                    type: array
+                    items: { type: string }
+
+  /inspect:
+    post:
+      operationId: InspectWorkbook
+      summary: Inspect a workbook's layout with no PDF and no AI call, nothing written
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [workbook]
+              properties:
+                workbook: { type: string, format: binary }
+      responses:
+        "200":
+          description: Layout
+          content:
+            application/json:
+              schema: { type: object }

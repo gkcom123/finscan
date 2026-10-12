@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinScan2 Architecture and Deployment Guide</title>
+  <style>
+    :root { --ink: #10243e; --muted: #52657a; --line: #d7e0e8; --blue: #0874c7; --pale: #f4f8fb; --green: #0d7758; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #eef3f6; font-family: Georgia, "Times New Roman", serif; line-height: 1.55; }
+    .shell { display: grid; grid-template-columns: 268px minmax(0, 1fr); max-width: 1500px; min-height: 100vh; margin: auto; background: white; }
+    aside { padding: 26px 20px; color: white; background: #133d61; font-family: "Segoe UI", sans-serif; }
+    aside h1 { margin: 0; font: 700 23px/1.15 Georgia, serif; }
+    aside p { margin: 8px 0 24px; color: #c9dbe8; font-size: 13px; }
+    nav a { display: block; padding: 8px 10px; color: #e8f3fa; border-radius: 5px; font-size: 13px; text-decoration: none; }
+    nav a:hover { background: #24577f; }
+    main { min-width: 0; padding: 52px min(7vw, 90px) 70px; }
+    .eyebrow { color: var(--blue); font: 700 12px/1 "Segoe UI", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    h1, h2, h3 { color: var(--ink); line-height: 1.18; }
+    main > h1 { max-width: 820px; margin: 10px 0 12px; font-size: clamp(34px, 5vw, 56px); }
+    h2 { margin: 54px 0 14px; padding-bottom: 9px; border-bottom: 2px solid var(--line); font-size: 28px; }
+    h3 { margin: 30px 0 8px; font-size: 21px; }
+    p, li { max-width: 960px; }
+    .lead { max-width: 800px; color: var(--muted); font-size: 20px; }
+    .callout { margin: 22px 0; padding: 15px 18px; border-left: 5px solid var(--blue); background: var(--pale); font-family: "Segoe UI", sans-serif; }
+    .current { border-left-color: var(--green); }
+    code, pre { font-family: Consolas, "Courier New", monospace; }
+    pre { overflow: auto; padding: 16px; color: #e9f6ff; background: #122337; border-radius: 5px; font-size: 13px; }
+    table { width: 100%; margin: 16px 0 26px; border-collapse: collapse; font-family: "Segoe UI", sans-serif; font-size: 14px; }
+    th, td { padding: 11px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #153957; background: #e8f2f8; }
+    .mermaid { overflow: auto; margin: 28px 0; padding: 14px; border: 1px solid var(--line); border-radius: 6px; background: #fbfdff; }
+    .footer { margin-top: 70px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 13px "Segoe UI", sans-serif; }
+    @media print { aside { display: none; } .shell { display: block; } main { padding: 28px; } .mermaid { break-inside: avoid; } }
+    @media (max-width: 850px) { .shell { display: block; } aside { padding: 20px; } nav { columns: 2; } main { padding: 36px 24px; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <h1>FinScan2</h1>
+      <p>Architecture and deployment guide</p>
+      <nav>
+        <a href="#summary">Executive summary</a>
+        <a href="#current">Current architecture</a>
+        <a href="#cloud">Target cloud architecture</a>
+        <a href="#identity">Identity and boundaries</a>
+        <a href="#pipeline">Processing pipeline</a>
+        <a href="#model">Model and vision path</a>
+        <a href="#audit">Audit artifacts</a>
+        <a href="#services">Service topology</a>
+        <a href="#storage">Storage design</a>
+        <a href="#foundry">Foundry and Teams</a>
+        <a href="#deployment">Deployment strategy</a>
+        <a href="#operations">Operations and security</a>
+        <a href="#work">Open implementation work</a>
+      </nav>
+    </aside>
+    <main>
+      <div class="eyebrow">Current state and target Azure deployment</div>
+      <h1>FinScan2 Architecture</h1>
+      <p class="lead">A controlled financial-document pipeline: read a filing, resolve a reviewed mapping, validate the result, and write a traceable copy of the Excel model.</p>
+
+      <div class="callout current"><strong>Current:</strong> FinScan2 is a local CLI application. It has no HTTP API, Teams bot, Foundry agent, or Blob Storage integration today.</div>
+      <div class="callout"><strong>Target:</strong> Deploy one FinScan2 worker image with a small asynchronous job API. Foundry is optional and only provides a Teams-facing conversational interface.</div>
+
+      <h2 id="summary">Executive Summary</h2>
+      <div class="mermaid">
+flowchart LR
+    Analyst[Analyst] --> Client[Teams, UI, or scheduler]
+    Client --> API[FinScan2 job API]
+    API --> Queue[Durable job queue]
+    Queue --> Worker[FinScan2 worker job]
+    Worker --> Artifacts[Workbook, audit JSON, report]
+    Foundry[Optional Foundry agent] --> API
+      </div>
+      <p>The worker is the only component that parses financial filings, resolves values, validates safety controls, and writes workbooks. The API submits jobs and publishes their status; it does not execute a long PDF/Excel run inside an HTTP request.</p>
+
+      <h2 id="current">Current Architecture</h2>
+      <div class="mermaid">
+flowchart LR
+    PDF[PDF filing] --> CLI[python -m finscan2.cli]
+    XLSX[Excel model] --> CLI
+    Map[Reviewed mapping JSON] --> CLI
+    CLI --> Read[Read PDF]
+    Read --> Resolve[Resolve mapped values]
+    Resolve --> Validate[Validate]
+    Validate --> Write[Write workbook copy]
+    Write --> Output[Output workbook]
+    Resolve --> Audit[Values JSON and report]
+      </div>
+      <pre>.\.venv\Scripts\python.exe -m finscan2.cli company ccu run</pre>
+      <table>
+        <thead><tr><th>Area</th><th>Current responsibility</th></tr></thead>
+        <tbody>
+          <tr><td><code>pdf/</code></td><td>PDF text/table extraction, OCR, and optional vision read.</td></tr>
+          <tr><td><code>model/</code></td><td>Workbook layout and period-column discovery.</td></tr>
+          <tr><td><code>mapping/</code></td><td>Reviewed, company-specific PDF-to-model decisions.</td></tr>
+          <tr><td><code>match/</code></td><td>Caption lookup, sums, periods, and resolution.</td></tr>
+          <tr><td><code>write/</code></td><td>Workbook copy, inputs, formulas, comments, and audit.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="cloud">Target Cloud Architecture</h2>
+      <div class="mermaid">
+flowchart TB
+    subgraph Users
+      Teams[Teams user]
+      Ops[Operations UI or scheduler]
+    end
+    subgraph Azure
+      Agent[Optional Foundry agent]
+      Gateway[API Management]
+      API[FinScan2 job API]
+      Queue[Service Bus]
+      Worker[Container Apps Job]
+      Blob[(Blob Storage)]
+      Jobs[(Job status store)]
+      KV[Key Vault]
+      AOAI[Azure OpenAI]
+      Monitor[Application Insights]
+    end
+    Teams --> Agent --> Gateway --> API
+    Ops --> Gateway
+    API --> Queue --> Worker
+    API --> Jobs
+    API --> Blob
+    Worker --> Blob
+    Worker --> Jobs
+    Worker --> KV
+    Worker -. optional model call .-> AOAI
+    API --> Monitor
+    Worker --> Monitor
+      </div>
+
+      <h2 id="identity">Identity and Boundaries</h2>
+      <div class="mermaid">
+flowchart LR
+    Client[Approved client] -->|HTTPS + Entra token| API[FinScan2 API]
+    API -->|queue message| Worker[FinScan2 worker]
+    API -->|managed identity| Blob[(Blob Storage)]
+    Worker -->|managed identity| Blob
+    Worker -->|managed identity| KV[Key Vault]
+    Worker -->|managed identity| AOAI[Azure OpenAI]
+      </div>
+      <p>The API is the only public boundary. Foundry, Teams, an internal UI, and schedulers call the API with Entra ID. The worker receives only queued jobs and has no need to accept public HTTP traffic.</p>
+
+      <h2 id="pipeline">Processing Pipeline</h2>
+      <div class="mermaid">
+flowchart LR
+    PDF[PDF bytes] --> Hash[SHA-256]
+    Hash --> Cache{Matching cached parse?}
+    Cache -->|yes| Doc[PdfDoc]
+    Cache -->|no| Text[Text and table extraction]
+    Text --> OCR[OCR fallback]
+    OCR --> Statements[Statement and note parsing]
+    Statements --> Doc
+    Doc --> Resolve[Resolve reviewed mapping]
+    Resolve --> Check[Period, coverage, and adjustment checks]
+    Check --> Write[Copy and update workbook]
+    Write --> Result[Workbook plus audit artifacts]
+      </div>
+      <p>The normal <code>run</code> command reads company filings, learns a mapping only when none exists, and then applies the approved mapping. <code>read</code>, <code>learn</code>, and <code>apply</code> remain available as diagnostic stages.</p>
+
+      <h2 id="model">Optional Model and Vision Path</h2>
+      <div class="mermaid">
+flowchart LR
+    Mapping{Vision reader enabled?} -->|no| Rule[Rule-based parser]
+    Mapping -->|yes| Image[Render table page]
+    Image --> Model[Configured vision model]
+    Model --> Verify[Verify figures against PDF text]
+    Rule --> PDFDoc[Common PdfDoc contract]
+    Verify --> PDFDoc
+      </div>
+      <p>Rule-based parsing is the default. A company mapping can opt into the vision reader only for filings whose table layout cannot be read reliably from text. Vision output is cached and figures that cannot be verified against the text layer must not be written automatically.</p>
+
+      <h2 id="audit">Safety and Audit</h2>
+      <table>
+        <thead><tr><th>Control</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Hash/version cache</td><td>Reuses reviewed reads and makes parser changes explicit.</td></tr>
+          <tr><td>Reviewed mapping</td><td>Makes company-specific decisions visible and versioned.</td></tr>
+          <tr><td>Period binding</td><td>Stops a filing from being written into the wrong model column.</td></tr>
+          <tr><td>Formula protection</td><td>Prevents overwriting calculated Excel cells.</td></tr>
+          <tr><td>Source page and caption</td><td>Lets a reviewer trace a written value back to the filing.</td></tr>
+          <tr><td>Workbook copy</td><td>Preserves the analyst's original model.</td></tr>
+        </tbody>
+      </table>
+      <pre>jobs/&lt;job-id&gt;/
+  input-manifest.json
+  parsed-filing.pdf.json
+  mapping.json
+  model.json
+  values.json
+  report.md
+  workbook.xlsx or workbook.xlsm</pre>
+
+      <h2 id="services">Target Service Topology</h2>
+      <table>
+        <thead><tr><th>Workload</th><th>Azure host</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td>Job API</td><td>Container App</td><td>Authenticate requests, locate approved inputs, create and report jobs.</td></tr>
+          <tr><td>Worker</td><td>Container Apps Job</td><td>Execute FinScan2 and publish immutable artifacts.</td></tr>
+          <tr><td>Queue</td><td>Service Bus</td><td>Decouple submission from processing and support retries.</td></tr>
+          <tr><td>Job store</td><td>Azure Table or Cosmos DB</td><td>Durable state, idempotency, and artifact locations.</td></tr>
+        </tbody>
+      </table>
+      <p>Do not split parsing, matching, validation, and Excel writing into microservices. They share a single audit context and should run as one worker transaction.</p>
+
+      <h2 id="storage">Storage Design</h2>
+      <pre>finscan-inputs/
+  inbound/&lt;company&gt;/&lt;period-end&gt;/&lt;filing-id&gt;.pdf
+  models/&lt;company&gt;/&lt;model-version&gt;.xlsx
+
+finscan-artifacts/
+  jobs/&lt;job-id&gt;/values.json
+  jobs/&lt;job-id&gt;/report.md
+  jobs/&lt;job-id&gt;/output.xlsx</pre>
+      <p>“Latest” must mean the newest <strong>approved financial period</strong>, not the most recently uploaded file. Store company, period end, filing type, approval state, and source identifier in a manifest or job/input record.</p>
+
+      <h2 id="foundry">Foundry and Teams</h2>
+      <div class="mermaid">
+sequenceDiagram
+    participant User as Teams analyst
+    participant Agent as Foundry agent
+    participant API as FinScan2 API
+    participant Worker as FinScan2 worker
+    User->>Agent: Run latest CCU filing
+    Agent->>API: POST /jobs
+    API->>Worker: Queue job
+    Worker-->>API: Status and artifacts
+    Agent->>API: GET /jobs/{id}
+    API-->>Agent: Audit-backed summary and download URL
+    Agent-->>User: Summary, warnings, workbook link
+      </div>
+      <p>Foundry is optional. It is useful for a Teams conversation, but it must relay the API's audited figures and warnings rather than calculate or reinterpret financial values.</p>
+
+      <h2 id="deployment">Deployment Strategy</h2>
+      <h3>Phase A: Cloud batch proof</h3>
+      <ol><li>Build a FinScan2 worker image.</li><li>Run it as a Container Apps Job for a known company.</li><li>Save the workbook and full audit set to Blob Storage.</li><li>Compare cloud results with local FinScan2 audits.</li></ol>
+      <h3>Phase B: Asynchronous service</h3>
+      <ol><li>Add the Job API, Service Bus, and durable job state.</li><li>Use Entra ID, managed identity, Key Vault, and Application Insights.</li><li>Add idempotency, alerts, retention, and operational dashboards.</li></ol>
+      <h3>Phase C: Analyst experience</h3>
+      <ol><li>Add an operations UI or Power Automate trigger.</li><li>Add Foundry and Teams only when natural-language interaction is valuable.</li><li>Pilot selected companies before wider rollout.</li></ol>
+
+      <h2 id="operations">Operations and Security</h2>
+      <ul>
+        <li>Use managed identities and least-privilege RBAC for API, worker, and CI.</li>
+        <li>Require Entra ID at the API boundary; use API Management or Front Door for public access.</li>
+        <li>Use time-limited output download URLs and never expose public Blob containers.</li>
+        <li>Correlate every API request and worker execution with one job ID.</li>
+        <li>Record filing hash, mapping/parser/model versions, timings, model calls, and final result.</li>
+        <li>Run workers asynchronously and scale them to zero between filings.</li>
+      </ul>
+
+      <h2 id="work">Open Implementation Work</h2>
+      <ul>
+        <li>FinScan2-specific FastAPI Job API and worker launcher.</li>
+        <li>Service Bus, Blob input resolver, artifact publisher, and durable job state.</li>
+        <li>FinScan2-specific Azure OpenAI managed-identity client.</li>
+        <li>Entra ID authorization, Bicep, CI/CD workflow, production runbook, and alerts.</li>
+        <li>Foundry/Teams OpenAPI contract only if that analyst interface is required.</li>
+      </ul>
+      <p class="footer">Detailed source document: <code>docs/finscan2_architecture.md</code>. Mermaid diagrams render from the Mermaid CDN when an internet connection is available.</p>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "base", themeVariables: { primaryColor: "#e8f2f8", primaryTextColor: "#10243e", primaryBorderColor: "#0874c7", lineColor: "#52657a", fontFamily: "Segoe UI" } });
+  </script>
+</body>
+</html>

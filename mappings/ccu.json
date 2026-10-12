@@ -2,6 +2,10 @@
   "mapping_version": "2.0",
   "company": "ccu",
   "sheet": "Model",
+  "extra_statements": [
+    {"title": "Nature of cost and expense", "kind": "income_statement"},
+    {"title": "Operating Segment's additional information", "kind": "income_statement"}
+  ],
   "rows": [
     {"label": "Revenue", "section": "income_statement", "pdf": "Net sales"},
     {"label": "Cost of sales", "section": "income_statement", "pdf": "Cost of sales"},
@@ -18,8 +22,8 @@
     {"label": "Other expenses", "section": "income_statement", "pdf": "Other expenses"},
     {"label": "Income tax (expense)/benefit", "section": "income_statement", "pdf": "Income tax (expense) benefit"},
     {"label": "Non-controlling interest", "section": "income_statement", "pdf": "Non-controlling interests"},
-    {"label": "Depreciation, depletion & amortization", "section": "income_statement", "pdf": null, "note": "no row captioned like 'depreciation amortisation'"},
-    {"label": "Adj. EBITDA", "section": "income_statement", "pdf": null, "note": "the filing prints no EBITDA line — it is a model-computed metric, not a reported caption"},
+    {"label": "Depreciation, depletion & amortization", "section": "income_statement", "pdf": "Depreciation and amortization", "statement": "title:Nature of cost and expense", "note": "disclosed only in Note 30 'Nature of cost and expense' (p.122); read via extra_statements"},
+    {"label": "Adj. EBITDA", "section": "income_statement", "pdf": "ORBDA", "statement": "title:additional information", "note": "ORBDA = Adjusted operating result + D&A, the filing's EBITDA equivalent, in the 'Operating Segment's additional information' note (p.46); read via extra_statements"},
     {"label": "Working Capital", "section": "cash_flow", "pdf": null, "note": "the reference cell was the hand-typed expression '=1148876.616-690041.696' — name its components as a list to make this a sum"},
     {"label": "Taxes", "section": "cash_flow", "pdf": "Income tax paid"},
     {"label": "Cash interest paid", "section": "cash_flow", "pdf": "Interest paid"},

@@ -7,6 +7,7 @@ translation. v1 is untouched by all of this.
 from __future__ import annotations
 
 from finscan2.pdf.columns import parse_columns
+from finscan2.pdf.titles import ExtraTitle
 from finscan2.pdf.statements import (
     classify,
     column_alignment,
@@ -167,6 +168,30 @@ def test_extract_statement_end_to_end():
 def test_a_notes_page_is_not_a_statement():
     assert extract_statement(11, "NOTES TO THE CONDENSED INTERIM STATEMENTS\n"
                                  "1. General 12,345 6,789") is None
+
+
+def test_configured_note_title_reads_stacked_period_columns_and_stops_at_next_note():
+    page = """Note 30 Nature of cost and expense
+For the six-months periods ended as For the three-monts periods ended
+of June 30, as of June 30,
+Costs and expenses by nature
+2026 2025 2026 2025
+ThCh$ ThCh$ ThCh$ ThCh$
+Depreciation and amortization 80,898,013 76,827,748 41,037,752 37,156,952
+Materials and maintenance 50,000,229 49,228,812 25,900,096 24,671,243
+Total 1,349,459,454 1,329,304,280 619,303,121 598,641,298
+Note 31 Other income by function
+Sales of property 567,311 4,370,408 63,941 186,276
+Leases 323,699 243,520 124,024 150,963
+Total 4,478,913 6,263,372 2,054,604 1,387,728
+"""
+    statement = extract_statement(
+        122, page, extra=(ExtraTitle("Nature of cost and expense"),))
+    assert [c.months for c in statement.columns] == [6, 6, 3, 3]
+    assert [c.end for c in statement.columns] == [
+        "2026-06-30", "2025-06-30", "2026-06-30", "2025-06-30"]
+    assert [row.caption for row in statement.rows] == [
+        "Depreciation and amortization", "Materials and maintenance", "Total"]
 
 
 def test_column_alignment_flags_a_misread_header():

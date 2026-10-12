@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" role="img" aria-labelledby="title description">
+  <title id="title">FinScan 2 architecture</title>
+  <desc id="description">A three-stage pipeline reads financial-result PDFs, learns an Excel model layout, then validates and writes an updated workbook.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#52606d"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f8f5; }
+      .lane { fill: #ffffff; stroke: #c9d1c8; stroke-width: 2; }
+      .lane-title { font: 700 23px 'Segoe UI', sans-serif; fill: #13201a; }
+      .node { stroke-width: 2; rx: 10; ry: 10; }
+      .input { fill: #dceafa; stroke: #2563a6; }
+      .process { fill: #e5f4eb; stroke: #197343; }
+      .artifact { fill: #f3e8ff; stroke: #7e3fa1; }
+      .control { fill: #fff2cc; stroke: #a66a00; }
+      .output { fill: #fce3e3; stroke: #a33a3a; }
+      .label { font: 600 18px 'Segoe UI', sans-serif; fill: #17221b; text-anchor: middle; }
+      .small { font: 15px 'Segoe UI', sans-serif; fill: #34423a; text-anchor: middle; }
+      .note { font: 15px 'Segoe UI', sans-serif; fill: #52606d; }
+      .flow { fill: none; stroke: #52606d; stroke-width: 2.5; marker-end: url(#arrow); }
+      .dashed { fill: none; stroke: #7e3fa1; stroke-width: 2.5; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+      .legend { font: 14px 'Segoe UI', sans-serif; fill: #34423a; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="940"/>
+  <text x="70" y="64" style="font:700 34px 'Segoe UI', sans-serif; fill:#13201a">FinScan 2: controlled PDF-to-model update</text>
+  <text x="70" y="94" style="font:18px 'Segoe UI', sans-serif; fill:#52606d">The filing is parsed once, company decisions are reviewed once, and each period is validated before Excel is updated.</text>
+
+  <rect class="lane" x="55" y="145" width="450" height="650" rx="16"/>
+  <rect class="lane" x="575" y="145" width="450" height="650" rx="16"/>
+  <rect class="lane" x="1095" y="145" width="450" height="650" rx="16"/>
+  <text class="lane-title" x="85" y="188">1. Read filing</text>
+  <text class="lane-title" x="605" y="188">2. Learn model</text>
+  <text class="lane-title" x="1125" y="188">3. Apply period</text>
+
+  <rect class="node input" x="105" y="230" width="350" height="72"/>
+  <text class="label" x="280" y="261">Results PDF(s)</text>
+  <text class="small" x="280" y="284">Source filing for the current period</text>
+  <path class="flow" d="M280 302 V342"/>
+  <rect class="node process" x="105" y="342" width="350" height="92"/>
+  <text class="label" x="280" y="376">PDF text and table parser</text>
+  <text class="small" x="280" y="401">Statements, columns, captions, units</text>
+  <text class="small" x="280" y="421">Vision OCR fallback for image-only pages</text>
+  <path class="flow" d="M280 434 V474"/>
+  <rect class="node artifact" x="105" y="474" width="350" height="82"/>
+  <text class="label" x="280" y="507">Parsed filing: pdf.json</text>
+  <text class="small" x="280" y="532">Stable, reviewable document representation</text>
+  <rect class="node artifact" x="105" y="618" width="350" height="72"/>
+  <text class="label" x="280" y="648">SHA-256 PDF cache</text>
+  <text class="small" x="280" y="672">Reuses prior vision transcription</text>
+  <path class="dashed" d="M280 618 V558"/>
+
+  <rect class="node input" x="625" y="230" width="350" height="72"/>
+  <text class="label" x="800" y="261">Excel model</text>
+  <text class="small" x="800" y="284">Company workbook and sheet choice</text>
+  <path class="flow" d="M800 302 V342"/>
+  <rect class="node process" x="625" y="342" width="350" height="92"/>
+  <text class="label" x="800" y="376">Discover layout</text>
+  <text class="small" x="800" y="401">Periods, units, blue inputs, formulas</text>
+  <text class="small" x="800" y="421">Reference and target columns</text>
+  <path class="flow" d="M800 434 V474"/>
+  <rect class="node artifact" x="625" y="474" width="350" height="72"/>
+  <text class="label" x="800" y="506">Derived model JSON</text>
+  <text class="small" x="800" y="531">Regenerated whenever the layout changes</text>
+  <path class="flow" d="M800 546 V584"/>
+  <rect class="node process" x="625" y="584" width="350" height="82"/>
+  <text class="label" x="800" y="616">Propose mapping decisions</text>
+  <text class="small" x="800" y="641">Exact match, rules, optional LLM</text>
+  <path class="flow" d="M800 666 V704"/>
+  <rect class="node input" x="625" y="704" width="350" height="72"/>
+  <text class="label" x="800" y="735">Reviewed mapping JSON</text>
+  <text class="small" x="800" y="759">Human-controlled company knowledge</text>
+
+  <path class="flow" d="M455 515 H1055 V330 H1145"/>
+  <text class="note" x="650" y="499">Current filing</text>
+  <path class="flow" d="M975 740 H1055 V360 H1145"/>
+  <text class="note" x="920" y="726">Reviewed decisions</text>
+  <path class="flow" d="M975 266 H1055 V390 H1145"/>
+  <text class="note" x="900" y="252">Workbook</text>
+
+  <rect class="node process" x="1145" y="298" width="350" height="92"/>
+  <text class="label" x="1320" y="332">Re-discover and bind</text>
+  <text class="small" x="1320" y="357">Map decisions to the current workbook</text>
+  <text class="small" x="1320" y="377">Never trust a stale layout</text>
+  <path class="flow" d="M1320 390 V424"/>
+  <path class="node control" d="M1320 424 L1434 491 L1320 558 L1206 491 Z"/>
+  <text class="label" x="1320" y="484">Periods agree?</text>
+  <text class="small" x="1320" y="507">Workbook slot and filing</text>
+  <path class="flow" d="M1320 558 V590"/>
+  <rect class="node process" x="1145" y="590" width="350" height="76"/>
+  <text class="label" x="1320" y="621">Resolve and validate</text>
+  <text class="small" x="1320" y="646">Captions, sums, coverage, identities</text>
+  <path class="flow" d="M1320 666 V704"/>
+  <rect class="node process" x="1145" y="704" width="350" height="72"/>
+  <text class="label" x="1320" y="735">Copy and write workbook</text>
+  <text class="small" x="1320" y="759">Values, formulas, comments, audit</text>
+
+  <path class="flow" d="M1434 491 H1515 V835 H1395"/>
+  <rect class="node output" x="1145" y="814" width="250" height="72"/>
+  <text class="label" x="1270" y="845">Updated Excel model</text>
+  <text class="small" x="1270" y="869">New output file only</text>
+  <path d="M1206 491 H1120 V835 H1020" fill="none" stroke="#a33a3a" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect class="node output" x="720" y="814" width="300" height="72"/>
+  <text class="label" x="870" y="845">Safe refusal</text>
+  <text class="small" x="870" y="869">No workbook changes</text>
+
+  <rect x="70" y="870" width="16" height="16" class="input"/><text class="legend" x="94" y="884">input</text>
+  <rect x="170" y="870" width="16" height="16" class="process"/><text class="legend" x="194" y="884">process</text>
+  <rect x="290" y="870" width="16" height="16" class="artifact"/><text class="legend" x="314" y="884">persisted artifact</text>
+  <rect x="455" y="870" width="16" height="16" class="control"/><text class="legend" x="479" y="884">safety gate</text>
+</svg>

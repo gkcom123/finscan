@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from finscan2.match.basis import decumulate, fiscal_year_start, periods_to_subtract, prior_columns
 from finscan2.match.select import find_row, select_column
-from finscan2.schema import Column, Statement, StatementRow
+from finscan2.schema import Column, PdfDoc, Statement, StatementRow
 
 
 def _statement(columns: list[tuple[str, int | None, str, str]],
@@ -66,6 +66,20 @@ def test_a_cumulative_column_is_used_when_no_quarter_exists():
                                 "2026-06-30", 3, point_in_time=False)
     assert column.months == 6
     assert "cumulative" in why
+
+
+def test_cash_flow_continuation_rows_are_available_for_lookup():
+    operating = _statement(_ALMARAI[:2], [("Cash Used in Working Capital", [-677990.0])],
+                           kind="cash_flow")
+    financing = _statement(_ALMARAI[:2], [("Finance Cost Paid", [-369762.0])],
+                            kind="cash_flow")
+    operating.page, financing.page = 7, 9
+    doc = PdfDoc(path="f.pdf", sha256="x", statements=[operating, financing])
+
+    rows = [row for row in doc.statement("cash_flow").rows
+            if row.caption == "Finance Cost Paid"]
+
+    assert len(rows) == 1 and rows[0].source_page == 9
 
 
 def test_the_shortest_cumulative_column_is_preferred():
