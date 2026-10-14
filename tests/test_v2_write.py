@@ -155,6 +155,26 @@ def test_the_new_column_is_stamped_with_its_date(tmp_path):
     assert load_workbook(out)["Model"].cell(2, 5).value == datetime(2026, 9, 30)
 
 
+def test_presentation_headers_are_copied_and_short_quarter_label_is_preserved(tmp_path):
+    source = _workbook(tmp_path / "model.xlsx")
+    book = load_workbook(source)
+    sheet = book["Model"]
+    sheet.cell(1, 4, "Quarters")
+    sheet.cell(3, 4, "Act")
+    sheet.cell(4, 4, "2Q")
+    book.save(source)
+
+    model, layout = _map_and_layout()
+    model.header_row = 4
+    result = write_column(_values(), resolve(model, layout), str(source),
+                          str(tmp_path / "model_updated.xlsx"))
+    sheet = load_workbook(result.output_path)["Model"]
+
+    assert sheet.cell(1, 5).value == "Quarters"
+    assert sheet.cell(3, 5).value == "Act"
+    assert sheet.cell(4, 5).value == "3Q"
+
+
 def test_a_missing_date_row_is_reported_not_ignored(tmp_path):
     source = _workbook(tmp_path / "model.xlsx")
     model, layout = _map_and_layout()

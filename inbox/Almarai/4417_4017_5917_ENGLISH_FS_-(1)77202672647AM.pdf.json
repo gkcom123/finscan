@@ -1,0 +1,2832 @@
+{
+  "schema_version": "1.0",
+  "parser_version": "30",
+  "path": "C:\\Project\\finscan\\inbox\\Almarai\\4417_4017_5917_ENGLISH_FS_-(1)77202672647AM.pdf",
+  "sha256": "ab3a5278a537e56ff691c6c7b410c88bae98f592fa8156b2f3d4ddd1b30e8f26",
+  "units": "thousands",
+  "currency": "SAR",
+  "ocr": {
+    "pages": [
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "engine": "llm:gpt-5.4"
+  },
+  "issues": [
+    {
+      "code": "llm_read",
+      "severity": "info",
+      "message": "Read by gpt-5.4: 13 page(s), 11 table(s). Each figure is checked against the page's text layer; the read is cached by the PDF's hash, so later runs return the same figures.",
+      "page": null
+    },
+    {
+      "code": "llm_figure_not_printed",
+      "severity": "warning",
+      "message": "Figures the model returned that the page's text layer does not print, which stage 3 will not write: page 14: 1, page 15: 1",
+      "page": null
+    },
+    {
+      "code": "llm_unchecked",
+      "severity": "warning",
+      "message": "Page(s) [5, 6, 7, 8, 9] have no text layer (scans), so their figures could not be checked against the PDF; spot-check them.",
+      "page": null
+    }
+  ],
+  "statements": [
+    {
+      "page": 5,
+      "kind": "balance_sheet",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "ALMARAI COMPANY A SAUDI JOINT STOCK COMPANY CONDENSED CONSOLIDATED STATEMENT OF FINANCIAL POSITION AS AT 30 JUNE 2026",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "30 June 2026 (Unaudited)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "31 December 2025 (Audited)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": "2025-12-31"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Property, Plant and Equipment",
+          "values": [
+            27094376.0,
+            26058632.0
+          ],
+          "raw": "{\"caption\": \"Property, Plant and Equipment\", \"values\": [\"27,094,376\", \"26,058,632\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Long-term Prepayments",
+          "values": [
+            474356.0,
+            492514.0
+          ],
+          "raw": "{\"caption\": \"Long-term Prepayments\", \"values\": [\"474,356\", \"492,514\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Right-of-Use Assets",
+          "values": [
+            542279.0,
+            551614.0
+          ],
+          "raw": "{\"caption\": \"Right-of-Use Assets\", \"values\": [\"542,279\", \"551,614\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Intangible Assets and Goodwill",
+          "values": [
+            1620328.0,
+            1612427.0
+          ],
+          "raw": "{\"caption\": \"Intangible Assets and Goodwill\", \"values\": [\"1,620,328\", \"1,612,427\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Biological Assets",
+          "values": [
+            1810709.0,
+            1810686.0
+          ],
+          "raw": "{\"caption\": \"Biological Assets\", \"values\": [\"1,810,709\", \"1,810,686\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative Financial Instruments",
+          "values": [
+            26512.0,
+            45202.0
+          ],
+          "raw": "{\"caption\": \"Derivative Financial Instruments\", \"values\": [\"26,512\", \"45,202\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Deferred Tax Assets",
+          "values": [
+            7952.0,
+            4215.0
+          ],
+          "raw": "{\"caption\": \"Deferred Tax Assets\", \"values\": [\"7,952\", \"4,215\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            31576512.0,
+            30575290.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"31,576,512\", \"30,575,290\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Inventories",
+          "values": [
+            6639626.0,
+            6005738.0
+          ],
+          "raw": "{\"caption\": \"Inventories\", \"values\": [\"6,639,626\", \"6,005,738\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Biological Assets",
+          "values": [
+            174767.0,
+            160737.0
+          ],
+          "raw": "{\"caption\": \"Biological Assets\", \"values\": [\"174,767\", \"160,737\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade Receivables, Prepayments and Other Receivables",
+          "values": [
+            3908476.0,
+            2696342.0
+          ],
+          "raw": "{\"caption\": \"Trade Receivables, Prepayments and Other Receivables\", \"values\": [\"3,908,476\", \"2,696,342\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative Financial Instruments",
+          "values": [
+            12853.0,
+            5752.0
+          ],
+          "raw": "{\"caption\": \"Derivative Financial Instruments\", \"values\": [\"12,853\", \"5,752\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash and Cash Equivalents",
+          "values": [
+            496078.0,
+            523039.0
+          ],
+          "raw": "{\"caption\": \"Cash and Cash Equivalents\", \"values\": [\"496,078\", \"523,039\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            11231800.0,
+            9391608.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"11,231,800\", \"9,391,608\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "TOTAL ASSETS",
+          "values": [
+            42808312.0,
+            39966898.0
+          ],
+          "raw": "{\"caption\": \"TOTAL ASSETS\", \"values\": [\"42,808,312\", \"39,966,898\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share Capital",
+          "values": [
+            10000000.0,
+            10000000.0
+          ],
+          "raw": "{\"caption\": \"Share Capital\", \"values\": [\"10,000,000\", \"10,000,000\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Statutory Reserve",
+          "values": [
+            2966165.0,
+            2966165.0
+          ],
+          "raw": "{\"caption\": \"Statutory Reserve\", \"values\": [\"2,966,165\", \"2,966,165\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Treasury Shares",
+          "values": [
+            -475726.0,
+            -509663.0
+          ],
+          "raw": "{\"caption\": \"Treasury Shares\", \"values\": [\"(475,726)\", \"(509,663)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Reserves",
+          "values": [
+            -1190563.0,
+            -1033599.0
+          ],
+          "raw": "{\"caption\": \"Other Reserves\", \"values\": [\"(1,190,563)\", \"(1,033,599)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Retained Earnings",
+          "values": [
+            9329209.0,
+            9104577.0
+          ],
+          "raw": "{\"caption\": \"Retained Earnings\", \"values\": [\"9,329,209\", \"9,104,577\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Equity Attributable to Equity Holders of the Company",
+          "values": [
+            20629085.0,
+            20527480.0
+          ],
+          "raw": "{\"caption\": \"Equity Attributable to Equity Holders of the Company\", \"values\": [\"20,629,085\", \"20,527,480\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Non-Controlling Interests",
+          "values": [
+            495.0,
+            -244.0
+          ],
+          "raw": "{\"caption\": \"Non-Controlling Interests\", \"values\": [\"495\", \"(244)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "TOTAL EQUITY",
+          "values": [
+            20629580.0,
+            20527236.0
+          ],
+          "raw": "{\"caption\": \"TOTAL EQUITY\", \"values\": [\"20,629,580\", \"20,527,236\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Loans and Borrowings",
+          "values": [
+            12451044.0,
+            10951810.0
+          ],
+          "raw": "{\"caption\": \"Loans and Borrowings\", \"values\": [\"12,451,044\", \"10,951,810\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease Liabilities",
+          "values": [
+            433249.0,
+            442476.0
+          ],
+          "raw": "{\"caption\": \"Lease Liabilities\", \"values\": [\"433,249\", \"442,476\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Employee Retirement Benefits",
+          "values": [
+            1656494.0,
+            1584310.0
+          ],
+          "raw": "{\"caption\": \"Employee Retirement Benefits\", \"values\": [\"1,656,494\", \"1,584,310\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative Financial Instruments",
+          "values": [
+            97860.0,
+            3986.0
+          ],
+          "raw": "{\"caption\": \"Derivative Financial Instruments\", \"values\": [\"97,860\", \"3,986\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Deferred Tax Liabilities",
+          "values": [
+            69953.0,
+            64926.0
+          ],
+          "raw": "{\"caption\": \"Deferred Tax Liabilities\", \"values\": [\"69,953\", \"64,926\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            14708600.0,
+            13047508.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"14,708,600\", \"13,047,508\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Bank Overdrafts",
+          "values": [
+            37868.0,
+            16893.0
+          ],
+          "raw": "{\"caption\": \"Bank Overdrafts\", \"values\": [\"37,868\", \"16,893\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Loans and Borrowings",
+          "values": [
+            1342852.0,
+            1520330.0
+          ],
+          "raw": "{\"caption\": \"Loans and Borrowings\", \"values\": [\"1,342,852\", \"1,520,330\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease Liabilities",
+          "values": [
+            104466.0,
+            107750.0
+          ],
+          "raw": "{\"caption\": \"Lease Liabilities\", \"values\": [\"104,466\", \"107,750\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Zakat",
+          "values": [
+            218959.0,
+            257878.0
+          ],
+          "raw": "{\"caption\": \"Zakat\", \"values\": [\"218,959\", \"257,878\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income Tax Payable",
+          "values": [
+            71643.0,
+            68039.0
+          ],
+          "raw": "{\"caption\": \"Income Tax Payable\", \"values\": [\"71,643\", \"68,039\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade and Other Payables",
+          "values": [
+            5666437.0,
+            4414793.0
+          ],
+          "raw": "{\"caption\": \"Trade and Other Payables\", \"values\": [\"5,666,437\", \"4,414,793\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative Financial Instruments",
+          "values": [
+            27907.0,
+            6421.0
+          ],
+          "raw": "{\"caption\": \"Derivative Financial Instruments\", \"values\": [\"27,907\", \"6,421\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            7470132.0,
+            6392154.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"7,470,132\", \"6,392,154\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "TOTAL LIABILITIES",
+          "values": [
+            22178732.0,
+            19439662.0
+          ],
+          "raw": "{\"caption\": \"TOTAL LIABILITIES\", \"values\": [\"22,178,732\", \"19,439,662\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "TOTAL EQUITY AND LIABILITIES",
+          "values": [
+            42808312.0,
+            39966898.0
+          ],
+          "raw": "{\"caption\": \"TOTAL EQUITY AND LIABILITIES\", \"values\": [\"42,808,312\", \"39,966,898\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 6,
+      "kind": "income_statement",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "CONDENSED CONSOLIDATED STATEMENT OF PROFIT OR LOSS FOR THE THREE-MONTH AND SIX-MONTH PERIODS ENDED 30 JUNE 2026",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "April - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "April - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 2,
+          "header": "January - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 3,
+          "header": "January - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Revenue",
+          "values": [
+            5868205.0,
+            5288402.0,
+            12028258.0,
+            11055492.0
+          ],
+          "raw": "{\"caption\": \"Revenue\", \"values\": [\"5,868,205\", \"5,288,402\", \"12,028,258\", \"11,055,492\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            -4044312.0,
+            -3575223.0,
+            -8338456.0,
+            -7573658.0
+          ],
+          "raw": "{\"caption\": \"Cost of Sales\", \"values\": [\"(4,044,312)\", \"(3,575,223)\", \"(8,338,456)\", \"(7,573,658)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            1823893.0,
+            1713179.0,
+            3689802.0,
+            3481834.0
+          ],
+          "raw": "{\"caption\": \"Gross Profit\", \"values\": [\"1,823,893\", \"1,713,179\", \"3,689,802\", \"3,481,834\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Selling and Distribution Expenses",
+          "values": [
+            -820024.0,
+            -766224.0,
+            -1638416.0,
+            -1520319.0
+          ],
+          "raw": "{\"caption\": \"Selling and Distribution Expenses\", \"values\": [\"(820,024)\", \"(766,224)\", \"(1,638,416)\", \"(1,520,319)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "General and Administration Expenses",
+          "values": [
+            -140879.0,
+            -130036.0,
+            -278866.0,
+            -259329.0
+          ],
+          "raw": "{\"caption\": \"General and Administration Expenses\", \"values\": [\"(140,879)\", \"(130,036)\", \"(278,866)\", \"(259,329)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other (Expenses) / Income, net",
+          "values": [
+            -30302.0,
+            11991.0,
+            -56511.0,
+            619.0
+          ],
+          "raw": "{\"caption\": \"Other (Expenses) / Income, net\", \"values\": [\"(30,302)\", \"11,991\", \"(56,511)\", \"619\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Impairment Loss on Financial Assets",
+          "values": [
+            -19133.0,
+            -15667.0,
+            -27325.0,
+            -15426.0
+          ],
+          "raw": "{\"caption\": \"Impairment Loss on Financial Assets\", \"values\": [\"(19,133)\", \"(15,667)\", \"(27,325)\", \"(15,426)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Profit",
+          "values": [
+            813555.0,
+            813243.0,
+            1688684.0,
+            1687379.0
+          ],
+          "raw": "{\"caption\": \"Operating Profit\", \"values\": [\"813,555\", \"813,243\", \"1,688,684\", \"1,687,379\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Finance Cost, net",
+          "values": [
+            -137011.0,
+            -124962.0,
+            -242551.0,
+            -224653.0
+          ],
+          "raw": "{\"caption\": \"Finance Cost, net\", \"values\": [\"(137,011)\", \"(124,962)\", \"(242,551)\", \"(224,653)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share of Results of Associate",
+          "values": [
+            null,
+            -323.0,
+            null,
+            -122.0
+          ],
+          "raw": "{\"caption\": \"Share of Results of Associate\", \"values\": [\"-\", \"(323)\", \"-\", \"(122)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit before Zakat and Income Tax",
+          "values": [
+            676544.0,
+            687958.0,
+            1446133.0,
+            1461504.0
+          ],
+          "raw": "{\"caption\": \"Profit before Zakat and Income Tax\", \"values\": [\"676,544\", \"687,958\", \"1,446,133\", \"1,461,504\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Zakat",
+          "values": [
+            -25454.0,
+            -27981.0,
+            -52027.0,
+            -55445.0
+          ],
+          "raw": "{\"caption\": \"Zakat\", \"values\": [\"(25,454)\", \"(27,981)\", \"(52,027)\", \"(55,445)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income Tax",
+          "values": [
+            -14910.0,
+            -12867.0,
+            -25488.0,
+            -27422.0
+          ],
+          "raw": "{\"caption\": \"Income Tax\", \"values\": [\"(14,910)\", \"(12,867)\", \"(25,488)\", \"(27,422)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit for the period",
+          "values": [
+            636180.0,
+            647110.0,
+            1368618.0,
+            1378637.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period\", \"values\": [\"636,180\", \"647,110\", \"1,368,618\", \"1,378,637\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit for the period attributable to: Shareholders of the Company",
+          "values": [
+            635657.0,
+            646866.0,
+            1367879.0,
+            1378060.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period attributable to: Shareholders of the Company\", \"values\": [\"635,657\", \"646,866\", \"1,367,879\", \"1,378,060\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Non-Controlling Interests",
+          "values": [
+            523.0,
+            244.0,
+            739.0,
+            577.0
+          ],
+          "raw": "{\"caption\": \"Non-Controlling Interests\", \"values\": [\"523\", \"244\", \"739\", \"577\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            636180.0,
+            647110.0,
+            1368618.0,
+            1378637.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"636,180\", \"647,110\", \"1,368,618\", \"1,378,637\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Earnings per share (﷼), based on Profit for the period attributable to Shareholders of the Company - Basic",
+          "values": [
+            0.64,
+            0.65,
+            1.38,
+            1.39
+          ],
+          "raw": "{\"caption\": \"Earnings per share (﷼), based on Profit for the period attributable to Shareholders of the Company - Basic\", \"values\": [\"0.64\", \"0.65\", \"1.38\", \"1.39\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Diluted",
+          "values": [
+            0.64,
+            0.65,
+            1.37,
+            1.38
+          ],
+          "raw": "{\"caption\": \"Diluted\", \"values\": [\"0.64\", \"0.65\", \"1.37\", \"1.38\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 7,
+      "kind": "comprehensive_income",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "CONDENSED CONSOLIDATED STATEMENT OF COMPREHENSIVE INCOME",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "April - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "April - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 2,
+          "header": "January - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 3,
+          "header": "January - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Profit for the period",
+          "values": [
+            636180.0,
+            647110.0,
+            1368618.0,
+            1378637.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period\", \"values\": [\"636,180\", \"647,110\", \"1,368,618\", \"1,378,637\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Foreign Currency Translation Differences",
+          "values": [
+            25349.0,
+            4977.0,
+            -18890.0,
+            3478.0
+          ],
+          "raw": "{\"caption\": \"Foreign Currency Translation Differences\", \"values\": [\"25,349\", \"4,977\", \"(18,890)\", \"3,478\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Settlement of Cash Flow Hedges transferred to Profit or Loss",
+          "values": [
+            -4564.0,
+            -2770.0,
+            -7947.0,
+            -5187.0
+          ],
+          "raw": "{\"caption\": \"Settlement of Cash Flow Hedges transferred to Profit or Loss\", \"values\": [\"(4,564)\", \"(2,770)\", \"(7,947)\", \"(5,187)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Movement in Fair Value on Cash Flow Hedges",
+          "values": [
+            13053.0,
+            8472.0,
+            -69657.0,
+            184634.0
+          ],
+          "raw": "{\"caption\": \"Movement in Fair Value on Cash Flow Hedges\", \"values\": [\"13,053\", \"8,472\", \"(69,657)\", \"184,634\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Comprehensive Income / (Loss) for the period",
+          "values": [
+            33838.0,
+            10679.0,
+            -96494.0,
+            182925.0
+          ],
+          "raw": "{\"caption\": \"Other Comprehensive Income / (Loss) for the period\", \"values\": [\"33,838\", \"10,679\", \"(96,494)\", \"182,925\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Comprehensive Income for the period",
+          "values": [
+            670018.0,
+            657789.0,
+            1272124.0,
+            1561562.0
+          ],
+          "raw": "{\"caption\": \"Total Comprehensive Income for the period\", \"values\": [\"670,018\", \"657,789\", \"1,272,124\", \"1,561,562\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Shareholders of the Company",
+          "values": [
+            669495.0,
+            657548.0,
+            1271385.0,
+            1560987.0
+          ],
+          "raw": "{\"caption\": \"Shareholders of the Company\", \"values\": [\"669,495\", \"657,548\", \"1,271,385\", \"1,560,987\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Non-Controlling Interests",
+          "values": [
+            523.0,
+            241.0,
+            739.0,
+            575.0
+          ],
+          "raw": "{\"caption\": \"Non-Controlling Interests\", \"values\": [\"523\", \"241\", \"739\", \"575\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            670018.0,
+            657789.0,
+            1272124.0,
+            1561562.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"670,018\", \"657,789\", \"1,272,124\", \"1,561,562\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 8,
+      "kind": "equity",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "ALMARAI COMPANY ASAUDI JOINT STOCK COMPANY CONDENSED CONSOLIDATED STATEMENT OF CHANGES IN EQUITY FOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "Share Capital",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 1,
+          "header": "Statutory Reserve",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 2,
+          "header": "Treasury Shares",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 3,
+          "header": "Other Reserves",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 4,
+          "header": "Retained Earnings",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 5,
+          "header": "Equity Attributable to Equity Holders",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 6,
+          "header": "Non-Controlling Interests",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 7,
+          "header": "Total Equity",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Balance as at 1 January 2025 (Audited)",
+          "values": [
+            10000000.0,
+            2966165.0,
+            -538024.0,
+            -1311377.0,
+            7673972.0,
+            18790736.0,
+            396.0,
+            18791132.0
+          ],
+          "raw": "{\"caption\": \"Balance as at 1 January 2025 (Audited)\", \"values\": [\"10,000,000\", \"2,966,165\", \"(538,024)\", \"(1,311,377)\", \"7,673,972\", \"18,790,736\", \"396\", \"18,791,132\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit for the period",
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            1378060.0,
+            1378060.0,
+            577.0,
+            1378637.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period\", \"values\": [null, null, null, null, \"1,378,060\", \"1,378,060\", \"577\", \"1,378,637\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Comprehensive Income / (Loss) for the period",
+          "values": [
+            null,
+            null,
+            null,
+            182927.0,
+            null,
+            182927.0,
+            -2.0,
+            182925.0
+          ],
+          "raw": "{\"caption\": \"Other Comprehensive Income / (Loss) for the period\", \"values\": [null, null, null, \"182,927\", null, \"182,927\", \"(2)\", \"182,925\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Comprehensive Income",
+          "values": [
+            null,
+            null,
+            null,
+            182927.0,
+            1378060.0,
+            1560987.0,
+            575.0,
+            1561562.0
+          ],
+          "raw": "{\"caption\": \"Total Comprehensive Income\", \"values\": [null, null, null, \"182,927\", \"1,378,060\", \"1,560,987\", \"575\", \"1,561,562\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Settlement of Cash Flow Hedges transferred to Inventory / Property, Plant and Equipment",
+          "values": [
+            null,
+            null,
+            null,
+            -23205.0,
+            null,
+            -23205.0,
+            null,
+            -23205.0
+          ],
+          "raw": "{\"caption\": \"Settlement of Cash Flow Hedges transferred to Inventory / Property, Plant and Equipment\", \"values\": [null, null, null, \"(23,205)\", null, \"(23,205)\", null, \"(23,205)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Directors' Remuneration",
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            -7390.0,
+            -7390.0,
+            null,
+            -7390.0
+          ],
+          "raw": "{\"caption\": \"Directors' Remuneration\", \"values\": [null, null, null, null, \"(7,390)\", \"(7,390)\", null, \"(7,390)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Dividend Declared ﷼1 per share",
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            -989366.0,
+            -989366.0,
+            null,
+            -989366.0
+          ],
+          "raw": "{\"caption\": \"Dividend Declared ﷼1 per share\", \"values\": [null, null, null, null, \"(989,366)\", \"(989,366)\", null, \"(989,366)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share Based Payment Transactions",
+          "values": [
+            null,
+            null,
+            null,
+            21255.0,
+            null,
+            21255.0,
+            null,
+            21255.0
+          ],
+          "raw": "{\"caption\": \"Share Based Payment Transactions\", \"values\": [null, null, null, \"21,255\", null, \"21,255\", null, \"21,255\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Settlement of Treasury Shares",
+          "values": [
+            null,
+            null,
+            9446.0,
+            -758.0,
+            1572.0,
+            10260.0,
+            null,
+            10260.0
+          ],
+          "raw": "{\"caption\": \"Settlement of Treasury Shares\", \"values\": [null, null, \"9,446\", \"(758)\", \"1,572\", \"10,260\", null, \"10,260\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance as at 30 June 2025 (Unaudited)",
+          "values": [
+            10000000.0,
+            2966165.0,
+            -528578.0,
+            -1113158.0,
+            8056848.0,
+            19363277.0,
+            971.0,
+            19364248.0
+          ],
+          "raw": "{\"caption\": \"Balance as at 30 June 2025 (Unaudited)\", \"values\": [\"10,000,000\", \"2,966,165\", \"(528,578)\", \"(1,113,158)\", \"8,056,848\", \"19,363,277\", \"971\", \"19,364,248\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance as at 1 January 2026 (Audited)",
+          "values": [
+            10000000.0,
+            2966165.0,
+            -509663.0,
+            -1033599.0,
+            9104577.0,
+            20527480.0,
+            -24.0,
+            20527236.0
+          ],
+          "raw": "{\"caption\": \"Balance as at 1 January 2026 (Audited)\", \"values\": [\"10,000,000\", \"2,966,165\", \"(509,663)\", \"(1,033,599)\", \"9,104,577\", \"20,527,480\", \"(24)\", \"20,527,236\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit for the period",
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            1367879.0,
+            1367879.0,
+            739.0,
+            1368618.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period\", \"values\": [null, null, null, null, \"1,367,879\", \"1,367,879\", \"739\", \"1,368,618\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Comprehensive Loss for the period",
+          "values": [
+            null,
+            null,
+            null,
+            -96494.0,
+            null,
+            -96494.0,
+            null,
+            -96494.0
+          ],
+          "raw": "{\"caption\": \"Other Comprehensive Loss for the period\", \"values\": [null, null, null, \"(96,494)\", null, \"(96,494)\", null, \"(96,494)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Comprehensive (Loss) / Income",
+          "values": [
+            null,
+            null,
+            null,
+            -96494.0,
+            1367879.0,
+            1271385.0,
+            739.0,
+            1272124.0
+          ],
+          "raw": "{\"caption\": \"Total Comprehensive (Loss) / Income\", \"values\": [null, null, null, \"(96,494)\", \"1,367,879\", \"1,271,385\", \"739\", \"1,272,124\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Settlement of Cash Flow Hedges transferred to Inventory / Property, Plant and Equipment",
+          "values": [
+            null,
+            null,
+            null,
+            -49345.0,
+            null,
+            -49345.0,
+            null,
+            -49345.0
+          ],
+          "raw": "{\"caption\": \"Settlement of Cash Flow Hedges transferred to Inventory / Property, Plant and Equipment\", \"values\": [null, null, null, \"(49,345)\", null, \"(49,345)\", null, \"(49,345)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Directors' Remuneration",
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            -7682.0,
+            -7682.0,
+            null,
+            -7682.0
+          ],
+          "raw": "{\"caption\": \"Directors' Remuneration\", \"values\": [null, null, null, null, \"(7,682)\", \"(7,682)\", null, \"(7,682)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Dividend Declared ﷼1.15 per share (Refer Note 13)",
+          "values": [
+            null,
+            null,
+            null,
+            null,
+            -1138593.0,
+            -1138593.0,
+            null,
+            -1138593.0
+          ],
+          "raw": "{\"caption\": \"Dividend Declared ﷼1.15 per share (Refer Note 13)\", \"values\": [null, null, null, null, \"(1,138,593)\", \"(1,138,593)\", null, \"(1,138,593)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share Based Payment Transactions",
+          "values": [
+            null,
+            null,
+            null,
+            25840.0,
+            null,
+            25840.0,
+            null,
+            25840.0
+          ],
+          "raw": "{\"caption\": \"Share Based Payment Transactions\", \"values\": [null, null, null, \"25,840\", null, \"25,840\", null, \"25,840\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Settlement of Treasury Shares",
+          "values": [
+            null,
+            null,
+            33937.0,
+            -36965.0,
+            3028.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "{\"caption\": \"Settlement of Treasury Shares\", \"values\": [null, null, \"33,937\", \"(36,965)\", \"3,028\", \"-\", \"-\", \"-\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance as at 30 June 2026 (Unaudited)",
+          "values": [
+            10000000.0,
+            2966165.0,
+            -475726.0,
+            -1190563.0,
+            9329209.0,
+            20629085.0,
+            495.0,
+            20629580.0
+          ],
+          "raw": "{\"caption\": \"Balance as at 30 June 2026 (Unaudited)\", \"values\": [\"10,000,000\", \"2,966,165\", \"(475,726)\", \"(1,190,563)\", \"9,329,209\", \"20,629,085\", \"495\", \"20,629,580\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 9,
+      "kind": "cash_flow",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "CONDENSED CONSOLIDATED STATEMENT OF CASH FLOWS FOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "January - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "January - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Profit for the period",
+          "values": [
+            1368618.0,
+            1378637.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period\", \"values\": [\"1,368,618\", \"1,378,637\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Depreciation and Amortisation",
+          "values": [
+            1256307.0,
+            1201634.0
+          ],
+          "raw": "{\"caption\": \"Depreciation and Amortisation\", \"values\": [\"1,256,307\", \"1,201,634\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gain Arising from Changes in Fair Value less Cost to Sell of Crops",
+          "values": [
+            -6187.0,
+            -23580.0
+          ],
+          "raw": "{\"caption\": \"Gain Arising from Changes in Fair Value less Cost to Sell of Crops\", \"values\": [\"(6,187)\", \"(23,580)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Provision for Employee Retirement Benefits",
+          "values": [
+            135516.0,
+            127673.0
+          ],
+          "raw": "{\"caption\": \"Provision for Employee Retirement Benefits\", \"values\": [\"135,516\", \"127,673\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Provision for Inventories and Trade Receivables",
+          "values": [
+            67298.0,
+            60589.0
+          ],
+          "raw": "{\"caption\": \"Provision for Inventories and Trade Receivables\", \"values\": [\"67,298\", \"60,589\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share Based Payment Expense",
+          "values": [
+            25840.0,
+            21255.0
+          ],
+          "raw": "{\"caption\": \"Share Based Payment Expense\", \"values\": [\"25,840\", \"21,255\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Finance Cost, net",
+          "values": [
+            242551.0,
+            224653.0
+          ],
+          "raw": "{\"caption\": \"Finance Cost, net\", \"values\": [\"242,551\", \"224,653\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Income / (Expenses), net",
+          "values": [
+            5651.0,
+            -619.0
+          ],
+          "raw": "{\"caption\": \"Other Income / (Expenses), net\", \"values\": [\"56,51\", \"(619)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share of Results of Associate",
+          "values": [
+            null,
+            1222.0
+          ],
+          "raw": "{\"caption\": \"Share of Results of Associate\", \"values\": [\"-\", \"1,222\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Zakat",
+          "values": [
+            52027.0,
+            55445.0
+          ],
+          "raw": "{\"caption\": \"Zakat\", \"values\": [\"52,027\", \"55,445\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income Tax",
+          "values": [
+            25488.0,
+            27422.0
+          ],
+          "raw": "{\"caption\": \"Income Tax\", \"values\": [\"25,488\", \"27,422\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            3213969.0,
+            3074331.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"3,213,969\", \"3,074,331\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Inventories",
+          "values": [
+            -679645.0,
+            28631.0
+          ],
+          "raw": "{\"caption\": \"Inventories\", \"values\": [\"(679,645)\", \"28,631\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Biological Assets",
+          "values": [
+            2192.0,
+            -1487.0
+          ],
+          "raw": "{\"caption\": \"Biological Assets\", \"values\": [\"2,192\", \"(1,487)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade Receivables, Prepayments and Other Receivables",
+          "values": [
+            -1254064.0,
+            -1018713.0
+          ],
+          "raw": "{\"caption\": \"Trade Receivables, Prepayments and Other Receivables\", \"values\": [\"(1,254,064)\", \"(1,018,713)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade and Other Payables",
+          "values": [
+            1254427.0,
+            -650611.0
+          ],
+          "raw": "{\"caption\": \"Trade and Other Payables\", \"values\": [\"1,254,427\", \"(650,611)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash Used in Working Capital",
+          "values": [
+            -677090.0,
+            -340958.0
+          ],
+          "raw": "{\"caption\": \"Cash Used in Working Capital\", \"values\": [\"(677,090)\", \"(340,958)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Employee Retirement Benefits Paid",
+          "values": [
+            -63512.0,
+            -37667.0
+          ],
+          "raw": "{\"caption\": \"Employee Retirement Benefits Paid\", \"values\": [\"(63,512)\", \"(37,667)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Zakat and Income Tax Paid",
+          "values": [
+            -101007.0,
+            -142633.0
+          ],
+          "raw": "{\"caption\": \"Zakat and Income Tax Paid\", \"values\": [\"(101,007)\", \"(142,633)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Cash from Operating Activities",
+          "values": [
+            2372360.0,
+            2553073.0
+          ],
+          "raw": "{\"caption\": \"Net Cash from Operating Activities\", \"values\": [\"2,372,360\", \"2,553,073\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Proceeds from Disposal of Investment in Associate",
+          "values": [
+            null,
+            88529.0
+          ],
+          "raw": "{\"caption\": \"Proceeds from Disposal of Investment in Associate\", \"values\": [\"-\", \"88,529\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Additions in Long-term Prepayments",
+          "values": [
+            null,
+            -1175.0
+          ],
+          "raw": "{\"caption\": \"Additions in Long-term Prepayments\", \"values\": [\"-\", \"(1,175)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Additions to Property, Plant and Equipment",
+          "values": [
+            -1792992.0,
+            -2096984.0
+          ],
+          "raw": "{\"caption\": \"Additions to Property, Plant and Equipment\", \"values\": [\"(1,792,992)\", \"(2,096,984)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Proceeds from the Disposal of Property, Plant and Equipment",
+          "values": [
+            42411.0,
+            39850.0
+          ],
+          "raw": "{\"caption\": \"Proceeds from the Disposal of Property, Plant and Equipment\", \"values\": [\"42,411\", \"39,850\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Additions to Intangible Assets",
+          "values": [
+            -41582.0,
+            -10666.0
+          ],
+          "raw": "{\"caption\": \"Additions to Intangible Assets\", \"values\": [\"(41,582)\", \"(10,666)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Additions to Biological Assets",
+          "values": [
+            -535797.0,
+            -512951.0
+          ],
+          "raw": "{\"caption\": \"Additions to Biological Assets\", \"values\": [\"(535,797)\", \"(512,951)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Proceeds from the Disposal of Biological Assets",
+          "values": [
+            170621.0,
+            158193.0
+          ],
+          "raw": "{\"caption\": \"Proceeds from the Disposal of Biological Assets\", \"values\": [\"170,621\", \"158,193\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Cash Used in Investing Activities",
+          "values": [
+            -2157339.0,
+            -2335204.0
+          ],
+          "raw": "{\"caption\": \"Net Cash Used in Investing Activities\", \"values\": [\"(2,157,339)\", \"(2,335,204)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Proceeds from Loans and Borrowings",
+          "values": [
+            10693768.0,
+            12523157.0
+          ],
+          "raw": "{\"caption\": \"Proceeds from Loans and Borrowings\", \"values\": [\"10,693,768\", \"12,523,157\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Repayment of Loans and Borrowings",
+          "values": [
+            -9341641.0,
+            -11428674.0
+          ],
+          "raw": "{\"caption\": \"Repayment of Loans and Borrowings\", \"values\": [\"(9,341,641)\", \"(11,428,674)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Finance Cost Paid",
+          "values": [
+            -369762.0,
+            -326216.0
+          ],
+          "raw": "{\"caption\": \"Finance Cost Paid\", \"values\": [\"(369,762)\", \"(326,216)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Dividend Paid",
+          "values": [
+            -1137003.0,
+            -985446.0
+          ],
+          "raw": "{\"caption\": \"Dividend Paid\", \"values\": [\"(1,137,003)\", \"(985,446)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Settlement of Treasury Shares",
+          "values": [
+            null,
+            10260.0
+          ],
+          "raw": "{\"caption\": \"Settlement of Treasury Shares\", \"values\": [\"-\", \"10,260\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Principal Element of Lease Payments",
+          "values": [
+            -77085.0,
+            -71584.0
+          ],
+          "raw": "{\"caption\": \"Principal Element of Lease Payments\", \"values\": [\"(77,085)\", \"(71,584)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest Element of Lease Payments",
+          "values": [
+            -1633.0,
+            -2120.0
+          ],
+          "raw": "{\"caption\": \"Interest Element of Lease Payments\", \"values\": [\"(1,633)\", \"(2,120)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Directors' Remuneration",
+          "values": [
+            -7682.0,
+            -7390.0
+          ],
+          "raw": "{\"caption\": \"Directors' Remuneration\", \"values\": [\"(7,682)\", \"(7,390)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Cash Used in Financing Activities",
+          "values": [
+            -241038.0,
+            -288013.0
+          ],
+          "raw": "{\"caption\": \"Net Cash Used in Financing Activities\", \"values\": [\"(241,038)\", \"(288,013)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Change in Cash and Cash Equivalents",
+          "values": [
+            -26017.0,
+            -70144.0
+          ],
+          "raw": "{\"caption\": \"Net Change in Cash and Cash Equivalents\", \"values\": [\"(26,017)\", \"(70,144)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash and Cash Equivalents as at 1 January",
+          "values": [
+            523039.0,
+            528214.0
+          ],
+          "raw": "{\"caption\": \"Cash and Cash Equivalents as at 1 January\", \"values\": [\"523,039\", \"528,214\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Effect of Movements in Exchange Rates on Cash and Cash Equivalents",
+          "values": [
+            -944.0,
+            655.0
+          ],
+          "raw": "{\"caption\": \"Effect of Movements in Exchange Rates on Cash and Cash Equivalents\", \"values\": [\"(944)\", \"655\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash and Cash Equivalents as at 30 June",
+          "values": [
+            496078.0,
+            458725.0
+          ],
+          "raw": "{\"caption\": \"Cash and Cash Equivalents as at 30 June\", \"values\": [\"496,078\", \"458,725\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 13,
+      "kind": "other",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "7. BUSINESS COMBINATION",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "Fair Value on Acquisition '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Property, Plant and Equipment",
+          "values": [
+            417284.0
+          ],
+          "raw": "{\"caption\": \"Property, Plant and Equipment\", \"values\": [\"417,284\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Intangible Assets",
+          "values": [
+            2181.0
+          ],
+          "raw": "{\"caption\": \"Intangible Assets\", \"values\": [\"2,181\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Customer Relationships and Brands",
+          "values": [
+            155800.0
+          ],
+          "raw": "{\"caption\": \"Customer Relationships and Brands\", \"values\": [\"155,800\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Right of Use Assets",
+          "values": [
+            26658.0
+          ],
+          "raw": "{\"caption\": \"Right of Use Assets\", \"values\": [\"26,658\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            601923.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"601,923\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash and Cash Equivalents",
+          "values": [
+            11129.0
+          ],
+          "raw": "{\"caption\": \"Cash and Cash Equivalents\", \"values\": [\"11,129\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade Receivables, Prepayments and Other Receivables",
+          "values": [
+            177758.0
+          ],
+          "raw": "{\"caption\": \"Trade Receivables, Prepayments and Other Receivables\", \"values\": [\"177,758\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Inventories",
+          "values": [
+            40238.0
+          ],
+          "raw": "{\"caption\": \"Inventories\", \"values\": [\"40,238\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            229125.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"229,125\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Assets",
+          "values": [
+            831048.0
+          ],
+          "raw": "{\"caption\": \"Total Assets\", \"values\": [\"831,048\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease Liabilities",
+          "values": [
+            10803.0
+          ],
+          "raw": "{\"caption\": \"Lease Liabilities\", \"values\": [\"10,803\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Employee Retirement Benefits",
+          "values": [
+            12553.0
+          ],
+          "raw": "{\"caption\": \"Employee Retirement Benefits\", \"values\": [\"12,553\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            23356.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"23,356\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease Liabilities",
+          "values": [
+            9491.0
+          ],
+          "raw": "{\"caption\": \"Lease Liabilities\", \"values\": [\"9,491\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade and Other Payables",
+          "values": [
+            114086.0
+          ],
+          "raw": "{\"caption\": \"Trade and Other Payables\", \"values\": [\"114,086\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            123577.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"123,577\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities",
+          "values": [
+            146933.0
+          ],
+          "raw": "{\"caption\": \"Total Liabilities\", \"values\": [\"146,933\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Purchase Consideration",
+          "values": [
+            1012223.0
+          ],
+          "raw": "{\"caption\": \"Total Purchase Consideration\", \"values\": [\"1,012,223\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Identifiable Net Assets",
+          "values": [
+            -684115.0
+          ],
+          "raw": "{\"caption\": \"Total Identifiable Net Assets\", \"values\": [\"(684,115)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Goodwill Arising on Acquisition",
+          "values": [
+            328108.0
+          ],
+          "raw": "{\"caption\": \"Goodwill Arising on Acquisition\", \"values\": [\"328,108\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Cash Acquired with the Subsidiary",
+          "values": [
+            11129.0
+          ],
+          "raw": "{\"caption\": \"Net Cash Acquired with the Subsidiary\", \"values\": [\"11,129\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash Paid",
+          "values": [
+            -1021223.0
+          ],
+          "raw": "{\"caption\": \"Cash Paid\", \"values\": [\"(1,021,223)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Cash Outflow",
+          "values": [
+            -1010094.0
+          ],
+          "raw": "{\"caption\": \"Net Cash Outflow\", \"values\": [\"(1,010,094)\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 14,
+      "kind": "other",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "8. LOANS AND BORROWINGS",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "30 June 2026 (Unaudited)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "31 December 2025 (Audited)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": "2025-12-31"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Islamic Banking Facilities (Murabaha)",
+          "values": [
+            7528573.0,
+            5960307.0
+          ],
+          "raw": "{\"caption\": \"Islamic Banking Facilities (Murabaha)\", \"values\": [\"7,528,573\", \"5,960,307\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Saudi Industrial Development Fund (\"SIDF\")",
+          "values": [
+            47141.0,
+            128143.0
+          ],
+          "raw": "{\"caption\": \"Saudi Industrial Development Fund (\\\"SIDF\\\")\", \"values\": [\"47,141\", \"128,143\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Banking Facilities of Non-GCC Subsidiaries",
+          "values": [
+            185119.0,
+            128588.0
+          ],
+          "raw": "{\"caption\": \"Banking Facilities of Non-GCC Subsidiaries\", \"values\": [\"185,119\", \"128,588\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Supranational (Murabaha)",
+          "values": [
+            null,
+            47277.0
+          ],
+          "raw": "{\"caption\": \"Supranational (Murabaha)\", \"values\": [\"-\", \"47,277\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Agricultural Development Fund (\"ADF\")",
+          "values": [
+            18848.0,
+            17987.0
+          ],
+          "raw": "{\"caption\": \"Agricultural Development Fund (\\\"ADF\\\")\", \"values\": [\"18,848\", \"17,987\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "International Sukuk",
+          "values": [
+            4671363.0,
+            4669508.0
+          ],
+          "raw": "{\"caption\": \"International Sukuk\", \"values\": [\"4,671,363\", \"4,669,508\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            12451044.0,
+            10951810.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"12,451,044\", \"10,951,810\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Islamic Banking Facilities (Murabaha)",
+          "values": [
+            822602.0,
+            1062084.0
+          ],
+          "raw": "{\"caption\": \"Islamic Banking Facilities (Murabaha)\", \"values\": [\"822,602\", \"1,062,084\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Saudi Industrial Development Fund (\"SIDF\")",
+          "values": [
+            177505.0,
+            197499.0
+          ],
+          "raw": "{\"caption\": \"Saudi Industrial Development Fund (\\\"SIDF\\\")\", \"values\": [\"177,505\", \"197,499\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Banking Facilities of Non-GCC Subsidiaries",
+          "values": [
+            55214.0,
+            68408.0
+          ],
+          "raw": "{\"caption\": \"Banking Facilities of Non-GCC Subsidiaries\", \"values\": [\"55,214\", \"68,408\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Supranational (Murabaha)",
+          "values": [
+            71745.0,
+            72137.0
+          ],
+          "raw": "{\"caption\": \"Supranational (Murabaha)\", \"values\": [\"71,745\", \"72,137\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Agricultural Development Fund (\"ADF\")",
+          "values": [
+            24543.0,
+            23886.0
+          ],
+          "raw": "{\"caption\": \"Agricultural Development Fund (\\\"ADF\\\")\", \"values\": [\"24,543\", \"23,886\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "International Sukuk",
+          "values": [
+            91243.0,
+            96316.0
+          ],
+          "raw": "{\"caption\": \"International Sukuk\", \"values\": [\"91,243\", \"96,316\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "",
+          "values": [
+            1242852.0,
+            1520330.0
+          ],
+          "raw": "{\"caption\": \"\", \"values\": [\"1,242,852\", \"1,520,330\"]}",
+          "heading": "",
+          "unverified": [
+            0
+          ]
+        },
+        {
+          "caption": "Total Loans and Borrowings",
+          "values": [
+            13793896.0,
+            12472140.0
+          ],
+          "raw": "{\"caption\": \"Total Loans and Borrowings\", \"values\": [\"13,793,896\", \"12,472,140\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 14,
+      "kind": "other",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "9. EARNINGS PER SHARE",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "April - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "April - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 2,
+          "header": "January - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 3,
+          "header": "January - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Profit for the period attributable to the Shareholders of the Company",
+          "values": [
+            635657.0,
+            646866.0,
+            1367879.0,
+            1378060.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period attributable to the Shareholders of the Company\", \"values\": [\"635,657\", \"646,866\", \"1,367,879\", \"1,378,060\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Weighted average number of ordinary shares for the purpose of basic earnings",
+          "values": [
+            990042.0,
+            989326.0,
+            989812.0,
+            989280.0
+          ],
+          "raw": "{\"caption\": \"Weighted average number of ordinary shares for the purpose of basic earnings\", \"values\": [\"990,042\", \"989,326\", \"989,812\", \"989,280\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Weighted average number of ordinary shares repurchased",
+          "values": [
+            9958.0,
+            10674.0,
+            10188.0,
+            10720.0
+          ],
+          "raw": "{\"caption\": \"Weighted average number of ordinary shares repurchased\", \"values\": [\"9,958\", \"10,674\", \"10,188\", \"10,720\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Weighted average number of ordinary shares for the purpose of diluted earnings",
+          "values": [
+            1000000.0,
+            1000000.0,
+            1000000.0,
+            1000000.0
+          ],
+          "raw": "{\"caption\": \"Weighted average number of ordinary shares for the purpose of diluted earnings\", \"values\": [\"1,000,000\", \"1,000,000\", \"1,000,000\", \"1,000,000\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 15,
+      "kind": "other",
+      "note": null,
+      "units": null,
+      "source": null,
+      "title": "9. EARNINGS PER SHARE (Continued...)",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "April - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "April - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 2,
+          "header": "January - June 2026 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 3,
+          "header": "January - June 2025 (Unaudited)",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Basic",
+          "values": [
+            0.64,
+            0.65,
+            1.38,
+            1.39
+          ],
+          "raw": "{\"caption\": \"Basic\", \"values\": [\"0.64\", \"0.65\", \"1.38\", \"1.39\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Diluted",
+          "values": [
+            0.64,
+            0.65,
+            1.37,
+            1.38
+          ],
+          "raw": "{\"caption\": \"Diluted\", \"values\": [\"0.64\", \"0.65\", \"1.37\", \"1.38\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 15,
+      "kind": "other",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "10. SEGMENT REPORTING",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "Dairy and Juice '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 1,
+          "header": "Bakery '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 2,
+          "header": "Protein* '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 3,
+          "header": "Other Activities* '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 4,
+          "header": "Total '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        }
+      ],
+      "rows": [
+        {
+          "caption": "30 June 2026 Revenue",
+          "values": [
+            7937368.0,
+            1408790.0,
+            2265235.0,
+            858086.0,
+            12469479.0
+          ],
+          "raw": "{\"caption\": \"30 June 2026 Revenue\", \"values\": [\"7,937,368\", \"1,408,790\", \"2,265,235\", \"858,086\", \"12,469,479\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Third Party Revenue",
+          "values": [
+            7895271.0,
+            1408790.0,
+            2265235.0,
+            458962.0,
+            12028258.0
+          ],
+          "raw": "{\"caption\": \"Third Party Revenue\", \"values\": [\"7,895,271\", \"1,408,790\", \"2,265,235\", \"458,962\", \"12,028,258\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Depreciation and Amortisation",
+          "values": [
+            -702893.0,
+            -97651.0,
+            -362076.0,
+            -93687.0,
+            -1256307.0
+          ],
+          "raw": "{\"caption\": \"Depreciation and Amortisation\", \"values\": [\"(702,893)\", \"(97,651)\", \"(362,076)\", \"(93,687)\", \"(1,256,307)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit / (Loss) for the period",
+          "values": [
+            915780.0,
+            231694.0,
+            241400.0,
+            -20256.0,
+            1368618.0
+          ],
+          "raw": "{\"caption\": \"Profit / (Loss) for the period\", \"values\": [\"915,780\", \"231,694\", \"241,400\", \"(20,256)\", \"1,368,618\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit / (Loss) attributable to Shareholders of the Company",
+          "values": [
+            915041.0,
+            231694.0,
+            241400.0,
+            -20256.0,
+            1367879.0
+          ],
+          "raw": "{\"caption\": \"Profit / (Loss) attributable to Shareholders of the Company\", \"values\": [\"915,041\", \"231,694\", \"241,400\", \"(20,256)\", \"1,367,879\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Assets",
+          "values": [
+            23726722.0,
+            1960260.0,
+            13105460.0,
+            4015870.0,
+            42808312.0
+          ],
+          "raw": "{\"caption\": \"Total Assets\", \"values\": [\"23,726,722\", \"1,960,260\", \"13,105,460\", \"4,015,870\", \"42,808,312\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities",
+          "values": [
+            15475327.0,
+            408751.0,
+            5491271.0,
+            803383.0,
+            22178732.0
+          ],
+          "raw": "{\"caption\": \"Total Liabilities\", \"values\": [\"15,475,327\", \"408,751\", \"5,491,271\", \"803,383\", \"22,178,732\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "31 December 2025 Total Assets",
+          "values": [
+            22267954.0,
+            1866423.0,
+            12004313.0,
+            3828208.0,
+            39966898.0
+          ],
+          "raw": "{\"caption\": \"31 December 2025 Total Assets\", \"values\": [\"22,267,954\", \"1,866,423\", \"12,004,313\", \"3,828,208\", \"39,966,898\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities",
+          "values": [
+            13200048.0,
+            381699.0,
+            5195665.0,
+            662250.0,
+            19439662.0
+          ],
+          "raw": "{\"caption\": \"Total Liabilities\", \"values\": [\"13,200,048\", \"381,699\", \"5,195,665\", \"662,250\", \"19,439,662\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "30 June 2025 Revenue",
+          "values": [
+            7578629.0,
+            1327445.0,
+            2017299.0,
+            686223.0,
+            11609596.0
+          ],
+          "raw": "{\"caption\": \"30 June 2025 Revenue\", \"values\": [\"7,578,629\", \"1,327,445\", \"2,017,299\", \"686,223\", \"11,609,596\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Third Party Revenue",
+          "values": [
+            7533771.0,
+            1327445.0,
+            2017299.0,
+            176977.0,
+            11055492.0
+          ],
+          "raw": "{\"caption\": \"Third Party Revenue\", \"values\": [\"7,533,771\", \"1,327,445\", \"2,017,299\", \"176,977\", \"11,055,492\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Depreciation and Amortisation",
+          "values": [
+            -725836.0,
+            -94266.0,
+            -310922.0,
+            -70610.0,
+            -1201634.0
+          ],
+          "raw": "{\"caption\": \"Depreciation and Amortisation\", \"values\": [\"(725,836)\", \"(94,266)\", \"(310,922)\", \"(70,610)\", \"(1,201,634)\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Share of Results of associate",
+          "values": [
+            null,
+            null,
+            null,
+            -1122.0,
+            -1222.0
+          ],
+          "raw": "{\"caption\": \"Share of Results of associate\", \"values\": [null, null, null, \"(1,122)\", \"(1,222)\"]}",
+          "heading": "",
+          "unverified": [
+            3
+          ]
+        },
+        {
+          "caption": "Profit for the period",
+          "values": [
+            905237.0,
+            191600.0,
+            253593.0,
+            28207.0,
+            1378637.0
+          ],
+          "raw": "{\"caption\": \"Profit for the period\", \"values\": [\"905,237\", \"191,600\", \"253,593\", \"28,207\", \"1,378,637\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit attributable to Shareholders of the Company",
+          "values": [
+            904660.0,
+            191600.0,
+            253593.0,
+            28207.0,
+            1378060.0
+          ],
+          "raw": "{\"caption\": \"Profit attributable to Shareholders of the Company\", \"values\": [\"904,660\", \"191,600\", \"253,593\", \"28,207\", \"1,378,060\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Assets",
+          "values": [
+            21277872.0,
+            2024637.0,
+            11325368.0,
+            3127320.0,
+            37755197.0
+          ],
+          "raw": "{\"caption\": \"Total Assets\", \"values\": [\"21,277,872\", \"2,024,637\", \"11,325,368\", \"3,127,320\", \"37,755,197\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities",
+          "values": [
+            12957944.0,
+            434581.0,
+            4310292.0,
+            688132.0,
+            18390949.0
+          ],
+          "raw": "{\"caption\": \"Total Liabilities\", \"values\": [\"12,957,944\", \"434,581\", \"4,310,292\", \"688,132\", \"18,390,949\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "31 December 2024 Total Assets",
+          "values": [
+            21120578.0,
+            1982800.0,
+            9557661.0,
+            2906921.0,
+            35567960.0
+          ],
+          "raw": "{\"caption\": \"31 December 2024 Total Assets\", \"values\": [\"21,120,578\", \"1,982,800\", \"9,557,661\", \"2,906,921\", \"35,567,960\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities",
+          "values": [
+            12799436.0,
+            427890.0,
+            2957078.0,
+            592424.0,
+            16776828.0
+          ],
+          "raw": "{\"caption\": \"Total Liabilities\", \"values\": [\"12,799,436\", \"427,890\", \"2,957,078\", \"592,424\", \"16,776,828\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 16,
+      "kind": "other",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "10. SEGMENT REPORTING (Continued.)",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "Dairy and Juice '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 1,
+          "header": "Bakery '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 2,
+          "header": "Protein* '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 3,
+          "header": "Other Activities* '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 4,
+          "header": "Total '000 ﷼",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        }
+      ],
+      "rows": [
+        {
+          "caption": "For the six-month period ended 30 June 2026 Saudi Arabia",
+          "values": [
+            4797261.0,
+            1026216.0,
+            1784808.0,
+            349776.0,
+            7958061.0
+          ],
+          "raw": "{\"caption\": \"For the six-month period ended 30 June 2026 Saudi Arabia\", \"values\": [\"4,797,261\", \"1,026,216\", \"1,784,808\", \"349,776\", \"7,958,061\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other GCC Countries",
+          "values": [
+            1660082.0,
+            366820.0,
+            405899.0,
+            null,
+            2432801.0
+          ],
+          "raw": "{\"caption\": \"Other GCC Countries\", \"values\": [\"1,660,082\", \"366,820\", \"405,899\", null, \"2,432,801\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Countries",
+          "values": [
+            1437928.0,
+            15754.0,
+            74528.0,
+            109186.0,
+            1637396.0
+          ],
+          "raw": "{\"caption\": \"Other Countries\", \"values\": [\"1,437,928\", \"15,754\", \"74,528\", \"109,186\", \"1,637,396\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Third Party Revenue",
+          "values": [
+            7895271.0,
+            1408790.0,
+            2265235.0,
+            458962.0,
+            12028258.0
+          ],
+          "raw": "{\"caption\": \"Total Third Party Revenue\", \"values\": [\"7,895,271\", \"1,408,790\", \"2,265,235\", \"458,962\", \"12,028,258\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "For the six-month period ended 30 June 2025 Saudi Arabia",
+          "values": [
+            4714068.0,
+            956088.0,
+            1619575.0,
+            101258.0,
+            7390989.0
+          ],
+          "raw": "{\"caption\": \"For the six-month period ended 30 June 2025 Saudi Arabia\", \"values\": [\"4,714,068\", \"956,088\", \"1,619,575\", \"101,258\", \"7,390,989\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other GCC Countries",
+          "values": [
+            1623283.0,
+            356389.0,
+            341108.0,
+            689.0,
+            2321469.0
+          ],
+          "raw": "{\"caption\": \"Other GCC Countries\", \"values\": [\"1,623,283\", \"356,389\", \"341,108\", \"689\", \"2,321,469\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Countries",
+          "values": [
+            1196420.0,
+            14968.0,
+            56616.0,
+            75030.0,
+            1343034.0
+          ],
+          "raw": "{\"caption\": \"Other Countries\", \"values\": [\"1,196,420\", \"14,968\", \"56,616\", \"75,030\", \"1,343,034\"]}",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Third Party Revenue",
+          "values": [
+            7533771.0,
+            1327445.0,
+            2017299.0,
+            176977.0,
+            11055492.0
+          ],
+          "raw": "{\"caption\": \"Total Third Party Revenue\", \"values\": [\"7,533,771\", \"1,327,445\", \"2,017,299\", \"176,977\", \"11,055,492\"]}",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "source": "text",
+      "chars": 349,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nCONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nAND REVIEW REPORT\nFOR THE THREE-MONTH AND SIX-MONTH PERIODS ENDED\n30 JUNE 2026\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nCONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nAND REVIEW REPORT\nFOR THE THREE-MONTH AND SIX-MONTH PERIODS ENDED\n30 JUNE 2026"
+    },
+    {
+      "page": 2,
+      "source": "text",
+      "chars": 995,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nINDEX\nPAGES\nINDEPENDENT AUDITOR’S REVIEW REPORT ON CONDENSED CONSOLIDATED\nINTERIM FINANCIAL STATEMENTS 1 - 2\nCONDENSED CONSOLIDATED STATEMENT OF FINANCIAL POSITION 3\nCONDENSED CONSOLIDATED STATEMENT OF PROFIT OR LOSS 4\nCONDENSED CONSOLIDATED STATEMENT OF COMPREHENSIVE INCOME 5\nCONDENSED CONSOLIDATED STATEMENT OF CHANGES IN EQUITY 6\nCONDENSED CONSOLIDATED STATEMENT OF CASH FLOWS 7\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS 8 -14\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nINDEX\nPAGES\nINDEPENDENT AUDITOR’S REVIEW REPORT ON CONDENSED CONSOLIDATED\nINTERIM FINANCIAL STATEMENTS 1 - 2\nCONDENSED CONSOLIDATED STATEMENT OF FINANCIAL POSITION 3\nCONDENSED CONSOLIDATED STATEMENT OF PROFIT OR LOSS 4\nCONDENSED CONSOLIDATED STATEMENT OF COMPREHENSIVE INCOME 5\nCONDENSED CONSOLIDATED STATEMENT OF CHANGES IN EQUITY 6\nCONDENSED CONSOLIDATED STATEMENT OF CASH FLOWS 7\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS 8 -14"
+    },
+    {
+      "page": 3,
+      "source": "vision",
+      "chars": 6333,
+      "tables": 0,
+      "text": "KPMG Professional Services Company ة ينهم ةمهاسم ةينهملا تاراشتسلال يج مإ يب يك ةكرش\nRoshn Front, Airport Road ر اطملا قيرط ،نشور ةهجاو\nP.O. Box 92876 92876 ديرب قودنص\nRiyadh 11663 11663 ضايرلا\nKingdom of Saudi Arabia ة يدوعسلا ةيبرعلا ةكلمملا\nCommercial Registration No 1010425494 1010425494 م قر يراجت لجس\nضايرلا يف يسيئرلا زكرملا\nHeadquarters in Riyadh\nIndependent auditor’s report on review of condensed\nconsolidated interim financial statements\nTo the Shareholders of Almarai Company (A Saudi Joint Stock Company)\nIntroduction\nWe have reviewed the accompanying 30 June 2026 condensed consolidated interim financial\nstatements of Almarai Company (“the Company”) and its subsidiaries (“the Group”) which comprises:\n• the condensed consolidated statement of financial position as at 30 June 2026;\n• the condensed consolidated statement of profit or loss for the three-month and six-month periods\nended 30 June 2026;\n• the condensed consolidated statement of comprehensive income for the three-month and six-\nmonth periods ended 30 June 2026;\n• the condensed consolidated statement of changes in equity for the six-month period ended 30\nJune 2026;\n• the condensed consolidated statement of cash flows for the six-month period ended 30 June\n2026; and\n• the notes to the condensed consolidated interim financial statements.\nManagement is responsible for the preparation and presentation of these condensed consolidated\ninterim financial statements in accordance with IAS 34, ‘Interim Financial Reporting’ that is endorsed in\nthe Kingdom of Saudi Arabia. Our responsibility is to express a conclusion on these condensed\nconsolidated interim financial statements based on our review.\nScope of Review\nWe conducted our review in accordance with the International Standard on Review Engagements 2410,\n‘Review of Interim Financial Information Performed by the Independent Auditor of the Entity’ that is\nendorsed in the Kingdom of Saudi Arabia. A review of condensed consolidated interim financial\nstatements consists of making inquiries, primarily of persons responsible for financial and accounting\nmatters, and applying analytical and other review procedures. A review is substantially less in scope\nthan an audit conducted in accordance with International Standards on Auditing that are endorsed in the\nKingdom of Saudi Arabia, and consequently does not enable us to obtain assurance that we would\nbecome aware of all significant matters that might be identified in an audit. Accordingly, we do not\nexpress an audit opinion.\nKPMG Professional Services Company, a professional closed joint stock company registered in the Kingdom of Saudi Arabia with a paid-up capital of SAR110,000,000 and a non-partner member\nfirm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private English company limited by guarantee.\n.\nمإ يب يك ـل ةعباتلاو ةلقتسملا يج مإ يب يك تاكرشل ةيملاعلا ةكبشلا يف كيرش ريغ وضع يهو ،لماكلاب عوفدم يدوعس ريال )110,000,000( اهلام سأر ،ةيدوعسلا ةيبرعلا ةكلمملا يف ةلجسم ةلفقم ةينهم ةمهاسم ةكرش ،ةينهم ةمهاسم ةينهملا تاراشتسلال يج مإ يب يك ةكرش\n. نامضلاب ةدودحم ةصاخ ةيزيلجنا ةكرش ،ةدودحملا ةيملاعلا يج\nKPMG Professional Services Company\nRoshn Front, Airport Road\nP.O. Box 92876\nRiyadh 11663\nKingdom of Saudi Arabia\nCommercial Registration No 1010425494\nHeadquarters in Riyadh\nةينهم ةمهاسم ةينهملا تاراشتسلال يج مإ يب يك ةكرش\nةهجاو نشور راطملا قيرط ،\nديرب قودنص 92876\nضايرلا 11663\nةيدوعسلا ةيبرعلا ةكلمملا\nمقر يراجت لجس 1010425494\nيسيئرلا زكرملا ضايرلا يف\nKPMG Professional Services Company, a professional closed joint stock company registered in the Kingdom of Saudi Arabia with a paid-up capital of SAR110,000,000 and a non-partner member\nfirm of the KPMG global organization of independent member firms affiliated with KPMG International Limited, a private English company limited by guarantee.\n.\n( اهلام سأر ،ةيدوعسلا ةيبرعلا ةكلمملا يف ةلجسم ةلفقم ةينهم ةمهاسم ةكرش ،ةينهم ةمهاسم ةينهملا تاراشتسلال يج مإ يب يك ةكرش 110,000,000 مإ يب يك ـل ةعباتلاو ةلقتسملا يج مإ يب يك تاكرشل ةيملاعلا ةكبشلا يف كيرش ريغ وضع يهو ،لماكلاب عوفدم يدوعس ريال )\n.نامضلاب ةدودحم ةصاخ ةيزيلجنا ةكرش ،ةدودحملا ةيملاعلا يج\nIndependent auditor’s report on review of condensed\nconsolidated interim financial statements\nTo the Shareholders of Almarai Company (A Saudi Joint Stock Company)\nIntroduction\nWe have reviewed the accompanying 30 June 2026 condensed consolidated interim financial\nstatements of Almarai Company (“the Company”) and its subsidiaries (“the Group”) which comprises:\n• the condensed consolidated statement of financial position as at 30 June 2026;\n• the condensed consolidated statement of profit or loss for the three-month and six-month periods\nended 30 June 2026;\n• the condensed consolidated statement of comprehensive income for the three-month and six-\nmonth periods ended 30 June 2026;\n• the condensed consolidated statement of changes in equity for the six-month period ended 30\nJune 2026;\n• the condensed consolidated statement of cash flows for the six-month period ended 30 June\n2026; and\n• the notes to the condensed consolidated interim financial statements.\nManagement is responsible for the preparation and presentation of these condensed consolidated\ninterim financial statements in accordance with IAS 34, ‘Interim Financial Reporting’ that is endorsed in\nthe Kingdom of Saudi Arabia. Our responsibility is to express a conclusion on these condensed\nconsolidated interim financial statements based on our review.\nScope of Review\nWe conducted our review in accordance with the International Standard on Review Engagements 2410,\n‘Review of Interim Financial Information Performed by the Independent Auditor of the Entity’ that is\nendorsed in the Kingdom of Saudi Arabia. A review of condensed consolidated interim financial\nstatements consists of making inquiries, primarily of persons responsible for financial and accounting\nmatters, and applying analytical and other review procedures. A review is substantially less in scope\nthan an audit conducted in accordance with International Standards on Auditing that are endorsed in the\nKingdom of Saudi Arabia, and consequently does not enable us to obtain assurance that we would\nbecome aware of all significant matters that might be identified in an audit. Accordingly, we do not\nexpress an audit opinion."
+    },
+    {
+      "page": 4,
+      "source": "text",
+      "chars": 1393,
+      "tables": 0,
+      "text": "Independent auditor’s report on review of condensed\nconsolidated interim financial statements\nTo the Shareholders of Almarai Company (A Saudi Joint Stock Company) (continued)\nConclusion\nBased on our review, nothing has come to our attention that causes us to believe that the accompanying\n30 June 2026 condensed consolidated interim financial statements of Almarai Company (“the Company”)\nand its subsidiaries are not prepared, in all material respects, in accordance with IAS 34, ‘Interim Financial\nReporting’ that is endorsed in the Kingdom of Saudi Arabia.\nKPMG Professional Services Company\nFahad Mubark Aldossari\nLicense No: 469\nRiyadh on 6 July 2026 G\nCorresponding to: 21 Muharram 1448 H\n2\n2\nIndependent auditor’s report on review of condensed\nconsolidated interim financial statements\nTo the Shareholders of Almarai Company (A Saudi Joint Stock Company) (continued)\nConclusion\nBased on our review, nothing has come to our attention that causes us to believe that the accompanying\n30 June 2026 condensed consolidated interim financial statements of Almarai Company (“the Company”)\nand its subsidiaries are not prepared, in all material respects, in accordance with IAS 34, ‘Interim Financial\nReporting’ that is endorsed in the Kingdom of Saudi Arabia.\nKPMG Professional Services Company\nFahad Mubark Aldossari\nLicense No: 469\nRiyadh on 6 July 2026 G\nCorresponding to: 21 Muharram 1448 H"
+    },
+    {
+      "page": 5,
+      "source": "vision",
+      "chars": 1,
+      "tables": 0,
+      "text": "\n"
+    },
+    {
+      "page": 6,
+      "source": "vision",
+      "chars": 1,
+      "tables": 0,
+      "text": "\n"
+    },
+    {
+      "page": 7,
+      "source": "vision",
+      "chars": 1,
+      "tables": 0,
+      "text": "\n"
+    },
+    {
+      "page": 8,
+      "source": "vision",
+      "chars": 1,
+      "tables": 0,
+      "text": "\n"
+    },
+    {
+      "page": 9,
+      "source": "vision",
+      "chars": 1,
+      "tables": 0,
+      "text": "\n"
+    },
+    {
+      "page": 10,
+      "source": "vision",
+      "chars": 9741,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n1. THE COMPANY, ITS SUBSIDIARIES AND ITS BUSINESS DESCRIPTION\nAlmarai Company (the “Company”) is a Saudi Joint Stock Company, which was converted from a limited liability company to a\njoint stock company on 2 Rajab 1426 A.H. (8 August 2005). The Company initially commenced trading on 19 Dul Hijjah 1411 A.H.\n(1 July 1991) and operates under Commercial Registration No. 1010084223 and issued unified number 7001360630. Prior to the\nconsolidation of activities in 1991, the core business was conducted between 1977 and 1991 under the Almarai brand name.\nThe Company’s Head Office is located at Exit 7, North Ring Road, Al Izdihar District, P.O. Box 8524, Riyadh 11492, Kingdom of\nSaudi Arabia (“Saudi Arabia”).\nThe Company and its subsidiaries (together, the “Group”) are a major integrated consumer food and beverage Group in the\nMiddle East with leading market share in Saudi Arabia. It also operates in Egypt, Jordan and other Gulf Cooperation Council\n(“GCC”) countries.\nDairy, fruit juices and related food business is operated under the “Almarai”, “Beyti” and “Teeba” brand names. All raw milk\nproduction, dairy and fruit juice product processing and related food product manufacturing activities are undertaken in Saudi\nArabia, United Arab Emirates (“UAE”), Egypt and Jordan.\nDairy, fruit juices and related food business in Egypt and Jordan operates through a fully owned subsidiary International Dairy\nand Juice Limited (“IDJ”). The Group manages IDJ operations through the following key subsidiaries:\nJordan - Teeba Investment for Developed Food Processing\nEgypt - International Company for Agricultural Industries Projects (Beyti) (SAE)\nBa kery products are manufactured and traded by Western Bakeries Company Limited and Modern Food Industries Company\nLimited under the brand names “L’usine” and “7 Days”, respectively.\nPoultry products are manufactured and traded by Hail Agricultural Development Company under the “Alyoum” and\n“AlBashayer” brand names.\nSeafood products are traded under the “Seama” brand name.\nIce cream products are traded under the “Almarai” brand name.\nInfant Nutrition products are manufactured by Almarai Baby Food Company Limited and traded by International Pediatric\nNutrition Company under “Nuralac” and “Evolac” brand names.\nDrinking water products are manufactured and traded by Pure Beverages Industries Company Limited under the “Oska” and\n“Ival” brand names\nIn territories where the Group has operations, final consumer packed products are distributed from manufacturing facilities to\nlocal distribution centres by the Group’s long haul distribution fleet. The distribution centres in GCC countries are managed\nthrough subsidiaries in UAE, Sultanate of Oman (“Oman) and Kingdom of Bahrain (“Bahrain”) and an agency agreements in\nKuwait and Qatar as follows:\nUAE - Almarai Emirates Company LLC\nOman - Arabian Planets for Trading and Marketing LLC\nBahrain - Almarai Company Bahrain W.L.L.\nKuwait - Al Kharafi Brothers Dairy Products Company Limited\nQatar - Khalid for Foodstuff and Trading Company\nIn other territories, where permissible by law, export sales are made through other subsidiaries.\nThe Group owns and operates arable farms in Argentina and in United States of America (USA), collectively referred to as\n“Fondomonte”, through the following key subsidiaries:\nUSA - Fondomonte Holdings North America LLC\nArgentina - Fondomonte South America S.A\nThe G roup’s non-GCC business operations under IDJ and Fondomonte are managed through Almarai Investment Holding\nCompany W.L.L., a company incorporated in the Kingdom of Bahrain.\nPoultry grandparent farming operations are conducted by Pure Breed Poultry (Taseel) Company.\nValue- added meat and poultry for the Middle East food services industry are manufactured and distributed by Premier Foods\nIndustries Company LLC.\nFrozen bakery products are produced and sold in the UAE and Bahrain by Bakemart FZ LLC, Bakemart L.L.C (UAE), and\nBakemart W.L.L (Bahrain).\nAcquisitions\nOn 19 Dhul-Hijjah 1446 A.H (15 June 2025), the Group entered into a Share Purchase Agreement (“SPA”) to acquire 100% shares\nin Pure Beverages Industry Company Limited, a company based in the Kingdom of Saudi Arabia. The closure of the acquisition\nand determination of the date of control was subject to completion of certain conditions identified in the SPA. On 31 July 2025,\n$\nthe Group completed the acquisition and settled the consideration amounting to 1,012 million.\nPure Beverages Industry Company Limited’s main operation is the production and distribution of bottled drinking water. This\nacquisition marks Group‘s strategic entry into the bottled water segment and strengthens its position in the broader beverage\nmarket. Also refer note 7.\n8\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n8\n1. THE COMPANY, ITS SUBSIDIARIES AND ITS BUSINESS DESCRIPTION\nAlmarai Company (the “Company”) is a Saudi Joint Stock Company, which was converted from a limited liability company to a\njoint stock company on 2 Rajab 1426 A.H. (8 August 2005). The Company initially commenced trading on 19 Dul Hijjah 1411 A.H.\n(1 July 1991) and operates under Commercial Registration No. 1010084223 and issued unified number 7001360630. Prior to the\nconsolidation of activities in 1991, the core business was conducted between 1977 and 1991 under the Almarai brand name.\nThe Company’s Head Office is located at Exit 7, North Ring Road, Al Izdihar District, P.O. Box 8524, Riyadh 11492, Kingdom of\nSaudi Arabia (“Saudi Arabia”).\nThe Company and its subsidiaries (together, the “Group”) are a major integrated consumer food and beverage Group in the\nMiddle East with leading market share in Saudi Arabia. It also operates in Egypt, Jordan and other Gulf Cooperation Council\n(“GCC”) countries.\nDairy, fruit juices and related food business is operated under the “Almarai”, “Beyti” and “Teeba” brand names. All raw milk\nproduction, dairy and fruit juice product processing and related food product manufacturing activities are undertaken in Saudi\nArabia, United Arab Emirates (“UAE”), Egypt and Jordan.\nDairy, fruit juices and related food business in Egypt and Jordan operates through a fully owned subsidiary International Dairy\nand Juice Limited (“IDJ”). The Group manages IDJ operations through the following key subsidiaries:\nJordan - Teeba Investment for Developed Food Processing\nEgypt - International Company for Agricultural Industries Projects (Beyti) (SAE)\nBakery products are manufactured and traded by Western Bakeries Company Limited and Modern Food Industries Company\nLimited under the brand names “L’usine” and “7 Days”, respectively.\nPoultry products are manufactured and traded by Hail Agricultural Development Company under the “Alyoum” and\n“AlBashayer” brand names.\nSeafood products are traded under the “Seama” brand name.\nIce cream products are traded under the “Almarai” brand name.\nInfant Nutrition products are manufactured by Almarai Baby Food Company Limited and traded by International Pediatric\nNutrition Company under “Nuralac” and “Evolac” brand names.\nDrinking water products are manufactured and traded by Pure Beverages Industries Company Limited under the “Oska” and\n“Ival” brand names\nIn territories where the Group has operations, final consumer packed products are distributed from manufacturing facilities to\nlocal distribution centres by the Group’s long haul distribution fleet. The distribution centres in GCC countries are managed\nthrough subsidiaries in UAE, Sultanate of Oman (“Oman) and Kingdom of Bahrain (“Bahrain”) and an agency agreements in\nKuwait and Qatar as follows:\nUAE - Almarai Emirates Company LLC\nOman - Arabian Planets for Trading and Marketing LLC\nBahrain - Almarai Company Bahrain W.L.L.\nKuwait - Al Kharafi Brothers Dairy Products Company Limited\nQatar - Khalid for Foodstuff and Trading Company\nIn other territories, where permissible by law, export sales are made through other subsidiaries.\nThe Group owns and operates arable farms in Argentina and in United States of America (USA), collectively referred to as\n“Fondomonte”, through the following key subsidiaries:\nUSA - Fondomonte Holdings North America LLC\nArgentina - Fondomonte South America S.A\nThe Group’s non-GCC business operations under IDJ and Fondomonte are managed through Almarai Investment Holding\nCompany W.L.L., a company incorporated in the Kingdom of Bahrain.\nPoultry grandparent farming operations are conducted by Pure Breed Poultry (Taseel) Company.\nValue- added meat and poultry for the Middle East food services industry are manufactured and distributed by Premier Foods\nIndustries Company LLC.\nFrozen bakery products are produced and sold in the UAE and Bahrain by Bakemart FZ LLC, Bakemart L.L.C (UAE), and\nBakemart W.L.L (Bahrain).\nAcquisitions\nOn 19 Dhul-Hijjah 1446 A.H (15 June 2025), the Group entered into a Share Purchase Agreement (“SPA”) to acquire 100% shares\nin Pure Beverages Industry Company Limited, a company based in the Kingdom of Saudi Arabia. The closure of the acquisition\nand determination of the date of control was subject to completion of certain conditions identified in the SPA. On 31 July 2025,\nthe Group completed the acquisition and settled the consideration amounting to\n$\n1,012 million.\nPure Beverages Industry Company Limited’s main operation is the production and distribution of bottled drinking water. This\nacquisition marks Group‘s strategic entry into the bottled water segment and strengthens its position in the broader beverage\nmarket. Also refer note 7."
+    },
+    {
+      "page": 11,
+      "source": "vision",
+      "chars": 9963,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n1. THE COMPANY, ITS SUBSIDIARIES AND ITS BUSINESS DESCRIPTION (Continued…)\nGeopolitical Developments\nThe Group continues to monitor regional geopolitical developments and related supply chain conditions. During the period,\ncertain disruptions to regional transportation networks resulted in inflationary pressures on transportation and logistics costs.\nThe Group undertook appropriate operational measures, including the use of alternative transportation routes where\nnecessary, to maintain continuity of supply and operations.\nThese developments did not have a material impact on the Group’s operations for the period ended 30 June 2026. The Group\nwill continue to assess the situation and monitor any potential future effects on its operating conditions, supply chain\narrangements and cost structure at subsequent reporting dates.\n2. BASIS OF PREPARATION\n2 .1 Statement of Compliance\nThese Condensed Consolidated Interim Financial Statements have been prepared in accordance with International\nAccounting Standard IAS 34 ‘Interim Financial Reporting’ that is endorsed in the Kingdom of Saudi Arabia and other\nstandards and pronouncements that are issued by Saudi Organization for Chartered and Professional Accountants\n(“SOCPA”) and should be read in conjunction with the Group’s last annual Consolidated Financial Statements for the year\nended 31 December 2025. These do not include all of the information normally required for a complete set of Consolidated\nFinancial Statements; however, accounting policies and selected explanatory notes are included to explain events and\ntransactions that are significant to an understanding of the changes in the Group’s financial position and performance\nsince 31 December 2025.\n2.2 Preparation of the Financial Statements\nThese Condensed Consolidated Interim Financial Statements have been prepared on the historical cost basis except for\nthe following material items in the Condensed Consolidated Statement of Financial Position:\n Derivative financial instruments are measured at fair value.\n The employee retirement benefit is recognised at the present value of future obligations using the Projected Unit\nCredit Method.\n Biological Assets, where fair value is reliably measurable, have been measured at fair value.\n2.3 Use of Judgments and Estimates\nIn preparing these Condensed Consolidated Interim Financial Statements, management has made judgments and\nestimates that affect the application of accounting policies and the reported amounts of assets and liabilities, income and\nexpense. Actual results may differ from these estimates.\nThe significant judgments made by management in applying the Group’s accounting policies and the key sources of\nestimation uncertainty were the same as those described in the last annual Consolidated Financial Statement.\n3. FUNCTIONAL AND PRESENTATION CURRENCY\n$\nThese Condensed Consolidated Interim Financial Statements are presented in Saudi Riyals (“ ”), which is the Company’s\nfunctional and Group’s presentation currency. All amounts have been rounded to the nearest thousand, unless otherwise\nindicated.\n4. MATERIAL ACCOUNTING POLICIES\n4.1 Ne w Standards, Amendment to Standards and Interpretations\nThe new standards and amendments to standards disclosed in the Group's annual consolidated financial statements\nremain unchanged.\nIFRS 18 Presentation and Disclosure in Financial Statements will replace IAS 1 Presentation of Financial Statements and\napplies for annual reporting periods beginning on or after 1 January 2027. The Group has not early adopted the new\naccounting standard in preparing these interim financial statements; however, earlier application is permitted.\nThe Group is in the process of assessing the estimated impact that the initial application of IFRS 18 will have on its\nconsolidated financial statements.\na) Structure of the Statement of Profit or Loss\nIFRS 18 requires entities to classify all income and expenses into categories in the statement of profit or loss – namely\noperating, investing, financing, zakat income tax and discontinued operations. Classification of income and expenses\ndepends on the main business activities of an entity. The Group has determined that it does not have a specified main\nbusiness activity of investing in assets and/or providing financing to customers.\nNeither net profit nor net assets will change as a result of the Group’s adoption of IFRS 18. The Group will be required to\npresent two newly defined subtotals, which are ‘operating profit’ and ‘profit or loss before financing and income taxes’,\nHowever, operating profit subtotal differs from the current operating profit subtotal presented by the Group. Based on the\ninformation currently available, the Group expects changes to the current structure of the statement of profit or loss to\nresult from the following.\n9\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n9\n1. THE COMPANY, ITS SUBSIDIARIES AND ITS BUSINESS DESCRIPTION (Continued…)\nGeopolitical Developments\nThe Group continues to monitor regional geopolitical developments and related supply chain conditions. During the period,\ncertain disruptions to regional transportation networks resulted in inflationary pressures on transportation and logistics costs.\nThe Group undertook appropriate operational measures, including the use of alternative transportation routes where\nnecessary, to maintain continuity of supply and operations.\nThese developments did not have a material impact on the Group’s operations for the period ended 30 June 2026. The Group\nwill continue to assess the situation and monitor any potential future effects on its operating conditions, supply chain\narrangements and cost structure at subsequent reporting dates.\n2. BASIS OF PREPARATION\n2.1 Statement of Compliance\nThese Condensed Consolidated Interim Financial Statements have been prepared in accordance with International\nAccounting Standard IAS 34 ‘Interim Financial Reporting’ that is endorsed in the Kingdom of Saudi Arabia and other\nstandards and pronouncements that are issued by Saudi Organization for Chartered and Professional Accountants\n(“SOCPA”) and should be read in conjunction with the Group’s last annual Consolidated Financial Statements for the year\nended 31 December 2025. These do not include all of the information normally required for a complete set of Consolidated\nFinancial Statements; however, accounting policies and selected explanatory notes are included to explain events and\ntransactions that are significant to an understanding of the changes in the Group’s financial position and performance\nsince 31 December 2025.\n2.2 Preparation of the Financial Statements\nThese Condensed Consolidated Interim Financial Statements have been prepared on the historical cost basis except for\nthe following material items in the Condensed Consolidated Statement of Financial Position:\n Derivative financial instruments are measured at fair value.\n The employee retirement benefit is recognised at the present value of future obligations using the Projected Unit\nCredit Method.\n Biological Assets, where fair value is reliably measurable, have been measured at fair value.\n2.3 Use of Judgments and Estimates\nIn preparing these Condensed Consolidated Interim Financial Statements, management has made judgments and\nestimates that affect the application of accounting policies and the reported amounts of assets and liabilities, income and\nexpense. Actual results may differ from these estimates.\nThe significant judgments made by management in applying the Group’s accounting policies and the key sources of\nestimation uncertainty were the same as those described in the last annual Consolidated Financial Statement.\n3. FUNCTIONAL AND PRESENTATION CURRENCY\nThese Condensed Consolidated Interim Financial Statements are presented in Saudi Riyals (“\n$\n”), which is the Company’s\nfunctional and Group’s presentation currency. All amounts have been rounded to the nearest thousand, unless otherwise\nindicated.\n4. MATERIAL ACCOUNTING POLICIES\n4.1 New Standards, Amendment to Standards and Interpretations\nThe new standards and amendments to standards disclosed in the Group's annual consolidated financial statements\nremain unchanged.\nIFRS 18 Presentation and Disclosure in Financial Statements will replace IAS 1 Presentation of Financial Statements and\napplies for annual reporting periods beginning on or after 1 January 2027. The Group has not early adopted the new\naccounting standard in preparing these interim financial statements; however, earlier application is permitted.\nThe Group is in the process of assessing the estimated impact that the initial application of IFRS 18 will have on its\nconsolidated financial statements.\na) Structure of the Statement of Profit or Loss\nIFRS 18 requires entities to classify all income and expenses into categories in the statement of profit or loss – namely\noperating, investing, financing, zakat income tax and discontinued operations. Classification of income and expenses\ndepends on the main business activities of an entity. The Group has determined that it does not have a specified main\nbusiness activity of investing in assets and/or providing financing to customers.\nNeither net profit nor net assets will change as a result of the Group’s adoption of IFRS 18. The Group will be required to\npresent two newly defined subtotals, which are ‘operating profit’ and ‘profit or loss before financing and income taxes’,\nHowever, operating profit subtotal differs from the current operating profit subtotal presented by the Group. Based on the\ninformation currently available, the Group expects changes to the current structure of the statement of profit or loss to\nresult from the following."
+    },
+    {
+      "page": 12,
+      "source": "vision",
+      "chars": 9540,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n4. MATERIAL ACCOUNTING POLICIES (Continued…)\n4.1 Ne w Standards, Amendment to Standards and Interpretations (Continued…)\na) Structure of the Statement of Profit or Loss (Continued)\n Interest income and expenses are generally included in finance income and finance costs under the Group’s current\naccounting policy and are presented in the ‘net finance costs’ subtotal. IFRS 18 provides specific guidance on the\nincome and expenses classified in the investing and financing categories.\n Interest cost on employee benefit obligations, which is currently presented within employee costs, will be classified\nand presented within finance costs.\n Net foreign exchange losses are currently included in finance costs and presented in net finance costs. Under IFRS\n18, foreign exchange differences are required to be presented in the same category as the income and expenses from\nthe items that gave rise to the differences. The Group has determined that it has foreign exchange differences to be\nclassified in the operating and financing categories. For example, foreign exchange differences on trade payables\nand trade receivables will be classified in the operating category.\n Gains and losses on certain designated cash flow hedging instruments are currently included in finance costs and\npresented in net finance costs. Under IFRS 18, gains and losses on designated hedging instruments are required to\nbe classified in the same category as the income and expenses affected by the hedged risks. The Group has\ndetermined that gains or losses on these hedging instruments will be classified in the operating and financing\ncategories.\nb) Management- defined performance measures\nManagement-defined performance measures (MPMs) are subtotals of income and expenses used in public\ncommunications outside the financial statements that communicate to users management’s view of an aspect of the\nfinancial performance of the entity as a whole. The Group will be required to disclose specific information about MPMs in\na single note in the financial statements.\nThe Group is in process to determine which public communications should be considered when identifying MPMs. MPMs\nrelate to the same reporting period as the financial statements. Therefore, MPMs disclosed by the Group following\nadoption of IFRS 18 will be determined based on public communications issued by the Group relating to the 2027 interim\nreporting period.\nc) Principles of aggregation and disaggregation\nIFRS 18 provides enhanced principles on how to group information in the financial statements (i.e. the primary financial\nstatements and the notes). It also introduces guidance on labelling and describing items presented in the primary financial\nstatements or disclosed in the notes.\nThe Group is assessing the grouping of items on the basis of similar and dissimilar characteristics. Based on this\nassessment, it will present line items in the primary financial statements that provide useful structured summaries and\ndisclose additional material information in the notes.\nThe Group is also assessing line items currently labelled as ‘other’ and will use more informative labels.\nd) Consequential amendments\nIFRS 18 introduces consequential amendments to IAS 7, which require entities to use the newly defined operating profit\nsubtotal as the starting point for the statement of cash flows when presenting operating cash flows under the indirect\nmethod. The Group currently uses profit for the year/period as the starting point of the reconciliation to cash flows from\noperating activities. Certain adjusting items included in the reconciliation will change as a result of the new starting point.\nThe consequential amendments also provide specific guidance on the classification of interest and dividend cash flows.\nThe Group will classify cash flows from interest paid as financing activities rather than operating activities under this\nguidance. Cash flows from interest and dividends received and from dividends paid will continue to be classified as\ninvesting activities and financing activities, respectively.\n5. SHARE CAPITAL\n$ $\nThe Company’s share capital as at 30 June 2026 amounted to 10,000 million (2025: 10,000 million), consisting of 1,000\n$\nmillion (2025: 1,000 million) fully paid and issued shares of 10 each.\n6. STATUTORY RESERVE\nThe statutory reserve included in the condensed consolidated interim financial statements was required under the Company’s\nprevious by-laws. However, following amendments to the Company's by-laws during the year ended 31 December 2024, the\nrequirement to set aside a statutory reserve has been removed.\n10\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n10\n4. MATERIAL ACCOUNTING POLICIES (Continued…)\n4.1 New Standards, Amendment to Standards and Interpretations (Continued…)\na) Structure of the Statement of Profit or Loss (Continued)\n Interest income and expenses are generally included in finance income and finance costs under the Group’s current\naccounting policy and are presented in the ‘net finance costs’ subtotal. IFRS 18 provides specific guidance on the\nincome and expenses classified in the investing and financing categories.\n Interest cost on employee benefit obligations, which is currently presented within employee costs, will be classified\nand presented within finance costs.\n Net foreign exchange losses are currently included in finance costs and presented in net finance costs. Under IFRS\n18, foreign exchange differences are required to be presented in the same category as the income and expenses from\nthe items that gave rise to the differences. The Group has determined that it has foreign exchange differences to be\nclassified in the operating and financing categories. For example, foreign exchange differences on trade payables\nand trade receivables will be classified in the operating category.\n Gains and losses on certain designated cash flow hedging instruments are currently included in finance costs and\npresented in net finance costs. Under IFRS 18, gains and losses on designated hedging instruments are required to\nbe classified in the same category as the income and expenses affected by the hedged risks. The Group has\ndetermined that gains or losses on these hedging instruments will be classified in the operating and financing\ncategories.\nb) Management- defined performance measures\nManagement-defined performance measures (MPMs) are subtotals of income and expenses used in public\ncommunications outside the financial statements that communicate to users management’s view of an aspect of the\nfinancial performance of the entity as a whole. The Group will be required to disclose specific information about MPMs in\na single note in the financial statements.\nThe Group is in process to determine which public communications should be considered when identifying MPMs. MPMs\nrelate to the same reporting period as the financial statements. Therefore, MPMs disclosed by the Group following\nadoption of IFRS 18 will be determined based on public communications issued by the Group relating to the 2027 interim\nreporting period.\nc) Principles of aggregation and disaggregation\nIFRS 18 provides enhanced principles on how to group information in the financial statements (i.e. the primary financial\nstatements and the notes). It also introduces guidance on labelling and describing items presented in the primary financial\nstatements or disclosed in the notes.\nThe Group is assessing the grouping of items on the basis of similar and dissimilar characteristics. Based on this\nassessment, it will present line items in the primary financial statements that provide useful structured summaries and\ndisclose additional material information in the notes.\nThe Group is also assessing line items currently labelled as ‘other’ and will use more informative labels.\nd) Consequential amendments\nIFRS 18 introduces consequential amendments to IAS 7, which require entities to use the newly defined operating profit\nsubtotal as the starting point for the statement of cash flows when presenting operating cash flows under the indirect\nmethod. The Group currently uses profit for the year/period as the starting point of the reconciliation to cash flows from\noperating activities. Certain adjusting items included in the reconciliation will change as a result of the new starting point.\nThe consequential amendments also provide specific guidance on the classification of interest and dividend cash flows.\nThe Group will classify cash flows from interest paid as financing activities rather than operating activities under this\nguidance. Cash flows from interest and dividends received and from dividends paid will continue to be classified as\ninvesting activities and financing activities, respectively.\n5. SHARE CAPITAL\nThe Company’s share capital as at 30 June 2026 amounted to\n$\n10,000 million (2025:\n$\n10,000 million), consisting of 1,000\nmillion (2025: 1,000 million) fully paid and issued shares of\n$\n10 each.\n6. STATUTORY RESERVE\nThe statutory reserve included in the condensed consolidated interim financial statements was required under the Company’s\nprevious by-laws. However, following amendments to the Company's by-laws during the year ended 31 December 2024, the\nrequirement to set aside a statutory reserve has been removed."
+    },
+    {
+      "page": 13,
+      "source": "vision",
+      "chars": 3246,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n7. BUSINESS COMBINATION\nAs explained in note 1, Group effectively obtained control of Pure Beverages Industry Company Limited on 6 Safar 1447 A.H (31\nJuly 2025).\nDuring the period, the Group finalised the purchase price allocation (“PPA”) for the acquisition, which was previously reported\nas provisional. The finalisation of the PPA did not result in any measurement period adjustments, and accordingly, there have\nbeen no changes to the provisional amounts disclosed in the consolidated financial statements for the year ended 31 December\n2025.\nThe assets and liabilities recognised as a result of the acquisition are as follows:\nFair Value on\nAcquisition\n'000\n$\nAssets Acquired:\nNon-Current Assets\nProperty, Plant and Equipment 417,284\nIntangible Assets 2,181\nCustomer Relationships and Brands 155,800\nRight of Use Assets 26,658\n6 01,923\nCurrent Assets\nCash and Cash Equivalents 11,129\nTrade Receivables, Prepayments and Other Receivables 177,758\nInventories 40,238\n229,125\nTotal Assets 831,048\nLiabilities Assumed:\nNon-Current Liabilities\nLease Liabilities 10,803\nEmployee Retirement Benefits 12,553\n2 3,356\nCurrent Liabilities\nLease Liabilities 9,491\nTrade and Other Payables 114,086\n123,577\nTotal Liabilities 1 46,933\nTotal Purchase Consideration 1,012,223\nTotal Identifiable Net Assets ( 684,115)\nGoodwill Arising on Acquisition 3 28,108\nCash Outflow on Acquisition:\nNet Cash Acquired with the Subsidiary 11,129\nCash Paid (1,021,223)\nNet Cash Outflow (1,010,094)\n11\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n11\n7. BUSINESS COMBINATION\nAs explained in note 1, Group effectively obtained control of Pure Beverages Industry Company Limited on 6 Safar 1447 A.H (31\nJuly 2025).\nDuring the period, the Group finalised the purchase price allocation (“PPA”) for the acquisition, which was previously reported\nas provisional. The finalisation of the PPA did not result in any measurement period adjustments, and accordingly, there have\nbeen no changes to the provisional amounts disclosed in the consolidated financial statements for the year ended 31 December\n2025.\nThe assets and liabilities recognised as a result of the acquisition are as follows:\nFair Value on\nAcquisition\n'000\n$\nAssets Acquired:\nNon-Current Assets\nProperty, Plant and Equipment 417,284\nIntangible Assets 2,181\nCustomer Relationships and Brands 155,800\nRight of Use Assets 26,658\n601,923\nCurrent Assets\nCash and Cash Equivalents 11,129\nTrade Receivables, Prepayments and Other Receivables 177,758\nInventories 40,238\n229,125\nTotal Assets 831,048\nLiabilities Assumed:\nNon-Current Liabilities\nLease Liabilities 10,803\nEmployee Retirement Benefits 12,553\n23,356\nCurrent Liabilities\nLease Liabilities 9,491\nTrade and Other Payables 114,086\n123,577\nTotal Liabilities 146,933\nTotal Purchase Consideration 1,012,223\nTotal Identifiable Net Assets (684,115)\nGoodwill Arising on Acquisition 328,108\nCash Outflow on Acquisition:\nNet Cash Acquired with the Subsidiary 11,129\nCash Paid (1,021,223)\nNet Cash Outflow (1,010,094)"
+    },
+    {
+      "page": 14,
+      "source": "vision",
+      "chars": 4402,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n8. LOANS AND BORROWINGS\n30 June 31 December\n2026 2025\n(Unaudited) (Audited)\nNotes '000 '000\n$ $\nNon-Current Liabilities\nIslamic Banking Facilities (Murabaha) 8.1 7 ,528,573 5,960,307\nSaudi Industrial Development Fund (\"SIDF\") 4 7,141 128,143\nBanking Facilities of Non-GCC Subsidiaries 1 85,119 128,588\nSupranational (Murabaha) - 4 7,277\nAgricultural Development Fund (\"ADF\") 18,848 17,987\nInternational Sukuk 4 ,671,363 4,669,508\n1 2,451,044 1 0,951,810\nCurrent Liabilities\nIslamic Banking Facilities (Murabaha) 8.1 8 22,602 1,062,084\nSaudi Industrial Development Fund (\"SIDF\") 1 77,505 1 97,499\nBanking Facilities of Non-GCC Subsidiaries 1 55,214 68,408\nSupranational (Murabaha) 71,745 7 2,137\nAgricultural Development Fund (\"ADF\") 24,543 2 3,886\nInternational Sukuk 9 1,243 9 6,316\n1,342,852 1,520,330\nTotal Loans and Borrowings 13,793,896 12,472,140\n$\n8.1 During the period ended 30 June 2026, 1,875 million were drawn down from existing Islamic banking facilities (Murabaha)\n(31 December 2025: Nil).\n8.2 The loans contain certain covenants. A future breach of covenants may lead to renegotiation. The covenants are\nmonitored on a monthly basis by management. In case of potential breach, actions are taken by management to ensure\ncompliance. During the period ended 30 June 2026, there has been no non-compliance with any of the covenants.\n9. EARNINGS PER SHARE\nThe calculation of the basic and diluted earnings per share is based on the following data:\nApril - June April - June January - June January - June\n2026 2025 2026 2025\n(Unaudited) (Unaudited) (Unaudited) (Unaudited)\n'000 '000 '000 '000\n$ $ $ $\nProfit for the period attributable to the Shareholders of the\nCompany 6 35,657 646,866 1,367,879 1,378,060\nNumber of shares '000'\nWeighted average number of ordinary shares for the\n9 90,042 989,326 989,812 989,280\npurpose of basic earnings\nWeighted average number of ordinary shares repurchased 9 ,958 10,674 1 0,188 10,720\nWeighted average number of ordinary shares for the\npurpose of diluted earnings 1 ,000,000 1 ,000,000 1 ,000,000 1 ,000,000\n12\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n12\n8. LOANS AND BORROWINGS\n30 June\n2026\n(Unaudited)\n31 December\n2025\n(Audited)\nNotes '000 '000\n$ $\nIslamic Banking Facilities (Murabaha) 8.1 7,528,573 5,960,307\nSaudi Industrial Development Fund (\"SIDF\") 47,141 128,143\nBanking Facilities of Non-GCC Subsidiaries 185,119 128,588\nSupranational (Murabaha) - 47,277\nAgricultural Development Fund (\"ADF\") 18,848 17,987\nInternational Sukuk 4,671,363 4,669,508\n12,451,044 10,951,810\nIslamic Banking Facilities (Murabaha) 8.1 822,602 1,062,084\nSaudi Industrial Development Fund (\"SIDF\") 177,505 197,499\nBanking Facilities of Non-GCC Subsidiaries 155,214 68,408\nSupranational (Murabaha) 71,745 72,137\nAgricultural Development Fund (\"ADF\") 24,543 23,886\nInternational Sukuk 91,243 96,316\n1,342,852 1,520,330\nTotal Loans and Borrowings 13,793,896 12,472,140\nNon-Current Liabilities\nCurrent Liabilities\n8.1 During the period ended 30 June 2026,\n$\n1,875 million were drawn down from existing Islamic banking facilities (Murabaha)\n(31 December 2025: Nil).\n8.2 The loans contain certain covenants. A future breach of covenants may lead to renegotiation. The covenants are\nmonitored on a monthly basis by management. In case of potential breach, actions are taken by management to ensure\ncompliance. During the period ended 30 June 2026, there has been no non-compliance with any of the covenants.\n9. EARNINGS PER SHARE\nThe calculation of the basic and diluted earnings per share is based on the following data:\nApril - June\n2026\n(Unaudited)\nApril - June\n2025\n(Unaudited)\nJanuary - June\n2026\n(Unaudited)\nJanuary - June\n2025\n(Unaudited)\n'000 '000 '000 '000\n$ $ $ $\n635,657 646,866 1,367,879 1,378,060\nNumber of shares '000'\n990,042 989,326 989,812 989,280\n9,958 10,674 10,188 10,720\n1,000,000 1,000,000 1,000,000 1,000,000\nProfit for the period attributable to the Shareholders of the\nCompany\nWeighted average number of ordinary shares for the\npurpose of basic earnings\nWeighted average number of ordinary shares for the\npurpose of diluted earnings\nWeighted average number of ordinary shares repurchased"
+    },
+    {
+      "page": 15,
+      "source": "vision",
+      "chars": 7464,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n9. EARNINGS PER SHARE (Continued…)\nApril - June April - June January - June January - June\n2026 2025 2026 2025\n(Unaudited) (Unaudited) (Unaudited) (Unaudited)\n$\nEarnings per Share ( ), based on Profit for the\nperiod attributable to Shareholders of the Company\n- Basic 0.64 0.65 1.38 1.39\n- Diluted 0.64 0.65 1.37 1.38\nWeighted average number of shares are retrospectively adjusted to reflect the effect of Bonus Shares and are adjusted to\ntake account of Treasury Shares held under the Almarai Employee Equity Participation Program.\n10. SEGMENT REPORTING\nThe Group’s principal business activities involve manufacturing and trading of dairy and juice products under Almarai, Beyti\nand Teeba brands, bakery products under L’usine and 7 Days brands and poultry products under Alyoum and AlBashayer\nbrands. Seafood and value-added meat products, together with poultry, are presented under protein segment. Other activities\ninclude arable, horticulture, infant nutrition and water. Selected financial information as at 30 June 2026 and 30 June 2025, and\nfor the period then ended, categorised by these business segments, is as follows:\nDairy and Juice Milk production, dairy, fruits juice, ice cream product processing and distribution\nBakery Bakery products manufacturing and distribution\nProtein* Poultry products manufacturing and distribution, seafood and value added meat products.\nOther Activities* Arable, horticulture, infant nutrition and water.\nDairy Other\nand Juice Bakery Protein* Activities* Total\n'000 '000 '000 '000 '000\n$ $ $ $ $\n30 June 2026\nRevenue 7,937,368 1,408,790 2,265,235 858,086 1 2,469,479\nThird Party Revenue 7,895,271 1,408,790 2,265,235 458,962 1 2,028,258\nDepreciation and Amortisation (702,893) (97,651) ( 362,076) (93,687) ( 1,256,307)\nProfit / (Loss) for the period 9 15,780 2 31,694 2 41,400 (20,256) 1 ,368,618\nProfit / (Loss) attributable to Shareholders of the Company 915,041 2 31,694 2 41,400 (20,256) 1 ,367,879\nTotal Assets 2 3,726,722 1,960,260 1 3,105,460 4,015,870 4 2,808,312\nTotal Liabilities 15,475,327 4 08,751 5 ,491,271 803,383 2 2,178,732\n31 December 2025\nTotal Assets 22,267,954 1 ,866,423 12,004,313 3 ,828,208 3 9,966,898\nTotal Liabilities 13,200,048 381,699 5 ,195,665 662,250 1 9,439,662\n30 June 2025\nRevenue 7,578,629 1 ,327,445 2 ,017,299 686,223 1 1,609,596\nThird Party Revenue 7,533,771 1 ,327,445 2 ,017,299 1 76,977 1 1,055,492\nDepreciation and Amortisation (725,836) ( 94,266) ( 310,922) (70,610) ( 1,201,634)\nShare of Results of Associate - - - (1,222) ( 1,222)\nProfit for the period 9 05,237 1 91,600 2 53,593 28,207 1 ,378,637\nProfit attributable to Shareholders of the Company 904,660 1 91,600 2 53,593 28,207 1 ,378,060\nTotal Assets 21,277,872 2 ,024,637 1 1,325,368 3,127,320 3 7,755,197\nTotal Liabilities 12,957,944 4 34,581 4 ,310,292 688,132 1 8,390,949\n31 December 2024\nTotal Assets 21,120,578 1,982,800 9 ,557,661 2,906,921 3 5,567,960\nTotal Liabilities 12,799,436 4 27,890 2,957,078 5 92,424 1 6,776,828\nThe Group’s revenue is derived from contracts with customers for sale of consumer products. Control of products is transferred\nat a point in time and directly sold to customers.\nSegment assets are measured in the same way as in the Financial Statements. These assets are allocated and analysed\nbased on the operations of the segment. The Group’s management does not analyse total assets based on its geographical\nlocation and therefore country-wise total assets are not disclosed in these Condensed Consolidated Interim Financial\nStatements.\nThe revenue from business segments categorised by geographical region is as follows:\n13\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n13\n9. EARNINGS PER SHARE (Continued…)\nApril - June\n2026\n(Unaudited)\nApril - June\n2025\n(Unaudited)\nJanuary - June\n2026\n(Unaudited)\nJanuary - June\n2025\n(Unaudited)\n- Basic 0.64 0.65 1.38 1.39\n- Diluted 0.64 0.65 1.37 1.38\nEarnings per Share (\n$\n), based on Profit for the\nperiod attributable to Shareholders of the Company\nWeighted average number of shares are retrospectively adjusted to reflect the effect of Bonus Shares and are adjusted to\ntake account of Treasury Shares held under the Almarai Employee Equity Participation Program.\n10. SEGMENT REPORTING\nThe Group’s principal business activities involve manufacturing and trading of dairy and juice products under Almarai, Beyti\nand Teeba brands, bakery products under L’usine and 7 Days brands and poultry products under Alyoum and AlBashayer\nbrands. Seafood and value-added meat products, together with poultry, are presented under protein segment. Other activities\ninclude arable, horticulture, infant nutrition and water. Selected financial information as at 30 June 2026 and 30 June 2025, and\nfor the period then ended, categorised by these business segments, is as follows:\nDairy and Juice Milk production, dairy, fruits juice, ice cream product processing and distribution\nBakery Bakery products manufacturing and distribution\nProtein* Poultry products manufacturing and distribution, seafood and value added meat products.\nOther Activities* Arable, horticulture, infant nutrition and water.\nDairy\nand Juice Bakery Protein*\nOther\nActivities* Total\n'000 '000 '000 '000 '000\n$ $ $ $ $\n30 June 2026\nRevenue 7,937,368 1,408,790 2,265,235 858,086 12,469,479\nThird Party Revenue 7,895,271 1,408,790 2,265,235 458,962 12,028,258\n(702,893) (97,651) (362,076) (93,687) (1,256,307)\nProfit / (Loss) for the period 915,780 231,694 241,400 (20,256) 1,368,618\nProfit / (Loss) attributable to Shareholders of the Company 915,041 231,694 241,400 (20,256) 1,367,879\nTotal Assets 23,726,722 1,960,260 13,105,460 4,015,870 42,808,312\nTotal Liabilities 15,475,327 408,751 5,491,271 803,383 22,178,732\n31 December 2025\nTotal Assets 22,267,954 1,866,423 12,004,313 3,828,208 39,966,898\nTotal Liabilities 13,200,048 381,699 5,195,665 662,250 19,439,662\n30 June 2025\nRevenue 7,578,629 1,327,445 2,017,299 686,223 11,609,596\nThird Party Revenue 7,533,771 1,327,445 2,017,299 176,977 11,055,492\n(725,836) (94,266) (310,922) (70,610) (1,201,634)\n- - - (1,222) (1,222)\nProfit for the period 905,237 191,600 253,593 28,207 1,378,637\nProfit attributable to Shareholders of the Company 904,660 191,600 253,593 28,207 1,378,060\n21,277,872 2,024,637 11,325,368 3,127,320 37,755,197\nTotal Liabilities 12,957,944 434,581 4,310,292 688,132 18,390,949\n31 December 2024\nTotal Assets 21,120,578 1,982,800 9,557,661 2,906,921 35,567,960\nTotal Liabilities 12,799,436 427,890 2,957,078 592,424 16,776,828\nTotal Assets\nDepreciation and Amortisation\nDepreciation and Amortisation\nShare of Results of Associate\nThe Group’s revenue is derived from contracts with customers for sale of consumer products. Control of products is transferred\nat a point in time and directly sold to customers.\nSegment assets are measured in the same way as in the Financial Statements. These assets are allocated and analysed\nbased on the operations of the segment. The Group’s management does not analyse total assets based on its geographical\nlocation and therefore country-wise total assets are not disclosed in these Condensed Consolidated Interim Financial\nStatements.\nThe revenue from business segments categorised by geographical region is as follows:"
+    },
+    {
+      "page": 16,
+      "source": "vision",
+      "chars": 7249,
+      "tables": 0,
+      "text": "ALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n10. SEGMENT REPORTING (Continued…)\nDairy Other\nand Juice Bakery Protein* Activities* Total\n'000 '000 '000 '000 '000\n$ $ $ $ $\nFor the six-month period\nended 30 June 2026\nSaudi Arabia 4,797,261 1,026,216 1,784,808 349,776 7 ,958,061\nOther GCC Countries 1,660,082 366,820 405,899 - 2 ,432,801\nOther Countries 1,437,928 15,754 74,528 109,186 1 ,637,396\nTotal Third Party Revenue 7 ,895,271 1,408,790 2,265,235 458,962 12,028,258\nFor the six-month period\nended 30 June 2025\nSaudi Arabia 4,714,068 956,088 1,619,575 101,258 7 ,390,989\nOther GCC Countries 1 ,623,283 356,389 341,108 689 2 ,321,469\nOther Countries 1,196,420 14,968 56,616 75,030 1 ,343,034\nTotal Third Party Revenue 7 ,533,771 1,327,445 2,017,299 176,977 1 1,055,492\n* Effective Q1 2026, the Group has expanded its 'Poultry' operating segment to a broader 'Protein' segment. This updated\nsegment now encompasses poultry products, seafood, and value-added meat products (seafood and value-added products\nwere previously reported under other activities), reflecting the revised internal reporting provided to the Chief Operating\nDecision Maker (CODM). To ensure consistency with the current period's presentation, comparative figures for the six-month\nperiod ended 30 June 2025 have been reclassified to align with this revised segment composition.\n11. FAIR VALUE MEASUREMENT\nFinancial assets and financial liabilities measured at fair value are derivative financial instruments that include forwards,\ncommission rate swaps and commodity derivatives. These derivatives are classified as Level 2 fair value measurements,\nbased on valuations provided by counterparties using widely recognised valuation models. The valuation techniques applied\nby the counterparties include the use of forward pricing standard models using present value calculations and mid-market\nvaluations. Where applicable, these models project future cash flows and discount the future amounts to present value using\nmarket-based observable inputs including interest rate curves, credit spreads, foreign exchange rates, and forward and spot\nprices.\nThe classification methodology used in line with the annual consolidated financial statements for the year ended 31 December\n2025. No transfers were recorded between Level I, Level II or Level III during the period.\n12. COMMITMENT AND CONTINGENCIES\n$ $\n12.1. The Contingent Liabilities against letters of credit are 257 million at 30 June 2026 (31 December 2025: 385 million).\n$\n12.2. The Contingent Liabilities against letters of outward guarantee and corporate guarantee are 1,077 million at 30 June\n$\n2026 (31 December 2025: 1,023 million).\n$\n12.3. The Group had capital commitments amounting to 2,346 million at 30 June 2026 in respect of ongoing projects (31\n$\nDecember 2025: 2,620 million).\n13. DIVIDENDS\nOn 4 Dhul Qi’dah 1447 A.H (21 April 2026) the shareholders in their Extraordinary General Assembly Meeting approved\n$ $ $\ndividends of 1,150 million ( 1.15 per share) for the year ended 31 December 2025 out of which 1,137 million was paid during\nthe period.\n14. SUBSEQUENT EVENTS\nIn the opinion of the management, there have been no significant subsequent events since the period-end that require\nadjustment of or disclosure in these Condensed Consolidated Interim Financial Statements.\n15. BOARD OF DIRECTORS APPROVAL\nThese Condensed Consolidated Interim Financial Statements were approved by the Board of Directors on behalf of the\nShareholders on 20 Muharram 1448 A.H (5 July 2026).\n14\nALMARAI COMPANY\nA SAUDI JOINT STOCK COMPANY\nNOTES TO THE CONDENSED CONSOLIDATED INTERIM FINANCIAL STATEMENTS\nFOR THE SIX-MONTH PERIOD ENDED 30 JUNE 2026\n14\n10. SEGMENT REPORTING (Continued…)\nDairy\nand Juice Bakery Protein*\nOther\nActivities* Total\n'000 '000 '000 '000 '000\n$ $ $ $ $\nFor the six-month period\nended 30 June 2026\nSaudi Arabia 4,797,261 1,026,216 1,784,808 349,776 7,958,061\nOther GCC Countries 1,660,082 366,820 405,899 - 2,432,801\nOther Countries 1,437,928 15,754 74,528 109,186 1,637,396\nTotal Third Party Revenue 7,895,271 1,408,790 2,265,235 458,962 12,028,258\nFor the six-month period\nended 30 June 2025\nSaudi Arabia 4,714,068 956,088 1,619,575 101,258 7,390,989\nOther GCC Countries 1,623,283 356,389 341,108 689 2,321,469\nOther Countries 1,196,420 14,968 56,616 75,030 1,343,034\nTotal Third Party Revenue 7,533,771 1,327,445 2,017,299 176,977 11,055,492\n* Effective Q1 2026, the Group has expanded its 'Poultry' operating segment to a broader 'Protein' segment. This updated\nsegment now encompasses poultry products, seafood, and value-added meat products (seafood and value-added products\nwere previously reported under other activities), reflecting the revised internal reporting provided to the Chief Operating\nDecision Maker (CODM). To ensure consistency with the current period's presentation, comparative figures for the six-month\nperiod ended 30 June 2025 have been reclassified to align with this revised segment composition.\n11. FAIR VALUE MEASUREMENT\nFinancial assets and financial liabilities measured at fair value are derivative financial instruments that include forwards,\ncommission rate swaps and commodity derivatives. These derivatives are classified as Level 2 fair value measurements,\nbased on valuations provided by counterparties using widely recognised valuation models. The valuation techniques applied\nby the counterparties include the use of forward pricing standard models using present value calculations and mid-market\nvaluations. Where applicable, these models project future cash flows and discount the future amounts to present value using\nmarket-based observable inputs including interest rate curves, credit spreads, foreign exchange rates, and forward and spot\nprices.\nThe classification methodology used in line with the annual consolidated financial statements for the year ended 31 December\n2025. No transfers were recorded between Level I, Level II or Level III during the period.\n12. COMMITMENT AND CONTINGENCIES\n12.1. The Contingent Liabilities against letters of credit are\n$\n257 million at 30 June 2026 (31 December 2025:\n$\n385 million).\n12.2. The Contingent Liabilities against letters of outward guarantee and corporate guarantee are\n$\n1,077 million at 30 June\n2026 (31 December 2025:\n$\n1,023 million).\n12.3. The Group had capital commitments amounting to\n$\n2,346 million at 30 June 2026 in respect of ongoing projects (31\nDecember 2025:\n$\n2,620 million).\n13. DIVIDENDS\nOn 4 Dhul Qi’dah 1447 A.H (21 April 2026) the shareholders in their Extraordinary General Assembly Meeting approved\ndividends of\n$\n1,150 million (\n$\n1.15 per share) for the year ended 31 December 2025 out of which\n$\n1,137 million was paid during\nthe period.\n14. SUBSEQUENT EVENTS\nIn the opinion of the management, there have been no significant subsequent events since the period-end that require\nadjustment of or disclosure in these Condensed Consolidated Interim Financial Statements.\n15. BOARD OF DIRECTORS APPROVAL\nThese Condensed Consolidated Interim Financial Statements were approved by the Board of Directors on behalf of the\nShareholders on 20 Muharram 1448 A.H (5 July 2026)."
+    }
+  ]
+}

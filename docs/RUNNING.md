@@ -228,6 +228,27 @@ re-confirm with the right `--sheets`.
 
 ## Useful commands
 
+### FinScan v2 company folders
+
+With one PDF and one source workbook in each `inbox/<company>/` folder, run every
+company in one pass:
+
+```powershell
+.\.venv\Scripts\python.exe -m finscan2.cli companies run
+```
+
+For each folder, this reads every PDF, creates `mappings/<company>.json` only when
+it does not already exist, then writes `inbox/<company>_v2_output.<extension>`.
+Existing mappings are never overwritten. The batch continues when one company
+fails and prints a final list of failed companies; close any generated output
+workbooks in Excel before running.
+
+Validate every company without writing workbooks:
+
+```powershell
+.\.venv\Scripts\python.exe -m finscan2.cli companies run --dry-run
+```
+
 ```bash
 finscan inspect <xlsx>                          # workbook layout, no AI
 finscan inspect-pdf <pdf>                       # which pages hold the statements, no AI

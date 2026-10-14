@@ -1,0 +1,1940 @@
+{
+  "schema_version": "1.0",
+  "parser_version": "30",
+  "path": "C:\\Project\\finscan\\inbox\\Gruma\\2q26-gruma.pdf",
+  "sha256": "a4797941bd63fa5183c6a099447a7f8eeedf886bc137215471c5f27f021e324e",
+  "units": "millions",
+  "currency": "USD",
+  "ocr": {
+    "pages": [],
+    "engine": null
+  },
+  "issues": [
+    {
+      "code": "text_layer_repaired",
+      "severity": "info",
+      "message": "Letter-spaced text layer repaired on page(s) [6, 7, 8, 9, 10].",
+      "page": null
+    },
+    {
+      "code": "columns_unreadable",
+      "severity": "error",
+      "message": "The balance_sheet on page 4 has no readable column headers, so the period basis of its figures cannot be established.",
+      "page": 4
+    },
+    {
+      "code": "columns_misaligned",
+      "severity": "error",
+      "message": "The income_statement on page 13 parsed 6 column(s), but only 22 of 45 rows carry that many values. The header layout was not understood; figures from this statement cannot be assigned to a period.",
+      "page": 13
+    }
+  ],
+  "statements": [
+    {
+      "page": 4,
+      "kind": "balance_sheet",
+      "note": null,
+      "units": null,
+      "source": null,
+      "title": "Balance Sheet Highlights",
+      "heading": "",
+      "columns": [],
+      "rows": [
+        {
+          "caption": "Total assets increased by",
+          "values": [
+            5.4,
+            2026.0
+          ],
+          "raw": "Total assets increased by 6% to US$5.4 billion when compared to March 2026, reflecting increases",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "of",
+          "values": [
+            42.0,
+            15.0
+          ],
+          "raw": "of 8% in inventory, 42% in accounts receivables, and 15% in the cash balance. Property, plant and",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "equipment also grew by",
+          "values": [
+            3.0
+          ],
+          "raw": "equipment also grew by 3% during the period.",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total liabilities grew by",
+          "values": [
+            3.2
+          ],
+          "raw": "Total liabilities grew by 14% to US$3.2 billion, mainly due to an increase in short term debt in line",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "with inventory and cash balance growth and",
+          "values": [
+            26.0
+          ],
+          "raw": "with inventory and cash balance growth and 26% in accounts payable.",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Majority shareholders’ equity decreased by",
+          "values": [
+            2.2
+          ],
+          "raw": "Majority shareholders’ equity decreased by 3% to US$2.2 billion.",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 13,
+      "kind": "income_statement",
+      "note": null,
+      "units": "millions",
+      "source": null,
+      "title": "Income Statement (USD millions) 2Q26 2Q25 VAR (%) 2026 2025 VAR (%)",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "YoY 2Q26",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "YoY 2Q25",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 2,
+          "header": "YoY VAR (%)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 3,
+          "header": "YTD 2026",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 4,
+          "header": "YTD 2025",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 5,
+          "header": "YTD VAR (%)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Net Sales",
+          "values": [
+            1649.9,
+            1600.7,
+            3.0,
+            3274.7,
+            3149.2,
+            4.0
+          ],
+          "raw": "Net Sales 1,649.9 1,600.7 3 3,274.7 3,149.2 4",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost Of Sales",
+          "values": [
+            1002.6,
+            970.1,
+            3.0,
+            1998.6,
+            1902.6,
+            5.0
+          ],
+          "raw": "Cost Of Sales 1,002.6 970.1 3 1,998.6 1,902.6 5",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            647.3,
+            630.7,
+            3.0,
+            1276.1,
+            1246.6,
+            2.0
+          ],
+          "raw": "Gross Profit 647.3 630.7 3 1,276.1 1,246.6 2",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Margin (%)",
+          "values": [
+            39.2,
+            39.4,
+            -20.0,
+            39.0,
+            39.6,
+            -60.0
+          ],
+          "raw": "Gross Margin (%) 39.2% 39.4% (20) bp 39.0% 39.6% (60) bp",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Selling And Administrative Expenses",
+          "values": [
+            434.4,
+            406.6,
+            7.0,
+            868.8,
+            811.9,
+            7.0
+          ],
+          "raw": "Selling And Administrative Expenses 434.4 406.6 7 868.8 811.9 7",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Expense (Income), Net",
+          "values": [
+            -1.9,
+            -5.7,
+            67.0,
+            3.4,
+            -12.2,
+            128.0
+          ],
+          "raw": "Other Expense (Income), Net (1.9) (5.7) 67 3.4 (12.2) 128",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            214.8,
+            229.8,
+            -7.0,
+            403.9,
+            446.9,
+            -10.0
+          ],
+          "raw": "Operating Income 214.8 229.8 (7) 403.9 446.9 (10)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Margin (%)",
+          "values": [
+            13.0,
+            14.4,
+            -140.0,
+            12.3,
+            14.2,
+            -190.0
+          ],
+          "raw": "Operating Margin (%) 13.0% 14.4% (140) bp 12.3% 14.2% (190) bp",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Comprehensive Financing Cost",
+          "values": [
+            37.3,
+            28.8,
+            30.0,
+            72.1,
+            59.1,
+            22.0
+          ],
+          "raw": "Net Comprehensive Financing Cost 37.3 28.8 30 72.1 59.1 22",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest Expense",
+          "values": [
+            34.3,
+            33.8,
+            1.0,
+            68.0,
+            67.3,
+            1.0
+          ],
+          "raw": "Interest Expense 34.3 33.8 1 68.0 67.3 1",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest Income",
+          "values": [
+            -3.4,
+            -3.4,
+            0.0,
+            -6.6,
+            -6.9,
+            4.0
+          ],
+          "raw": "Interest Income (3.4) (3.4) 0 (6.6) (6.9) 4",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "(Gain) Loss From Derivative Financial Instruments",
+          "values": [
+            0.0,
+            -0.0,
+            100.0,
+            0.0,
+            -0.0,
+            100.0
+          ],
+          "raw": "(Gain) Loss From Derivative Financial Instruments 0.0 (0.0) 100 0.0 (0.0) 100",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Foreign Exchange Loss (Gain)",
+          "values": [
+            6.6,
+            -1.2,
+            654.0,
+            11.4,
+            -0.5,
+            2622.0
+          ],
+          "raw": "Foreign Exchange Loss (Gain) 6.6 (1.2) 654 11.4 (0.5) 2,622",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Monetary Position (Gain) Loss",
+          "values": [
+            -0.2,
+            -0.4,
+            50.0,
+            -0.7,
+            -0.9,
+            25.0
+          ],
+          "raw": "Monetary Position (Gain) Loss (0.2) (0.4) 50 (0.7) (0.9) 25",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income Taxes",
+          "values": [
+            58.8,
+            67.1,
+            -12.0,
+            112.4,
+            128.2,
+            -12.0
+          ],
+          "raw": "Income Taxes 58.8 67.1 (12) 112.4 128.2 (12)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Income",
+          "values": [
+            118.7,
+            133.9,
+            -11.0,
+            219.4,
+            259.7,
+            -16.0
+          ],
+          "raw": "Net Income 118.7 133.9 (11) 219.4 259.7 (16)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Majority Net Income",
+          "values": [
+            118.7,
+            134.1,
+            -12.0,
+            219.3,
+            260.0,
+            -16.0
+          ],
+          "raw": "Majority Net Income 118.7 134.1 (12) 219.3 260.0 (16)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Earnings Per Share",
+          "values": [
+            0.35,
+            0.38,
+            -7.0,
+            0.65,
+            0.74,
+            -12.0
+          ],
+          "raw": "Earnings Per Share1 0.35 0.38 (7) 0.65 0.74 (12)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Depreciation And Amortization",
+          "values": [
+            61.8,
+            59.9,
+            null,
+            123.3,
+            118.7,
+            null
+          ],
+          "raw": "Depreciation And Amortization 61.8 59.9 123.3 118.7",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Impairment Of Long Lived Assets",
+          "values": [
+            -0.1,
+            -0.0,
+            null,
+            11.3,
+            -0.0,
+            null
+          ],
+          "raw": "Impairment Of Long Lived Assets (0.1) (0.0) 11.3 (0.0)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            276.5,
+            289.7,
+            -5.0,
+            538.5,
+            565.6,
+            -5.0
+          ],
+          "raw": "EBITDA2 276.5 289.7 (5) 538.5 565.6 (5)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA Margin (%)",
+          "values": [
+            16.8,
+            18.1,
+            -130.0,
+            16.4,
+            18.0,
+            -160.0
+          ],
+          "raw": "EBITDA Margin (%) 16.8% 18.1% (130) bp 16.4% 18.0% (160) bp",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Capital Expenditures",
+          "values": [
+            56.0,
+            13.0,
+            105.0,
+            106.0,
+            -1.0
+          ],
+          "raw": "Capital Expenditures 64 56 13 105 106 (1)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance Sheet Summary (USD millions) Jun",
+          "values": [
+            -26.0,
+            -25.0,
+            -26.0
+          ],
+          "raw": "Balance Sheet Summary (USD millions) Jun-26 Jun-25 VAR (%) Mar-26 VAR (%)",
+          "heading": "Gruma, S.A.B. de C.V., and Subsidiaries YoY QoQ",
+          "unverified": []
+        },
+        {
+          "caption": "Cash And Cash Equivalents",
+          "values": [
+            484.0,
+            353.0,
+            37.0,
+            419.0,
+            15.0
+          ],
+          "raw": "Cash And Cash Equivalents 484 353 37 419 15",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade Accounts Receivable",
+          "values": [
+            572.0,
+            561.0,
+            2.0,
+            559.0,
+            2.0
+          ],
+          "raw": "Trade Accounts Receivable 572 561 2 559 2",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Accounts Receivable",
+          "values": [
+            281.0,
+            213.0,
+            32.0,
+            198.0,
+            42.0
+          ],
+          "raw": "Other Accounts Receivable 281 213 32 198 42",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Inventories",
+          "values": [
+            1243.0,
+            1163.0,
+            7.0,
+            1148.0,
+            8.0
+          ],
+          "raw": "Inventories 1,243 1,163 7 1,148 8",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Current Assets",
+          "values": [
+            2622.0,
+            2329.0,
+            13.0,
+            2372.0,
+            11.0
+          ],
+          "raw": "Current Assets 2,622 2,329 13 2,372 11",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Property, Plant, And Equipment, Net",
+          "values": [
+            2439.0,
+            2318.0,
+            5.0,
+            2375.0,
+            3.0
+          ],
+          "raw": "Property, Plant, And Equipment, Net 2,439 2,318 5 2,375 3",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Assets",
+          "values": [
+            5409.0,
+            4941.0,
+            9.0,
+            5087.0,
+            6.0
+          ],
+          "raw": "Total Assets 5,409 4,941 9 5,087 6",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Short-Term Debt",
+          "values": [
+            418.0,
+            183.0,
+            128.0,
+            182.0,
+            129.0
+          ],
+          "raw": "Short-Term Debt 418 183 128 182 129",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Current Liabilities",
+          "values": [
+            1155.0,
+            949.0,
+            22.0,
+            824.0,
+            40.0
+          ],
+          "raw": "Current Liabilities 1,155 949 22 824 40",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Long-Term Debt",
+          "values": [
+            1694.0,
+            1647.0,
+            3.0,
+            1656.0,
+            2.0
+          ],
+          "raw": "Long-Term Debt 1,694 1,647 3 1,656 2",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities",
+          "values": [
+            3157.0,
+            2863.0,
+            10.0,
+            2770.0,
+            14.0
+          ],
+          "raw": "Total Liabilities 3,157 2,863 10 2,770 14",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Majority Shareholders' Equity",
+          "values": [
+            2249.0,
+            2075.0,
+            8.0,
+            2314.0,
+            -3.0
+          ],
+          "raw": "Majority Shareholders' Equity 2,249 2,075 8 2,314 (3)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Shareholders' Equity",
+          "values": [
+            2252.0,
+            2078.0,
+            8.0,
+            2317.0,
+            -3.0
+          ],
+          "raw": "Shareholders' Equity 2,252 2,078 8 2,317 (3)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Current Assets/Current Liabilities",
+          "values": [
+            2.27,
+            2.45,
+            2.88
+          ],
+          "raw": "Current Assets/Current Liabilities 2.27 2.45 2.88",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Liabilities/Shareholders' Equity",
+          "values": [
+            1.4,
+            1.38,
+            1.2
+          ],
+          "raw": "Total Liabilities/Shareholders' Equity 1.40 1.38 1.20",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Debt/EBITDA",
+          "values": [
+            1.45,
+            1.29,
+            1.27
+          ],
+          "raw": "Net Debt/EBITDA 3 1.45 1.29 1.27",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA/Interest Expense",
+          "values": [
+            8.35,
+            8.61,
+            8.35
+          ],
+          "raw": "EBITDA/Interest Expense 3 8.35 8.61 8.35",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Book Value Per Share",
+          "values": [
+            6.69,
+            5.9,
+            6.75
+          ],
+          "raw": "Book Value Per Share 1 6.69 5.90 6.75",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "shares as of March",
+          "values": [
+            31.0,
+            2026.0
+          ],
+          "raw": "shares as of March 31, 2026.",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "(income) unrelated to core business operations",
+          "values": [
+            3.0
+          ],
+          "raw": "(income) unrelated to core business operations 3 Last twelve months.",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Jun",
+          "values": [
+            -26.0,
+            -25.0,
+            -26.0
+          ],
+          "raw": "Jun-26 | Jun-25 | VAR (%) | Mar-26 |",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 14,
+      "kind": "income_statement",
+      "note": null,
+      "units": "millions",
+      "source": null,
+      "title": "Selected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%) 2026 % 2025 % VAR ($) VAR (%)",
+      "heading": "",
+      "columns": [
+        {
+          "index": 0,
+          "header": "YoY 2Q26",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "YoY %",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 2,
+          "header": "YoY 2Q25",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 3,
+          "header": "YoY %",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 4,
+          "header": "YoY VAR ($)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 5,
+          "header": "YoY VAR (%)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 6,
+          "header": "YTD 2026",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 7,
+          "header": "YTD %",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 8,
+          "header": "YTD 2025",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 9,
+          "header": "YTD %",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 10,
+          "header": "YTD VAR ($)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        },
+        {
+          "index": 11,
+          "header": "YTD VAR (%)",
+          "kind": "point_in_time",
+          "months": null,
+          "end": null
+        }
+      ],
+      "rows": [
+        {
+          "caption": "GRUMA USA Sales Volume",
+          "values": [
+            380.0,
+            null,
+            391.0,
+            null,
+            -12.0,
+            -3.0,
+            754.0,
+            null,
+            775.0,
+            null,
+            -20.0,
+            -3.0
+          ],
+          "raw": "GRUMA USA Sales Volume2 380 391 (12) (3) 754 775 (20) (3)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Corn flour, tortillas, and other Net Sales",
+          "values": [
+            850.3,
+            100.0,
+            875.7,
+            100.0,
+            -25.0,
+            -3.0,
+            1701.4,
+            100.0,
+            1755.4,
+            100.0,
+            -54.0,
+            -3.0
+          ],
+          "raw": "Corn flour, tortillas, and other Net Sales 850.3 100.0 875.7 100.0 (25) (3) 1,701.4 100.0 1,755.4 100.0 (54) (3)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            483.1,
+            56.8,
+            488.0,
+            55.7,
+            -5.0,
+            -1.0,
+            961.1,
+            56.5,
+            976.2,
+            55.6,
+            -15.0,
+            -2.0
+          ],
+          "raw": "Cost of Sales 483.1 56.8 488.0 55.7 (5) (1) 961.1 56.5 976.2 55.6 (15) (2)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            367.2,
+            43.2,
+            387.7,
+            44.3,
+            -20.0,
+            -5.0,
+            740.3,
+            43.5,
+            779.2,
+            44.4,
+            -39.0,
+            -5.0
+          ],
+          "raw": "Gross Profit 367.2 43.2 387.7 44.3 (20) (5) 740.3 43.5 779.2 44.4 (39) (5)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            243.3,
+            28.6,
+            241.9,
+            27.6,
+            1.0,
+            1.0,
+            491.3,
+            28.9,
+            487.5,
+            27.8,
+            4.0,
+            1.0
+          ],
+          "raw": "SG&A 243.3 28.6 241.9 27.6 1 1 491.3 28.9 487.5 27.8 4 1",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            124.0,
+            14.6,
+            150.8,
+            17.2,
+            -27.0,
+            -18.0,
+            254.9,
+            15.0,
+            301.6,
+            17.2,
+            -47.0,
+            -15.0
+          ],
+          "raw": "Operating Income 124.0 14.6 150.8 17.2 (27) (18) 254.9 15.0 301.6 17.2 (47) (15)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            165.0,
+            19.4,
+            193.0,
+            22.0,
+            -28.0,
+            -15.0,
+            337.3,
+            19.8,
+            386.3,
+            22.0,
+            -49.0,
+            -13.0
+          ],
+          "raw": "EBITDA 165.0 19.4 193.0 22.0 (28) (15) 337.3 19.8 386.3 22.0 (49) (13)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "GIMSA Sales Volume",
+          "values": [
+            520.0,
+            null,
+            522.0,
+            null,
+            -2.0,
+            -0.0,
+            1034.0,
+            null,
+            1034.0,
+            null,
+            0.0,
+            0.0
+          ],
+          "raw": "GIMSA Sales Volume2 520 522 (2) (0) 1,034 1,034 0 0",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Corn flour and other Net Sales",
+          "values": [
+            459.8,
+            100.0,
+            465.7,
+            100.0,
+            -6.0,
+            -1.0,
+            913.5,
+            100.0,
+            923.9,
+            100.0,
+            -10.0,
+            -1.0
+          ],
+          "raw": "Corn flour and other Net Sales 459.8 100.0 465.7 100.0 (6) (1) 913.5 100.0 923.9 100.0 (10) (1)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            324.0,
+            70.5,
+            337.4,
+            72.4,
+            -13.0,
+            -4.0,
+            654.4,
+            71.6,
+            670.5,
+            72.6,
+            -16.0,
+            -2.0
+          ],
+          "raw": "Cost of Sales 324.0 70.5 337.4 72.4 (13) (4) 654.4 71.6 670.5 72.6 (16) (2)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            135.8,
+            29.5,
+            128.3,
+            27.6,
+            7.0,
+            6.0,
+            259.1,
+            28.4,
+            253.4,
+            27.4,
+            6.0,
+            2.0
+          ],
+          "raw": "Gross Profit 135.8 29.5 128.3 27.6 7 6 259.1 28.4 253.4 27.4 6 2",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            97.6,
+            21.2,
+            94.1,
+            20.2,
+            4.0,
+            4.0,
+            191.1,
+            20.9,
+            188.0,
+            20.3,
+            3.0,
+            2.0
+          ],
+          "raw": "SG&A 97.6 21.2 94.1 20.2 4 4 191.1 20.9 188.0 20.3 3 2",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            36.7,
+            8.0,
+            36.5,
+            7.8,
+            0.0,
+            1.0,
+            54.6,
+            6.0,
+            69.5,
+            7.5,
+            -15.0,
+            -22.0
+          ],
+          "raw": "Operating Income 36.7 8.0 36.5 7.8 0 1 54.6 6.0 69.5 7.5 (15) (22)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            50.3,
+            10.9,
+            49.8,
+            10.7,
+            1.0,
+            1.0,
+            92.0,
+            10.1,
+            95.9,
+            10.4,
+            -4.0,
+            -4.0
+          ],
+          "raw": "EBITDA 50.3 10.9 49.8 10.7 1 1 92.0 10.1 95.9 10.4 (4) (4)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "GRUMA EUROPE Sales Volume",
+          "values": [
+            107.0,
+            null,
+            107.0,
+            null,
+            0.0,
+            0.0,
+            218.0,
+            null,
+            212.0,
+            null,
+            6.0,
+            3.0
+          ],
+          "raw": "GRUMA EUROPE Sales Volume2 107 107 0 0 218 212 6 3",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Corn flour, tortillas, and other Net Sales",
+          "values": [
+            142.6,
+            100.0,
+            135.3,
+            100.0,
+            7.0,
+            5.0,
+            273.5,
+            100.0,
+            250.2,
+            100.0,
+            23.0,
+            9.0
+          ],
+          "raw": "Corn flour, tortillas, and other Net Sales 142.6 100.0 135.3 100.0 7 5 273.5 100.0 250.2 100.0 23 9",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            96.5,
+            67.7,
+            92.8,
+            68.6,
+            4.0,
+            4.0,
+            189.7,
+            69.4,
+            174.8,
+            69.9,
+            15.0,
+            9.0
+          ],
+          "raw": "Cost of Sales 96.5 67.7 92.8 68.6 4 4 189.7 69.4 174.8 69.9 15 9",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            46.1,
+            32.3,
+            42.5,
+            31.4,
+            4.0,
+            9.0,
+            83.8,
+            30.6,
+            75.3,
+            30.1,
+            8.0,
+            11.0
+          ],
+          "raw": "Gross Profit 46.1 32.3 42.5 31.4 4 9 83.8 30.6 75.3 30.1 8 11",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            30.3,
+            21.3,
+            28.6,
+            21.1,
+            2.0,
+            6.0,
+            59.3,
+            21.7,
+            53.9,
+            21.5,
+            5.0,
+            10.0
+          ],
+          "raw": "SG&A 30.3 21.3 28.6 21.1 2 6 59.3 21.7 53.9 21.5 5 10",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            16.3,
+            11.4,
+            13.9,
+            10.3,
+            2.0,
+            17.0,
+            25.7,
+            9.4,
+            21.6,
+            8.6,
+            4.0,
+            19.0
+          ],
+          "raw": "Operating Income 16.3 11.4 13.9 10.3 2 17 25.7 9.4 21.6 8.6 4 19",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            21.0,
+            14.8,
+            17.9,
+            13.2,
+            3.0,
+            17.0,
+            34.8,
+            12.7,
+            29.3,
+            11.7,
+            5.0,
+            19.0
+          ],
+          "raw": "EBITDA 21.0 14.8 17.9 13.2 3 17 34.8 12.7 29.3 11.7 5 19",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "GRUMA ASIA & OCEANIA Sales Volume",
+          "values": [
+            26.0,
+            null,
+            25.0,
+            null,
+            1.0,
+            4.0,
+            53.0,
+            null,
+            50.0,
+            null,
+            3.0,
+            5.0
+          ],
+          "raw": "GRUMA ASIA & OCEANIA Sales Volume2 26 25 1 4 53 50 3 5",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Corn flour, tortillas, and other Net Sales",
+          "values": [
+            78.4,
+            100.0,
+            68.0,
+            100.0,
+            10.0,
+            15.0,
+            156.2,
+            100.0,
+            134.8,
+            100.0,
+            21.0,
+            16.0
+          ],
+          "raw": "Corn flour, tortillas, and other Net Sales 78.4 100.0 68.0 100.0 10 15 156.2 100.0 134.8 100.0 21 16",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            51.7,
+            65.9,
+            47.1,
+            69.2,
+            5.0,
+            10.0,
+            105.0,
+            67.2,
+            93.2,
+            69.1,
+            12.0,
+            13.0
+          ],
+          "raw": "Cost of Sales 51.7 65.9 47.1 69.2 5 10 105.0 67.2 93.2 69.1 12 13",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            26.7,
+            34.1,
+            20.9,
+            30.8,
+            6.0,
+            28.0,
+            51.2,
+            32.8,
+            41.6,
+            30.9,
+            10.0,
+            23.0
+          ],
+          "raw": "Gross Profit 26.7 34.1 20.9 30.8 6 28 51.2 32.8 41.6 30.9 10 23",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            17.2,
+            22.0,
+            15.2,
+            22.3,
+            2.0,
+            13.0,
+            33.9,
+            21.7,
+            30.2,
+            22.4,
+            4.0,
+            12.0
+          ],
+          "raw": "SG&A 17.2 22.0 15.2 22.3 2 13 33.9 21.7 30.2 22.4 4 12",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            9.5,
+            12.1,
+            5.7,
+            8.3,
+            4.0,
+            68.0,
+            17.3,
+            11.1,
+            11.4,
+            8.4,
+            6.0,
+            52.0
+          ],
+          "raw": "Operating Income 9.5 12.1 5.7 8.3 4 68 17.3 11.1 11.4 8.4 6 52",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            12.7,
+            16.2,
+            8.6,
+            12.7,
+            4.0,
+            47.0,
+            23.7,
+            15.2,
+            17.3,
+            12.8,
+            6.0,
+            37.0
+          ],
+          "raw": "EBITDA 12.7 16.2 8.6 12.7 4 47 23.7 15.2 17.3 12.8 6 37",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "GRUMA CENTROAMÉRICA Sales Volume",
+          "values": [
+            62.0,
+            null,
+            60.0,
+            null,
+            2.0,
+            3.0,
+            124.0,
+            null,
+            119.0,
+            null,
+            5.0,
+            4.0
+          ],
+          "raw": "GRUMA CENTROAMÉRICA Sales Volume2 62 60 2 3 124 119 5 4",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Corn flour and other Net Sales",
+          "values": [
+            103.3,
+            100.0,
+            96.6,
+            100.0,
+            7.0,
+            7.0,
+            206.2,
+            100.0,
+            193.2,
+            100.0,
+            13.0,
+            7.0
+          ],
+          "raw": "Corn flour and other Net Sales 103.3 100.0 96.6 100.0 7 7 206.2 100.0 193.2 100.0 13 7",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            59.8,
+            57.9,
+            56.3,
+            58.3,
+            4.0,
+            6.0,
+            119.1,
+            57.8,
+            114.3,
+            59.2,
+            5.0,
+            4.0
+          ],
+          "raw": "Cost of Sales 59.8 57.9 56.3 58.3 4 6 119.1 57.8 114.3 59.2 5 4",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            43.4,
+            42.1,
+            40.3,
+            41.7,
+            3.0,
+            8.0,
+            87.1,
+            42.2,
+            78.9,
+            40.8,
+            8.0,
+            10.0
+          ],
+          "raw": "Gross Profit 43.4 42.1 40.3 41.7 3 8 87.1 42.2 78.9 40.8 8 10",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            26.8,
+            26.0,
+            25.0,
+            25.9,
+            2.0,
+            7.0,
+            52.7,
+            25.6,
+            49.5,
+            25.6,
+            3.0,
+            6.0
+          ],
+          "raw": "SG&A 26.8 26.0 25.0 25.9 2 7 52.7 25.6 49.5 25.6 3 6",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            17.3,
+            16.7,
+            15.3,
+            15.9,
+            2.0,
+            13.0,
+            35.7,
+            17.3,
+            29.4,
+            15.2,
+            6.0,
+            21.0
+          ],
+          "raw": "Operating Income 17.3 16.7 15.3 15.9 2 13 35.7 17.3 29.4 15.2 6 21",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            19.7,
+            19.0,
+            17.5,
+            18.1,
+            2.0,
+            12.0,
+            41.2,
+            20.0,
+            33.7,
+            17.4,
+            7.0,
+            22.0
+          ],
+          "raw": "EBITDA 19.7 19.0 17.5 18.1 2 12 41.2 20.0 33.7 17.4 7 22",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Sales Volume",
+          "values": [
+            -18.0,
+            null,
+            -21.0,
+            null,
+            2.0,
+            11.0,
+            -39.0,
+            null,
+            -44.0,
+            null,
+            4.0,
+            10.0
+          ],
+          "raw": "Sales Volume2 (18) (21) 2 11 (39) (44) 4 10",
+          "heading": "OTHER SUBSIDIARIES &",
+          "unverified": []
+        },
+        {
+          "caption": "Net Sales",
+          "values": [
+            15.6,
+            100.0,
+            -40.5,
+            100.0,
+            56.0,
+            139.0,
+            23.9,
+            100.0,
+            -108.2,
+            100.0,
+            132.0,
+            122.0
+          ],
+          "raw": "Net Sales 15.6 100.0 (40.5) 100.0 56 139 23.9 100.0 (108.2) 100.0 132 122",
+          "heading": "ELIMINATIONS",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            -12.4,
+            -79.5,
+            -51.5,
+            127.2,
+            39.0,
+            76.0,
+            -30.7,
+            -128.5,
+            -126.4,
+            116.8,
+            96.0,
+            76.0
+          ],
+          "raw": "Cost of Sales (12.4) (79.5) (51.5) 127.2 39 76 (30.7) (128.5) (126.4) 116.8 96 76",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            28.0,
+            179.5,
+            11.0,
+            -27.2,
+            17.0,
+            155.0,
+            54.6,
+            228.5,
+            18.2,
+            -16.8,
+            36.0,
+            200.0
+          ],
+          "raw": "Gross Profit 28.0 179.5 11.0 (27.2) 17 155 54.6 228.5 18.2 (16.8) 36 200",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            19.2,
+            123.1,
+            1.9,
+            -4.7,
+            17.0,
+            911.0,
+            40.6,
+            169.9,
+            3.0,
+            -2.8,
+            38.0,
+            1253.0
+          ],
+          "raw": "SG&A 19.2 123.1 1.9 (4.7) 17 911 40.6 169.9 3.0 (2.8) 38 1,253",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            11.0,
+            70.5,
+            7.6,
+            -18.8,
+            3.0,
+            45.0,
+            15.7,
+            65.7,
+            13.5,
+            -12.5,
+            2.0,
+            16.0
+          ],
+          "raw": "Operating Income 11.0 70.5 7.6 (18.8) 3 45 15.7 65.7 13.5 (12.5) 2 16",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            7.9,
+            50.6,
+            2.9,
+            -7.2,
+            5.0,
+            172.0,
+            9.5,
+            39.7,
+            3.1,
+            -2.9,
+            6.0,
+            206.0
+          ],
+          "raw": "EBITDA 7.9 50.6 2.9 (7.2) 5 172 9.5 39.7 3.1 (2.9) 6 206",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "CONSOLIDATED Sales Volume",
+          "values": [
+            1076.0,
+            null,
+            1084.0,
+            null,
+            -8.0,
+            -1.0,
+            2144.0,
+            null,
+            2146.0,
+            null,
+            -2.0,
+            -0.0
+          ],
+          "raw": "CONSOLIDATED Sales Volume2 1,076 1,084 (8) (1) 2,144 2,146 (2) (0)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net Sales",
+          "values": [
+            1649.9,
+            100.0,
+            1600.7,
+            100.0,
+            49.0,
+            3.0,
+            3274.7,
+            100.0,
+            3149.2,
+            100.0,
+            125.0,
+            4.0
+          ],
+          "raw": "Net Sales 1,649.9 100.0 1,600.7 100.0 49 3 3,274.7 100.0 3,149.2 100.0 125 4",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of Sales",
+          "values": [
+            1002.6,
+            60.8,
+            970.1,
+            60.6,
+            33.0,
+            3.0,
+            1998.6,
+            61.0,
+            1902.6,
+            60.4,
+            96.0,
+            5.0
+          ],
+          "raw": "Cost of Sales 1,002.6 60.8 970.1 60.6 33 3 1,998.6 61.0 1,902.6 60.4 96 5",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Gross Profit",
+          "values": [
+            647.3,
+            39.2,
+            630.7,
+            39.4,
+            17.0,
+            3.0,
+            1276.1,
+            39.0,
+            1246.6,
+            39.6,
+            29.0,
+            2.0
+          ],
+          "raw": "Gross Profit 647.3 39.2 630.7 39.4 17 3 1,276.1 39.0 1,246.6 39.6 29 2",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "SG&A",
+          "values": [
+            434.4,
+            26.3,
+            406.6,
+            25.4,
+            28.0,
+            7.0,
+            868.8,
+            26.5,
+            811.9,
+            25.8,
+            57.0,
+            7.0
+          ],
+          "raw": "SG&A 434.4 26.3 406.6 25.4 28 7 868.8 26.5 811.9 25.8 57 7",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other Exp. (Inc.) , Net",
+          "values": [
+            -1.9,
+            null,
+            -5.7,
+            null,
+            4.0,
+            67.0,
+            3.4,
+            null,
+            -12.2,
+            null,
+            16.0,
+            128.0
+          ],
+          "raw": "Other Exp. (Inc.) , Net (1.9) (5.7) 4 67 3.4 (12.2) 16 128",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating Income",
+          "values": [
+            214.8,
+            13.0,
+            229.8,
+            14.4,
+            -15.0,
+            -7.0,
+            403.9,
+            12.3,
+            446.9,
+            14.2,
+            -43.0,
+            -10.0
+          ],
+          "raw": "Operating Income 214.8 13.0 229.8 14.4 (15) (7) 403.9 12.3 446.9 14.2 (43) (10)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "EBITDA",
+          "values": [
+            276.5,
+            16.8,
+            289.7,
+            18.1,
+            -13.0,
+            -5.0,
+            538.5,
+            16.4,
+            565.6,
+            18.0,
+            -27.0,
+            -5.0
+          ],
+          "raw": "EBITDA 276.5 16.8 289.7 18.1 (13) (5) 538.5 16.4 565.6 18.0 (27) (5)",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "source": "text",
+      "chars": 37,
+      "tables": 0,
+      "text": "EAR NINGS\nRELEASE\nSECOND QUARTER\n2026"
+    },
+    {
+      "page": 2,
+      "source": "text",
+      "chars": 3851,
+      "tables": 7,
+      "text": "2Q26 Results\nInvestor Relations\nSECOND QUARTER 2026 RESULTS\nir@gruma.com\nTel: 52 (81) 8399-3349\nwww.gruma.com\nSan Pedro Garza García, N.L., México; July 22, 2026\nDuring the quarter, GRUMA continued to deliver solid performance across its subsidiaries outside the\nUnited States. In the U.S. subsidiary price sensitivity and uncertainty regarding the economic outlook\ncontinued to weigh on several sectors. Volumes in the food service channel remained a key factor in\nthe subsidiary’s performance. At GIMSA, volumes were flat, although profitability remained stable.\nEurope continued to expand in the retail channel, delivering healthy growth in sales and tortilla\nvolume sold, while maintaining attractive profitability. Central America continued to strengthen its\nmarket position through innovation in corn flour products. In Asia and Oceania, the recently opened\nChina plant supported higher sales volumes and improved operating leverage, while the price mix\nimproved in Australia. With a good performance in Asia and Oceania, Europe and Central America in\naddition to the currency exchange effect in Mexican subsidiaries net sales grew by 3%; meanwhile,\nconsolidated EBITDA declined by 5% spurred by higher distribution costs and EBITDA margin by 130\nbasis points, reaching 16.8%. The U.S. is still undergoing a period of volatility that keeps consumer\nconfidence at historical lows; during this time, we will execute our strategy to incentivize volume\ngrowth, while this transitional period is behind us. We expect to see a meaningful recovery once this\ntakes place with strong contribution from our other subsidiaries.\nHIGHLIGHTS\nYoY\nConsolidated Financial Highlights\nIncome Statement (USD millions) 2Q26 2Q25 VAR (%)\nVolume (thousand tons) 1,076 1,084 (1)\nNet Sales 1,649.9 1,600.7 3\nOperating Income 214.8 229.8 (7)\nOperating Margin (%) 13.0% 14.4% (140) bp\nEBITDA1 276.5 289.7 (5)\nEBITDA Margin (%) 16.8% 18.1% (130) bp\nMajority Net Income 118.7 134.1 (12)\n1 EBITDA = operating income + depreciation, amortization and impairment of long lived assets\n+(-) other expenses (income) unrelated to core business operations.\nPage 1 of 13\n2Q26 Results | \n | 2Q26 | Results\n | Investor Relations ir@gruma.com Tel: 52 (81) 8399-3349 www.gruma.com\nSan Pedro Garza García, N.L., México; July 22, 2026 | \nwww.gruma.com | \nDuring the quarter, GRUMA continued to deliver solid performance across its subsidiaries outside the\nUnited States. In the U.S. subsidiary price sensitivity and uncertainty regarding the economic outlook\ncontinued to weigh on several sectors. Volumes in the food service channel remained a key factor in\nthe subsidiary’s performance. At GIMSA, volumes were flat, although profitability remained stable.\nEurope continued to expand in the retail channel, delivering healthy growth in sales and tortilla\nvolume sold, while maintaining attractive profitability. Central America continued to strengthen its\nmarket position through innovation in corn flour products. In Asia and Oceania, the recently opened\nChina plant supported higher sales volumes and improved operating leverage, while the price mix\nimproved in Australia. With a good performance in Asia and Oceania, Europe and Central America in\naddition to the currency exchange effect in Mexican subsidiaries net sales grew by 3%; meanwhile,\nconsolidated EBITDA declined by 5% spurred by higher distribution costs and EBITDA margin by 130\nbasis points, reaching 16.8%. The U.S. is still undergoing a period of volatility that keeps consumer\nconfidence at historical lows; during this time, we will execute our strategy to incentivize volume\ngrowth, while this transitional period is behind us. We expect to see a meaningful recovery once this\ntakes place with strong contribution from our other subsidiaries.\n | YoY |  |  | \nIncome Statement (USD millions) |  | 2Q26 | 2Q25 | VAR (%)"
+    },
+    {
+      "page": 3,
+      "source": "text",
+      "chars": 2976,
+      "tables": 1,
+      "text": "2Q26 Results\nCONSOLIDATED RESULTS OF OPERATIONS\n2Q26 versus 2Q25\nSales volume decreased 1% compared to 2Q25, to 1,076 thousand metric tons, driven by continued\nchallenges in the U.S., mainly in the food service channel, as weak consumer sentiment persisted in\nline with trends observed over recent quarters. Meanwhile, volumes remained stable in Mexico and\nEurope, while Asia & Oceania and Central America continued to benefit from positive demand\ntrends.\nNet sales increased 3% to US$1.6 billion mainly due to (1) net sales growth in Europe, Asia and\nOceania and Central America; coupled with (2) the translation effect of the appreciation of the\nMexican Peso against the U.S. dollar from Mexican operations. Sales from non-Mexican operations\nrepresented 71% of consolidated figures.\nCost of sales (“COGS”) increased 3% to US$1.0 billion in line with net sales growth. As a percentage\nof net sales, COGS increased to 60.8% from 60.6%.\nSelling, general and administrative expenses (“SG&A”) increased 7% to US$434.4 million due (1)\nhigher distribution costs; and (2) higher marketing expenses. As a percentage of net sales, SG&A\nincreased to 26.3% from 25.4%.\nOther income, net, was US$1.9 million compared to US$5.7 million last year. The change resulted\nmainly from gains derived from payments received for insurance claims on damaged assets in 2Q25.\nOperating income decreased by 7% to US$214.8 million. Operating margin contracted by 140 basis\npoints to 13.0% from 14.4%.\nEBITDA decreased 5% to US$276.5 million, and EBITDA margin decreased 130 basis points to 16.8%\nfrom 18.1%. EBITDA from non-Mexican operations represented 79% of consolidated figures.\nNet comprehensive financing cost increased by 30% to US$37.3 million, mainly due to the effect of\nforeign exchanges on monetary positions in the balance sheet.\nIncome taxes were US$58.8 million, a 12% decrease compared to 2Q25, due to lower pretax earnings\nresulting from the dynamics mentioned above. The effective tax rate for the quarter was 33.1%\ncompared to 33.4% in 2Q25.\nMajority net income decreased 12% to US$118.7 million.\nAll of GRUMA´s subsidiaries outside of the U.S. are performing in line and even exceeding\nexpectations in some cases, while the U.S continues to be under pressure from the effects\nof low consumer sentiment, reflected ma inly at the food service channel in this\nsubsidiary. We are being proactive, however, implementing our strategy that aims to\nbuild a healthier operating structure, which should lead to better results in the future.\nPage 2 of 13\n | All of GRUMA´s subsidiaries outside of the U.S. are performing in line and even exceeding expectations in some cases, while the U.S continues to be under pressure from the effects of low consumer sentiment, reflected ma inly at the food service channel in this subsidiary. We are being proactive, however, implementing our strategy that aims to build a healthier operating structure, which should lead to better results in the future."
+    },
+    {
+      "page": 4,
+      "source": "text",
+      "chars": 572,
+      "tables": 0,
+      "text": "2Q26 Results\nFINANCIAL POSITION\nJune 2026 versus March 2026\nBalance Sheet Highlights\nTotal assets increased by 6% to US$5.4 billion when compared to March 2026, reflecting increases\nof 8% in inventory, 42% in accounts receivables, and 15% in the cash balance. Property, plant and\nequipment also grew by 3% during the period.\nTotal liabilities grew by 14% to US$3.2 billion, mainly due to an increase in short term debt in line\nwith inventory and cash balance growth and 26% in accounts payable.\nMajority shareholders’ equity decreased by 3% to US$2.2 billion.\nPage 3 of 13"
+    },
+    {
+      "page": 5,
+      "source": "text",
+      "chars": 1732,
+      "tables": 0,
+      "text": "2Q26 Results\nDebt Profile\nGRUMA’s debt increased 15% to US$2.1 billion in connection with inventory growth and the\nstrengthening of the peso against the U.S. dollar relative to the end of March. GRUMA´s Net Debt /\nEBITDA increased to 1.5x. Approximately 72% of GRUMA’s debt was USD denominated.\nIn 2Q26, GRUMA refinanced some of its debt outstanding by extending the maturity to 2031 of an\nexisting revolver and increasing its amount to US$300 million; additionally, a new US$125 million\nrevolver was acquired with the same maturity. As part of this refinancing GRUMA paid down its peso\ndenominated note GRUMA22 and a revolver both maturing in 2027.\nDebt\n(USD millions)\nDebt Maturity Profile(1)\n(USD millions)\nCAPITAL EXPENDITURE PROGRAM\nGRUMA’s capital expenditures totaled US$64 million in 2Q26, allocated mostly to the following\nprojects during the quarter: (1) general upgrades, maintenance, and investment in machinery at\nGIMSA; (2) upgrades and replacement of operational equipment in the U.S.; (3) expanded capacity\nin Europe; and (4) expanded capacity in Central America.\nPage 4 of 13\nJ u\n2\nn ´\n,1\n2\n1\n6\n8\nJ u\n1\nn ´\n,8\n2\n3\n5\n4\nV a r\n2\nv\n( $\n8\ns J\n)\n4\nu n ´ 2 5\n1\n( %\n5 %\n) M a\n1\nr ´\n,8\n2\n4\n6\n3\nV a r v s M\n( $ )\n2 7 5\na r ´ 2 6\n1\n( %\n5 %\n)\nRate 2026 2027 2028 2029 2030 2031 2032+ Total\nSenior Notes 2034 Fixed 5.39% 500.0 500.0\nSenior Notes 2054 Fixed 5.76% 300.0 300.0\nRabobank RCF 2026 SOFR + 1.00% 125.0 125.0\nBBVA RCF 2026 SOFR + 0.85% 300.0 300.0\nCebures Gruma21 (MXN $2,000) Fixed 7.00% 114.5 114.5\nOther:\nMXN 6.80% 354.9 354.9\nEUR 0.94% 10.3 0.0 0.0 0 0.0 0.0 0.0 10.3\nTOTAL 5.62% (avg.) 365.2 0.0 114.5 0.0 0.0 425.0 800.0 1,704.7\n(1) The US$413 million related to leases are not included on the above debt figures."
+    },
+    {
+      "page": 6,
+      "source": "text_respaced",
+      "chars": 2363,
+      "tables": 1,
+      "text": "Page 5 of 13\n2Q26 Results\nSUBSIDIARY RESULTS OF OPERATIONS\n2Q26 versus 2Q25\nGRUMA USA\nSales volume decreased 3% to 380 thousand metric tons, primarily driven by lower\nvolumes in the food service channel, as consumers remained sensitive to inflation,\nparticularly to higher dining-out prices. Retail also experienced a slowdown, mainly\nin standard products, reflecting increased price sensitivity and uncertainty\nsurrounding economic outlook in the United States.\nNet sales declined 3% to US$850.3 million, in line with volume decline as a result\nof the food service channel performance this quarter.\nCost of sales decreased 1% to US$483.1 million in line with volume decline.\nSG&A increased 1% to US$243.3 million due to (1) higher distribution costs; and (2) higher marketing\ncosts. As a percentage of net sales, SG&A increased to 28.6% from 27.6% in 2Q25.\nOther income, net, was US$0.1 million compared to US$5.1 million in 2Q25, resulting mostly from\nthe payment received for insurance claims on damaged assets in 2Q25.\nOperating income decreased 18% to US$124.0 million, and operating margin decreased 260 basis\npoints to 14.6% from 17.2%.\nEBITDA decreased 15% to US$165.0 million, and EBITDA margin decreased to 19.4% from 22.0% in\n2Q25.\nSelected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%)\nGRUMA USA Sales Volume1 380 391 (12) (3)\nCorn flour, tortillas, and other Net Sales 850.3 100.0 875.7 100.0 (25) (3)\nOperating Income 124.0 14.6 150.8 17.2 (27) (18)\nEBITDA 165.0 19.4 193.0 22.0 (28) (15)\n1 All sales volume figures are expressed in thousand metric tons.\nYoY\nThe U.S. operation continues to be subject to factors linked to the country´s economic\noutlook and consumer sentiment, both of which create additional price sensitivity in the\nmarketplace. GRUMA´s strategy continues to focus on higher private label production\ncoupled with value-add products to cater to the different sensitivities identified in the\nmarket and foster volume growth.\n | The U.S. operation continues to be subject to factors linked to the country´s economic outlook and consumer sentiment, both of which create additional price sensitivity in the marketplace. GRUMA´s strategy continues to focus on higher private label production coupled with value-add products to cater to the different sensitivities identified in the market and foster volume growth."
+    },
+    {
+      "page": 7,
+      "source": "text_respaced",
+      "chars": 1987,
+      "tables": 1,
+      "text": "2Q26 Results\nGIMSA\nSales volume remained stable at 520 thousand metric tons, on the back of lower\nvolumes sold included in government programs, which were much more active in\n2Q25. ………………………………………\nNet sales decreased 1% to US$459.8 million, in line with volume and price mix sold\nduring the 2Q26.\nCost of sales declined 4% to US$324.0 million mainly due to efficiencies. As a\npercentage of net sales, it improved to 70.5% from 72.4%.\nSG&A increased 4% to US$97.6 million resulting mainly from (1) higher distribution costs; and (2)\nelevated marketing expenses. As a percentage of net sales, SG&A increased to 21.2% from 20.2%.\nOther expense, net, was US$1.5 million compared to an income of US$2.2 million in 2Q25, resulting\nmostly from payment received for insurance claims on damaged assets in 2Q25.\nOperating income increased 1% to US$36.7 million, and operating margin was 20 basis points higher\nat 8.0% from 7.8%.\nEBITDA increased 1% to US$50.3 million in 2Q26, and EBITDA margin increased 20 basis points to\n10.9% from 10.7% in 2Q25.\nPage 6 of 13\nYoY\nSelected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%)\n1 2 GIMSA Sales Volume 520 522 (2) (0)\nCorn flour and other Net Sales 459.8 100.0 465.7 100.0 (6) (1)\nOperating Income 36.7 8.0 36.5 7.8 0 1\nEBITDA 50.3 10.9 49.8 10.7 1 1\nConvenience translation at the exchange rate of Ps. 17.4700/dollar as of June 30, 2026. For further details see 1\n“Accounting Procedures”.\nAll sales volume figures are expressed in thousand metric tons. 2\nLower activity in the government segment of this subsidiary continues to make YoY\ncomparisons uneven, however the core business of GIMSA is performing very well with\nhigh demand and the mix improving since the first quarter of the year.\n | Lower activity in the government segment of this subsidiary continues to make YoY comparisons uneven, however the core business of GIMSA is performing very well with high demand and the mix improving since the first quarter of the year."
+    },
+    {
+      "page": 8,
+      "source": "text_respaced",
+      "chars": 2160,
+      "tables": 1,
+      "text": "Page 7 of 13\n2Q26 Results\nGruma Europe\nSales volume remained flat at 107 thousand metric tons in 2Q26, primarily due to\nlower demand in the corn milling business, which is inherently volatile, despite the\nsustained positive performance of the tortilla business, which continued its expansion\nin the retail channel.\nNet sales increased 5% to US$142.6 million resulting from (1) volume growth in the\ntortilla business; (2) a richer sales mix favoring retail tortilla over food service; and (3)\na greater composition of the tortilla business.\nCost of sales increased 4% to US$96.5 million, as a result of (1) higher raw material costs reflecting\nan improved product mix; and (2) elevated labor costs. As a percentage of net sales, cost of sales\ndecreased to 67.7% from 68.6%.\nSG&A increased 6% to US$30.3 million mainly due to elevated distribution costs in 2Q26. As a\npercentage of net sales, SG&A increased to 21.3% from 21.1%.\nOther income, net, totaled US$0.5 million compared to US$0.0 million in 2Q25.\nOperating income increased by 17% to US$16.3 million compared to US$13.9 million in 2Q25.\nOperating margin expanded by 110 basis points to 11.4% in 2Q26 from 10.3%.\nEBITDA was US$21.0 million, an improvement of 17% from US$17.9 million in 2Q25, and EBITDA\nmargin grew to 14.8% from 13.2% a year ago.\nSelected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%)\nGRUMA EUROPE Sales Volume1 107 107 0 0\nCorn flour, tortillas, and other Net Sales 142.6 100.0 135.3 100.0 7 5\nOperating Income 16.3 11.4 13.9 10.3 2 17\nEBITDA 21.0 14.8 17.9 13.2 3 17\n1 All sales volume figures are expressed in thousand metric tons.\nYoY\nEurope continues its positive evolution within the European tortilla retail market\noffsetting the usual volatility present in the corn milling business. This has helped this\nsubsidiary grow 17% in EBITDA and reach attractive levels in profitability indicators.\n | Europe continues its positive evolution within the European tortilla retail market offsetting the usual volatility present in the corn milling business. This has helped this subsidiary grow 17% in EBITDA and reach attractive levels in profitability indicators."
+    },
+    {
+      "page": 9,
+      "source": "text_respaced",
+      "chars": 1907,
+      "tables": 1,
+      "text": "Page 8 of 13\n2Q26 Results\nGruma Asia and Oceania\nSales volume increased 4% to 26 thousand metric tons, driven by positive\nperformance across all Asian subsidiaries, as well as continued strength in\nAustralia.\nNet sales increased by 15% to US$78.4 million as a result of a richer sales mix in\nAustralia and a strong demand in Asia.\nCost of Sales increased 10% to US$51.7 million during the quarter in line with (1)\nvolume growth; and (2) higher packaging costs. As a percentage of net sales, it contracted to 65.9%\nfrom 69.2% in 2Q25.\nSG&A increased 13% to US$17.2 million, as a result of (1) increased distribution costs; and (2) higher\nsales commissions paid in line with stronger revenues. As a percentage of net sales, SG&A improved\nto 22.0% from 22.3% in 2Q25.\nOperating Income rose by 68% to US$9.5 million, while operating margin was 12.1% compared to\n8.3% in 2Q25.\nEBITDA grew 47% to US$12.7 million, and EBITDA margin increased 350 basis points to 16.2% from\n12.7% in 2Q25.\nSelected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%)\nGRUMA ASIA & OCEANIA Sales Volume1 26 25 1 4\nCorn flour, tortillas, and other Net Sales 78.4 100.0 68.0 100.0 10 15\nOperating Income 9.5 12.1 5.7 8.3 4 68\nEBITDA 12.7 16.2 8.6 12.7 4 47\n1 All sales volume figures are expressed in thousand metric tons.\nYoY\nThis subsidiary has been able to leverage the recovery in Malaysia from last quarter´s\nlower demand and greater operational leverage at the new plant in China with higher\ndemand for retail products in Australia. This has allowed it to reach attractive\nprofitability metrics across the spectrum.\n | This subsidiary has been able to leverage the recovery in Malaysia from last quarter´s lower demand and greater operational leverage at the new plant in China with higher demand for retail products in Australia. This has allowed it to reach attractive profitability metrics across the spectrum."
+    },
+    {
+      "page": 10,
+      "source": "text_respaced",
+      "chars": 2283,
+      "tables": 1,
+      "text": "Page 9 of 13\n2Q26 Results\nGruma Centroamérica\nSales volume increased 3% to 62 thousand metric tons, as a result of higher demand for\ncorn flour products in all the markets this subsidiary serves.\nNet sales increased 7% to US$103.3 million in line with (1) volumes sold; and (2) an\nimproved sales mix.\nCost of sales increased 6% to US$59.8 million in line with (1) higher raw material costs;\nand (2) volume growth. As a percentage of net sales, cost of sales improved to 57.9%\nfrom 58.3% due to the abovementioned revenue and cost dynamics.\nSG&A increased 7% to US$26.8 million due to (1) higher freight costs; (2) higher marketing costs to\nsupport the brand; and (3) higher sales commissions during 2Q26. As a percentage of net sales, SG&A\nincreased to 26.0% from 25.9%.\nOperating income increased 13% to US$17.3 million and operating margin increased 80 basis points\nto 16.7% from 15.9%, as a result of the revenue and cost dynamics mentioned above.\nEBITDA increased 12% to US$19.7 million from US$17.5 million in 2Q25, and EBITDA margin\nincreased 90 basis points to 19.0% from 18.1%.\nSelected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%)\nGRUMA CENTROAMÉRICA Sales Volume1 62 60 2 3\nCorn flour and other Net Sales 103.3 100.0 96.6 100.0 7 7\nOperating Income 17.3 16.7 15.3 15.9 2 13\nEBITDA 19.7 19.0 17.5 18.1 2 12\n1 All sales volume figures are expressed in thousand metric tons.\nYoY\nCapacity constraints continue to be the main challenge in this subsidiary, which is still\ndelivering strong financial results on the back of a continued growing demand for its\nproducts in the region and the mix it has achieved through innovation and distribution\nexpansion. We will continue to increase utilization in the newly built mill in the coming\nquarters, with an eye to build an additional one in the short term to meet demand.\n | Capacity constraints continue to be the main challenge in this subsidiary, which is still delivering strong financial results on the back of a continued growing demand for its products in the region and the mix it has achieved through innovation and distribution expansion. We will continue to increase utilization in the newly built mill in the coming quarters, with an eye to build an additional one in the short term to meet demand."
+    },
+    {
+      "page": 11,
+      "source": "text",
+      "chars": 3308,
+      "tables": 0,
+      "text": "2Q26 Results\nOther Subsidiaries and Eliminations\nOperating income was US$11.0 million compared to US$7.6 million in 2Q25 mainly due to higher\nrevenues from other Mexican subsidiaries and the effects of a stronger Mexican Peso relative to\nthe U.S. dollar.\nCONFERENCE CALL\nThe second quarter conference call will be held on Thursday, July 23, 2026, at 12:30 pm Eastern Time\n(10:30 am Monterrey Time). To access the call, please dial: domestic US +1 (877) 407-0784,\ninternational +1 (201) 689-8560.\nACCOUNTING PROCEDURES\nThe consolidated figures have been prepared in accordance with the International Financial Reporting\nStandards (IFRS). The consolidated financial statements are presented in U.S. dollars, currency that\ncorresponds to the presentation currency of the Company. The results of the entities that have a functional\ncurrency which differs from the Company’s presentation currency are translated into U.S. dollars applying the\naverage exchange rate for the period. Nevertheless, under the section “Subsidiary Results of Operations” and\nthe table “Financial Highlights by Subsidiary” of this report, figures for GIMSA were translated into U.S. dollars\nusing a convenience translation at the exchange rate of Ps.17.4700/dollar as of June 30, 2026. The differences\nbetween the use of convenience translation and the average exchange rate for the period are recorded under\nthe line \"Convenience Translation Effect” of the same table.\nABOUT GRUMA\nSince 1949, GRUMA, S.A.B. de C.V., is one of the world's leading tortilla and corn flour producers. With leading\nbrands in most of its markets, GRUMA has operations in the United States, Mexico, Central America, Europe,\nAsia and Oceania. GRUMA is headquartered in San Pedro Garza García, Mexico, and has approximately 25,000\nemployees and 77 plants. In 2025, GRUMA had net sales of US$6.4 billion, of which 73% came from non-\nMexican operations. For further information, please visit www.gruma.com.\nThis report may contain certain forward-looking statements and information relating to GRUMA, S.A.B. de C.V., and its\nsubsidiaries (collectively, “GRUMA”) that are based on the beliefs of its management as well as assumptions made by\nand information then available to GRUMA. Such statements reflect the views of GRUMA with respect to future events\nand are subject to certain risks, uncertainties, and assumptions. Many factors could cause the actual results, performance,\nor achievements of GRUMA to be materially different from historical results or any future results, performance, or\nachievements that may be expressed or implied by such forward-looking statements. Such factors include, among others,\nchanges in economic, political, social, governmental, business, or other factors globally or in Mexico, the United States,\nLatin America, or any other countries in which GRUMA does business, and world corn and wheat costs. If one or more of\nthese risks or uncertainties materializes, or underlying assumptions are proven incorrect, actual results may vary\nmaterially from those described herein as anticipated, believed, estimated, expected, or targeted. GRUMA does not\nintend, and undertakes no obligation, to publicly update or revise any forward-looking statements, whether as a result of\nnew information, future events, or otherwise.\nPage 10 of 13"
+    },
+    {
+      "page": 12,
+      "source": "text",
+      "chars": 778,
+      "tables": 0,
+      "text": "2Q26 Results\nThis report was translated from Spanish into English and presented only for purpose of complying with the requirements\nof GRUMA’s U.S.$500 million 5.390% Senior Notes due 2034, and U.S.$300 million 5.761% Senior Notes due 2054. None\nof the information contained in this report is prepared and published with the intention of claiming an exemption under\nRule 12g3-2 (b) of the U.S. Securities Exchange Act of 1934. GRUMA does not authorize, endorse, support or encourage\nthe creation of any unsponsored ADR programs in respect of its securities and disclaims any liability whatsoever arising\nout of an unsponsored ADR program. Under no circumstances should the contents of this report be construed as a\nsolicitation to purchase any securities of GRUMA.\nPage 11 of 13"
+    },
+    {
+      "page": 13,
+      "source": "text",
+      "chars": 2608,
+      "tables": 1,
+      "text": "2Q26 Results\nGruma, S.A.B. de C.V., and Subsidiaries YoY YTD\nIncome Statement (USD millions) 2Q26 2Q25 VAR (%) 2026 2025 VAR (%)\nNet Sales 1,649.9 1,600.7 3 3,274.7 3,149.2 4\nCost Of Sales 1,002.6 970.1 3 1,998.6 1,902.6 5\nGross Profit 647.3 630.7 3 1,276.1 1,246.6 2\nGross Margin (%) 39.2% 39.4% (20) bp 39.0% 39.6% (60) bp\nSelling And Administrative Expenses 434.4 406.6 7 868.8 811.9 7\nOther Expense (Income), Net (1.9) (5.7) 67 3.4 (12.2) 128\nOperating Income 214.8 229.8 (7) 403.9 446.9 (10)\nOperating Margin (%) 13.0% 14.4% (140) bp 12.3% 14.2% (190) bp\nNet Comprehensive Financing Cost 37.3 28.8 30 72.1 59.1 22\nInterest Expense 34.3 33.8 1 68.0 67.3 1\nInterest Income (3.4) (3.4) 0 (6.6) (6.9) 4\n(Gain) Loss From Derivative Financial Instruments 0.0 (0.0) 100 0.0 (0.0) 100\nForeign Exchange Loss (Gain) 6.6 (1.2) 654 11.4 (0.5) 2,622\nMonetary Position (Gain) Loss (0.2) (0.4) 50 (0.7) (0.9) 25\nIncome Taxes 58.8 67.1 (12) 112.4 128.2 (12)\nNet Income 118.7 133.9 (11) 219.4 259.7 (16)\nMajority Net Income 118.7 134.1 (12) 219.3 260.0 (16)\nEarnings Per Share1 0.35 0.38 (7) 0.65 0.74 (12)\nDepreciation And Amortization 61.8 59.9 123.3 118.7\nImpairment Of Long Lived Assets (0.1) (0.0) 11.3 (0.0)\nEBITDA2 276.5 289.7 (5) 538.5 565.6 (5)\nEBITDA Margin (%) 16.8% 18.1% (130) bp 16.4% 18.0% (160) bp\nCapital Expenditures 64 56 13 105 106 (1)\nGruma, S.A.B. de C.V., and Subsidiaries YoY QoQ\nBalance Sheet Summary (USD millions) Jun-26 Jun-25 VAR (%) Mar-26 VAR (%)\nCash And Cash Equivalents 484 353 37 419 15\nTrade Accounts Receivable 572 561 2 559 2\nOther Accounts Receivable 281 213 32 198 42\nInventories 1,243 1,163 7 1,148 8\nCurrent Assets 2,622 2,329 13 2,372 11\nProperty, Plant, And Equipment, Net 2,439 2,318 5 2,375 3\nTotal Assets 5,409 4,941 9 5,087 6\nShort-Term Debt 418 183 128 182 129\nCurrent Liabilities 1,155 949 22 824 40\nLong-Term Debt 1,694 1,647 3 1,656 2\nTotal Liabilities 3,157 2,863 10 2,770 14\nMajority Shareholders' Equity 2,249 2,075 8 2,314 (3)\nShareholders' Equity 2,252 2,078 8 2,317 (3)\nCurrent Assets/Current Liabilities 2.27 2.45 2.88\nTotal Liabilities/Shareholders' Equity 1.40 1.38 1.20\nNet Debt/EBITDA 3 1.45 1.29 1.27\nEBITDA/Interest Expense 3 8.35 8.61 8.35\nBook Value Per Share 1 6.69 5.90 6.75\n1 On the basis of 336'207,985 shares as of June 30, 2026, 351'690,146 shares as of June 30, 2025, and 342'671,036\nshares as of March 31, 2026.\n2 EBITDA = operating income + depreciation, amortization and impairment of long lived assets +(-) other expenses\n(income) unrelated to core business operations.\n3 Last twelve months.\nPage 12 of 13\nJun-26 | Jun-25 | VAR (%) | Mar-26 |"
+    },
+    {
+      "page": 14,
+      "source": "text",
+      "chars": 3707,
+      "tables": 0,
+      "text": "2Q26 Results\nFinancial Highlights by Subsidiary1 YoY YTD\nSelected Income Statement Items (USD millions) 2Q26 % 2Q25 % VAR ($) VAR (%) 2026 % 2025 % VAR ($) VAR (%)\nGRUMA USA Sales Volume2 380 391 (12) (3) 754 775 (20) (3)\nCorn flour, tortillas, and other Net Sales 850.3 100.0 875.7 100.0 (25) (3) 1,701.4 100.0 1,755.4 100.0 (54) (3)\nCost of Sales 483.1 56.8 488.0 55.7 (5) (1) 961.1 56.5 976.2 55.6 (15) (2)\nGross Profit 367.2 43.2 387.7 44.3 (20) (5) 740.3 43.5 779.2 44.4 (39) (5)\nSG&A 243.3 28.6 241.9 27.6 1 1 491.3 28.9 487.5 27.8 4 1\nOperating Income 124.0 14.6 150.8 17.2 (27) (18) 254.9 15.0 301.6 17.2 (47) (15)\nEBITDA 165.0 19.4 193.0 22.0 (28) (15) 337.3 19.8 386.3 22.0 (49) (13)\nGIMSA Sales Volume2 520 522 (2) (0) 1,034 1,034 0 0\nCorn flour and other Net Sales 459.8 100.0 465.7 100.0 (6) (1) 913.5 100.0 923.9 100.0 (10) (1)\nCost of Sales 324.0 70.5 337.4 72.4 (13) (4) 654.4 71.6 670.5 72.6 (16) (2)\nGross Profit 135.8 29.5 128.3 27.6 7 6 259.1 28.4 253.4 27.4 6 2\nSG&A 97.6 21.2 94.1 20.2 4 4 191.1 20.9 188.0 20.3 3 2\nOperating Income 36.7 8.0 36.5 7.8 0 1 54.6 6.0 69.5 7.5 (15) (22)\nEBITDA 50.3 10.9 49.8 10.7 1 1 92.0 10.1 95.9 10.4 (4) (4)\nGRUMA EUROPE Sales Volume2 107 107 0 0 218 212 6 3\nCorn flour, tortillas, and other Net Sales 142.6 100.0 135.3 100.0 7 5 273.5 100.0 250.2 100.0 23 9\nCost of Sales 96.5 67.7 92.8 68.6 4 4 189.7 69.4 174.8 69.9 15 9\nGross Profit 46.1 32.3 42.5 31.4 4 9 83.8 30.6 75.3 30.1 8 11\nSG&A 30.3 21.3 28.6 21.1 2 6 59.3 21.7 53.9 21.5 5 10\nOperating Income 16.3 11.4 13.9 10.3 2 17 25.7 9.4 21.6 8.6 4 19\nEBITDA 21.0 14.8 17.9 13.2 3 17 34.8 12.7 29.3 11.7 5 19\nGRUMA ASIA & OCEANIA Sales Volume2 26 25 1 4 53 50 3 5\nCorn flour, tortillas, and other Net Sales 78.4 100.0 68.0 100.0 10 15 156.2 100.0 134.8 100.0 21 16\nCost of Sales 51.7 65.9 47.1 69.2 5 10 105.0 67.2 93.2 69.1 12 13\nGross Profit 26.7 34.1 20.9 30.8 6 28 51.2 32.8 41.6 30.9 10 23\nSG&A 17.2 22.0 15.2 22.3 2 13 33.9 21.7 30.2 22.4 4 12\nOperating Income 9.5 12.1 5.7 8.3 4 68 17.3 11.1 11.4 8.4 6 52\nEBITDA 12.7 16.2 8.6 12.7 4 47 23.7 15.2 17.3 12.8 6 37\nGRUMA CENTROAMÉRICA Sales Volume2 62 60 2 3 124 119 5 4\nCorn flour and other Net Sales 103.3 100.0 96.6 100.0 7 7 206.2 100.0 193.2 100.0 13 7\nCost of Sales 59.8 57.9 56.3 58.3 4 6 119.1 57.8 114.3 59.2 5 4\nGross Profit 43.4 42.1 40.3 41.7 3 8 87.1 42.2 78.9 40.8 8 10\nSG&A 26.8 26.0 25.0 25.9 2 7 52.7 25.6 49.5 25.6 3 6\nOperating Income 17.3 16.7 15.3 15.9 2 13 35.7 17.3 29.4 15.2 6 21\nEBITDA 19.7 19.0 17.5 18.1 2 12 41.2 20.0 33.7 17.4 7 22\nOTHER SUBSIDIARIES &\nSales Volume2 (18) (21) 2 11 (39) (44) 4 10\nELIMINATIONS\nNet Sales 15.6 100.0 (40.5) 100.0 56 139 23.9 100.0 (108.2) 100.0 132 122\nCost of Sales (12.4) (79.5) (51.5) 127.2 39 76 (30.7) (128.5) (126.4) 116.8 96 76\nGross Profit 28.0 179.5 11.0 (27.2) 17 155 54.6 228.5 18.2 (16.8) 36 200\nSG&A 19.2 123.1 1.9 (4.7) 17 911 40.6 169.9 3.0 (2.8) 38 1,253\nOperating Income 11.0 70.5 7.6 (18.8) 3 45 15.7 65.7 13.5 (12.5) 2 16\nEBITDA 7.9 50.6 2.9 (7.2) 5 172 9.5 39.7 3.1 (2.9) 6 206\nCONSOLIDATED Sales Volume2 1,076 1,084 (8) (1) 2,144 2,146 (2) (0)\nNet Sales 1,649.9 100.0 1,600.7 100.0 49 3 3,274.7 100.0 3,149.2 100.0 125 4\nCost of Sales 1,002.6 60.8 970.1 60.6 33 3 1,998.6 61.0 1,902.6 60.4 96 5\nGross Profit 647.3 39.2 630.7 39.4 17 3 1,276.1 39.0 1,246.6 39.6 29 2\nSG&A 434.4 26.3 406.6 25.4 28 7 868.8 26.5 811.9 25.8 57 7\nOther Exp. (Inc.) , Net (1.9) (5.7) 4 67 3.4 (12.2) 16 128\nOperating Income 214.8 13.0 229.8 14.4 (15) (7) 403.9 12.3 446.9 14.2 (43) (10)\nEBITDA 276.5 16.8 289.7 18.1 (13) (5) 538.5 16.4 565.6 18.0 (27) (5)\n1 For further details see “Accounting Procedures”.\n2 All sales volume figures are expressed in thousand metric tons.\nPage 13 of 13"
+    }
+  ]
+}
