@@ -1,0 +1,2098 @@
+{
+  "schema_version": "1.0",
+  "parser_version": "30",
+  "path": "C:\\Project\\finscan\\inbox\\Funo\\documento-NZlEc-1785359073.pdf",
+  "sha256": "bb55ab0d5e5b1255df8cc86b299467da90dd86ebfdc6dcc08f191a479bd5ace7",
+  "units": "thousands",
+  "currency": "USD",
+  "ocr": {
+    "pages": [],
+    "engine": null
+  },
+  "issues": [
+    {
+      "code": "text_layer_repaired",
+      "severity": "info",
+      "message": "Letter-spaced text layer repaired on page(s) [5, 13, 15, 16, 17, 27].",
+      "page": null
+    },
+    {
+      "code": "columns_unreadable",
+      "severity": "error",
+      "message": "The equity on page 5 has no readable column headers, so the period basis of its figures cannot be established.",
+      "page": 5
+    }
+  ],
+  "statements": [
+    {
+      "page": 3,
+      "kind": "balance_sheet",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "Interim Consolidated Condensed Statement of Financial Position",
+      "heading": "As of June 30, 2026 (Unaudited) and December 31, 2025",
+      "columns": [
+        {
+          "index": 0,
+          "header": "30/06/2026",
+          "kind": "point_in_time",
+          "months": null,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "31/12/2025",
+          "kind": "point_in_time",
+          "months": null,
+          "end": "2025-12-31"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Cash and cash equivalents",
+          "values": [
+            7868913.0,
+            13721823.0
+          ],
+          "raw": "Cash and cash equivalents 3 $ 7,868,913 $ 13,721,823",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease receivables",
+          "values": [
+            2667173.0,
+            2131586.0
+          ],
+          "raw": "Lease receivables 4 2,667,173 2,131,586",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other accounts receivable",
+          "values": [
+            761485.0,
+            383371.0
+          ],
+          "raw": "Other accounts receivable 5 761,485 383,371",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Due from related parties",
+          "values": [
+            452432.0,
+            747369.0
+          ],
+          "raw": "Due from related parties 13 452,432 747,369",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Recoverable taxes, mainly VAT",
+          "values": [
+            4599029.0,
+            4412212.0
+          ],
+          "raw": "Recoverable taxes, mainly VAT 4,599,029 4,412,212",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Financial assets from properties",
+          "values": [
+            262847.0,
+            50101.0
+          ],
+          "raw": "Financial assets from properties 262,847 50,101",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative financial instruments",
+          "values": [
+            null,
+            940339.0
+          ],
+          "raw": "Derivative financial instruments 10 - 940,339",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Prepaid expenses",
+          "values": [
+            2058014.0,
+            1526419.0
+          ],
+          "raw": "Prepaid expenses 2,058,014 1,526,419",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other assets",
+          "values": [
+            326976.0,
+            491760.0
+          ],
+          "raw": "Other assets 326,976 491,760",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Asset held for sale",
+          "values": [
+            null,
+            12358667.0
+          ],
+          "raw": "Asset held for sale - 12,358,667",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total current assets",
+          "values": [
+            18996869.0,
+            36763647.0
+          ],
+          "raw": "Total current assets 18,996,869 36,763,647",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Restricted Cash",
+          "values": [
+            152810.0,
+            155706.0
+          ],
+          "raw": "Restricted Cash 3 152,810 155,706",
+          "heading": "Non-current assets:",
+          "unverified": []
+        },
+        {
+          "caption": "Investments in financial assets",
+          "values": [
+            675505.0,
+            675505.0
+          ],
+          "raw": "Investments in financial assets 675,505 675,505",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Investment properties",
+          "values": [
+            367546117.0,
+            360758353.0
+          ],
+          "raw": "Investment properties 6 367,546,117 360,758,353",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Financial assets from properties",
+          "values": [
+            1763136.0,
+            2350461.0
+          ],
+          "raw": "Financial assets from properties 1,763,136 2,350,461",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Investments in associates and joint venture",
+          "values": [
+            11823520.0,
+            11843525.0
+          ],
+          "raw": "Investments in associates and joint venture 7 11,823,520 11,843,525",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Due from related parties",
+          "values": [
+            234389.0,
+            155927.0
+          ],
+          "raw": "Due from related parties 13 234,389 155,927",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Prepaid expenses",
+          "values": [
+            473.0,
+            91209.0
+          ],
+          "raw": "Prepaid expenses 473 91,209",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Intangible assets,net",
+          "values": [
+            762530.0,
+            813622.0
+          ],
+          "raw": "Intangible assets,net 8 762,530 813,622",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other assets",
+          "values": [
+            1073381.0,
+            1233382.0
+          ],
+          "raw": "Other assets 1,073,381 1,233,382",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total non-current assets",
+          "values": [
+            384031861.0,
+            378077690.0
+          ],
+          "raw": "Total non-current assets 384,031,861 378,077,690",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total assets $",
+          "values": [
+            403028730.0,
+            414841337.0
+          ],
+          "raw": "Total assets $ 403,028,730 $ 414,841,337",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Liabilities and Trustors´/ Beneficiaries’ Capital Notes",
+          "values": [
+            6.0,
+            2026.0,
+            31.0,
+            12.0,
+            2025.0
+          ],
+          "raw": "Liabilities and Trustors´/ Beneficiaries’ Capital Notes 30/06/2026 31/12/2025",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Borrowings",
+          "values": [
+            16761603.0,
+            11947917.0
+          ],
+          "raw": "Borrowings 9 $ 16,761,603 $ 11,947,917",
+          "heading": "Short-term liabilities:",
+          "unverified": []
+        },
+        {
+          "caption": "Interest payable",
+          "values": [
+            2359263.0,
+            1691886.0
+          ],
+          "raw": "Interest payable 2,359,263 1,691,886",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Accounts payable and accrued expenses",
+          "values": [
+            4166113.0,
+            4076567.0
+          ],
+          "raw": "Accounts payable and accrued expenses 11 4,166,113 4,076,567",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Helios consideration payable",
+          "values": [
+            444501.0,
+            693569.0
+          ],
+          "raw": "Helios consideration payable 444,501 693,569",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Accounts payable due to acquisition of investment properties",
+          "values": [
+            516418.0,
+            516418.0
+          ],
+          "raw": "Accounts payable due to acquisition of investment properties 516,418 516,418",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Deposits from tenants",
+          "values": [
+            187631.0,
+            269903.0
+          ],
+          "raw": "Deposits from tenants 187,631 269,903",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income collected in advance",
+          "values": [
+            395857.0,
+            366284.0
+          ],
+          "raw": "Income collected in advance 395,857 366,284",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease rights",
+          "values": [
+            110372.0,
+            107212.0
+          ],
+          "raw": "Lease rights 110,372 107,212",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Due to related parties",
+          "values": [
+            780574.0,
+            311085.0
+          ],
+          "raw": "Due to related parties 13 780,574 311,085",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative financial instruments",
+          "values": [
+            null,
+            2063241.0
+          ],
+          "raw": "Derivative financial instruments 10 - 2,063,241",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total short-term liabilities",
+          "values": [
+            25722332.0,
+            22044082.0
+          ],
+          "raw": "Total short-term liabilities 25,722,332 22,044,082",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Borrowings",
+          "values": [
+            130837289.0,
+            138914573.0
+          ],
+          "raw": "Borrowings 9 130,837,289 138,914,573",
+          "heading": "Long-term liabilities:",
+          "unverified": []
+        },
+        {
+          "caption": "Accrued liabilities",
+          "values": [
+            71700.0,
+            71040.0
+          ],
+          "raw": "Accrued liabilities 71,700 71,040",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Deposits from tenants",
+          "values": [
+            2033479.0,
+            1856562.0
+          ],
+          "raw": "Deposits from tenants 2,033,479 1,856,562",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income collected in advance and lease rights",
+          "values": [
+            588504.0,
+            588762.0
+          ],
+          "raw": "Income collected in advance and lease rights 588,504 588,762",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative financial instruments",
+          "values": [
+            3046785.0,
+            1858439.0
+          ],
+          "raw": "Derivative financial instruments 10 3,046,785 1,858,439",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total long-term liabilities",
+          "values": [
+            136577757.0,
+            143289376.0
+          ],
+          "raw": "Total long-term liabilities 136,577,757 143,289,376",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total liabilities",
+          "values": [
+            162300089.0,
+            165333458.0
+          ],
+          "raw": "Total liabilities 162,300,089 165,333,458",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trustors’ contributions",
+          "values": [
+            101400353.0,
+            102379312.0
+          ],
+          "raw": "Trustors’ contributions 14 101,400,353 102,379,312",
+          "heading": "Trustors’/ Beneficiaries’ Capital",
+          "unverified": []
+        },
+        {
+          "caption": "Retained earnings",
+          "values": [
+            91412129.0,
+            100285720.0
+          ],
+          "raw": "Retained earnings 91,412,129 100,285,720",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Valuation of derivative financial instruments",
+          "values": [
+            -1672143.0,
+            -1647475.0
+          ],
+          "raw": "Valuation of derivative financial instruments (1,672,143) (1,647,475)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "CBFIs repurchase reserve",
+          "values": [
+            1560594.0,
+            1405420.0
+          ],
+          "raw": "CBFIs repurchase reserve 1,560,594 1,405,420",
+          "heading": "in cash flow hedges / Actuarial valuation effects-benefit plans",
+          "unverified": []
+        },
+        {
+          "caption": "Total controlling interest",
+          "values": [
+            192700933.0,
+            202422977.0
+          ],
+          "raw": "Total controlling interest 192,700,933 202,422,977",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Non-controlling interest",
+          "values": [
+            48027708.0,
+            47084902.0
+          ],
+          "raw": "Non-controlling interest 48,027,708 47,084,902",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total Trustors’/ Beneficiaries’ capital",
+          "values": [
+            240728641.0,
+            249507879.0
+          ],
+          "raw": "Total Trustors’/ Beneficiaries’ capital 240,728,641 249,507,879",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total liabilities and Trustors’/ Beneficiaries’ capital $",
+          "values": [
+            403028730.0,
+            414841337.0
+          ],
+          "raw": "Total liabilities and Trustors’/ Beneficiaries’ capital $ 403,028,730 $ 414,841,337",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 4,
+      "kind": "comprehensive_income",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "Interim Consolidated Condensed Statements of Income and Other Comprehensive Income",
+      "heading": "For the six and three-months periods ended June 30, 2026 and 2025",
+      "columns": [
+        {
+          "index": 0,
+          "header": "6 months as of 30/06/2026",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "Second-quarter 2026 transactions",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 2,
+          "header": "3 months as of 31/03/2026",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-03-31"
+        },
+        {
+          "index": 3,
+          "header": "6 months as of 30/06/2025",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 4,
+          "header": "Second-quarter 2025 transactions",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 5,
+          "header": "3 months as of 31/03/2025",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-03-31"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Leases of investment property $",
+          "values": [
+            14094380.0,
+            6976202.0,
+            7118178.0,
+            13401981.0,
+            6645411.0,
+            6756570.0
+          ],
+          "raw": "Leases of investment property $ 14,094,380 $ 6,976,202 $ 7,118,178 $ 13,401,981 $ 6,645,411 $ 6,756,570",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Maintenance",
+          "values": [
+            1500578.0,
+            760413.0,
+            740165.0,
+            1429976.0,
+            718379.0,
+            711597.0
+          ],
+          "raw": "Maintenance 1,500,578 760,413 740,165 1,429,976 718,379 711,597",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Dividends on income from fiduciary rights",
+          "values": [
+            200864.0,
+            122436.0,
+            78428.0,
+            122774.0,
+            62881.0,
+            59893.0
+          ],
+          "raw": "Dividends on income from fiduciary rights 200,864 122,436 78,428 122,774 62,881 59,893",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest income from financial assets",
+          "values": [
+            132855.0,
+            62445.0,
+            70410.0,
+            148784.0,
+            74392.0,
+            74392.0
+          ],
+          "raw": "Interest income from financial assets 132,855 62,445 70,410 148,784 74,392 74,392",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Mangement fees",
+          "values": [
+            null,
+            null,
+            null,
+            6530.0,
+            4203.0,
+            2327.0
+          ],
+          "raw": "Mangement fees - - - 6,530 4,203 2,327",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Management fees",
+          "values": [
+            null,
+            null,
+            null,
+            -496764.0,
+            -251622.0,
+            -245142.0
+          ],
+          "raw": "Management fees - - - (496,764) (251,622) (245,142)",
+          "heading": "Expenses from:",
+          "unverified": []
+        },
+        {
+          "caption": "Corporate and administrative expenses",
+          "values": [
+            -1122592.0,
+            -562577.0,
+            -560015.0,
+            -1299077.0,
+            -633861.0,
+            -665216.0
+          ],
+          "raw": "Corporate and administrative expenses (1,122,592) (562,577) (560,015) (1,299,077) (633,861) (665,216)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Maintenance expenses",
+          "values": [
+            -2299935.0,
+            -1116541.0,
+            -1183394.0,
+            -1935216.0,
+            -959977.0,
+            -975239.0
+          ],
+          "raw": "Maintenance expenses (2,299,935) (1,116,541) (1,183,394) (1,935,216) (959,977) (975,239)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Property taxes",
+          "values": [
+            -417770.0,
+            -209860.0,
+            -207910.0,
+            -414443.0,
+            -209100.0,
+            -205343.0
+          ],
+          "raw": "Property taxes (417,770) (209,860) (207,910) (414,443) (209,100) (205,343)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Insurance",
+          "values": [
+            -259992.0,
+            -129933.0,
+            -130059.0,
+            -233001.0,
+            -123782.0,
+            -109219.0
+          ],
+          "raw": "Insurance (259,992) (129,933) (130,059) (233,001) (123,782) (109,219)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Operating income",
+          "values": [
+            11828388.0,
+            5902585.0,
+            5925803.0,
+            10731544.0,
+            5326924.0,
+            5404620.0
+          ],
+          "raw": "Operating income 11,828,388 5,902,585 5,925,803 10,731,544 5,326,924 5,404,620",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest expense",
+          "values": [
+            -5848411.0,
+            -2899889.0,
+            -2948522.0,
+            -6124938.0,
+            -3007270.0,
+            -3117668.0
+          ],
+          "raw": "Interest expense (5,848,411) (2,899,889) (2,948,522) (6,124,938) (3,007,270) (3,117,668)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest income",
+          "values": [
+            451146.0,
+            226993.0,
+            224153.0,
+            160309.0,
+            45963.0,
+            114346.0
+          ],
+          "raw": "Interest income 451,146 226,993 224,153 160,309 45,963 114,346",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Income after financial expenses",
+          "values": [
+            6431123.0,
+            3229689.0,
+            3201434.0,
+            4766915.0,
+            2365617.0,
+            2401298.0
+          ],
+          "raw": "Income after financial expenses 6,431,123 3,229,689 3,201,434 4,766,915 2,365,617 2,401,298",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Profit on sale of financial assets from properties",
+          "values": [
+            82500.0,
+            null,
+            82500.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "Profit on sale of financial assets from properties 82,500 - 82,500 - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Foreign exchange gain (loss), net",
+          "values": [
+            1397003.0,
+            2490415.0,
+            -1093412.0,
+            2310930.0,
+            3017413.0,
+            -706483.0
+          ],
+          "raw": "Foreign exchange gain (loss), net 1,397,003 2,490,415 (1,093,412) 2,310,930 3,017,413 (706,483)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Valuation effect on financial instruments",
+          "values": [
+            174570.0,
+            -3180.0,
+            177750.0,
+            54706.0,
+            -40418.0,
+            95124.0
+          ],
+          "raw": "Valuation effect on financial instruments 174,570 (3,180) 177,750 54,706 (40,418) 95,124",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Adjustment to fair value of investments in associates and property-related",
+          "values": [
+            -193134.0,
+            -23407.0,
+            -169727.0,
+            209771.0,
+            225366.0,
+            -15595.0
+          ],
+          "raw": "Adjustment to fair value of investments in associates and property-related (193,134) (23,407) (169,727) 209,771 225,366 (15,595)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Administrative platform amortization",
+          "values": [
+            -51092.0,
+            -25546.0,
+            -25546.0,
+            -51092.0,
+            -25546.0,
+            -25546.0
+          ],
+          "raw": "Administrative platform amortization (51,092) (25,546) (25,546) (51,092) (25,546) (25,546)",
+          "heading": "financial assets",
+          "unverified": []
+        },
+        {
+          "caption": "Amortization of bank and other financial charges",
+          "values": [
+            -105515.0,
+            -45286.0,
+            -60229.0,
+            -187762.0,
+            -55002.0,
+            -132760.0
+          ],
+          "raw": "Amortization of bank and other financial charges (105,515) (45,286) (60,229) (187,762) (55,002) (132,760)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other (expenses) income, net",
+          "values": [
+            -31950.0,
+            -23435.0,
+            -8515.0,
+            -34505.0,
+            -31769.0,
+            -2736.0
+          ],
+          "raw": "Other (expenses) income, net (31,950) (23,435) (8,515) (34,505) (31,769) (2,736)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Executive bonus",
+          "values": [
+            -263142.0,
+            -139066.0,
+            -124076.0,
+            -55221.0,
+            -27611.0,
+            -27610.0
+          ],
+          "raw": "Executive bonus (263,142) (139,066) (124,076) (55,221) (27,611) (27,610)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Consolidated net income for the period $",
+          "values": [
+            7440363.0,
+            5460184.0,
+            1980179.0,
+            7013742.0,
+            5428050.0,
+            1585692.0
+          ],
+          "raw": "Consolidated net income for the period $ 7,440,363 $ 5,460,184 $ 1,980,179 $ 7,013,742 $ 5,428,050 $ 1,585,692",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Consolidated comprehensive income for the period $",
+          "values": [
+            7561731.0,
+            5643696.0,
+            1918035.0,
+            8162855.0,
+            6456511.0,
+            1706344.0
+          ],
+          "raw": "Consolidated comprehensive income for the period $ 7,561,731 $ 5,643,696 $ 1,918,035 $ 8,162,855 $ 6,456,511 $ 1,706,344",
+          "heading": "(loss) in valuation of derivate financial instruments",
+          "unverified": []
+        },
+        {
+          "caption": "Controlling interest",
+          "values": [
+            5479550.0,
+            4107164.0,
+            1372386.0,
+            6976924.0,
+            5407733.0,
+            1569191.0
+          ],
+          "raw": "Controlling interest 5,479,550 4,107,164 1,372,386 6,976,924 5,407,733 1,569,191",
+          "heading": "Consolidated net income for the period:",
+          "unverified": []
+        },
+        {
+          "caption": "Non-controlling interest",
+          "values": [
+            1960813.0,
+            1353020.0,
+            607793.0,
+            36818.0,
+            20317.0,
+            16501.0
+          ],
+          "raw": "Non-controlling interest 1,960,813 1,353,020 607,793 36,818 20,317 16,501",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "$",
+          "values": [
+            7440363.0,
+            5460184.0,
+            1980179.0,
+            7013742.0,
+            5428050.0,
+            1585692.0
+          ],
+          "raw": "$ 7,440,363 $ 5,460,184 $ 1,980,179 $ 7,013,742 $ 5,428,050 $ 1,585,692",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Controlling interest",
+          "values": [
+            5454882.0,
+            4226028.0,
+            1228854.0,
+            8126037.0,
+            6436194.0,
+            1689843.0
+          ],
+          "raw": "Controlling interest 5,454,882 4,226,028 1,228,854 8,126,037 6,436,194 1,689,843",
+          "heading": "Consolidated comprehensive income for the period:",
+          "unverified": []
+        },
+        {
+          "caption": "Non-controlling interest",
+          "values": [
+            2106849.0,
+            1417668.0,
+            689181.0,
+            36818.0,
+            20317.0,
+            16501.0
+          ],
+          "raw": "Non-controlling interest 2,106,849 1,417,668 689,181 36,818 20,317 16,501",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "$",
+          "values": [
+            7561731.0,
+            5643696.0,
+            1918035.0,
+            8162855.0,
+            6456511.0,
+            1706344.0
+          ],
+          "raw": "$ 7,561,731 $ 5,643,696 $ 1,918,035 $ 8,162,855 $ 6,456,511 $ 1,706,344",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 5,
+      "kind": "equity",
+      "note": null,
+      "units": null,
+      "source": null,
+      "title": "Interim Consolidated Condensed Statement of Changes in Trustors'/ Beneficiaries' Capital",
+      "heading": "For the six-months periods ended June 30, 2026 and 2025",
+      "columns": [],
+      "rows": [
+        {
+          "caption": "Balance as of December",
+          "values": [
+            31.0,
+            2025.0,
+            102379312.0,
+            100285720.0,
+            -1647475.0,
+            1405420.0,
+            202422977.0,
+            47084902.0,
+            249507879.0
+          ],
+          "raw": "Balance as of December 31, 2025 $ 102,379,312 $ 100,285,720 $ (1,647,475) $ 1,405,420 $ 202,422,977 $ 47,084,902 $ 249,507,879",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trustors' contributions",
+          "values": [
+            263141.0,
+            null,
+            null,
+            null,
+            263141.0,
+            null,
+            263141.0
+          ],
+          "raw": "Trustors' contributions 263,141 - - - 263,141 - 263,141",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Distributions to beneficiaries",
+          "values": [
+            -1242100.0,
+            -3673638.0,
+            null,
+            null,
+            -4915738.0,
+            -1164043.0,
+            -6079781.0
+          ],
+          "raw": "Distributions to beneficiaries (1,242,100) (3,673,638) - - (4,915,738) (1,164,043) (6,079,781)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other capital accounts",
+          "values": [
+            null,
+            -10524329.0,
+            null,
+            null,
+            -10524329.0,
+            null,
+            -10524329.0
+          ],
+          "raw": "Other capital accounts - (10,524,329) - - (10,524,329) - (10,524,329)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "CBFIs repurchase reserve",
+          "values": [
+            null,
+            -155174.0,
+            null,
+            155174.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "CBFIs repurchase reserve - (155,174) - 155,174 - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Consolidated comprehensive income",
+          "values": [
+            null,
+            5479550.0,
+            -24668.0,
+            null,
+            5454882.0,
+            2106849.0,
+            7561731.0
+          ],
+          "raw": "Consolidated comprehensive income - 5,479,550 (24,668) - 5,454,882 2,106,849 7,561,731",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance as of June",
+          "values": [
+            30.0,
+            2026.0,
+            101400353.0,
+            91412129.0,
+            -1672143.0,
+            1560594.0,
+            192700933.0,
+            48027708.0,
+            240728641.0
+          ],
+          "raw": "Balance as of June 30, 2026 $ 101,400,353 $ 91,412,129 $ (1,672,143) $ 1,560,594 $ 192,700,933 $ 48,027,708 $ 240,728,641",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance as of December",
+          "values": [
+            31.0,
+            2024.0,
+            105623400.0,
+            82981184.0,
+            -3527652.0,
+            1268278.0,
+            186345210.0,
+            1433827.0,
+            187779037.0
+          ],
+          "raw": "Balance as of December 31, 2024 $ 105,623,400 $ 82,981,184 $ (3,527,652) $ 1,268,278 $ 186,345,210 $ 1,433,827 $ 187,779,037",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trustor's contributions",
+          "values": [
+            55221.0,
+            null,
+            null,
+            null,
+            55221.0,
+            null,
+            55221.0
+          ],
+          "raw": "Trustor's contributions 55,221 - - - 55,221 - 55,221",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Distributions to beneficiaries",
+          "values": [
+            -1870890.0,
+            -2340885.0,
+            null,
+            null,
+            -4211775.0,
+            -22180.0,
+            -4233955.0
+          ],
+          "raw": "Distributions to beneficiaries (1,870,890) (2,340,885) - - (4,211,775) (22,180) (4,233,955)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "CBFIs repurchase reserve",
+          "values": [
+            null,
+            -280400.0,
+            null,
+            81426.0,
+            -198974.0,
+            null,
+            -198974.0
+          ],
+          "raw": "CBFIs repurchase reserve - (280,400) - 81,426 (198,974) - (198,974)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Consolidated comprehensive income",
+          "values": [
+            null,
+            6976924.0,
+            1149113.0,
+            null,
+            8126037.0,
+            36818.0,
+            8162855.0
+          ],
+          "raw": "Consolidated comprehensive income - 6,976,924 1,149,113 - 8,126,037 36,818 8,162,855",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Balance as of June",
+          "values": [
+            30.0,
+            2025.0,
+            103807731.0,
+            87336823.0,
+            -2378539.0,
+            1349704.0,
+            190115719.0,
+            1448465.0,
+            191564184.0
+          ],
+          "raw": "Balance as of June 30, 2025 $ 103,807,731 $ 87,336,823 $ (2,378,539) $ 1,349,704 $ 190,115,719 $ 1,448,465 $ 191,564,184",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    },
+    {
+      "page": 6,
+      "kind": "cash_flow",
+      "note": null,
+      "units": "thousands",
+      "source": null,
+      "title": "Interim Consolidated Condensed Statement of Cash Flow",
+      "heading": "For the six and three months periods ended June 30, 2026 and 2025",
+      "columns": [
+        {
+          "index": 0,
+          "header": "As of 30/06/2026",
+          "kind": "period",
+          "months": 6,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 1,
+          "header": "Second-quarter 2026 flows",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-06-30"
+        },
+        {
+          "index": 2,
+          "header": "As of 31/03/2026",
+          "kind": "period",
+          "months": 3,
+          "end": "2026-03-31"
+        },
+        {
+          "index": 3,
+          "header": "As of 30/06/2025",
+          "kind": "period",
+          "months": 6,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 4,
+          "header": "Second-quarter 2025 flows",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-06-30"
+        },
+        {
+          "index": 5,
+          "header": "As of 31/03/2025",
+          "kind": "period",
+          "months": 3,
+          "end": "2025-03-31"
+        }
+      ],
+      "rows": [
+        {
+          "caption": "Net Consolidated income of the period $",
+          "values": [
+            440363.0,
+            5460184.0,
+            1.0,
+            980179.0,
+            7.0,
+            13742.0,
+            5428050.0,
+            1585692.0
+          ],
+          "raw": "Net Consolidated income of the period $ 7 ,440,363 $ 5,460,184 $ 1 ,980,179 $ 7 ,013,742 $ 5,428,050 $ 1,585,692",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Adjustment to the fair value of investment properties,",
+          "values": [
+            193134.0,
+            23407.0,
+            169727.0,
+            -209771.0,
+            -225366.0,
+            15595.0
+          ],
+          "raw": "Adjustment to the fair value of investment properties, 193,134 23,407 169,727 (209,771) (225,366) 15,595",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Unrealized exchange effects",
+          "values": [
+            -1535590.0,
+            -2746986.0,
+            1211396.0,
+            -2753095.0,
+            -3265040.0,
+            511945.0
+          ],
+          "raw": "Unrealized exchange effects (1,535,590) (2,746,986) 1,211,396 (2,753,095) (3,265,040) 511,945",
+          "heading": "financial assets of properties and investments in associates",
+          "unverified": []
+        },
+        {
+          "caption": "Profit on sale of financial assets of properties",
+          "values": [
+            -82500.0,
+            null,
+            -82500.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "Profit on sale of financial assets of properties (82,500) - (82,500) - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Amortizations and provisions for expenses",
+          "values": [
+            1293375.0,
+            466621.0,
+            826754.0,
+            1289047.0,
+            499907.0,
+            789140.0
+          ],
+          "raw": "Amortizations and provisions for expenses 1,293,375 466,621 826,754 1,289,047 499,907 789,140",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Executive Bonus",
+          "values": [
+            263142.0,
+            139066.0,
+            124076.0,
+            55221.0,
+            27611.0,
+            27610.0
+          ],
+          "raw": "Executive Bonus 263,142 139,066 124,076 55,221 27,611 27,610",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest income",
+          "values": [
+            -451146.0,
+            -226993.0,
+            -224153.0,
+            -160309.0,
+            -45963.0,
+            -114346.0
+          ],
+          "raw": "Interest income (451,146) (226,993) (224,153) (160,309) (45,963) (114,346)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest expense",
+          "values": [
+            5848411.0,
+            2899889.0,
+            2948522.0,
+            6124938.0,
+            3007270.0,
+            3117668.0
+          ],
+          "raw": "Interest expense 5,848,411 2,899,889 2,948,522 6,124,938 3,007,270 3,117,668",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Effect of valuation on derivative financial instruments",
+          "values": [
+            -174570.0,
+            3180.0,
+            -177750.0,
+            -54706.0,
+            40418.0,
+            -95124.0
+          ],
+          "raw": "Effect of valuation on derivative financial instruments (174,570) 3,180 (177,750) (54,706) 40,418 (95,124)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Other non-cash transactions",
+          "values": [
+            353.0,
+            -2230.0,
+            2583.0,
+            -6714.0,
+            -7693.0,
+            979.0
+          ],
+          "raw": "Other non-cash transactions 353 (2,230) 2,583 (6,714) (7,693) 979",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Total",
+          "values": [
+            12794972.0,
+            6016138.0,
+            6778834.0,
+            11298353.0,
+            5459194.0,
+            5839159.0
+          ],
+          "raw": "Total 12,794,972 6,016,138 6,778,834 11,298,353 5,459,194 5,839,159",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease receivables",
+          "values": [
+            -747113.0,
+            69702.0,
+            -816815.0,
+            -194504.0,
+            -178990.0,
+            -15514.0
+          ],
+          "raw": "Lease receivables (747,113) 69,702 (816,815) (194,504) (178,990) (15,514)",
+          "heading": "(Increase) decrease in:",
+          "unverified": []
+        },
+        {
+          "caption": "Other accounts receivable",
+          "values": [
+            -152147.0,
+            -104095.0,
+            -48052.0,
+            -25270.0,
+            -35184.0,
+            9914.0
+          ],
+          "raw": "Other accounts receivable (152,147) (104,095) (48,052) (25,270) (35,184) 9,914",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Accounts receivable – related parties",
+          "values": [
+            294938.0,
+            287309.0,
+            7629.0,
+            -269214.0,
+            -64944.0,
+            -204270.0
+          ],
+          "raw": "Accounts receivable – related parties 294,938 287,309 7,629 (269,214) (64,944) (204,270)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Recoverable taxes, manily VAT",
+          "values": [
+            -186818.0,
+            -344293.0,
+            157475.0,
+            141498.0,
+            107056.0,
+            34442.0
+          ],
+          "raw": "Recoverable taxes, manily VAT (186,818) (344,293) 157,475 141,498 107,056 34,442",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Prepaid expenses and other assets",
+          "values": [
+            -791698.0,
+            76339.0,
+            -868037.0,
+            -614609.0,
+            112907.0,
+            -727516.0
+          ],
+          "raw": "Prepaid expenses and other assets (791,698) 76,339 (868,037) (614,609) 112,907 (727,516)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Trade accounts payable and accrued expenses",
+          "values": [
+            -1096969.0,
+            -349662.0,
+            -747307.0,
+            -443326.0,
+            -482506.0,
+            39180.0
+          ],
+          "raw": "Trade accounts payable and accrued expenses (1,096,969) (349,662) (747,307) (443,326) (482,506) 39,180",
+          "heading": "Increase (decrease) in:",
+          "unverified": []
+        },
+        {
+          "caption": "Rents collected in advance",
+          "values": [
+            29314.0,
+            4110.0,
+            25204.0,
+            -103951.0,
+            -31601.0,
+            -72350.0
+          ],
+          "raw": "Rents collected in advance 29,314 4,110 25,204 (103,951) (31,601) (72,350)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Lease rights",
+          "values": [
+            3159.0,
+            -1543.0,
+            4702.0,
+            -18294.0,
+            -907.0,
+            -17387.0
+          ],
+          "raw": "Lease rights 3,159 (1,543) 4,702 (18,294) ( 907) (17,387)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Deposits from tenants",
+          "values": [
+            94646.0,
+            43629.0,
+            51017.0,
+            -1766.0,
+            -27345.0,
+            25579.0
+          ],
+          "raw": "Deposits from tenants 94,646 43,629 51,017 (1,766) (27,345) 25,579",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Due from related parties",
+          "values": [
+            406738.0,
+            199803.0,
+            206935.0,
+            61597.0,
+            62981.0,
+            -1384.0
+          ],
+          "raw": "Due from related parties 406,738 199,803 206,935 61,597 62,981 (1,384)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net cash flow provided by operating activities",
+          "values": [
+            10649022.0,
+            5897437.0,
+            4751585.0,
+            9830514.0,
+            4920661.0,
+            4909853.0
+          ],
+          "raw": "Net cash flow provided by operating activities 10,649,022 5,897,437 4,751,585 9,830,514 4,920,661 4,909,853",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Investments in project development",
+          "values": [
+            -3419213.0,
+            -3114494.0,
+            -304719.0,
+            -1239772.0,
+            -545892.0,
+            -693880.0
+          ],
+          "raw": "Investments in project development (3,419,213) (3,114,494) (304,719) (1,239,772) (545,892) (693,880)",
+          "heading": "Investment Activities:",
+          "unverified": []
+        },
+        {
+          "caption": "Advances and Acquisitions of investment properties",
+          "values": [
+            -3212471.0,
+            -2470604.0,
+            -741867.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "Advances and Acquisitions of investment properties (3,212,471) (2,470,604) (741,867) - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Insurance recovery",
+          "values": [
+            50442.0,
+            49341.0,
+            1101.0,
+            9747.0,
+            4794.0,
+            4953.0
+          ],
+          "raw": "Insurance recovery 50,442 49,341 1,101 9,747 4,794 4,953",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Investment property sales",
+          "values": [
+            352000.0,
+            null,
+            352000.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "Investment property sales 352,000 - 352,000 - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cost of loans capitalized on investment properties",
+          "values": [
+            -103257.0,
+            -46466.0,
+            -56791.0,
+            -379213.0,
+            -181847.0,
+            -197366.0
+          ],
+          "raw": "Cost of loans capitalized on investment properties (103,257) (46,466) (56,791) (379,213) (181,847) (197,366)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Investments in associates",
+          "values": [
+            -17067.0,
+            -9702.0,
+            -7365.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "Investments in associates (17,067) (9,702) (7,365) - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Helios Consideration",
+          "values": [
+            -249068.0,
+            -249068.0,
+            null,
+            -2501022.0,
+            null,
+            -2501022.0
+          ],
+          "raw": "Helios Consideration (249,068) (249,068) - (2,501,022) - (2,501,022)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest charged",
+          "values": [
+            451146.0,
+            226993.0,
+            224153.0,
+            160309.0,
+            45963.0,
+            114346.0
+          ],
+          "raw": "Interest charged 451,146 226,993 224,153 160,309 45,963 114,346",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net cash flow used in investing activities",
+          "values": [
+            -6147488.0,
+            -5614000.0,
+            -533488.0,
+            -3949951.0,
+            -676982.0,
+            -3272969.0
+          ],
+          "raw": "Net cash flow used in investing activities (6,147,488) (5,614,000) (533,488) (3,949,951) (676,982) (3,272,969)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Payments on borrowings",
+          "values": [
+            -10660488.0,
+            -9118444.0,
+            -1542044.0,
+            -36092557.0,
+            -14815146.0,
+            -21277411.0
+          ],
+          "raw": "Payments on borrowings (10,660,488) (9,118,444) (1,542,044) (36,092,557) (14,815,146) (21,277,411)",
+          "heading": "Financing Activities:",
+          "unverified": []
+        },
+        {
+          "caption": "Proceeds from borrowings",
+          "values": [
+            11530000.0,
+            9050000.0,
+            2480000.0,
+            40458368.0,
+            16800000.0,
+            23658368.0
+          ],
+          "raw": "Proceeds from borrowings 11,530,000 9,050,000 2,480,000 40,458,368 16,800,000 23,658,368",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Structuring costs",
+          "values": [
+            -244681.0,
+            -244681.0,
+            null,
+            null,
+            null,
+            null
+          ],
+          "raw": "Structuring costs (244,681) (244,681) - - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Derivative financial instruments",
+          "values": [
+            -90589.0,
+            -53107.0,
+            -37482.0,
+            -484229.0,
+            -250963.0,
+            -233266.0
+          ],
+          "raw": "Derivative financial instruments (90,589) (53,107) (37,482) (484,229) (250,963) (233,266)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Distributions to Trustors / Beneficiaries",
+          "values": [
+            -6079781.0,
+            -2998128.0,
+            -3081653.0,
+            -4233955.0,
+            -2122521.0,
+            -2111434.0
+          ],
+          "raw": "Distributions to Trustors / Beneficiaries (6,079,781) (2,998,128) (3,081,653) (4,233,955) (2,122,521) (2,111,434)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Repurchase of CBFIs",
+          "values": [
+            null,
+            null,
+            null,
+            -198974.0,
+            -83.0,
+            -198891.0
+          ],
+          "raw": "Repurchase of CBFIs - - - (198,974) ( 83) (198,891)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Restricted deposit",
+          "values": [
+            2896.0,
+            6985.0,
+            -4089.0,
+            null,
+            null,
+            null
+          ],
+          "raw": "Restricted deposit 2,896 6,985 (4,089) - - -",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Interest paid",
+          "values": [
+            -4811801.0,
+            -2157322.0,
+            -2654479.0,
+            -5650699.0,
+            -1666421.0,
+            -3984278.0
+          ],
+          "raw": "Interest paid (4,811,801) (2,157,322) (2,654,479) (5,650,699) (1,666,421) (3,984,278)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net cash flow used in financing activities",
+          "values": [
+            -10354444.0,
+            -5514697.0,
+            -4839747.0,
+            -6202046.0,
+            -2055134.0,
+            -4146912.0
+          ],
+          "raw": "Net cash flow used in financing activities (10,354,444) (5,514,697) (4,839,747) (6,202,046) (2,055,134) (4,146,912)",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Net (decrease) increase in cash and cash equivalents",
+          "values": [
+            -5852910.0,
+            -5231260.0,
+            -621650.0,
+            -321483.0,
+            2188545.0,
+            -2510028.0
+          ],
+          "raw": "Net (decrease) increase in cash and cash equivalents (5,852,910) (5,231,260) (621,650) (321,483) 2,188,545 (2,510,028)",
+          "heading": "Cash and cash equivalents:",
+          "unverified": []
+        },
+        {
+          "caption": "Cash and Cash equivalents at the beginning of the period",
+          "values": [
+            13721823.0,
+            null,
+            13721823.0,
+            4518601.0,
+            null,
+            4518601.0
+          ],
+          "raw": "Cash and Cash equivalents at the beginning of the period 13,721,823 - 13,721,823 4,518,601 - 4,518,601",
+          "heading": "",
+          "unverified": []
+        },
+        {
+          "caption": "Cash and cash equivalents at the end of the period $",
+          "values": [
+            868913.0,
+            -5231260.0,
+            13100173.0,
+            4.0,
+            197118.0,
+            2.0,
+            188545.0,
+            2.0,
+            8573.0
+          ],
+          "raw": "Cash and cash equivalents at the end of the period $ 7 ,868,913 $ (5,231,260) $ 13,100,173 $ 4 ,197,118 $ 2 ,188,545 $ 2 ,008,573",
+          "heading": "",
+          "unverified": []
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "source": "text",
+      "chars": 199,
+      "tables": 0,
+      "text": "Fibra Uno Trust and Subsidiaries\nInterim Consolidated Condensed Financial Statements as of\nJune 30, 2026 and December 31, 2025, and for the six and three-\nmonths periods ended June 30, 2026, and 2025"
+    },
+    {
+      "page": 2,
+      "source": "text",
+      "chars": 588,
+      "tables": 0,
+      "text": "Fibra Uno Trust and subsidiaries\nInterim Consolidated Condensed Financial Statements as of\nJune 30, 2026 and December 31 2025, and for the six and three-months periods\nended June 30, 2026 and 2025\nTable of Contents Page\nInterim Consolidated Condensed Statements of Financial Position 2\nInterim Consolidated Condensed Statements of Income and other Comprehensive Income 3\nInterim Consolidated Condensed Statements of Changes in Trustors´/ Beneficiares´ Capital 4\nInterim Consolidated Condensed Statements of Cash Flows 5\nNotes to the Interim Consolidated Condensed Financial Statements 7\n1"
+    },
+    {
+      "page": 3,
+      "source": "text",
+      "chars": 2772,
+      "tables": 0,
+      "text": "Interim Consolidated Condensed Statement of Financial Position\nAs of June 30, 2026 (Unaudited) and December 31, 2025\n(In thousands of Mexican pesos)\nAssets Notes 30/06/2026 31/12/2025\nCurrents assets:\nCash and cash equivalents 3 $ 7,868,913 $ 13,721,823\nLease receivables 4 2,667,173 2,131,586\nOther accounts receivable 5 761,485 383,371\nDue from related parties 13 452,432 747,369\nRecoverable taxes, mainly VAT 4,599,029 4,412,212\nFinancial assets from properties 262,847 50,101\nDerivative financial instruments 10 - 940,339\nPrepaid expenses 2,058,014 1,526,419\nOther assets 326,976 491,760\nAsset held for sale - 12,358,667\nTotal current assets 18,996,869 36,763,647\nNon-current assets:\nRestricted Cash 3 152,810 155,706\nInvestments in financial assets 675,505 675,505\nInvestment properties 6 367,546,117 360,758,353\nFinancial assets from properties 1,763,136 2,350,461\nInvestments in associates and joint venture 7 11,823,520 11,843,525\nDue from related parties 13 234,389 155,927\nPrepaid expenses 473 91,209\nIntangible assets,net 8 762,530 813,622\nOther assets 1,073,381 1,233,382\nTotal non-current assets 384,031,861 378,077,690\nTotal assets $ 403,028,730 $ 414,841,337\nLiabilities and Trustors´/ Beneficiaries’ Capital Notes 30/06/2026 31/12/2025\nShort-term liabilities:\nBorrowings 9 $ 16,761,603 $ 11,947,917\nInterest payable 2,359,263 1,691,886\nAccounts payable and accrued expenses 11 4,166,113 4,076,567\nHelios consideration payable 444,501 693,569\nAccounts payable due to acquisition of investment properties 516,418 516,418\nDeposits from tenants 187,631 269,903\nIncome collected in advance 395,857 366,284\nLease rights 110,372 107,212\nDue to related parties 13 780,574 311,085\nDerivative financial instruments 10 - 2,063,241\nTotal short-term liabilities 25,722,332 22,044,082\nLong-term liabilities:\nBorrowings 9 130,837,289 138,914,573\nAccrued liabilities 71,700 71,040\nDeposits from tenants 2,033,479 1,856,562\nIncome collected in advance and lease rights 588,504 588,762\nDerivative financial instruments 10 3,046,785 1,858,439\nTotal long-term liabilities 136,577,757 143,289,376\nTotal liabilities 162,300,089 165,333,458\nTrustors’/ Beneficiaries’ Capital\nTrustors’ contributions 14 101,400,353 102,379,312\nRetained earnings 91,412,129 100,285,720\nValuation of derivative financial instruments\n(1,672,143) (1,647,475)\nin cash flow hedges / Actuarial valuation effects-benefit plans\nCBFIs repurchase reserve 1,560,594 1,405,420\nTotal controlling interest 192,700,933 202,422,977\nNon-controlling interest 48,027,708 47,084,902\nTotal Trustors’/ Beneficiaries’ capital 240,728,641 249,507,879\nTotal liabilities and Trustors’/ Beneficiaries’ capital $ 403,028,730 $ 414,841,337\nThe accompanying notes are an integral part of the consolidated financial statements.\n2"
+    },
+    {
+      "page": 4,
+      "source": "text",
+      "chars": 3438,
+      "tables": 0,
+      "text": "Interim Consolidated Condensed Statements of Income and Other Comprehensive Income\nFor the six and three-months periods ended June 30, 2026 and 2025\n(Unaudited figures) (In thousands of Mexican pesos)\n6 months as of Second-quarter 2026 3 months as of 6 months as of Second-quarter 2025 3 months as of\n30/06/2026 transactions 31/03/2026 30/06/2025 transactions 31/03/2025\nRevenue from:\nLeases of investment property $ 14,094,380 $ 6,976,202 $ 7,118,178 $ 13,401,981 $ 6,645,411 $ 6,756,570\nMaintenance 1,500,578 760,413 740,165 1,429,976 718,379 711,597\nDividends on income from fiduciary rights 200,864 122,436 78,428 122,774 62,881 59,893\nInterest income from financial assets 132,855 62,445 70,410 148,784 74,392 74,392\nMangement fees - - - 6,530 4,203 2,327\n15,928,677 7,921,496 8,007,181 15,110,045 7,505,266 7,604,779\nExpenses from:\nManagement fees - - - (496,764) (251,622) (245,142)\nCorporate and administrative expenses (1,122,592) (562,577) (560,015) (1,299,077) (633,861) (665,216)\nMaintenance expenses (2,299,935) (1,116,541) (1,183,394) (1,935,216) (959,977) (975,239)\nProperty taxes (417,770) (209,860) (207,910) (414,443) (209,100) (205,343)\nInsurance (259,992) (129,933) (130,059) (233,001) (123,782) (109,219)\n(4,100,289) (2,018,911) (2,081,378) (4,378,501) (2,178,342) (2,200,159)\nOperating income 11,828,388 5,902,585 5,925,803 10,731,544 5,326,924 5,404,620\nInterest expense (5,848,411) (2,899,889) (2,948,522) (6,124,938) (3,007,270) (3,117,668)\nInterest income 451,146 226,993 224,153 160,309 45,963 114,346\nIncome after financial expenses 6,431,123 3,229,689 3,201,434 4,766,915 2,365,617 2,401,298\nProfit on sale of financial assets from properties 82,500 - 82,500 - - -\nForeign exchange gain (loss), net 1,397,003 2,490,415 (1,093,412) 2,310,930 3,017,413 (706,483)\nValuation effect on financial instruments 174,570 (3,180) 177,750 54,706 (40,418) 95,124\nAdjustment to fair value of investments in associates and property-related\n(193,134) (23,407) (169,727) 209,771 225,366 (15,595)\nfinancial assets\nAdministrative platform amortization (51,092) (25,546) (25,546) (51,092) (25,546) (25,546)\nAmortization of bank and other financial charges (105,515) (45,286) (60,229) (187,762) (55,002) (132,760)\nOther (expenses) income, net (31,950) (23,435) (8,515) (34,505) (31,769) (2,736)\nExecutive bonus (263,142) (139,066) (124,076) (55,221) (27,611) (27,610)\nConsolidated net income for the period $ 7,440,363 $ 5,460,184 $ 1,980,179 $ 7,013,742 $ 5,428,050 $ 1,585,692\nOther comprehensive results:\nItems that will be subsequently reclassified to results - Gain\n121,368 183,512 (62,144) 1,149,113 1,028,461 120,652\n(loss) in valuation of derivate financial instruments\nConsolidated comprehensive income for the period $ 7,561,731 $ 5,643,696 $ 1,918,035 $ 8,162,855 $ 6,456,511 $ 1,706,344\nConsolidated net income for the period:\nControlling interest 5,479,550 4,107,164 1,372,386 6,976,924 5,407,733 1,569,191\nNon-controlling interest 1,960,813 1,353,020 607,793 36,818 20,317 16,501\n$ 7,440,363 $ 5,460,184 $ 1,980,179 $ 7,013,742 $ 5,428,050 $ 1,585,692\nConsolidated comprehensive income for the period:\nControlling interest 5,454,882 4,226,028 1,228,854 8,126,037 6,436,194 1,689,843\nNon-controlling interest 2,106,849 1,417,668 689,181 36,818 20,317 16,501\n$ 7,561,731 $ 5,643,696 $ 1,918,035 $ 8,162,855 $ 6,456,511 $ 1,706,344\nThe accompanying notes are an integral part of the consolidated financial statements.\n3"
+    },
+    {
+      "page": 5,
+      "source": "text_respaced",
+      "chars": 1626,
+      "tables": 0,
+      "text": "4\nInterim Consolidated Condensed Statement of Changes in Trustors'/ Beneficiaries' Capital\nFor the six-months periods ended June 30, 2026 and 2025\n(Unaudited figures) (In thousands of Mexican pesos)\nBalance as of December 31, 2025 $ 102,379,312 $ 100,285,720 $ (1,647,475) $ 1,405,420 $ 202,422,977 $ 47,084,902 $ 249,507,879\nTrustors' contributions 263,141 - - - 263,141 - 263,141\nDistributions to beneficiaries (1,242,100) (3,673,638) - - (4,915,738) (1,164,043) (6,079,781)\nOther capital accounts - (10,524,329) - - (10,524,329) - (10,524,329)\nCBFIs repurchase reserve - (155,174) - 155,174 - - -\nConsolidated comprehensive income - 5,479,550 (24,668) - 5,454,882 2,106,849 7,561,731\nBalance as of June 30, 2026 $ 101,400,353 $ 91,412,129 $ (1,672,143) $ 1,560,594 $ 192,700,933 $ 48,027,708 $ 240,728,641\nBalance as of December 31, 2024 $ 105,623,400 $ 82,981,184 $ (3,527,652) $ 1,268,278 $ 186,345,210 $ 1,433,827 $ 187,779,037\nTrustor's contributions 55,221 - - - 55,221 - 55,221\nDistributions to beneficiaries (1,870,890) (2,340,885) - - (4,211,775) (22,180) (4,233,955)\nCBFIs repurchase reserve - (280,400) - 81,426 (198,974) - (198,974)\nConsolidated comprehensive income - 6,976,924 1,149,113 - 8,126,037 36,818 8,162,855\nBalance as of June 30, 2025 $ 103,807,731 $ 87,336,823 $ (2,378,539) $ 1,349,704 $ 190,115,719 $ 1,448,465 $ 191,564,184\nThe accompanying notes are an integral part of the consolidated financial statements.\nTotal Trustors´ capital Retained earnings\nOther comprehensive\nincome / Valuation of\nderivative financial\ninstruments\nCBFIs repurchase\nreserve\nControlling interest Non-controlling interest"
+    },
+    {
+      "page": 6,
+      "source": "text",
+      "chars": 4268,
+      "tables": 0,
+      "text": "Interim Consolidated Condensed Statement of Cash Flow\nFor the six and three months periods ended June 30, 2026 and 2025\n(Unaudited figures) (In thousands of Mexican pesos)\nSecond-quarter Second-quarter\nAs of 30/06/2026 As of 31/03/2026 As of 30/06/2025 As of 31/03/2025\n2026 flows 2025 flows\nOperating activities:\nNet Consolidated income of the period $ 7 ,440,363 $ 5,460,184 $ 1 ,980,179 $ 7 ,013,742 $ 5,428,050 $ 1,585,692\nAdjustments to non-cash items:\nAdjustment to the fair value of investment properties,\n193,134 23,407 169,727 (209,771) (225,366) 15,595\nfinancial assets of properties and investments in associates\nUnrealized exchange effects (1,535,590) (2,746,986) 1,211,396 (2,753,095) (3,265,040) 511,945\nProfit on sale of financial assets of properties (82,500) - (82,500) - - -\nAmortizations and provisions for expenses 1,293,375 466,621 826,754 1,289,047 499,907 789,140\nExecutive Bonus 263,142 139,066 124,076 55,221 27,611 27,610\nInterest income (451,146) (226,993) (224,153) (160,309) (45,963) (114,346)\nInterest expense 5,848,411 2,899,889 2,948,522 6,124,938 3,007,270 3,117,668\nEffect of valuation on derivative financial instruments (174,570) 3,180 (177,750) (54,706) 40,418 (95,124)\nOther non-cash transactions 353 (2,230) 2,583 (6,714) (7,693) 979\nTotal 12,794,972 6,016,138 6,778,834 11,298,353 5,459,194 5,839,159\nChanges in working capital:\n(Increase) decrease in:\nLease receivables (747,113) 69,702 (816,815) (194,504) (178,990) (15,514)\nOther accounts receivable (152,147) (104,095) (48,052) (25,270) (35,184) 9,914\nAccounts receivable – related parties 294,938 287,309 7,629 (269,214) (64,944) (204,270)\nRecoverable taxes, manily VAT (186,818) (344,293) 157,475 141,498 107,056 34,442\nPrepaid expenses and other assets (791,698) 76,339 (868,037) (614,609) 112,907 (727,516)\nIncrease (decrease) in:\nTrade accounts payable and accrued expenses (1,096,969) (349,662) (747,307) (443,326) (482,506) 39,180\nRents collected in advance 29,314 4,110 25,204 (103,951) (31,601) (72,350)\nLease rights 3,159 (1,543) 4,702 (18,294) ( 907) (17,387)\nDeposits from tenants 94,646 43,629 51,017 (1,766) (27,345) 25,579\nDue from related parties 406,738 199,803 206,935 61,597 62,981 (1,384)\nNet cash flow provided by operating activities 10,649,022 5,897,437 4,751,585 9,830,514 4,920,661 4,909,853\nInvestment Activities:\nInvestments in project development (3,419,213) (3,114,494) (304,719) (1,239,772) (545,892) (693,880)\nAdvances and Acquisitions of investment properties (3,212,471) (2,470,604) (741,867) - - -\nInsurance recovery 50,442 49,341 1,101 9,747 4,794 4,953\nInvestment property sales 352,000 - 352,000 - - -\nCost of loans capitalized on investment properties (103,257) (46,466) (56,791) (379,213) (181,847) (197,366)\nInvestments in associates (17,067) (9,702) (7,365) - - -\nHelios Consideration (249,068) (249,068) - (2,501,022) - (2,501,022)\nInterest charged 451,146 226,993 224,153 160,309 45,963 114,346\nNet cash flow used in investing activities (6,147,488) (5,614,000) (533,488) (3,949,951) (676,982) (3,272,969)\nFinancing Activities:\nPayments on borrowings (10,660,488) (9,118,444) (1,542,044) (36,092,557) (14,815,146) (21,277,411)\nProceeds from borrowings 11,530,000 9,050,000 2,480,000 40,458,368 16,800,000 23,658,368\nStructuring costs (244,681) (244,681) - - - -\nDerivative financial instruments (90,589) (53,107) (37,482) (484,229) (250,963) (233,266)\nDistributions to Trustors / Beneficiaries (6,079,781) (2,998,128) (3,081,653) (4,233,955) (2,122,521) (2,111,434)\nRepurchase of CBFIs - - - (198,974) ( 83) (198,891)\nRestricted deposit 2,896 6,985 (4,089) - - -\nInterest paid (4,811,801) (2,157,322) (2,654,479) (5,650,699) (1,666,421) (3,984,278)\nNet cash flow used in financing activities (10,354,444) (5,514,697) (4,839,747) (6,202,046) (2,055,134) (4,146,912)\nCash and cash equivalents:\nNet (decrease) increase in cash and cash equivalents (5,852,910) (5,231,260) (621,650) (321,483) 2,188,545 (2,510,028)\nCash and Cash equivalents at the beginning of the period 13,721,823 - 13,721,823 4,518,601 - 4,518,601\nCash and cash equivalents at the end of the period $ 7 ,868,913 $ (5,231,260) $ 13,100,173 $ 4 ,197,118 $ 2 ,188,545 $ 2 ,008,573\nThe accompanying notes are an integral part of the consolidated financial statements.\n5"
+    },
+    {
+      "page": 7,
+      "source": "text",
+      "chars": 1740,
+      "tables": 0,
+      "text": "As of the end of the second quarter of 2026, Fibra UNO's sources of financing are: national and international\nbond issuances, access to mortgage loans, access to revolving credit lines, and two committed revolving credit\nlines.\nAs of the end of June 2026, Fibra UNO had Ps. $6,300 million in undrawn revolving credit lines, as well as Ps.\n$11,700 million and $300 million US Dollars available under the first committed revolving credit line. Finally, there\nis also a second committed revolving credit line for NEXT Properties amounting to $700 million US Dollars.\nFurthermore, Fibra UNO's management does not consider the business to be subject to seasonality in its\nfinancing requirements.\nThe debt ratio at the end of the second quarter of 2025 decreased from 41.4% to 36.8% at the end of the second\nquarter of 2026. Conversely, the debt service coverage ratio at the end of the second quarter of 2025 increased\nfrom 1.51 to 2.32 at the end of the second quarter of 2026.\nThe company's treasury investment policy is to invest in securities issued by the Federal Government and\nregistered with the National Securities Registry.\nThe main changes in the balance sheet accounts are concentrated primarily in the Short- and Long-Term Loans\ncategory.\nThe change in Short-Term Loans is mainly due to the reclassification of balances from Long-Term to Short-Term\nregarding a national UDI-denominated bond nearing maturity, as well as the impact of exchange rate fluctuations.\nFinally, the change in Long-Term Loans is primarily due to the reclassification of balances from Long-Term to\nShort-Term regarding that same national UDI-denominated bond nearing maturity, as well as the impact of\nexchange rate fluctuations.\n[INTENTIONALLY LEFT BLANK]\n6"
+    },
+    {
+      "page": 8,
+      "source": "text",
+      "chars": 3045,
+      "tables": 0,
+      "text": "Notes to the Interim Consolidated Condensed Financial Statements\nFor the six and three-month periods ended June 30, 2026 and 2025, and for the year\nended December 31, 2025 (2026 Unaudited figures)\n(In thousands of Mexican pesos, except for CBFI numbers)\n1. General information, acquisitions and relevant events\nGeneral Information and relevant events\nTrust Fibra Uno (“Fibra Uno”) was established as a real estate investment trust (Mexican REIT) on January 12th,\n2011, by Fibra Uno Administración, SA de CV, (the “Trustor”) and Deutsche Bank México, SA, Institución de\nBanca Múltiple, División Fiduciaria y Subsidiarias (“Deutsche Bank México”) as Trustee. Fibra Uno began\noperations in March 2011 and was incorporated mainly to purchase and own real estate properties in order to\nlease and develop commercial, industrial and mixed-use properties, as well as office buildings and land, in the\nMexican Real Estate Market.\nOn June 29th, 2018, Fibra Uno entered into a Fiduciary Institution substitution agreement, effective as of July\n1st, 2018, appointing Banco Actinver SA, Institución de Banca Multiple, Grupo Financiero Actinver (Actinver) as\nthe new Trustee Institution of the Fideicomiso Fibra Uno, replacing Deutsche Bank México, SA, Institución de\nBanca Multiple (Deutsche Bank). Consequently, the name of Fibra Uno has changed to Fideicomiso Fibra Uno\n(Banco Actinver, S.A. Institución de Banca Múltiple, Grupo Financiero Actinver).\nFibra Uno, as a real-estate investment trust (“FIBRA”, by its Spanish acronym), qualifies to be treated as a\ntransparent entity in Mexico for the purposes of the Statutory Income Tax Law (“LISR\", by its Spanish acronym).\nTherefore, all net tax income generated by Fibra Uno’s operations are attributed to the holders of its Real Estate\nInvestment Trust Certificates (“CBFIs\", by its Spanish acronym) for tax purposes, and therefore Fibra Uno is not\nsubject to Income Tax in Mexico. To maintain FIBRA’s status, the Mexican Congress of the Union, through the\nMexican Internal Revenue Services (“SAT”, by its Spanish acronym), has established in the articles 187 and 188\nof the Statutory Mexican Income Tax Law that the FIBRAs must distribute no less than 95% of their net tax income\non annual basis to the holders of the CBFIs issued.\nFibra Uno has entered into the following agreements for the development of its operations:\ni. A property management agreement with F1 Management, S.C. (“F1 Management”), Operadora CVC,\nS.C. (“Operadora CVC”) and F1 Controladora de Activos, S.C. (“F1 Controladora”) (subsidiary\ncompanies) in order to manage the daily operations of Fibra Uno;\nii. A Service Agreement between F1 Administración, S.C. (F1 Administración - subsidiary company) and\nBanco Invex, S.A., Institución de Banca Múltiple, Invex Grupo Financiero, acting as Trustee for the Trust\nF/2353 (Trust F/2353) in order to manage the daily operation of Trust F/2353.\nThe tax address of Fibra Uno is Av. Antonio Dovalí Jaime No.70, Tower A Floor 11, Colonia Zedec Santa Fe,\nAlcaldía Álvaro Obregón, Mexico City.\n7"
+    },
+    {
+      "page": 9,
+      "source": "text",
+      "chars": 3446,
+      "tables": 0,
+      "text": "Relevant events as of June 30, 2026.\nSince January 1, 2026, the most important events and transactions to understand the situation of Fideicomiso\nFibra Uno and its subsidiaries to date are:\n1. Fibra NEXT executed the transaction announced in the fourth quarter of 2025 regarding the acquisition\nof three assets located in the cities of Toluca, Querétaro, and Cancún, totaling 395,843 m² of gross\nleasable area; of this total, 252,679 m² are under development and 143,163 m² are stabilized. The value\nof the stabilized properties in this transaction was $2,891 million, paid in cash, and as of June 30, 2026,\nan additional $3,015 million in construction advances had been paid for their full construction.\n2. Fibra NEXT signed a binding agreement to acquire the “Atlas” portfolio, comprising 15 industrial\nproperties in premium locations, primarily in northern Mexico. The properties have a gross leasable\narea of 183,461 m² and an occupancy rate of 99.6%, with tenants consisting of international light\nmanufacturing companies operating in sectors with robust, long-term demand fundamentals along the\ncountry's northern border. The properties are expected to generate a net operating income of US$12.1\nmillion starting in the first year. The transaction closed on July 16, 2026.\nThe acquisition price for the properties is US$138.2 million, payable in cash, with a cap rate of\napproximately 9%. In addition to the purchase price, there is an option to acquire an additional 19,673-\nsquare-meter property for US$14.8 million within the next 12 months at the same cap rate.\n3. In June 2026, following a favorable opinion from the Practices Committee, the NEXT Technical\nCommittee approved the acquisition of the industrial assets comprising the “Saturno” portfolio; payment\nfor the acquisition may be made in cash, CBFIs, or a combination thereof.\nThe portfolio consists of two industrial properties located in the Mexico City Metropolitan Area, with a\ntotal gross leasable area of approximately 501,659 m²; of this, approximately 207,479 m² represents\nstabilized gross leasable area, and approximately 294,180 m² represents gross leasable area under\ndevelopment. Additionally, the portfolio is estimated to generate a total NOI of Ps. 1,032.5 million and a\ncombined cap rate of 9.0%.\n4. On June 4, 2026, NEXT Properties extended the maturity of a drawdown with BBVA México, S.A. in the\namount of Ps. $1,450 million until July 2027. On that same date, NEXT Properties extended the maturity\nof a drawdown with Banco Citi México, S.A. in the amount of US$145 million until September 2026.\n5. On June 4, 2026, Fibra UNO made a short-term drawdown with BBVA México, S.A. in the amount of Ps.\n$250 million, the proceeds of which were used to prepay two drawdowns with Banco del Bajío, S.A. in\nthe amounts of Ps. $150 million and Ps. $100 million, respectively. On June 5, 2026, Fibra UNO\nextended the maturity of a drawdown with Banco Mercantil del Norte, S.A. in the amount of Ps. $1,000\nmillion until September 2026. On June 12, 2026, Fibra UNO extended the maturity of a drawdown with\nBanco Actinver, S.A. in the amount of Ps. $200 million until June 2027. Finally, on June 18, 2026, Fibra\nUNO made a short-term drawdown with BBVA México, S.A. in the amount of Ps. $2,050 million, the\nproceeds of which were used to prepay two drawdowns with Banco Mercantil del Norte, S.A. in the\namounts of Ps. $1,000 million and Ps. $1,050 million, respectively.\n8"
+    },
+    {
+      "page": 10,
+      "source": "text",
+      "chars": 3122,
+      "tables": 0,
+      "text": "6. On May 12, 2026, Fibra UNO made a short-term drawdown with Banco Santander México, S.A. in the\namount of Ps. $2,900 million. The proceeds were used to prepay drawdowns with BBVA Bancomer,\nS.A. in the amount of Ps. $1,300 million, Banco del Bajío, S.A. in the amount of Ps. $100 million,\nScotiabank Inverlat, S.A. in the amount of Ps. $760 million, and Banco Santander México, S.A. in the\namount of Ps. $740 million. Finally, on May 13, 2026, Fibra UNO extended the maturity of a drawdown\nwith Banco del Bajío, S.A. in the amount of Ps. $100 million until November 2026.\n7. On May 11, 2026, NEXT Properties obtained its own long-term committed sustainability-linked revolving\ncredit facility (SLRCF), structuring it as a single tranche of US$700 million with a maturity date of May\n11, 2031; said facility is supported by and has the contractual commitment of 10 national and\ninternational banking institutions.\n8. On May 11, 2026, Fibra Uno made the payment distributions to the holders of Real Estate Trust Stock\nCertificates. The total amount of the distribution was $2,363 million pesos, corresponding to the first\nquarter of 2026 which in its entirety corresponds to net fiscal result.\n9. On May 11, 2026, Fibra UNO renewed its long-term committed sustainability-linked revolving credit\nfacility (SLRCF), structuring it into two tranches: one for Ps. $11,500 million and another for US$300\nmillion, with a maturity date of May 11, 2031; said facility is supported by and has the contractual\ncommitment of 13 national and international banking institutions.\n10. On April 17, 2026, Fibra UNO extended the maturity of a drawdown with Banco Mercantil del Norte,\nS.A. in the amount of Ps. $1,050 million until July 2026.\n11. During the first quarter of 2026, Fibra UNO made a disbursement with Banco Mercantil del Norte, S.A.\nfor Ps. $1,000 million, dated February 6, 2026 and with short-term maturity.\n12. During the first quarter of 2026, NEXT Properties renewed its credit line with Banco BBVA México, S.A.\nfor Ps. $1,450 million with an initial maturity date of March 6, 2026 to June 4, 2026.\n13. On March 2026, NEXT Properties acquired an industrial property called \"Calopark\" located in the state\nof Quintana Roo. The acquisition price is approximately Ps. $710 million. This asset has a gross leasable\narea (GLA) of approximately 50,000 m² and is 100% occupied.\n14. On Feb 9, 2026, Fibra Uno made the payment distributions to the holders of Real Estate Trust Stock\nCertificates corresponding to Capital refund and fiscal result of $1,242 and $1,311, respectively. The\ntotal amount of the distribution was $2,553 million pesos, corresponding to the fourth quarter of 2025.\n15. On January 1, 2026, the internalization agreement was executed through the transfer of certain\nproperties and the termination of real estate advisory and representation services, along with the related\ncommissions. The assets used as payment include Samara (taking into account the debt associated\nwith the property), Midtown Jalisco, and Montes Urales 620, with a composition of 60% office space,\n34% retail space, and 6% hotel space.\n9"
+    },
+    {
+      "page": 11,
+      "source": "text",
+      "chars": 2537,
+      "tables": 0,
+      "text": "2. Basis of presentation\na) Basis of preparation\nThe interim consolidated condensed financial statements have been prepared in accordance with IAS\n34 \"Interim Financial Reports\". Fibra Uno applied the same accounting policies in its interim as well as\nin its annual financial statements.\nFibra Uno’s Management considers that all the ordinary and recurring adjustments necessary for an\nadequate presentation of the interim consolidated condensed financial statements were included.\nCertain information and disclosures normally included in the annual financial statements, which are\nprepared according to the International Financial Reporting Standards (“IFRS”), have been condensed\nor omitted according to the standard of interim financial reports. These interim consolidated condensed\nfinancial statements must be read in conjunction with the annual consolidated financial statements of\nFibra Uno and their respective disclosures for the years that ended on December 31, 2025, 2024 and\n2023, which are prepared according to the IFRS. The results of the period do not necessarily indicate\nthe results of the year.\nb) Seasonality\nFibra Uno’s Management does not consider that the business is subject to material seasonal\nfluctuations.\nc) Reclassifications\nThe consolidated financial statements for the year ended December 31, 2025, have been reclassified in\ncertain items to facilitate comparability with the presentation being used in 2026.\nd) Valuation of Investment properties\nFor the closing of each year, Fibra UNO's Administration relies on independent specialized firms to value\nits stabilized investment properties using the income, cost and market approaches. For the interim\ncondensed consolidated financial statements, Management makes its best estimate of the fair value of\ninvestment properties before the end of the quarter, applying global factors, mainly inflation and the\nexchange rate of Pesos against the US Dollar. Consequently, the accompanying financial statements\ninclude a detailed estimate of its investment properties at fair value.\nFor properties under development, Fibra UNO's policy consists of registering them at book cost until 12\nmonths have elapsed since significant payments for the project have not been made and at least one\nmore of the following: i) 12 months have elapsed. that the asset be delivered by the supplier, ii) that 12\nmonths have elapsed since the collection of the first rental of the property or iii) that the stabilization of\nthe property is reached, that is, 80% of its occupation\n10"
+    },
+    {
+      "page": 12,
+      "source": "text",
+      "chars": 2940,
+      "tables": 2,
+      "text": "e) Details of subsidiaries controlled and those having a significant non-controlling interest.\nThe following table shows the details of subsidiaries controlled by Fibra Uno that have material non-\ncontrolling interests:\ni. Starting on January 1st, 2016, and derived from the second amendment to Trust agreement\n1127/2010 (Torre Reforma Latino), in which the following percentages of ownership and\ninformation are stipulated:\nName Description % of Ownership\nEcocinemas, S.A. de C.V.\nTrustor/Beneficiary A 22.53%\n(Ecocinemas)\nFibra Uno Trustor/Beneficiary B 77.47%\nThe percentage of ownership of each of the Trustor / Beneficiaries will be over the net lease income\nand the eventual sale’s collection of Trust 1127/10 (Torre Reforma Latino); Fibra Uno registered in its\ninterim consolidated condensed financial statements the 100% of the figures of the Trust 1127/2010\n(Torre Reforma Latino) including the minority interest corresponding to 22.53% that represents the\nparticipation that Ecocinemas has in the net asset value of Trust 1127/10 (Torre Reforma Latino) and\npresents it on the caption Non-controlling interest in the interim consolidated condensed income\nstatement meanwhile the Net Asset Value of the Trustor / Beneficiary A is presented in the interim\nconsolidated condensed statement of financial position in the caption Non-controlling interest.\nii. On March 31st, 2022, Fibra Uno closed a strategic alliance with AXA Seguros for the\ndevelopment of the Portal Norte mixed-use project located in Satélite in the municipality of\nNaucalpan, State of Mexico. The total investment of the project will come from the\ncontributions of Fibra Uno and AXA Seguros according to the following:\nName Description % Of Ownership\nFibra Uno Trustor/Beneficiary A 80.00%\nAXA Seguros SA de CV Trustor/Beneficiary B 20.00%\nThe summary of financial information of each of the subsidiaries controlled by Fibra Uno, in which it has\na significant controlling interest is presented below before intercompany eliminations.\n11\nFFT id . /1\nid . /9\no ta l\n15 25\nS u b sid ia rie n a m\n7 T o rre R e fo rm a L\nP o rtal N o rte (ii)\ne\natin o (i)\nM\nT y p e\nO ffice\nixe d -u se\nO w\n3\nn e r sh ip a n\nth e n o n -c o\n0 /0 6 /2 0 2 6\n2 2 .5 3 %\n2 0 .0 0 %\ndn v o tin g rig h ts o v\ntrillin g in te re st\n3 1 /1 2 /2 0 2 5\n2 2 .5 3 %\n2 0 .0 0 %\ne r\n$\n$\nP ro fit (lo ss) fro m th e n o n\nc o n tro lin g in te re st\n3 0 /0 6 /2 0 2 6 3 1 /1 2 /2 0 2 5\n2 6 ,3 5 8 $ 7 2 ,4 1\n3 ,7 9 2 3 1 ,0 0\n3 0 ,1 5 0 $ 1 0 3 ,4 2\n842 $\n$\nN o n - c o n\n3 0 /0 6 /2 0 2 6\n9 6 2 ,5 6 3\n5 2 8 ,6 6 4\n1 ,4 9 1 ,2 2 7\ntro llin g\n$\n$\nin te re st\n3 1 /1 2 /2 0 2 5\n9 6 0 ,5 2\n5 2 4 ,8 7\n1 ,4 8 5 ,3 9\n639\nName | Description | % of Ownership\nEcocinemas, S.A. de C.V. (Ecocinemas) | Trustor/Beneficiary A | 22.53%\nFibra Uno | Trustor/Beneficiary B | 77.47%\nName | Description | % Of Ownership\nFibra Uno | Trustor/Beneficiary A | 80.00%\nAXA Seguros SA de CV | Trustor/Beneficiary B | 20.00%"
+    },
+    {
+      "page": 13,
+      "source": "text_respaced",
+      "chars": 2101,
+      "tables": 0,
+      "text": "12\nSince November 2025, Fibra UNO consolidates Fibra NEXT, whose control was obtained through contractual\nagreements, including the possibility of appointing the majority of the members of its Technical Committee and\nthe signing of a Service Contract that exposes FUNO to variable returns.\nf) New IFRS reviewed and issued but not mandatory yet.\nAt the authorization date of these Financial Statements, Fibra Uno has not applied the following new and\nrevised IFRS that have been issued but are not mandatory yet:\nTrust 1127\nAssets $ 180,156 $ 171,090\nInvestment properties 4,205,013 4,203,593\nLiabilities 112,809 111,361\nTotal net asset value 4,272,360 4,263,322\nFibra Uno controlling interest 3,309,797 3,302,796\nNon-controlling interest 962,563 960,526\nProfit of the year 116,989 321,431\nProfit of the year attributable to the\nControlling interest 90,631 249,013\nProfit of the year attributable to the\nNon-controlling interest $ 26,358 $ 72,418\n30/06/2026 31/12/2025\nTrust 955\nAssets $ 502,908 $ 518,443\nInvestment properties 4,527,431 4,519,084\nLiabilities 2,387,017 2,413,163\nTotal net asset value 2,643,322 2,624,364\nFibra Uno controlling interest 2,114,658 2,099,491\nNon-controlling interest 528,664 524,873\nProfit of the year 18,959 155,022\nProfit of the year attributable\nto the controlling interest 15,167 124,018\nProfit of the year attributable to the Non-\ncontrolling interest $ 3,792 $ 31,004\n30/06/2026 31/12/2025\nAmendment to IFRS 9 and Amendments to the classification and measurement of financial\nIFRS 7 instruments\nAnnual Improvements to IFRS Amendments to IFRS 1 First-time Adoption of International Financial\nAccounting Standards- Reporting Standards, IFRS 7 Financial Instruments: Disclosures and\nVolume 11 its accompanying Guidance on the Implementation of IFRS 7, IFRS 9\nFinancial Instruments, IFRS 10 Consolidated Financial Statements\nand IAS 7 Statement of Cash Flows.\nAmmendments to IFRS 9 and Contracts Referencing Nature-dependent Electricity.\nIFRS 7\nIFRS 18 Presentation and Disclosure in Financial Statements\nIFRS 19 Subsidiaries without Public Accountability: Disclosures."
+    },
+    {
+      "page": 14,
+      "source": "text",
+      "chars": 3149,
+      "tables": 0,
+      "text": "Fibra Uno’s Management does not expect that the adoption of these standards will have a material impact in\nthe consolidated condensed financial statements in future periods.\n3. Cash and cash equivalents\nRegarding short-term restricted cash related to bank loans, it should be noted that, as of the date these\nconsolidated financial statements were issued, Fibra Uno held two significant credit lines that, under contractual\nstipulations, require a reserve fund. The most significant portion of the restricted cash consists of the reserve\nfund held with Banco Ve por Más, S.A. de C.V., with an outstanding balance of Ps. $62.4 million. This reserve\nfund is structured as follows, in accordance with the contractual terms established with the institution:\na) Banco Ve por Más, S.A. de C.V.: The borrower is required to maintain a balance equivalent to two\nmonths of principal and interest payments.\nRegarding long-term cash reserves for bank loans, it should be noted that, as of the date of publication of these\nfinancial statements, there are a total of three lines of credit that, under contractual stipulations, must have a\nReserve Fund. The restricted cash balance is comprised of the Reserve Funds for the loans with Metlife México,\nS.A., with a balance of $17.8 million pesos; Banco Nacional de Comercio Exterior, S.N.C., with a balance of $34.2\nmillion pesos; and Banco Mercantil del Norte, S.A., with a balance of $29 million pesos. These Reserve Funds\nare structured as follows, according to the contractual arrangements NEXT Properties maintains with each bank:\na) Banco Mercantil del Norte, S.A.: Agrees to maintain a Reserve Fund balance, which is determined by\nadding two principal payment dates and two interest payment dates, both immediately following the\ndetermination date.\nb) Banco Nacional de Comercio Exterior, S.N.C.: Agrees to maintain a Reserve Fund balance, which is\ndetermined by adding two principal payment dates and two interest payment dates, both immediately\nfollowing the determination date.\nc) Metlife México, S.A.: Must deposit with the lender a minimum balance equivalent to two months of\nprincipal and interest payments on the loan.\nFor a better analysis of Fibra Uno's liquidity situation, it should be considered that at the date of these financial\nstatements there is a Sustainability-Linked Revolving Credit Facility (SLRCF) with a maturity date of May 11,\n2031. This facility is supported by and subject to the contractual commitment of 13 national and international\nbanking institutions, allowing Fibra UNO to make drawdowns under the facility, with the final drawdown permitted\nup to 30 days prior to the maturity date.\n13\nC a s h a n d b a n k d e p o s its\nIn v e s tm e n ts o n d e m a n d\nR e s tric te d c a s h :\nR e s tric te d c a s h a n d re s\nT o ta l c a s h a n d r e s tr ic te d\nR e s tr ic te d c a s h a n d r e s e\ne rv\nc a\nr v e\ne fu n d s fo r b\ns h\nfu n d s fo r b\na\na\nn\nn\nk\nk\nlo\nlo\na\na\nn\nn\ns\ns\n$\n$\n$\n3 0 /0 6 /2 0 2 6\n6 ,3 9 0 ,5\n1 ,4 0 4 ,6\n7 3 ,6\n7 ,8 6 8 ,9\n1 5 2 ,8 1\n65\n9\n1\n0\n08\n5\n3\n$\n$\n$\n3 1 /1 2 /2 0 2 5\n1 2 ,2 5 8 ,3\n7 1 5 ,7\n7 4 7 ,7\n1 3 ,7 2 1 ,8\n1 5 5 ,7 0\n32\n6\n2\n6\n55\n3\n3"
+    },
+    {
+      "page": 15,
+      "source": "text_respaced",
+      "chars": 2116,
+      "tables": 0,
+      "text": "14\nThe SLRCF consists of two tranches, one denominated in Mexican pesos and the other in U.S. dollars, each\nunder the following terms:\n1) For the Mexican peso tranche, the available amount is Ps. 11,500 million, bearing a floating interest rate\nbased on the TIIE Funding Rate (TIIEF), plus an applicable margin of 1.75%.\n2) For the U.S. dollar tranche, the available amount is US$300 million, bearing a floating interest rate based\non 1-Month Term SOFR, plus an applicable margin of 1.75%.\nThe applicable margin may decrease or increase by up to 0.05% per annum, depending on sustainability\nperformance (KPIs).\nAdditionally, NEXT Properties has a Committed Sustainability-Linked Revolving Credit Facility (SLRCF) entered\ninto on May 11, 2026, with a maturity date of May 11, 2031, eligible to be extended for a period of up to two years\nupon payment of an extension fee equal to 15 basis points for each additional year. This facility is supported by\nand subject to the contractual commitment of 10 national and international banking institutions, allowing NEXT\nProperties to make drawdowns under the facility, with the final drawdown permitted up to 30 days prior to the\nmaturity date.\nThe SLRCF consists of only one tranche denominated in U.S. dollars under the following terms:\n1) The available amount is US$700 million, bearing a floating interest rate based on 1-Month Term SOFR,\nplus an applicable margin of 1.70%.\nThe applicable margin may decrease or increase by up to 0.05% per annum, depending on sustainability\nperformance (KPIs).\nAs of June 30, 2026, the long-term restricted cash, also includes the resources corresponding to employee\nbenefits plan in the amount of $71.6 million pesos. These are placed in Banca Actinver, S.A.\n4. Lease receivables from tenants\n5. Other accounts receivable\nLease receivables $ 4,056,814 $ 3,355,067\nPreventive allowance for doubtful accounts (1,389,641) (1,223,481)\n$ 2,667,173 $ 2,131,586\n30/06/2026 31/12/2025\nAccount receivable from sale of Investment properties $ 212,550 $ 110,575\nOther accounts receivable 548,935 272,796\n$ 761,485 $ 383,371\n30/06/2026 31/12/2025"
+    },
+    {
+      "page": 16,
+      "source": "text_respaced",
+      "chars": 1917,
+      "tables": 0,
+      "text": "15\n6. Investment properties\n6a. Investment properties\nFrom January 1 to June 30, 2026, Fibra Uno has capitalized loan costs for $103 million pesos.\n7. Investments in associates and join venture\nAs of June 30, 2026 and 2025, fair value effect recorded in investments in associates was for ($37) millon pesos\nand $155.2 millon pesos, respectively, and it’s shown in the interim condensed consolidated statements of\ncomprehensive income under the caption adjustment to fair value of investments in associates and property-\nrelated financial assets.\nFair value:\nInvestment completed $ 356,112,142 $ 350,880,296\nInvestment in development 6,758,592 4,794,932\nSeriousness deposit and/or advance payments for the\nacquisition of investment properties\n- 420,000\nLand reserves 1,504,775 1,504,775\nRights over properties with operating leases 3,170,608 3,158,350\n$ 367,546,117 $ 360,758,353\n30/06/2026 31/12/2025\nInvestment properties Type Properties\nBalance at the beginning of the period $ 360,758,353 $ 327,172,615\nAcquisitions:\nCalopark Industrial 1 741,867 -\nTHR Industrial 3 2,890,509 -\nJupiter I Industrial 9 - 14,405,822\nJupiter II Industrial 9 - 15,733,761\nDoña Rosa II Industrial 1 - 219,970\nDisposals:\nAltamira Land 1 - (36,440)\nInventory for Sale\nIndividuales Comercial 1 - (1,173,800)\nSamara Mixto 1 - (5,538,523)\nMidtown Jalisco Comercial 1 - (5,646,344)\nConstruction in process, improvements,\nprepayments and capitalized financial costs\n3,570,738 3,790,065\nSeriousness deposit and/or advance payments\nfor the acquisition of investment properties\n(420,000) 420,000\nFair value adjustments to investment properties 4,650 11,411,227\nBalance at the end of the period $ 367,546,117 $ 360,758,353\n30/06/2026 31/12/2025\n% ownership\nTorre Mayor 70% $ 5,562,193 $ 5,557,826\nTorre Diana 50% 3,358,968 3,326,339\nAntea Querétaro 40% 2,599,359 2,656,360\nOthers 49% 303,000 303,000\n$ 11,823,520 $ 11,843,525\n30/06/2026 31/12/2025"
+    },
+    {
+      "page": 17,
+      "source": "text_respaced",
+      "chars": 446,
+      "tables": 0,
+      "text": "16\n8. Intangible assets\n(a) The acquired administrative platform includes personnel, technology and processes. The amortization\namounts as of June 30, 2026, and 2025 were $51 million pesos for both periods.\n[INTENTIONALLY LEFT BLANK]\nAdministrative platform (a) $ 2,043,674 $ 2,043,674\nAdvisory for the structuring of the real estate vehicle 30,000 30,000\nAccumulated amortization (1,311,144) (1,260,052)\n$ 762,530 $ 813,622\n30/06/2026 31/12/2025"
+    },
+    {
+      "page": 18,
+      "source": "text",
+      "chars": 16,
+      "tables": 0,
+      "text": "9. Borrowings\n17"
+    },
+    {
+      "page": 19,
+      "source": "text",
+      "chars": 297,
+      "tables": 0,
+      "text": "* As of June 30, 2026, the market value of the UDI was 8.815225 pesos. The amounts shown in the previous\ntable of loans referring to issues in UDIs are already expressed in Mexican pesos.\n** These financial commitments have hedges through Derivatives, see section 10.\n[INTENTIONALLY LEFT BLANK]\n18"
+    },
+    {
+      "page": 20,
+      "source": "text",
+      "chars": 3336,
+      "tables": 0,
+      "text": "Summary of loans balance as of December 31, 2025\nType Institution\nCurrency Interest rate Initial Date Maturity Balance MXN Balance USD\nFUNO\nBond International** USD 4.87% jun-19 jan-30 $ - 3 80,503\nBond International USD 7.70% jan-25 jan-32 - 3 46,001\nBond International USD 7.38% feb-24 feb-34 - 3 00,100\nBond International USD 8.25% jan-25 jan-37 - 5 4,026\nBond International USD 6.95% jan-14 jan-44 - 3 38,800\nBond International** USD 6.39% jun-19 jan-50 - 3 80,139\nBond National (FUNO 23-3L) MXN TIIE + 0.95% dec-23 nov-26 $ 1,500,000 -\nBond National (FUNO 23-2L) MXN TIIE + 0.95% mar-23 mar-27 1,730,000 -\nBond National (FUNO 17) MXN 9.20% dec-17 nov-27 4,799,600 -\nBond National (FUNO 25L) MXN TIIEF + 1.25% may-25 may-28 3,700,000 -\nBond National (FUNO 21X) MXN 8.98% oct-21 oct-28 2,900,000 -\nBond National (FUNO 25-2L) MXN 11.36% may-25 may-32 9,000,000 -\nBond National (FUNO 23L) MXN 11.30% mar-23 feb-33 4,970,000 -\nMortgage Inbursa - Portal Norte Trust 955 MXN TIIE + 2.85% jul-23 jun-30 1,500,000 -\nMortgage Bancomext - Samara MXN TIIEF + 1.50% aug-25 jul-30 1,856,427 -\nMortgage BBVA - Mitikah Trust 2584 ** MXN TIIEF + 1.99% aug-25 aug-30 9,472,680 -\nUnsecured Santander MXN TIIE + 0.90% oct-25 jan-26 740,000 -\nUnsecured Scotiabank I MXN TIIE + 0.99% oct-25 jan-26 760,000 -\nUnsecured BBVA II MXN TIIEF + 1.17% dec-25 mar-26 1,300,000 -\nUnsecured Banorte I MXN TIIE + 0.83% dec-25 apr-26 1,050,000 -\nUnsecured Banco del Bajío MXN TIIE + 0.95% nov-25 may-26 200,000 -\nUnsecured Banco del Bajío ll MXN TIIE + 0.95% dec-25 jun-26 150,000 -\nUnsecured Actinver MXN TIIEF + 1.80% jun-25 jun-26 200,000 -\nUnsecured BBVA - Apolo MXN TIIEF + 1.95% oct-25 sep-30 10,000,000 -\nBond National (FUNO 16U) *UDIS 4.60% apr-16 apr-27 $ 3,967,693 -\nBond National (FUNO 13U) *UDIS 5.09% dec-13 nov-28 3,688,855 -\nNEXT\nBond International USD 4.87% dec-25 jan-30 $ - 3 87,497\nBond International USD 7.70% dec-25 jan-32 - 4 09,781\nBond International USD 7.38% dec-25 feb-34 - 2 99,900\nBond International USD 6.95% dec-25 jan-44 - 3 50,000\nBond International USD 6.39% dec-25 jan-50 - 4 37,500\nUnsecured Citi México USD SOFR + 0.80% dec-25 jun-26 - 1 45,000\nUnsecured BBVA - Titán ** USD SOFR + 2.10% dec-25 sep-27 - 7 50,000\nMortgage BBVA - Atizapán II USD SOFR + 2.35% nov-25 may-29 - 1 2,284\nMortgage Metlife - Doña Rosa MXN 11.58% dec-25 dec-28 $ 732,148 -\nMortgage BBVA - Atizapán I ** MXN TIIE + 1.85% nov-25 may-29 982,750 -\nMortgage Bancomext - Júpiter MXN TIIE + 1.35% nov-25 feb-31 1,839,972 -\nMortgage Banorte - Santin I MXN TIIE + 2.50% nov-25 mar-31 518,310 -\nMortgage Banorte - Santin II ** MXN TIIEF + 2.60% nov-25 jun-37 508,235 -\nUnsecured BBVA I MXN TIIEF + 1.17% dec-25 mar-26 1,450,000 -\nBalance as of December 31, 2025 $ 69,516,670 $ 4 ,591,531\nForeign exchange rate as December 31, 2025 17.9667\nUS Dollars balance expressed in its equivalent Pesos as of December 31, 2025 $ 8 2,494,667\nTotal Balance as of December 31, 2025 $ 1 52,011,337\nShort-term loans 1 2,125,429\nShort-term transaction costs (177,511)\n$ 11,947,917\nLong-term loans 1 39,885,908\nLong-term transaction costs (969,444)\nDebt's fair value (1,892)\n$ 1 38,914,573\n* As of December 31, 2025, the market value of the UDI was 8.665387pesos. The amounts shown in the previous\ntable of loans referring to issues in UDIs are already expressed in mexican pesos.\n19"
+    },
+    {
+      "page": 21,
+      "source": "text",
+      "chars": 3024,
+      "tables": 0,
+      "text": "** These financial commitments have hedges through Derivatives, see section 10.\nThe debt establishes certain covenants, which have been fully complied as of June 30, 2026, and December 31,\n2025, as described below:\n• Fibra Uno is obliged to pay, on or before the due date, the property tax and other contributions from its\nproperties.\n• Keep in good operating conditions all its useful goods and assets that are necessary for the proper\noperation of its business, except for normal wear and tear.\n• Maintain insurance on its insurable assets with insurance companies of recognized prestige, in amounts\nagainst standard risks in the real estate industry and for sums insured sufficient to replace or repair the\ndamage.\n• Do not reduce the debt service coverage ratio (Net Operating Income (NOI) divided by Debt Service)\nbelow 1.5 times.\n10. Derivative financial instruments\nFibra Uno has several derivatives that have the objective of partially limiting the market risk either due to\nmovements in interest rates and / or exchange rates, which may affect the costs and values of its financial\ncommitments.\nIn the case of Fibra Uno and its commitments, two types of derivatives have been contracted: Interest Rate Swap\n(IRS) and Cross Currency Swap (CCS). Once the acceptable risk analysis for the Entity's operation has been\ncarried out, it has been decided to contract the mentioned derivatives to hedge the market risk according to its\ndesired risk level.\nDerivatives for Fibra Uno\nFirst, a detail of the entire position, fair value of the derivative and fair value of the debt is shown, both from the\nIRS (Interest Rate Swap) portfolio and the CCS (Currency Swap) portfolio:\nInterest Rate Swap (IRS)\nThe commitment-coverage relationship is described below:\n(1) Syndicated Loan for the Titán and Vermont portfolio for drawn amounts of $750 million US Dollars at a\nvariable rate TERM SOFR 1M plus spread of 2.10% and maturity date in September 2027:\n• Structure of 1 derivative with Notional of $720 million US Dollars that aims to transform all\nvariable flows for interest payments into flows at a fixed rate of 6.13% (4.03% of the derivative\nplus 2.10% for the fixed financial commitment).\n20\n#\n1234567\nC om m itm ent\nTitán II (1)\nTitán II (1)\nM itikah (2)\nM itikah (2)\nA tizapán (3)\nA tizapán (3)\nS antín (4)\nCCCCCCC\nH edge\nash Flow\nash Flow\nash Flow\nash Flow\nash Flow\nash Flow\nash Flow\nM aturity\nS eptem ber-2027\nS eptem ber-2027\nN ovem ber-2028\nN ovem ber-2028\nM ay 2029\nM ay 2029\nA pril 2031\nTotal\nInitial A m ount\n(In thousands M X P)\n11,903,256\n594,504\n2,000,000\n1,000,000\n700,000\n300,000\n514,323\n17,012,083\nFair V alue (D ebt)\nJune 2026\n(13,107)\n2,121\n(57,381)\n(24,412)\n(28,339)\n(9,743)\n(12,610)\n(143,471)\nFair V alue (D erivative)\nJune 2026\n(12,465)\n2,118\n(56,575)\n(23,957)\n(27,880)\n(9,589)\n(11,958)\n(140,306)\nFair V alue (D ebt)\nM arch 2026\n(96,921)\n(785)\n(44,587)\n(16,000)\n(19,923)\n(5,961)\n(3,747)\n(187,925)\nFair V alue (D erivative)\nM arch 2026\n(94,628)\n(719)\n(43,289)\n(15,263)\n(19,551)\n(5,845)\n(3,185)\n(182,480)"
+    },
+    {
+      "page": 22,
+      "source": "text",
+      "chars": 3867,
+      "tables": 0,
+      "text": "• Structure of 1 derivative with Notional of $30 million US Dollars that aims to transform all\nvariable flows for interest payments into flows at a fixed rate of 5.70% (3.60% of the derivative\nplus 2.10% for the fixed financial commitment).\n(2) Mortgage Credit for the Mitikah Project for amounts drawn down for $9,405 million pesos at variable\nrate of TIIEF plus 1.99% and maturity date in August 2030:\n• Structure of 1 derivative whose objective is to transform all the variable flows for interest\npayments into flows at a fixed rate of 8.81%.\n• Structure of 1 derivative whose objective is to transform all the variable flows for interest\npayments into flows at a fixed rate of 8.29%.\n(3) Mortgage Credit secured by the Atizapán and Tultepark properties for amounts drawn down equivalent\nto $1,181 million pesos as of the end of June 2026, at variable rates of TIIE and TERM SOFR 1M plus a\nspread of 1.85% for pesos and 2.35% for US dollars and maturity date in May 2029:\n• Structure of 1 derivative whose objective is to transform all the variable flows for interest\npayments into flows at a fixed rate of 9.12%.\n• Structure of 1 derivative whose objective is to transform all the variable flows for interest\npayments into flows at a fixed rate of 8.55%.\n(4) Mortgage Credit secured by the Santín properties and amounts drawn down for $995 million pesos at\nvariable rates of TIIE and TIIEF plus a spread of 2.50% and 2.60% respectively, with maturity dates in\nMarch 2031 and June 2037 respectively:\n• Structure of 1 derivative whose objective is to transform all the variable flows for interest\npayments into flows at a fixed rate of 8.30%.\nCross Currency Swap (CCS)\n# Commitment Hedge Maturity I t n h i o ti u a s l a A n m d o s u U n S t D (In ) I t n h i o ti u a s l a A n m d o s u M nt X ( P In ) Fair J V un a e lu 2 e 0 ( 2 D 6 ebt) Fair Va J l u u n e e ( D 20 e 2 ri 6 vative) Fai M r a V r a c lu h e 2 ( 0 D 2 e 6 bt) Fair V M al a u r e c h (D 2 e 0 r 2 iv 6 ative)\n1 Int. Bond 775 USD (1) Cash Flow January-2029 275,000 5,684,250 (1,279,989) (1,245,810) (1,100,711) (1,064,515)\n2 Int. Bond 875 USD (2) Cash Flow January-2050 200,000 3,998,000 (901,730) (811,721) (981,440) (893,049)\n3 Int. Bond 875 USD (2) Cash Flow January-2050 200,000 3,430,000 (365,596) (339,447) (373,604) (349,262)\n4 Int. Bond 875 USD (2) Cash Flow January-2050 100,000 2,044,000 (138,916) (124,700) (142,710) (129,982)\n5 Int. Bond 875 USD (2) Cash Flow January-2050 100,000 2,019,000 (121,202) (109,523) (125,042) (115,024)\n6 Int. Bond 875 USD (2) Cash Flow January-2050 100,000 2,037,000 (85,378) (78,254) (90,714) (85,715)\n7 Int. Bond 875 USD (2) Cash Flow January-2050 100,000 1,686,750 (225,762) (197,024) (221,739) (194,309)\nTotal 1,075,000 20,899,000 (3,118,572) (2,906,479) (3,035,960) (2,831,856)\n(1) International Bond for $775 million US Dollars, with semiannual interest payments at a fixed rate of\n4.87%; maturing in January 2030:\na. Structure of 1 derivative with two objectives:\ni. Partially hedge the principal payment of the international bond in the event of a\npotential peso depreciation, by guaranteeing the purchase of 275 million US Dollars\nat an exchange rate of 20.6700 pesos per US dollar.\nii. Transform fixed interest payments in US dollars at a rate of 0.00% into fixed payments\nin pesos at a fixed rate of 0.00% less a spread of 0.0650%.\n(2) International Bond for $875 million US Dollars with semiannual interest payments at a fixed rate of 6.39%\nmaturing in January 2050:\na. Structure of 1 derivative that aims to:\ni. Partially cover the payment of the principal of the International Bond in the event of a\npossible depreciation of the peso by guaranteeing the purchase of 200 million US\nDollars at an exchange rate of 19.9900 pesos per US Dollar. In return, Fibra Uno\nundertakes to pay the counterparty every month the amount resulting from\n21"
+    },
+    {
+      "page": 23,
+      "source": "text",
+      "chars": 2797,
+      "tables": 0,
+      "text": "multiplying the notional amount in pesos by an annual rate of TIIE minus 4.7200%\n(TIIE as of June 30, 2026: 6.7559%).\nb. Structure of 1 derivative that aims to:\ni. Partially cover the payment of the principal of the International Bond in the event of a\npossible depreciation of the peso by guaranteeing the purchase of 200 million US\nDollars at an exchange rate of 17.1500 pesos per US Dollar. In return, Fibra Uno\nundertakes to pay the counterparty semiannually, starting in the second half of 2027,\nthe amount resulting from multiplying the notional amount in pesos by an annual rate\nof TIIE minus 4.9000% (TIIE as of June 30, 2026: 6.7559%).\nc. Structure of 1 derivative that aims to:\ni. Partially cover the payment of the principal of the International Bond in the event of a\npossible depreciation of the peso by guaranteeing the purchase of 100 million US\nDollars at an exchange rate of 16.8675 pesos per US Dollar. In return, Fibra Uno\nundertakes to pay the counterparty semiannually, starting in the first half of 2028, the\namount resulting from multiplying the notional amount in pesos by an annual rate of\nTIIE minus 4.2950% (TIIE as of June 30, 2026: 6.7559%).\nd. Structure of 3 derivatives that aims to:\ni. Partially cover the payment of the principal of the International Bond in the event of a\npossible depreciation of the peso by guaranteeing the purchase of 300 million US\nDollars at a weighted average exchange rate of 20.3339 pesos per US Dollar. In\nreturn, Fibra Uno undertakes to pay the counterparty semiannually, starting in the\nsecond half of 2028, the amount resulting from multiplying the notional amount in\npesos by an annual rate of TIIEF minus weighted average spread of 5.6701% (TIIEF\nas of June 30, 2026: 6.6300%).\nNow, the derivatives fair value according to their nature in the Balance Sheet as of June 30, 2026, amounts to a\nliability of $3,046,785.\nDuring the period, cash flow hedges were highly effective in hedging the foreign exchange exposure. For the\ncash flow hedges, the changes associated with the exchange rate were reclassified from OCI to results.\nThe first CCS (2), which hedges a portion ($200 million) of the USD principal on the International Bond due\nJanuary 15, 2050, provides the Counterpart the right to terminate the swap with no future payments due by the\nCompany or the Counterpart if there is a credit event with respect to Fibra Uno. It is because of this right of the\nCounterparty that the Notional of the derivative considers the probability of survival as of January 15, 2050 and\nchanges until it reaches $200 million US Dollars. The valuation of the transaction reflects this linkage to the\ncreditworthiness of Fibra Uno and the conditional nature of the Counterpart's obligation to make payments to\nFibra Uno under the transaction.\n22"
+    },
+    {
+      "page": 24,
+      "source": "text",
+      "chars": 4519,
+      "tables": 0,
+      "text": "On the other hand, if we consider the accumulated movement of the year of both portfolios, we have the following:\nInterest Rate Swap (IRS)\nCross Currency Swap (CCS)\nIn general terms, for the Interest Rate Swap portfolio, Fibra Uno pays flows at a fixed rate while it receives flows\nat a variable rate. This rate is linked to the TIIE (Interbank Equilibrium Interest Rate) and the TIIE Funding Rate\n(TIIEF). The capital gain or loss of this portfolio will then depend on the current movement and expectations of\nthe TIIE and TIIEF. On the other hand, for the Currency Swap portfolio, Fibra Uno receives flows at a fixed rate.\n11. Accounts payable and accrued expenses\n12. Payments based on CBFIs\nFor the six-month period ended June 30, 2026, and 2025, the costs related to the executive's long-term\ncompensation plan (LTI) were $263.1 million pesos and $55.2 pesos, respectively.\n23\n#\n123456789101112\n#\n123456789101112131415161718192021222324\nC om m itm ent\nInt. B ond 775 U S D\nInt. B ond 775 U S D\nInt. B ond 775 U S D\nInt. B ond 775 U S D\nInt. B ond 775 U S D\nTitán II\nTitán II\nM itikah\nM itikah\nA tizapán\nA tizapán\nS antín\nC om m itm ent\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 775 U SD\nInt. Bond 875 U SD\nInt. Bond 875 U SD\nInt. Bond 875 U SD\nInt. Bond 875 U SD\nInt. Bond 875 U SD\nInt. Bond 875 U SD\nA c c ru e d e\nS u p p lie rs\nx\nInitial A m ount Fair V alue (D ebt) Fair V alue (D erivative) Fair V alue (D ebt) Fair V alue (D erivative) H edge M aturity\n(In thousands M X P) June 2026 June 2026 D ecem ber 2025 D ecem ber 2025\nC ash Flow January-2026 - - - (12,477) (12,477)\nC ash Flow January-2026 - - - (2,039) (2,038)\nC ash Flow January-2026 - - - (2,039) (2,038)\nC ash Flow January-2026 - - - (2,402) (2,401)\nC ash Flow January-2026 - - - (1,595) (1,594)\nC ash Flow S eptem ber-2027 11,903,256 (13,107) (12,465) (161,613) (158,770)\nC ash Flow S eptem ber-2027 594,504 2,121 2,118 (2,859) (2,776)\nC ash Flow N ovem ber-2028 2,000,000 (57,381) (56,575) (59,009) (58,037)\nC ash Flow N ovem ber-2028 1,000,000 (24,412) (23,957) (23,750) (23,221)\nC ash Flow M ay 2029 700,000 (28,339) (27,880) (29,177) (28,659)\nC ash Flow M ay 2029 300,000 (9,743) (9,589) (4,480) (4,312)\nC ash Flow A pril 2031 514,323 (12,610) (11,958) (11,753) (11,066)\nTotal 17,012,083 (143,471) (140,306) (313,192) (307,389)\nInitial A m ount (In Initial A m ount (In Fair Value (D ebt) Fair Value (D erivative) Fair Value (D ebt) Fair Value (D erivative) H edge M aturity thousands U SD ) thousands M XP) June 2026 June 2026 D ecem ber 2025 D ecem ber 2025\nFair Value January-2026 - - - - (27,376) (27,366)\nFair Value January-2026 - - - - (12,226) (12,221)\nFair Value January-2026 - - - - (5,204) (5,202)\nFair Value January-2026 - - - - (151,685) (151,629)\nFair Value January-2026 - - - - (64,061) (64,037)\nFair Value January-2026 - - - - (50,901) (50,882)\nFair Value January-2026 - - - - (42,522) (42,506)\nC ash Flow January-2026 - - - - (45,979) (45,962)\nC ash Flow January-2026 - - - - (61,217) (61,195)\nC ash Flow January-2026 - - - - (227,562) (227,479)\nC ash Flow January-2026 - - - - (113,723) (113,681)\nC ash Flow January-2026 - - - - (113,637) (113,595)\nC ash Flow January-2026 - - - - (225,150) (225,150)\nC ash Flow January-2026 - - - - (225,309) (225,309)\nC ash Flow January-2026 - - - - (338,333) (338,332)\nC ash Flow January-2026 - - - - (338,145) (338,145)\nFair Value January-2026 - - - - 940,389 940,339\nC ash Flow January-2029 275,000 5,684,250 (1,279,989) (1,245,810) - -\nC ash Flow January-2050 200,000 3,998,000 (901,730) (811,721) (935,795) (846,587)\nC ash Flow January-2050 200,000 3,430,000 (365,596) (339,447) (318,899) (294,280)\nC ash Flow January-2050 100,000 2,044,000 (138,916) (124,700) (119,970) (106,651)\nC ash Flow January-2050 100,000 2,019,000 (121,202) (109,523) (103,035) (92,022)\nC ash Flow January-2050 100,000 2,037,000 (85,378) (78,254) (69,867) (62,863)\nC ash Flow January-2050 100,000 1,686,750 (225,762) (197,024) (195,971) (169,194)\nTotal 1,075,000 20,899,000 (3,118,572) (2,906,479) (2,846,178) (2,673,949)\n3 0 /0 6 /2 0 2 6 3 1 /1 2 /2 0 2 5\np e n s e s a n d o th e r a c c o u n ts p a y a b le s 2 ,0 8 3 ,6 8 5 2 ,1 1 6 ,4 4 4 $ $\n2 ,0 8 2 ,4 2 8 1 ,9 6 0 ,1 2 3\n4 ,1 6 6 ,1 1 3 4 ,0 7 6 ,5 6 7 $ $"
+    },
+    {
+      "page": 25,
+      "source": "text",
+      "chars": 3418,
+      "tables": 0,
+      "text": "13. Transactions and balances with related parties\n1. As of December 2025, Fibra Uno use to pay an annual fee equivalent to 0.5% of its net assets, plus applicable\nValue Added Tax (VAT), in exchange for advisory services, as well as 3% of the purchase price of properties\nacquired from third parties.\n2. As of December 2025, Fibra Uno use to pay to F2 Services a monthly fee equivalent to 2% of the rent collected\nfrom its properties, plus applicable VAT, in exchange for administrative services.\nIn June 2025, Fibra Uno informed its shareholders that it had signed an agreement to internalize its advisory and\nrepresentation advisory contracts. On January 1, 2026, compliance with this agreement was realized through the\ntransfer of three investment properties and the associated debts. The assets to be used as payment are the\nfollowing: Samara (considering the debt on the property), Midtown Jalisco, and Montes Urales 620; which contain\na mix of 60% office space, 34% retail space, and 6% hotel space.\n3. In accordance with the provisions of the service contract between F1 Administration, S.C. (F1 Administration-\nsubsidiary company) and Banco INVEX, S.A., Institución de Banca Múltiple, INVEX Grupo Financiero in its\ncapacity as Trustee of Trust F/2353 (Trust F/2353) for the Mitikah´s project development, F1 Administración shall\nbe entitled to receive (i) an annual equivalent commission to 1.25%, plus the corresponding VAT, on the\nMaximum Amount of the Issuance of Trust F/2353 and (ii) after the Investment Period and any extension thereof,\nat 1.25%, plus VAT corresponding, on the Total Amount Invested of the Trust F/2353.\nSince June 25, 2023, the annual commission has been reduced to 0.625%, in accordance with an agreement\nthat took place through a Holders meeting on June 23, 2023, is entitled to receive as a retribution, regard each\nTrust 2353 vehicle investment, the equivalent to 3% of the Total Investment Cost as Develop.\nSince August 29, 2024, Trust Fibra Uno has bought the 100% of Trust 2353 (CKD Helios).\nAccording on services contract held between F1 Administración, S.C. and Trust 955 Portal Norte, by the “Portal\nNorte” project, F1 Administración will receive, by administration tasks, treasury, obtaining financing, normative\ncompliance, accounting information preparement and monitoring report, an annual fee of 1.25% about the\ncontributed resources amount (or resources amount that should be contributed) by the Trustor B (AXA Seguros,\n24\nS\nR\nE\nub ject services to Internalization p rocess in curse\nF ib ra U no A d m inistración, S .C .\nA d m inistration fee 0.5% (1)\nF 2 S ervices, S .C .\nS ervices rend ered (2)\nevenues:\nIncom e from com m issions(3)\nLeases to H otel O p erators and others (4)\nxp enses:\nC onstruction m anagem ent fees (5)\nM aintenance, m anagem ent and others (6)\n$\n$\n$\n$\n$\n$\n30/06/2026\n60,040\n48,964\n109,004\n-\n273,779\n273,779\n3,436,124\n1,395,716\n4,831,840\nS e co n d q u arte r\n2026 tran sactio n s\n$ -\n-\n$ -\n$ -\n133,892\n$ 133,892\n$ 2,976,777\n1,018,770\n$ 3,995,547\n$\n$\n$\n$\n$\n$\n31/03/2026\n60,040\n48,964\n109,004\n-\n139,887\n139,887\n459,348\n376,946\n836,294\n$\n$\n$\n$\n$\n$\n30/06/2025\n470,902\n264,250\n735,152\n6,530\n233,373\n239,903\n506,426\n684,636\n1,191,062\nS e co n d q u arte r\n2025 tran sactio n s\n$ 238,421\n130,213\n$ 368,634\n$ 4,203\n144,858\n$ 149,063\n$ 232,328\n319,023\n$ 551,351\n$\n$\n$\n$\n$\n$\n31/03/2025\n232,481\n134,037\n366,518\n2,327\n88,515\n90,842\n274,098\n365,614\n639,712"
+    },
+    {
+      "page": 26,
+      "source": "text",
+      "chars": 2538,
+      "tables": 0,
+      "text": "S.A de C.V.) depending on its participation percent. When the construction period concludes, fee will down to\n0.75%. In addition, F1 Administración, is entitled to receive the equivalent retribution to 3% of the Total Investment\nCost as a Development fee.\n4. Income to hotel operators. They correspond to revenue generated by leases to related parties in different\nlocations in Mexico to hotel operators which are contemplated under contracts of use of brand with international\nand local hotel chains.\n5. Construction management. Fibra Uno engages specialized companies in the construction of properties acting\nas the general contractor scheme. These related entities are responsible, based on budgets and constructions\ntimelines, for developing the construction and modification or expansion of properties through the construction\nmanagement. The operation involves a payment of work advances to the administrator, who parallelly\nsubcontracts to specialist companies during the different construction milestones and, based on work in turn\nestimates, the resources are released to subcontractors. The master contractor charges a construction\nmanagement fee based on market conditions on the advance payments received and disbursements during the\nconstruction. In addition, these related parties participate in the execution of remodeling projects or overhauls to\nexisting properties owned by FUNO.\n6. Maintenance major repairs. The entity major repairing engage specialized companies in the procurement,\nconservation and maintenance of some of the properties operated by Fibra UNO. Based on annual budgets,\npre-agreed upon and authorized by FUNO, maintenance work is disbursed and delegated to contractors who\nprovide the work on site with the approval of Fibra UNO. Many of this work is in turn invoiced to the tenants,\nwhen the contract includes reimbursement for the recurring operational maintenance.\nThese transactions are always carried out at market prices and are covered by the corresponding contracts\nbetween the parties.\nBalances with related parties are:\n30/06/2026 31/12/2025\nReceivable:\nHotel operators $ 352,018 $ 386,489\nBanco Ve por Más, S.A. Fideicomiso 303 48,030 88,011\nOther transactions of property acquisition 15,613 175,544\nFid Querétaro 1487/2012 8,144 35,615\nFid 838/2007 Guadalajara 3,853 16,378\nOperadora Mexicana Allux S.A. de C.V. 1,513 16,010\nAllux Media S.A. de C.V. 173 13,968\nOthers 23,088 15,354\n$ 452,432 $ 747,369\nLong term receivable:\nOther transactions of property acquisition $ 234,389 $ 155,927\n25"
+    },
+    {
+      "page": 27,
+      "source": "text_respaced",
+      "chars": 1883,
+      "tables": 0,
+      "text": "26\n14. Trustors’/ Beneficiaries’ Capital\ni. The capital of Fibra Uno consists of the contribution of one thousand pesos plus the amount of\nresources from CBFIs issuances.\nii. As of the periods of June 30, 2026 and December 31, 2025, there are 3,838,823,784 and 3,810,649,852\nCBFIs in circulation, respectively.\nDistributions\nFibra Uno's Technical Committee has approved and paid distributions to the holders of the CBFIs (trustees) as\nfollows:\nAs of June 30, 2026, Fibra Uno has made the payment of distributions to the holders of Real Estate Trust Stock\nCertificates The total amount of distributions in 2026 has been for $4,916 million pesos, of which $3,674 million\npesos corresponds to fiscal result and $1,242 million pesos corresponds to Capital refund. Of the total\ndistributions, 2,553 million pesos corresponds to four quarter of 2025.\nPayables:\nOperadora Mexicana Allux S.A. de C.V. $ 115,787 $ 57,480\nPRK Industrial S.A. de C.V. 169,231 -\nParks Mantenimiento, S.C. 158,747 31,355\nFundación Funo A.C. 86,431 58,049\nParks Concentradora, S.A. de C.V. 53,969 71,457\nControladora Hotelera POH S.A. de C.V. 52,200 -\nParks Hospitality Guadalajara S.A. de C.V. 30,160 -\nCoordinadora de Inmuebles Industriales S.A. de C.V. 30,063 30,063\nParks Mantenimiento II S.C. 28,371 -\nOperadora de Hoteles Samara, S.A. de C.V. 20,880 -\nFibra Uno Administración, S.C. 36 59,013\nOthers 34,699 3,668\n$ 780,574 $ 311,085\n30/06/2026 31/12/2025\nDistribution dates\nMay 11, 2026 $ 2,362,603 $ - $ 2,362,603\nFeb 9, 2026 1,311,035 1,242,100 2,553,135\nTotal as of June 30, 2026 $ 3,673,638 $ 1,242,100 $ 4,915,738\nNov 10, 2025 $ 2,305,443 $ - $ 2,305,443\nAug 11, 2025 2,169,032 - 2,169,032\nMay 9, 2025 2,111,775 - 2,111,775\nFeb 10, 2025 229,110 1,870,890 2,100,000\nTotal as of December 31, 2025 $ 6,815,360 $ 1,870,890 $ 8,686,250\nTotal distributed\nFiscal result\ndistribution\nCapital refund\ndistribution"
+    },
+    {
+      "page": 28,
+      "source": "text",
+      "chars": 963,
+      "tables": 0,
+      "text": "CBFIs repurchase reserve.\nAs of June 30, 2026, the repurchase reserve of CBFIs authorized by the Committee on July 22, 2020, includes\n52,071,884 CBFIs at a closing price on this date of 29.97, which is equivalent to $1,560,594,363 pesos.\n15. Commitments\nNeither the Trustor nor its assets are subject to any type of legal action, except those derived from its operations\nand routine activities.\n16. Subsequent events\nOn July 16, 2026, NEXT Properties closed the transaction for the “Atlas” portfolio for a total of US$138.2 million;\nthe portfolio comprises 183,461 square meters of gross leasable area across 15 properties that are 100% leased\nand located primarily in the north of the country.\n17. Approval of Financial Statements\nThe attached interim condensed consolidated financial statements and their notes were authorized for issuance\nby Mr. Fernando Álvarez Toca, Finance VP, according to the approval of the Technical Committee on June 24,\n2026.\n*****\n27"
+    }
+  ]
+}

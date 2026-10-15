@@ -112,6 +112,13 @@ def test_note_reference_column_is_dropped():
     assert row.values == [5868205.0, 5288402.0, 12028258.0, 11055492.0]
 
 
+def test_comma_separated_note_reference_pair_is_dropped():
+    """Xiaomi: note references 2, 3 precede four financial columns."""
+    row = parse_row("Cost of sales 2, 3 (87,312,691) (89,855,133) "
+                    "(164,644,189) (175,742,560)")
+    assert row.values == [-87312691.0, -89855133.0, -164644189.0, -175742560.0]
+
+
 def test_heading_rows_are_not_rows():
     assert parse_row("CASH FLOWS FROM OPERATING ACTIVITIES") is None
     assert parse_row("The accompanying notes form an integral part 2.6") is None
@@ -507,6 +514,27 @@ def test_note_table_scale_is_read_from_its_header_block():
                                              "Revenue 7,937,368 1,408,790 9,346,158")])])
     units, _, _ = _document_units(doc)
     assert units == "thousands"
+
+
+def test_each_statement_keeps_its_own_detected_scale():
+    cash_flow = Statement(
+        page=27, kind="cash_flow", title="Cash Flow Statement (RMB millions)", heading="",
+        columns=[Column(index=0, header="Q2 2026", months=3)],
+        rows=[StatementRow("Cash flow", [10.0], "Cash flow 10")])
+    income = Statement(
+        page=30, kind="income_statement", title="Income Statement", heading="",
+        columns=[Column(index=0, header="Q2 2026 RMB'000", months=3)],
+        rows=[StatementRow("Revenue", [10000.0], "Revenue 10000")])
+    doc = _doc({27: "Cash Flow Statement (RMB millions)\nCash flow 10",
+                30: "Income Statement\nQ2 2026 RMB'000\nRevenue 10000"},
+               [cash_flow, income])
+
+    units, _, issues = _document_units(doc)
+
+    assert units == "millions"
+    assert cash_flow.units == "millions"
+    assert income.units == "thousands"
+    assert any(issue.code == "units_disagree" for issue in issues)
 
 
 def test_iso_date_range_column():

@@ -1,0 +1,2187 @@
+{
+  "map_version": "1.0",
+  "company": "bharti_airtel",
+  "sheet": "Model",
+  "fingerprint": "e7a4cc95dd5471dc",
+  "units": "millions",
+  "cadence_months": 3,
+  "fiscal_year_start_month": 1,
+  "layout": {
+    "label_col": 2,
+    "header_row": 5,
+    "first_data_row": 7,
+    "reference_col": 77,
+    "write_col": 79,
+    "write_mode": "fill_blank",
+    "period_dates": {
+      "4": "2011-03-10",
+      "5": "2012-03-11",
+      "6": "2013-03-13",
+      "7": "2014-03-15",
+      "8": "2015-03-17",
+      "9": "2016-03-31",
+      "10": "2017-03-31",
+      "11": "2018-03-31",
+      "12": "2018-03-31",
+      "13": "2019-03-31",
+      "14": "2020-03-31",
+      "15": "2021-03-31",
+      "16": "2022-03-31",
+      "17": "2023-03-31",
+      "18": "2024-03-31",
+      "19": "2025-03-31",
+      "20": "2026-03-31",
+      "21": "2026-03-31",
+      "23": "2012-06-08",
+      "24": "2012-09-09",
+      "25": "2012-12-10",
+      "26": "2013-03-10",
+      "27": "2013-06-08",
+      "28": "2013-09-09",
+      "29": "2013-12-10",
+      "30": "2014-03-10",
+      "31": "2014-06-08",
+      "32": "2014-09-09",
+      "33": "2014-12-10",
+      "34": "2015-03-10",
+      "35": "2015-06-08",
+      "36": "2015-09-09",
+      "37": "2015-12-10",
+      "38": "2016-03-10",
+      "39": "2016-06-08",
+      "40": "2016-09-09",
+      "41": "2016-12-10",
+      "42": "2017-03-10",
+      "43": "2017-06-30",
+      "44": "2017-09-30",
+      "45": "2017-12-31",
+      "46": "2018-03-31",
+      "47": "2018-06-30",
+      "48": "2018-09-30",
+      "49": "2018-12-31",
+      "50": "2019-03-31",
+      "51": "2019-06-30",
+      "52": "2019-09-30",
+      "53": "2019-12-31",
+      "54": "2020-03-31",
+      "55": "2020-06-30",
+      "56": "2020-09-30",
+      "57": "2020-12-31",
+      "58": "2021-03-31",
+      "59": "2021-06-30",
+      "60": "2021-09-30",
+      "61": "2021-12-31",
+      "62": "2022-03-31",
+      "63": "2022-06-30",
+      "64": "2022-09-30",
+      "65": "2022-12-31",
+      "66": "2023-03-31",
+      "67": "2023-06-30",
+      "68": "2023-09-30",
+      "69": "2023-12-30",
+      "70": "2024-03-31",
+      "71": "2024-06-30",
+      "72": "2024-09-30",
+      "73": "2024-12-30",
+      "74": "2025-03-31",
+      "75": "2025-06-30",
+      "76": "2025-09-30",
+      "77": "2025-12-30",
+      "78": "2026-03-31",
+      "80": "2019-06-30"
+    },
+    "period_date_row": 3
+  },
+  "confirmed_by": "",
+  "confirmed_at": "",
+  "rows": [
+    {
+      "key": {
+        "label": "Revenue from operations",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 7,
+      "kind": "input",
+      "resolve": "field:revenue_from_operations",
+      "pdf_caption": "Revenue from operations",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 8,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other income",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 9,
+      "kind": "input",
+      "resolve": "field:other_income",
+      "pdf_caption": "Other income",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "Total income from operations",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 10,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 11,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Expenses",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 12,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Network operating expenses",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 13,
+      "kind": "input",
+      "resolve": "pdf:Network operating expenses",
+      "pdf_caption": "Network operating expenses",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "Access Charges",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 14,
+      "kind": "input",
+      "resolve": "pdf:Access Charges",
+      "pdf_caption": "Access charges",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "License fee / spectrum charges (revenue share)",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 15,
+      "kind": "input",
+      "resolve": "pdf:License fee / spectrum charges (revenue share)",
+      "pdf_caption": "License fee / Spectrum charges",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "matched 'License fee / Spectrum charges' in the filing (caption matched by containment) — confirm it is the same line"
+    },
+    {
+      "key": {
+        "label": "Employee benefits",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 16,
+      "kind": "input",
+      "resolve": "pdf:Employee benefits",
+      "pdf_caption": "Employee benefits expense",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "matched 'Employee benefits expense' in the filing (caption matched by containment) — confirm it is the same line"
+    },
+    {
+      "key": {
+        "label": "Sales and marketing expenses",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 17,
+      "kind": "input",
+      "resolve": "pdf:Sales and marketing expenses",
+      "pdf_caption": "Sales and marketing expenses",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "Other expenses",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 18,
+      "kind": "input",
+      "resolve": "field:other_expenses",
+      "pdf_caption": "Other expenses",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "Profit from operating activities before D&A and exceptional items",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 19,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% margin",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 20,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Share of results of joint ventures and associates",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 21,
+      "kind": "input",
+      "resolve": "pdf:Share of results of joint ventures and associates",
+      "pdf_caption": "Share of profit of associates and joint ventures (net)",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "a model chose 'Share of profit of associates and joint ventures (net)' from the filing's income_statement (same associates/joint ventures line) — CONFIRM before use"
+    },
+    {
+      "key": {
+        "label": "Depreciation and amortisation",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 22,
+      "kind": "input",
+      "resolve": "pdf:Depreciation and amortisation",
+      "pdf_caption": "Depreciation and amortisation expenses",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "matched 'Depreciation and amortisation expenses' in the filing (caption matched by containment) — confirm it is the same line"
+    },
+    {
+      "key": {
+        "label": "Finance costs",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 23,
+      "kind": "input",
+      "resolve": "field:finance_costs",
+      "pdf_caption": "Finance costs",
+      "statement": "income_statement",
+      "basis": "quarter"
+    },
+    {
+      "key": {
+        "label": "Finance Income",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 24,
+      "kind": "input",
+      "resolve": "field:interest_income",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'interest income'"
+    },
+    {
+      "key": {
+        "label": "Net foreign exchange and derivative (gain)/loss",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 25,
+      "kind": "input",
+      "resolve": "pdf:Net foreign exchange and derivative (gain)/loss",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'Net foreign exchange and derivative (gain)/loss'"
+    },
+    {
+      "key": {
+        "label": "Non-operating income / expenses, (net)",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 26,
+      "kind": "input",
+      "resolve": "pdf:Non-operating income / expenses, (net)",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: the model chose 'Other income', but 'Other income' already reads that line — this row looks like a component of it, not the same line; left unmatched"
+    },
+    {
+      "key": {
+        "label": "Exceptional items",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 27,
+      "kind": "input",
+      "resolve": "field:exceptional_items",
+      "pdf_caption": "Exceptional items (net)",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "a model chose 'Exceptional items (net)' from the filing's income_statement (same line with net wording) — CONFIRM before use"
+    },
+    {
+      "key": {
+        "label": "Profit before tax",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 28,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Income  Tax Expense",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 29,
+      "kind": "input",
+      "resolve": "field:tax_expense",
+      "statement": "income_statement",
+      "basis": "quarter",
+      "review": "the reference cell is a hand-typed expression '=-20153-17832', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'tax expense'"
+    },
+    {
+      "key": {
+        "label": "Net profit/loss",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 30,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Profit from discontinued operation before tax",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 31,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Tax expense of discontinued operation",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 32,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Profit for the period from discontinued operation",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 33,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "% margin",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 34,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Check",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 35,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "As a % of Sales unless stated otherwise",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 37,
+      "kind": "skip",
+      "review": "looks like a heading or a derived ratio"
+    },
+    {
+      "key": {
+        "label": "Network operating expenses",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 38,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Access Charges",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 39,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "License fee / spectrum charges (revenue share)",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 40,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Employee benefits",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 41,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Sales and marketing expenses",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 42,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other expenses",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 43,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Profit from operating activities before D&A and exceptional items",
+        "section": "income_statement",
+        "occurrence": 2
+      },
+      "row_hint": 44,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Finance costs as a % of total debt",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 45,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Finance income as a % of end of period cash",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 46,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Income  Tax Expense as a % PBT",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 47,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "LTM Cash interest paid: % of debt",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 48,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Working capital/sales",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 49,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 51,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Profit from operating activities before D&A and exceptional items",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 52,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 54,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 55,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% margin",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 56,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adjustment",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 58,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 59,
+      "kind": "input",
+      "resolve": "field:ebitda",
+      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 60,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% margin",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 61,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Rent",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 62,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDAR",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 63,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "rent % of sales",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 64,
+      "kind": "skip",
+      "review": "looks like a heading or a derived ratio"
+    },
+    {
+      "key": {
+        "label": "Depreciation",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 65,
+      "kind": "skip",
+      "review": "reference cell is 'external', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Amortisation",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 66,
+      "kind": "skip",
+      "review": "reference cell is 'external', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Comparable revenue",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 68,
+      "kind": "input",
+      "resolve": "pdf:Comparable revenue",
+      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 69,
+      "kind": "skip",
+      "review": "looks like a heading or a derived ratio"
+    },
+    {
+      "key": {
+        "label": "Comparable EBITDA",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 70,
+      "kind": "input",
+      "resolve": "pdf:Comparable EBITDA",
+      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 4
+      },
+      "row_hint": 71,
+      "kind": "skip",
+      "review": "looks like a heading or a derived ratio"
+    },
+    {
+      "key": {
+        "label": "CASH FLOW",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 74,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Adj EBITDA",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 75,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Working Capital",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 76,
+      "kind": "input",
+      "resolve": "pdf:Working Capital",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "review": "the reference cell is a hand-typed expression '=4346+3805+25663', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Taxes",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 77,
+      "kind": "input",
+      "resolve": "field:tax_expense",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Cash interest paid",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 78,
+      "kind": "input",
+      "resolve": "pdf:Cash interest paid",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Net cash from operations",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 79,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Capex",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 80,
+      "kind": "input",
+      "resolve": "pdf:Net Capex",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "the reference cell is a hand-typed expression '=-107797-4542', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Acquisitions / (Asset Sales)",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 81,
+      "kind": "input",
+      "resolve": "pdf:Acquisitions / (Asset Sales)",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Free cash flow",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 82,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other investing activities",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 83,
+      "kind": "input",
+      "resolve": "pdf:Other investing activities",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "the reference cell is a hand-typed expression '=-19719-354+634+2223', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Dividends / Equity movements",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 84,
+      "kind": "input",
+      "resolve": "pdf:Dividends / Equity movements",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "the reference cell is a hand-typed expression '=-129-6460+75', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Principal Repayments",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 85,
+      "kind": "input",
+      "resolve": "pdf:Principal Repayments",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "the reference cell is a hand-typed expression '=-48076-76992-16139', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Other financing activities",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 86,
+      "kind": "input",
+      "resolve": "pdf:Other financing activities",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "sign": "negative",
+      "review": "the reference cell is a hand-typed expression '=-1414-449', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Cash flow after financing activities",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 87,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Balancing figure",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 88,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net change in cash",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 90,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash and cash equivalents",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 91,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Check - CFO",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 93,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "LTM  METRICS",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 95,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Revenue",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 97,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Operating profit",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 98,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 99,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adjusted EBITDA",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 100,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash interest paid",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 101,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Income",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 102,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Capex",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 103,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Free cash flow",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 104,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "BALANCE SHEET",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 106,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Tangible fixed assets",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 108,
+      "kind": "input",
+      "resolve": "pdf:Tangible fixed assets",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Net pension liability",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 109,
+      "kind": "input",
+      "resolve": "pdf:Net pension liability",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Inventory",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 110,
+      "kind": "input",
+      "resolve": "pdf:Inventory",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Trade debtors",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 111,
+      "kind": "input",
+      "resolve": "pdf:Trade debtors",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Trade creditors",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 112,
+      "kind": "input",
+      "resolve": "pdf:Trade creditors",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Net working capital",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 113,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% of revenues",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 114,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured debt",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 116,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Secured debt",
+        "section": "balance_sheet",
+        "occurrence": 2
+      },
+      "row_hint": 117,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Lease Obligation",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 118,
+      "kind": "input",
+      "resolve": "pdf:Lease Obligation",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Total Secured debt",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 119,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Unsecured debt",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 121,
+      "kind": "input",
+      "resolve": "pdf:Unsecured debt",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Unsecured debt",
+        "section": "balance_sheet",
+        "occurrence": 2
+      },
+      "row_hint": 122,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total debt",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 124,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Unrestricted cash",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 126,
+      "kind": "input",
+      "resolve": "pdf:Unrestricted cash",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Other Liquidity sources",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 127,
+      "kind": "input",
+      "resolve": "pdf:Other Liquidity sources",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Total Cash & cash equivalents",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 128,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net debt (including finance lease obligations)",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 130,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Market Cap",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 132,
+      "kind": "input",
+      "resolve": "pdf:Market Cap",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Equity (as reported on balance sheet)",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 133,
+      "kind": "input",
+      "resolve": "pdf:Equity (as reported on balance sheet)",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+    },
+    {
+      "key": {
+        "label": "Total debt + Equity",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 134,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net debt + Market Cap",
+        "section": "balance_sheet",
+        "occurrence": 1
+      },
+      "row_hint": 135,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "CREDIT RATIOS",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 137,
+      "kind": "skip",
+      "review": "looks like a heading or a derived ratio"
+    },
+    {
+      "key": {
+        "label": "Secured Gross Leverage",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 139,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Net Leverage",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 140,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Net Leverage",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 142,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Gross Leverage",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 143,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA - Capex / Interest",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 145,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA/Interest",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 146,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "FCF( before Dividends) / Net Debt",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 148,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gearing (Net debt / Equity)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 149,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Key  Credit Metrics (INR Mn where applicable)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 152,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Revenues",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 154,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 155,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA Margin",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 156,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Debt",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 157,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 158,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Debt",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 159,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gross Leverage",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 160,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Leverage",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 161,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Model Summary",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 163,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "(INR millions)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 164,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Sales",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 166,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 5
+      },
+      "row_hint": 167,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 168,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 6
+      },
+      "row_hint": 169,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% margin",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 170,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj EBITDA",
+        "section": "other",
+        "occurrence": 4
+      },
+      "row_hint": 172,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Working Capital",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 173,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Taxes",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 174,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash interest paid",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 175,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net cash from operations",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 176,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Capex",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 177,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Acquisitions / (Asset Sales)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 178,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Free cash flow",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 179,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other investing activities",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 180,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Dividends / Equity movements",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 181,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Principal Repayments",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 182,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other financing activities",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 183,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash flow after financing activities",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 184,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Balancing figure",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 186,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net change in cash",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 187,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash and cash equivalents",
+        "section": "cash_flow",
+        "occurrence": 2
+      },
+      "row_hint": 188,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gross Debt",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 190,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Debt",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 191,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "LTM Adjusted EBITDA",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 193,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Gross Leverage",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 195,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Net Leverage",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 196,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Net Leverage",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 198,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Gross Leverage",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 199,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA - Capex / Interest",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 201,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA/Interest",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 202,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "FCF( before Dividends) / Net Debt",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 204,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gearing (Net debt / Equity)",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 205,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "FX rate average - USD/INR",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 207,
+      "kind": "input",
+      "resolve": "pdf:FX rate average - USD/INR",
+      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+    },
+    {
+      "key": {
+        "label": "FX rate  - USD/INR (as at end of period)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 208,
+      "kind": "input",
+      "resolve": "pdf:FX rate  - USD/INR (as at end of period)",
+      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+    },
+    {
+      "key": {
+        "label": "Key  Credit Metrics (USD Mn where applicable)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 210,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Revenues",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 212,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA",
+        "section": "other",
+        "occurrence": 5
+      },
+      "row_hint": 213,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA Margin",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 214,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Debt",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 215,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 216,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Debt",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 217,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gross Leverage",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 218,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Leverage",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 219,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Model Summary",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 222,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "(USD millions)",
+        "section": "other",
+        "occurrence": 1
+      },
+      "row_hint": 223,
+      "kind": "skip",
+      "review": "reference cell is 'empty', not a writable input"
+    },
+    {
+      "key": {
+        "label": "Sales",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 225,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 7
+      },
+      "row_hint": 226,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj. EBITDA",
+        "section": "other",
+        "occurrence": 6
+      },
+      "row_hint": 227,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% growth",
+        "section": "other",
+        "occurrence": 8
+      },
+      "row_hint": 228,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "% margin",
+        "section": "other",
+        "occurrence": 4
+      },
+      "row_hint": 229,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Adj EBITDA",
+        "section": "other",
+        "occurrence": 7
+      },
+      "row_hint": 231,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Working Capital",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 232,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Taxes",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 233,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash interest paid",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 234,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net cash from operations",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 235,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Capex",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 236,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Acquisitions / (Asset Sales)",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 237,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Free cash flow",
+        "section": "cash_flow",
+        "occurrence": 4
+      },
+      "row_hint": 238,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other investing activities",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 239,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Dividends / Equity movements",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 240,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Principal Repayments",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 241,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Other financing activities",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 242,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash flow after financing activities",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 243,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Balancing figure",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 245,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net change in cash",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 246,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Cash and cash equivalents",
+        "section": "cash_flow",
+        "occurrence": 3
+      },
+      "row_hint": 247,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gross Total Debt",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 249,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Net Total Debt",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 250,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Gross debt",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 252,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Net debt",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 253,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total cash and cash equivalents including other sources",
+        "section": "cash_flow",
+        "occurrence": 1
+      },
+      "row_hint": 255,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Equity (as reported on balance sheet)",
+        "section": "balance_sheet",
+        "occurrence": 2
+      },
+      "row_hint": 257,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "LTM Adjusted EBITDA",
+        "section": "other",
+        "occurrence": 2
+      },
+      "row_hint": 259,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Gross Leverage",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 261,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Secured Net Leverage",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 262,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Net Leverage",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 264,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Total Gross Leverage",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 265,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA - Capex / Interest",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 267,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "EBITDA/Interest",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 268,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "FCF( before Dividends) / Net Debt",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 270,
+      "kind": "formula"
+    },
+    {
+      "key": {
+        "label": "Gearing (Net debt / Equity)",
+        "section": "other",
+        "occurrence": 3
+      },
+      "row_hint": 271,
+      "kind": "formula"
+    }
+  ]
+}

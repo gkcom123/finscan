@@ -202,6 +202,8 @@ def _document_units(doc: PdfDoc) -> tuple[str | None, str | None, list[Issue]]:
                      + [p for p in doc.pages if p.page not in statement_pages]):
             if currency := _sniff(page.text, _CURRENCIES):
                 break
+    for statement, scale in found:
+        statement.units = scale
     return units, currency, issues
 
 
@@ -246,6 +248,7 @@ def read_pdf(
             if payload.get("parser_version") == PARSER_VERSION:
                 doc = PdfDoc.from_dict(payload)
                 doc.path = path      # the cache is keyed by content, not location
+                doc.units, doc.currency, _ = _document_units(doc)
                 return doc
             transcribed = {p["page"]: p.get("text", "")
                            for p in payload.get("pages", [])

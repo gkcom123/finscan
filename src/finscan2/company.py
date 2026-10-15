@@ -39,6 +39,16 @@ def project_root(start: Path | None = None) -> Path:
     return here
 
 
+def company_keys(root: Path | None = None) -> list[str]:
+    """Return every direct company folder under the project's inbox."""
+    root = root or project_root()
+    inbox = root / "inbox"
+    if not inbox.is_dir():
+        raise CompanyError(f"No inbox/ directory under {root}.")
+    return sorted((folder.name for folder in inbox.iterdir() if folder.is_dir()),
+                  key=str.casefold)
+
+
 def _one(paths: list[Path], what: str, folder: Path, hint: str) -> Path:
     if not paths:
         raise CompanyError(f"No {what} in {folder}. {hint}")

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from finscan2.company import CompanyError, project_root, resolve
+from finscan2.company import CompanyError, company_keys, project_root, resolve
 
 
 def _tree(tmp_path, *, pdfs=("filing.pdf",), excels=("Model_1Q26.xlsx",), extra=()):
@@ -88,3 +88,11 @@ def test_the_root_is_found_by_walking_up_to_the_inbox(tmp_path):
     deep = root / "src" / "finscan2" / "match"
     deep.mkdir(parents=True)
     assert project_root(deep) == root.resolve()
+
+
+def test_company_keys_returns_every_inbox_folder_in_case_insensitive_order(tmp_path):
+    _tree(tmp_path)
+    (tmp_path / "inbox" / "zebra").mkdir()
+    (tmp_path / "inbox" / "Airtel").mkdir()
+
+    assert company_keys(tmp_path) == ["Airtel", "Almarai", "zebra"]

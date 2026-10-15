@@ -251,6 +251,18 @@ def _write_period_header(worksheet, model, write_col: int, period_end: str,
                                    message=f"'{period_end}' is not a date."))
         return
 
+    # Carry static labels such as "Quarters" and "Act" that sit above the
+    # data region, while retaining the period rows we calculate below.
+    protected_rows = {model.period_date_row, model.header_row}
+    for row in range(1, model.first_data_row):
+        if row in protected_rows or _is_merged(worksheet, row, write_col):
+            continue
+        source = worksheet.cell(row, model.reference_col)
+        target = worksheet.cell(row, write_col)
+        if target.value is None and source.value is not None:
+            target.value = source.value
+            _copy_style(source, target)
+
     if model.period_date_row:
         cell = worksheet.cell(model.period_date_row, write_col)
         if not (isinstance(cell.value, str) and cell.value.startswith("=")):
@@ -267,8 +279,10 @@ def _write_period_header(worksheet, model, write_col: int, period_end: str,
         header = worksheet.cell(model.header_row, write_col)
         if header.value is None:
             quarter = (parsed.month - 1) // 3 + 1
-            header.value = f"Q{quarter} {parsed.year}"
-            _copy_style(worksheet.cell(model.header_row, model.reference_col), header)
+            reference = worksheet.cell(model.header_row, model.reference_col)
+            existing = str(reference.value or "").strip().upper()
+            header.value = f"{quarter}Q" if len(existing) == 2 and existing[0] in "1234" and existing[1] == "Q" else f"Q{quarter} {parsed.year}"
+            _copy_style(reference, header)
 
 
 def _write_audit(book, values: Values, result: WriteResult, model) -> None:

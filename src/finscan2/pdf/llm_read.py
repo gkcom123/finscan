@@ -203,18 +203,28 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
     return doc
 
 
+def _model_name() -> str:
+    """Return the actual model target used by the configured provider."""
+    from finscan.llm.factory import settings
+
+    if settings.finscan_llm_provider.lower() == "azure":
+        return settings.azure_openai_deployment
+    return settings.openai_model
+
+
 def read_pdf_llm(path: str | Path, sha: str, cache_dir: str | Path | None = None,
                  enabled: bool = True):
     """Read a filing with the configured vision model, reusing a cached read."""
     import pdfplumber
 
-    from finscan.llm.factory import settings
-
     path = str(path)
+    model_name = _model_name()
     cached = cache_file(cache_dir, sha) if cache_dir else None
     store: dict = {}
     if cached and cached.exists():
         store = json.loads(cached.read_text(encoding="utf-8"))
+        if store.get("model") != model_name:
+            store = {}
     pages_json = {int(k): v for k, v in (store.get("pages") or {}).items()}
 
     page_texts: dict[int, str] = {}
@@ -239,11 +249,10 @@ def read_pdf_llm(path: str | Path, sha: str, cache_dir: str | Path | None = None
             cached.parent.mkdir(parents=True, exist_ok=True)
             cached.write_text(json.dumps({
                 "sha256": sha, "prompt_version": PROMPT_VERSION,
-                "model": store.get("model") or settings.openai_model,
+                "model": model_name,
                 "pages": {str(k): v for k, v in sorted(pages_json.items())},
             }, indent=1, ensure_ascii=False), encoding="utf-8")
 
-    model_name = store.get("model") or settings.openai_model
     older = store.get("prompt_version") not in (None, PROMPT_VERSION) and not missing
     doc = doc_from_tables(path, sha, {n: pages_json[n] for n in wanted if n in pages_json},
                           page_texts, model_name)
