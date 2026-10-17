@@ -24,7 +24,7 @@
     {"label": "Losses on early extinguishment of debt, net", "section": "income_statement", "pdf": "Losses on early extinguishment of debt", "statement": "title:Consolidated Statements of Income"},
     {"label": "Unused credit facility fee", "section": "income_statement", "pdf": "Unused credit facility fee", "statement": "title:Consolidated Statements of Income"},
     {"label": "Unrealized gain (loss) on exchange rate hedge instruments", "section": "income_statement", "pdf": "Unrealized gain (loss) on exchange rate options", "statement": "title:Consolidated Statements of Income"},
-    {"label": "Unrealized loss on exchange rate forwards", "section": "income_statement", "pdf": "change", "statement": "title:Consolidated Statements of Income"},
+    {"label": "Unrealized loss on exchange rate forwards", "section": "income_statement", "pdf": null, "note": "not disclosed separately; the filing reports exchange-rate options and net exchange movements, which are already mapped to separate rows"},
     {"label": "Realized losses on exchange rate hedge instruments", "section": "income_statement", "pdf": "Realized gain (loss) on exchange rate options", "statement": "title:Consolidated Statements of Income"},
     {"label": "Unrealized exchange gain (loss), net", "section": "income_statement", "pdf": "Unrealized exchange gain (loss), net", "statement": "title:Consolidated Statements of Income"},
     {"label": "Realized exchange gain (loss), net", "section": "income_statement", "pdf": "Realized exchange gain (loss), net", "statement": "title:Consolidated Statements of Income"},

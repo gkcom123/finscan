@@ -38,7 +38,7 @@
     {"label": "Tangible fixed assets", "section": "balance_sheet", "pdf": ["Property, plant and equipment (net)", "Investment property", "Right of use assets"], "note": "the reference cell was the hand-typed expression '=1512813.94+12472.221+53036.535' — its three components"},
     {"label": "Inventory", "section": "balance_sheet", "pdf": "Inventories"},
     {"label": "Trade accounts receivable", "section": "balance_sheet", "pdf": "Trade and other current receivables", "note": "the reference cell was the hand-typed expression '=391339.484+13260.805' — name its components as a list to make this a sum"},
-    {"label": "Trade accounts payable", "section": "balance_sheet", "pdf": "Trade and other current payables Accounts payable to related parties", "note": "the reference cell was the hand-typed expression '=427444.261+32351.509' — name its components as a list to make this a sum", "statement": "income_statement"},
+    {"label": "Trade accounts payable", "section": "balance_sheet", "pdf": null, "note": "the Q2 parsed balance sheet does not expose the two payable components used by the Q1 model formula; left blank rather than matching a flow-table caption"},
     {"label": "Short-term debt", "section": "balance_sheet", "pdf": null, "note": "the reference cell was the hand-typed expression '=85852.526+34551.156' — name its components as a list to make this a sum"},
     {"label": "Long-term debt", "section": "balance_sheet", "pdf": null, "note": "the reference cell was the hand-typed expression '=40280.382+1005985.277' — name its components as a list to make this a sum"},
     {"label": "Short-term", "section": "balance_sheet", "pdf": "Proceeds from short-term loans and bonds", "statement": "cash_flow"},
