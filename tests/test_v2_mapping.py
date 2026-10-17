@@ -211,3 +211,37 @@ def test_conversion_does_not_dress_an_unmatched_row_as_a_decision():
         "no filing caption" in by_label["Exchange Gain, net"].note
     # A caption a human typed that differs from the workbook's IS a decision.
     assert by_label["Other Expenses, net"].pdf == "Other (Expenses) / Income, net"
+
+
+def test_appending_rows_leaves_every_existing_line_untouched(tmp_path):
+    """A new workbook row is added without rewriting the human file: keys this
+    class does not model (CCU's `extra_statements`) and hand formatting survive."""
+    path = tmp_path / "ccu.json"
+    original = (
+        '{\n  "mapping_version": "2.0",\n  "company": "ccu",\n  "sheet": "Model",\n'
+        '  "extra_statements": [\n    {"title": "Nature of cost and expense"}\n  ],\n'
+        '  "rows": [\n'
+        '    {"label": "Revenue", "section": "income_statement", "pdf": "Net sales"}\n'
+        '  ]\n}\n')
+    path.write_text(original, encoding="utf-8")
+
+    Mapping.append_rows(path, [MappingRow(label="Royalties", section="income_statement",
+                                          pdf="Royalty income", note="added")])
+
+    text = path.read_text(encoding="utf-8")
+    assert text.startswith(original.split('"Net sales"}')[0] + '"Net sales"},\n')
+    assert '"extra_statements"' in text
+    assert [r.label for r in Mapping.load(path).rows] == ["Revenue", "Royalties"]
+
+
+def test_appending_to_a_file_in_another_layout_still_keeps_unknown_keys(tmp_path):
+    path = tmp_path / "x.json"
+    path.write_text('{"company": "x", "sheet": "Model", "custom": 1, "rows": []}',
+                    encoding="utf-8")
+
+    Mapping.append_rows(path, [MappingRow(label="Revenue", pdf="Revenue")])
+
+    import json
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["custom"] == 1
+    assert [r["label"] for r in payload["rows"]] == ["Revenue"]

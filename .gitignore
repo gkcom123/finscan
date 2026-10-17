@@ -8,8 +8,5 @@ _work/
 *_output.xlsm
 .pytest_cache/
 *.egg-info/
-profiles/
-samples/profiles/
-
+inbox/
 .env
-src/finscan/

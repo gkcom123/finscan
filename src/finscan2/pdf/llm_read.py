@@ -205,11 +205,9 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
 
 def _model_name() -> str:
     """Return the actual model target used by the configured provider."""
-    from finscan.llm.factory import settings
+    from finscan2.config import settings
 
-    if settings.finscan_llm_provider.lower() == "azure":
-        return settings.azure_openai_deployment
-    return settings.openai_model
+    return settings.model_name
 
 
 def read_pdf_llm(path: str | Path, sha: str, cache_dir: str | Path | None = None,

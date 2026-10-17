@@ -169,5 +169,37 @@ class Mapping:
     def load(cls, path: str | Path) -> "Mapping":
         return cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8")))
 
+    @staticmethod
+    def append_rows(path: str | Path, rows: list[MappingRow]) -> Path:
+        """Add rows to the end of a mapping file, leaving every existing line as is.
+
+        Not `load` + `save`: `from_dict` keeps only the keys this class knows, so a
+        round trip would silently drop any other top-level key a person added.
+        The new rows are spliced in before the closing `]` of `rows`; a file not in
+        the layout `save` writes is rewritten from its parsed JSON instead.
+        """
+        import re
+
+        path = Path(path)
+        text = path.read_text(encoding="utf-8")
+        added = ",\n".join("    " + json.dumps(r.to_dict(), ensure_ascii=False)
+                           for r in rows)
+        end = re.search(r"\}(\s*)\]\s*\}\s*$", text)
+        if end is not None:
+            spliced = text[:end.start() + 1] + ",\n" + added + text[end.start() + 1:]
+            try:
+                json.loads(spliced)
+            except ValueError:
+                spliced = None
+            if spliced is not None:
+                path.write_text(spliced, encoding="utf-8")
+                return path
+
+        payload = json.loads(text)
+        payload.setdefault("rows", []).extend(r.to_dict() for r in rows)
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                        encoding="utf-8")
+        return path
+
     def by_key(self) -> dict[tuple[str, str, int], MappingRow]:
         return {row.key: row for row in self.rows}

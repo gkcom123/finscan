@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "finscan"
 version = "0.1.0"
-description = "LangGraph agent that extracts financial results from company PDFs and appends them as a new period column in the company's Excel model."
+description = "Reads company results PDFs and appends them as a new period column in each company's Excel model, driven by a reviewed per-company mapping."
 requires-python = ">=3.10"
 dynamic = ["dependencies"]
 
 [project.scripts]
-finscan = "finscan.cli:main"
+finscan2 = "finscan2.cli:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
