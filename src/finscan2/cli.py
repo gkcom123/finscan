@@ -474,13 +474,14 @@ def _companies(args) -> int:
     return 0
 
 
-def _company_reader(paths) -> str | None:
+DEFAULT_READER = "llm"
+def _company_reader(paths) -> str:
     """The company's chosen reader: `"reader"` in its mapping, else the default."""
     from finscan2.mapping.schema import Mapping
 
     if not paths.mapping.exists():
-        return None
-    return Mapping.load(paths.mapping).reader
+        return DEFAULT_READER
+    return Mapping.load(paths.mapping).reader or DEFAULT_READER
 
 
 def _run_quarter(args, paths) -> int:
@@ -695,8 +696,8 @@ def main(argv: list[str] | None = None) -> int:
                        help=f"Cache directory keyed by SHA-256 (default: {DEFAULT_CACHE})")
         p.add_argument("--no-cache", action="store_true",
                        help="Ignore and do not write the cache; re-transcribes image pages")
-        p.add_argument("--reader", choices=["llm"], default=None,
-                       help="Read with the vision model instead of the rule-based reader")
+        p.add_argument("--reader", choices=["llm", "rules"], default=DEFAULT_READER,
+                       help="llm (default): the vision model; rules: the rule-based reader")
         p.add_argument("--no-ocr", action="store_true",
                        help="Skip vision transcription; image-only pages stay empty")
         p.add_argument("--rows", action="store_true", help="Also print parsed rows")

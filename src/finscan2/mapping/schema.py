@@ -133,8 +133,6 @@ class Mapping:
     sheet: str
     rows: list[MappingRow] = field(default_factory=list)
     mapping_version: str = MAPPING_VERSION
-    #: How this company's filings are read. Absent: the rule-based reader.
-    #: "llm": every table page is read by the vision model instead (pdf/llm_read.py).
     reader: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
