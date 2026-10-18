@@ -50,6 +50,10 @@ def select_column(statement: Statement, period_end: str,
             # the end date is what identifies the column either way.
             matches = [c for c in statement.columns if c.end == period_end]
         if not matches:
+            if header_contains and len(statement.columns) == 1:
+                column = statement.columns[0]
+                return column, ("explicitly selected continuation-table column "
+                                "without a repeated period header")
             ends = ", ".join(sorted({c.end or "?" for c in statement.columns}))
             return None, f"no column ends on {period_end} (found: {ends})"
         chosen, note = prefer_total(matches)

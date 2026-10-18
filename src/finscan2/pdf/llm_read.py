@@ -47,8 +47,15 @@ Rules:
 #: no text at all (a scan). Narrative pages are not worth a model call.
 _MIN_FIGURES = 20
 
-_FIGURE = re.compile(r"\(?-?\d[\d,]*\.?\d*\)?")
+_FIGURE = re.compile(r"\(?-?\d[\d,]*(?:\.\d{3})*(?:\.\d+)?\)?")
 _BULLET = re.compile(r"^\s*[-–•·]+\s*")
+_QUARTER = re.compile(r"\b(?:Q([1-4])\s*(\d{2,4})|([1-4])Q\s*(\d{2,4}))\b", re.IGNORECASE)
+_TL_OR_TRY = re.compile(r"\b(?:tl|try)\b", re.IGNORECASE)
+_DOTTED_THOUSANDS = re.compile(r"^-?\d{1,3}(?:\.\d{3})+$")
+_NON_MONETARY_COLUMN = re.compile(
+    r"%|rate|margin|multiple|leverage|y/y|q/q|variance|var\b|change",
+    re.IGNORECASE,
+)
 
 
 def cache_file(cache_dir: str | Path, sha: str) -> Path:
@@ -73,7 +80,26 @@ def _printed(text: str) -> set[float]:
         if value is not None:
             out.add(value)
             out.add(-value)          # a sign the layout shows by a column, not a bracket
+        compact = token.strip().strip("()").replace("−", "-")
+        if _DOTTED_THOUSANDS.fullmatch(compact):
+            value = parse_number(token.replace(".", ""))
+            if value is not None:
+                out.add(value)
+                out.add(-value)
     return out
+
+
+def _number(cell, header: str):
+    """Parse an LLM cell, preserving TL's dotted thousands separators."""
+    from finscan2.pdf.statements import parse_number
+
+    if cell is None or str(cell).strip() in {"", "-", "–", "—"}:
+        return None
+    text = str(cell).replace(" ", "").replace("%", "")
+    compact = text.strip().strip("()").replace("−", "-")
+    if _TL_OR_TRY.search(header) and _DOTTED_THOUSANDS.fullmatch(compact):
+        text = text.replace(".", "")
+    return parse_number(text)
 
 
 def _render(pdf, page_no: int) -> str:
@@ -103,18 +129,45 @@ def _read_page(page_no: int, encoded: str) -> dict:
         return {"tables": [], "error": f"{type(error).__name__}: {error}"[:300]}
 
 
+def _cover_period_end(page_text: str) -> str | None:
+    """The period a presentation's cover unambiguously declares, if any."""
+    ends: set[str] = set()
+    for match in _QUARTER.finditer(page_text or ""):
+        quarter = int(match.group(1) or match.group(3))
+        raw_year = match.group(2) or match.group(4)
+        year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
+        month = quarter * 3
+        if month == 12:
+            ends.add(f"{year}-12-31")
+        else:
+            ends.add(f"{year}-{month:02d}-30")
+    return next(iter(ends)) if len(ends) == 1 else None
+
+
+def _inherit_cover_period(statements, cover_end: str) -> list[int]:
+    """Date undated monetary presentation tables without inventing comparison dates."""
+    inherited: list[int] = []
+    for statement in statements:
+        if not statement.columns or any(column.end for column in statement.columns):
+            continue
+        changed = False
+        for column in statement.columns:
+            if _NON_MONETARY_COLUMN.search(column.header):
+                continue
+            column.end = cover_end
+            changed = True
+        if changed:
+            inherited.append(statement.page)
+    return inherited
+
+
 def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                     page_texts: dict[int, str], model_name: str):
     """The LLM's tables as a PdfDoc — the same contract the rule-based reader keeps."""
     from finscan2.pdf.columns import parse_columns_from_headers
     from finscan2.pdf.read import _CURRENCIES, _UNIT_PATTERNS, _sniff
-    from finscan2.pdf.statements import _stated_span, classify, parse_number
+    from finscan2.pdf.statements import _stated_span, classify
     from finscan2.schema import Issue, Page, PdfDoc, Statement, StatementRow
-
-    def number(cell):
-        if cell is None or str(cell).strip() in {"", "-", "–", "—"}:
-            return None
-        return parse_number(str(cell).replace(" ", "").replace("%", ""))
 
     issues: list[Issue] = []
     statements: list[Statement] = []
@@ -139,7 +192,8 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                 headers, statement_kind=kind, default_months=_stated_span(" ".join(headers)))
             rows: list[StatementRow] = []
             for row in table.get("rows") or []:
-                values = [number(v) for v in row.get("values") or []]
+                values = [_number(v, headers[index] if index < len(headers) else "")
+                          for index, v in enumerate(row.get("values") or [])]
                 if not any(v is not None for v in values):
                     continue
                 caption = _BULLET.sub("", str(row.get("caption") or "")).strip()
@@ -177,6 +231,14 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                          if (c := _sniff(" ".join([s.title] + [x.header for x in s.columns]),
                                          _CURRENCIES))), None) \
         or next((c for t in page_texts.values() if (c := _sniff(t, _CURRENCIES))), None)
+
+    cover_end = _cover_period_end(page_texts.get(1, ""))
+    if cover_end and (inherited_pages := _inherit_cover_period(statements, cover_end)):
+        issues.append(Issue(
+            code="llm_inherited_cover_period", severity="info",
+            message=f"Inferred {cover_end} from the presentation cover for undated monetary "
+                    f"table(s) on page(s) {inherited_pages}; rate and variance columns were "
+                    "left undated."))
 
     issues.append(Issue(
         code="llm_read", severity="info",
