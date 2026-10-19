@@ -8,6 +8,7 @@ count does not match the header count, because that mismatch is itself evidence.
 from __future__ import annotations
 
 import re
+from calendar import monthrange
 from collections import Counter
 
 from finscan2.pdf.columns import (
@@ -68,6 +69,9 @@ _ISO_DATE = re.compile(r"\b\d{4}-\d{2}-\s*\d{2}\b")
 
 _NUMBER_OR_DASH = re.compile(_NUMBER.pattern + r"|(?<!\S)-(?!\S)")
 
+_NOTE_REFERENCE_PAIR = re.compile(
+    r"\d{1,2}\s*,\s*\d{1,2}(?=\s+\(?\d{1,3},\d{3})")
+
 #: A statement has a body. Fewer captioned rows than this and the page is a table
 #: of contents, an index, or a stray mention of a statement's name — all of which
 #: match a title pattern and would otherwise be recorded as empty statements.
@@ -125,7 +129,11 @@ def parse_row(line: str, keep_first: bool = False) -> StatementRow | None:
     # between the caption and the figures. Treat a bare 1-2 digit first number as
     # the note reference when more numbers follow it.
     values = [None if m.group(0) == "-" else parse_number(m.group(0)) for m in matches]
-    if (not keep_first and len(values) > 1 and values[0] is not None
+    reference_pair = _NOTE_REFERENCE_PAIR.match(body[matches[0].start():])
+    if not keep_first and reference_pair:
+        pair_end = matches[0].start() + reference_pair.end()
+        values = [value for match, value in zip(matches, values) if match.end() > pair_end]
+    elif (not keep_first and len(values) > 1 and values[0] is not None
             and values[0].is_integer() and 0 < values[0] < 100
             and "." not in matches[0].group(0) and "," not in matches[0].group(0)):
         values = values[1:]
@@ -254,6 +262,45 @@ _MONTH_YEAR_TOKEN = re.compile(
     r"\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*"
     r"(?:[-'’]\d{2}|\s+\d{1,2},?\s*\d{4})\b", re.IGNORECASE)
 
+_TITLE_DATE = re.compile(
+    r"\b\d{1,2}\s+(january|february|march|april|may|june|july|august|september|"
+    r"october|november|december)\s*,?\s*(\d{4})\b",
+    re.IGNORECASE,
+)
+
+_TITLE_MONTH_FIRST_DATE = re.compile(
+    r"\b(january|february|march|april|may|june|july|august|september|"
+    r"october|november|december)\s+\d{1,2},?\s*(\d{4})\b",
+    re.IGNORECASE,
+)
+
+_FLOW_NOTE_TITLE = re.compile(
+    r"financial\s+(?:income|expenses)|net\s+monetary\s+position", re.IGNORECASE)
+
+
+def _inherit_title_period(columns: list, title: str, kind: str) -> None:
+    """Fill year-only comparative headers from a dated statement title."""
+    if not columns or any(column.end for column in columns):
+        return
+    if not all(re.fullmatch(r"(?:unaudited\s+)?(?:19|20)\d{2}",
+                            column.header.strip(), re.IGNORECASE)
+               for column in columns):
+        return
+    match = _TITLE_DATE.search(title or "") or _TITLE_MONTH_FIRST_DATE.search(title or "")
+    if match is None:
+        return
+    month = {"january": 1, "february": 2, "march": 3, "april": 4,
+             "may": 5, "june": 6, "july": 7, "august": 8,
+             "september": 9, "october": 10, "november": 11,
+             "december": 12}[match.group(1).lower()]
+    is_flow = kind in {"income_statement", "comprehensive_income", "cash_flow", "equity"}
+    is_flow = is_flow or bool(_FLOW_NOTE_TITLE.search(title or ""))
+    for column in columns:
+        year = int(re.search(r"(?:19|20)\d{2}", column.header).group(0))
+        column.end = f"{year}-{month:02d}-{monthrange(year, month)[1]:02d}"
+        if is_flow:
+            column.kind, column.months = "period", month
+
 
 def _month_year_header_columns(lines: list[str], kind: str,
                                span: int | None) -> list[Column]:
@@ -328,6 +375,7 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     if not columns:
         columns = _month_year_header_columns(lines[body_start:first_data], kind,
                                              _stated_span(f"{heading}\n{header_text}"))
+    _inherit_title_period(columns, title, kind)
 
     # A first row of small figures only ("GRUMA USA Sales Volume 380 391 (12)")
     # carries no amount, so the text test reads it as header. The geometry pass

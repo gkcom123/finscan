@@ -21,7 +21,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "33"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "41"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -54,6 +54,8 @@ PARSER_VERSION = "33"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 31: LLM presentation tables inherit an unambiguous cover period
                             # 32: LLM tables retain Turkish lira dotted-thousands values
                             # 33: LLM verifier recognizes multi-group dotted thousands
+                            # 40: LLM table headers recover omitted Q/H group labels from page text
+                            # 41: LLM misread digits corrected from the page's printed line
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,
@@ -217,9 +219,10 @@ class PdfDoc:
         an XBRL code ("[310000] Statement of comprehensive income"), which is
         stable from quarter to quarter where page numbers are not.
         """
-        needle = text.strip().lower()
+        normalize_dashes = lambda value: (value or "").replace("–", "-").replace("—", "-").replace("−", "-").lower()
+        needle = normalize_dashes(text.strip())
         titled = [s for s in self.statements
-                  if s.note is None and needle in (s.title or "").lower()]
+              if s.note is None and needle in normalize_dashes(s.title)]
         # A table of contents names the same section ("Section 1 ... Performance
         # at a glance ... 3") but has no columns; the real table does.
         return next((s for s in titled if s.columns), None) or next(iter(titled), None)

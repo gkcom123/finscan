@@ -46,6 +46,9 @@ class MappingRow:
     occurrence: int = 1
     #: str = one caption · list = a sum · None = the filing has no such line
     pdf: str | list[str] | None = None
+    #: Signed filing captions which may each select a different statement.
+    #: Used for a disclosed net figure whose gains and losses live in separate notes.
+    sources: list[dict[str, str]] | None = None
     #: A constant, for a row no filing reports. Excludes `pdf`.
     value: float | None = None
     #: True for a row the filing never reports at all, whose figure is instead
@@ -81,6 +84,8 @@ class MappingRow:
             return f"const:{self.value}"
         if self.carry_forward:
             return f"carry:{self.note}" if self.note else "carry:"
+        if self.sources is not None:
+            return "sources:" + json.dumps(self.sources, separators=(",", ":"))
         if self.pdf is None:
             return f"absent:{self.note}" if self.note else "absent:"
         if isinstance(self.pdf, str):
@@ -103,6 +108,8 @@ class MappingRow:
             out["value"] = self.value
         elif self.carry_forward:
             out["carry_forward"] = True
+        elif self.sources is not None:
+            out["sources"] = self.sources
         else:
             out["pdf"] = self.pdf
         for name in ("note", "statement", "basis", "sign", "column"):
@@ -117,6 +124,7 @@ class MappingRow:
             section=d.get("section", "other"),
             occurrence=int(d.get("occurrence", 1)),
             pdf=d.get("pdf"),
+            sources=d.get("sources"),
             value=d.get("value"),
             carry_forward=bool(d.get("carry_forward", False)),
             note=d.get("note", ""),

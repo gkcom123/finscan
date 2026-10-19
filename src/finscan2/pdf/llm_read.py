@@ -21,6 +21,7 @@ import base64
 import io
 import json
 import re
+from calendar import monthrange
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -50,6 +51,8 @@ _MIN_FIGURES = 20
 _FIGURE = re.compile(r"\(?-?\d[\d,]*(?:\.\d{3})*(?:\.\d+)?\)?")
 _BULLET = re.compile(r"^\s*[-–•·]+\s*")
 _QUARTER = re.compile(r"\b(?:Q([1-4])\s*(\d{2,4})|([1-4])Q\s*(\d{2,4}))\b", re.IGNORECASE)
+_GROUP_PERIOD = re.compile(r"\b([1-4])\s*([QH])\s*(\d{2,4})\b", re.IGNORECASE)
+_BARE_YEAR = re.compile(r"^\s*((?:19|20)\d{2}|\d{2})\*?\s*$")
 _TL_OR_TRY = re.compile(r"\b(?:tl|try)\b", re.IGNORECASE)
 _DOTTED_THOUSANDS = re.compile(r"^-?\d{1,3}(?:\.\d{3})+$")
 _NON_MONETARY_COLUMN = re.compile(
@@ -161,18 +164,143 @@ def _inherit_cover_period(statements, cover_end: str) -> list[int]:
     return inherited
 
 
+def _inherit_group_period_headers(columns, page_text: str) -> bool:
+    """Restore omitted Q/H group labels when later headers anchor their position."""
+    labels = []
+    for match in _GROUP_PERIOD.finditer(page_text or ""):
+        number, kind, raw_year = int(match.group(1)), match.group(2).upper(), match.group(3)
+        year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
+        months = 3 if kind == "Q" else 6
+        month = number * months
+        day = monthrange(year, month)[1]
+        labels.append((match.group(0).replace(" ", ""), year, months,
+                       f"{year}-{month:02d}-{day:02d}"))
+
+    changed = False
+    for index, column in enumerate(columns):
+        if not column.end or not column.months:
+            continue
+        known = next((position for position, (_, year, months, end) in enumerate(labels)
+                      if year == int(column.end[:4]) and months == column.months
+                      and end == column.end), None)
+        if known is None:
+            continue
+        missing = []
+        for prior in range(index - 1, -1, -1):
+            if columns[prior].end:
+                break
+            if _BARE_YEAR.fullmatch(columns[prior].header):
+                missing.append(prior)
+            elif not _NON_MONETARY_COLUMN.search(columns[prior].header):
+                break
+        missing.reverse()
+        source = labels[known - len(missing):known]
+        if len(source) != len(missing):
+            continue
+        years = [int(_BARE_YEAR.fullmatch(columns[position].header).group(1))
+                 for position in missing]
+        years = [year if year > 99 else 2000 + year for year in years]
+        if years != [year for _, year, _, _ in source]:
+            continue
+        for position, (label, _, months, end) in zip(missing, source):
+            restored = columns[position]
+            restored.header = f"{label} {restored.header}"
+            restored.kind, restored.months, restored.end = "period", months, end
+            changed = True
+    return changed
+
+
+def _inherit_flow_note_periods(statements) -> list[int]:
+    """Date undated flow notes from the matching year in a primary statement."""
+    from finscan2.pdf.statements import _FLOW_NOTE_TITLE
+
+    primary_by_year = {}
+    for statement in statements:
+        if statement.kind != "income_statement":
+            continue
+        for column in statement.columns:
+            if column.end and column.months:
+                primary_by_year.setdefault(column.end[:4], (column.end, column.months))
+    inherited: list[int] = []
+    for statement in statements:
+        if (not _FLOW_NOTE_TITLE.search(statement.title or "") or not statement.columns
+                or any(column.end for column in statement.columns)):
+            continue
+        changed = False
+        for column in statement.columns:
+            year = re.search(r"(?:19|20)\d{2}", column.header)
+            period = primary_by_year.get(year.group(0)) if year else None
+            if period is None:
+                continue
+            column.end, column.months = period
+            column.kind = "period"
+            changed = True
+        if changed:
+            inherited.append(statement.page)
+    return inherited
+
+
+def _repair_from_text(caption: str, values: list, unverified: list[int],
+                      text: str, headers: list[str]):
+    """Replace a misread figure with the one the page's text layer prints for the line.
+
+    Only when one printed line starts with the caption, every figure the model got
+    right agrees with that line, and each replaced figure keeps its digit count: a
+    one-digit slip, not a different number.
+    """
+    from finscan2.model.schema import normalize_label
+
+    words = normalize_label(caption).split()[:5]
+    filled = [j for j, v in enumerate(values) if v is not None]
+    if not words or not unverified or not filled:
+        return values, unverified, []
+    lead = " ".join(words)
+
+    candidates = set()
+    for line in text.split("\n"):
+        if not normalize_label(line).startswith(lead):
+            continue
+        tokens = _FIGURE.findall(line)
+        if len(tokens) >= len(filled):
+            candidates.add(tuple(tokens[-len(filled):]))
+    if len(candidates) != 1:
+        return values, unverified, []
+    tokens = next(iter(candidates))
+
+    parsed = {j: _number(token, headers[j] if j < len(headers) else "")
+              for j, token in zip(filled, tokens)}
+    if any(parsed[j] is None for j in filled):
+        return values, unverified, []
+    if any(j not in unverified and abs(parsed[j]) != abs(values[j]) for j in filled):
+        return values, unverified, []
+
+    fixed = list(values)
+    changes = []
+    for j in unverified:
+        if j not in parsed or parsed[j] == values[j]:
+            continue
+        if len(str(int(abs(parsed[j])))) != len(str(int(abs(values[j])))):
+            continue
+        changes.append(f"'{caption}' {values[j]:,.0f} -> {parsed[j]:,.0f}")
+        fixed[j] = parsed[j]
+    remaining = [j for j in unverified if fixed[j] not in _printed(text)]
+    return fixed, remaining, changes
+
+
 def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                     page_texts: dict[int, str], model_name: str):
     """The LLM's tables as a PdfDoc — the same contract the rule-based reader keeps."""
     from finscan2.pdf.columns import parse_columns_from_headers
     from finscan2.pdf.read import _CURRENCIES, _UNIT_PATTERNS, _sniff
-    from finscan2.pdf.statements import _stated_span, classify
+    from finscan2.pdf.statements import _inherit_title_period, _stated_span, classify
     from finscan2.schema import Issue, Page, PdfDoc, Statement, StatementRow
 
     issues: list[Issue] = []
     statements: list[Statement] = []
     unprinted: dict[int, int] = {}
     unchecked: list[int] = []
+    inherited_group_headers: list[int] = []
+    corrected: list[str] = []
 
     for page_no in sorted(pages_json):
         payload = pages_json[page_no] or {}
@@ -190,6 +318,9 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             kind = classify(title)
             columns = parse_columns_from_headers(
                 headers, statement_kind=kind, default_months=_stated_span(" ".join(headers)))
+            _inherit_title_period(columns, title, kind)
+            if _inherit_group_period_headers(columns, text):
+                inherited_group_headers.append(page_no)
             rows: list[StatementRow] = []
             for row in table.get("rows") or []:
                 values = [_number(v, headers[index] if index < len(headers) else "")
@@ -199,6 +330,10 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                 caption = _BULLET.sub("", str(row.get("caption") or "")).strip()
                 unverified = ([] if printed is None else
                               [j for j, v in enumerate(values) if v is not None and v not in printed])
+                if unverified:
+                    values, unverified, changes = _repair_from_text(
+                        caption, values, unverified, text, headers)
+                    corrected.extend(f"page {page_no}: {c}" for c in changes)
                 if unverified:
                     unprinted[page_no] = unprinted.get(page_no, 0) + len(unverified)
                 rows.append(StatementRow(caption=caption, values=values,
@@ -239,6 +374,25 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             message=f"Inferred {cover_end} from the presentation cover for undated monetary "
                     f"table(s) on page(s) {inherited_pages}; rate and variance columns were "
                     "left undated."))
+
+    if inherited_pages := _inherit_flow_note_periods(statements):
+        issues.append(Issue(
+            code="llm_inherited_flow_note_period",
+            severity="info",
+            message="Inferred period dates for undated flow note table(s) on page(s) "
+                    f"{inherited_pages} from the primary statements' matching year columns."))
+
+    if corrected:
+        issues.append(Issue(
+            code="llm_figure_corrected_from_text", severity="info",
+            message="Figures the model misread were replaced by the page's printed text: "
+                    + "; ".join(corrected)))
+
+    if inherited_group_headers:
+        issues.append(Issue(
+            code="llm_inherited_group_period_headers", severity="info",
+            message="Recovered omitted Q/H group labels for table column headers on page(s) "
+                    f"{sorted(set(inherited_group_headers))} from their page text."))
 
     issues.append(Issue(
         code="llm_read", severity="info",

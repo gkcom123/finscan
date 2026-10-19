@@ -46,8 +46,8 @@ MONTH_COUNT_WORDS: dict[str, int] = {
 #: "April - June 2026", "1 July - 30 September 2025". The span between the two
 #: months inclusive is what the column accumulates: Apr-Jun = 3, Jan-Sep = 9.
 _RANGE = re.compile(
-    rf"\b(?:\d{{1,2}}\s+)?({_MONTH_WORDS})\b\s*[-–—]\s*(?:\d{{1,2}}\s+)?"
-    rf"\b({_MONTH_WORDS})\b,?\s*(\d{{4}})",
+    rf"\b(?:\d{{1,2}}\s+)?({_MONTH_WORDS})\b(?:\s+\d{{1,2}})?\s*[-–—]\s*(?:\d{{1,2}}\s+)?"
+    rf"\b({_MONTH_WORDS})\b(?:\s+\d{{1,2}})?,?\s*(\d{{4}})",
     re.IGNORECASE,
 )
 
@@ -332,6 +332,25 @@ def _infer_fiscal_year_start(columns: list[Column]) -> int | None:
     return None
 
 
+def _repair_duplicate_comparative_year(columns: list[Column]) -> None:
+    """Repair a duplicated comparison year in a current/comparative period pair."""
+    for index in range(2, len(columns) - 1, 2):
+        current_ytd, comparative_ytd = columns[index - 2:index]
+        current, comparative = columns[index:index + 2]
+        if not all(column.end for column in (current_ytd, comparative_ytd, current, comparative)):
+            continue
+        if (current_ytd.end[:4] == comparative_ytd.end[:4]
+                or current_ytd.end[5:] != comparative_ytd.end[5:]
+                or current.end != comparative.end != comparative_ytd.end
+                or current.end != comparative_ytd.end
+                or current_ytd.months != comparative_ytd.months
+                or current.months != comparative.months):
+            continue
+        current_year = current_ytd.end[:4]
+        current.end = current_year + current.end[4:]
+        current.header = re.sub(r"(?:19|20)\d{2}\s*$", current_year, current.header)
+
+
 def parse_columns_from_headers(
     headers: list[str], *, statement_kind: str = "", fiscal_year_start_month: int = 1,
     default_months: int | None = None,
@@ -355,6 +374,8 @@ def parse_columns_from_headers(
         column = parse_single_column(header, day_first)
         column.index = len(columns)
         columns.append(column)
+
+    _repair_duplicate_comparative_year(columns)
 
     # A span the table states once above its dated columns ("Quarter Ended" over
     # "Jun-26  Jun-25"), passed in by the caller who saw the header block.
