@@ -1,8 +1,8 @@
 """Read one sheet of an Excel model and describe its layout.
 
-Deterministic and openpyxl-only. This is what `learn` turns into a map; the
-quarterly run never calls it, because by then the map already says everything
-this would have to work out again.
+Deterministic and openpyxl-only. Every run calls it afresh: the mapping says
+which filing line feeds which caption, and this works out where those captions,
+the formulas and the next period column are in today's workbook.
 
 Scope is one sheet — the Model sheet — by design. Multi-sheet authority is a
 later phase, and leaving it out keeps the rules here simple enough to verify.
@@ -306,7 +306,7 @@ def sheet_named(book, name: str):
 
 def discover_sheet(path: str, sheet: str) -> SheetLayout:
     """Describe one sheet's layout. Opens the workbook read-only; writes nothing."""
-    from finscan.excel.style_probe import Role, Theme, probe_cell
+    from finscan2.model.style_probe import Role, Theme, probe_cell
 
     workbook = load_workbook(path, data_only=False)
     values_book = load_workbook(path, data_only=True)

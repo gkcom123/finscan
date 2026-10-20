@@ -96,7 +96,7 @@ flowchart LR
 ```
 
 ```powershell
-.\.venv\Scripts\python.exe -m finscan2.cli company ccu run
+.\.venv\Scripts\python.exe -m finscan2.cli company ccu
 ```
 
 ## 4. Target cloud context
@@ -187,13 +187,15 @@ promotion process. A chat agent must not edit them freely.
 
 ## 8. Current local execution
 
-`company <key> run` reads every company PDF, learns a mapping only when none
-exists, then applies the reviewed mapping. Individual diagnostic stages remain:
+Two commands: `company <key>` for one inbox folder, `companies` for all of them.
+Each run reads every company PDF (rewriting its `.pdf.json`; reads are cached by
+file hash), creates the mapping when none exists or appends only the workbook rows
+it does not yet cover (leaving it untouched otherwise), applies it, and regenerates
+`models/<key>_model.json` and the `_work/` values and report.
 
 ```powershell
-python -m finscan2.cli company ccu read
-python -m finscan2.cli company ccu learn
-python -m finscan2.cli company ccu apply
+python -m finscan2.cli company ccu
+python -m finscan2.cli companies
 ```
 
 ## 9. Run lifecycle

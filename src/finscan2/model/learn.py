@@ -83,15 +83,10 @@ _SKIP_RE = re.compile(
 
 
 def _alias_table() -> dict[str, str]:
-    """Normalized alias -> canonical field, from v1's taxonomy.
+    """Normalized alias -> canonical field; the map decides whether any given
+    match is kept."""
+    from finscan2.aliases import FIELD_ALIASES
 
-    Reused rather than re-typed: it is a data table that took real filings to
-    build, and v2's map is what decides whether any given match is kept.
-    """
-    try:
-        from finscan.schemas import FIELD_ALIASES
-    except ImportError:      # pragma: no cover - v1 not importable
-        return {}
     table: dict[str, str] = {}
     for field_id, aliases in FIELD_ALIASES.items():
         for alias in aliases:
