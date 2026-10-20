@@ -180,19 +180,81 @@ def _sum_terms(instruction: str) -> list[tuple[float, str]]:
     return terms
 
 
+#: Marks a sum term optional: "pdf:Inventories?". See _lookup_sum.
+_OPTIONAL = "?"
+
+
+def _not_printed(why: str) -> bool:
+    """True only when the caption is absent from the statement altogether.
+
+    Deliberately narrow. "matches 2 rows" or "no line after the block heading" are
+    NOT absence — they are a caption that is there but cannot be pinned down, and
+    turning those into 0 would hide exactly the ambiguity the matcher refused.
+    """
+    return why.startswith("no row captioned like") or " printed 0 time(s)" in why
+
+
+def _lookup_optional(instruction: str, statement):
+    """An optional term is matched on its exact caption only.
+
+    A line that may legitimately be missing must never fall back to containment
+    or word matching: the quarter it is missing is exactly when a near match is
+    wrong. CCU's report prints each page footer "F-8" as a row captioned "F", and
+    containment found that "F" inside an absent "Loan from related entities", so
+    the absent line read as -8. Exact on the normalized caption; "#n" and block
+    syntax keep their own rules. Printed more than once without "#n" is refused.
+    """
+    wanted = instruction.split(":", 1)[1] if ":" in instruction else instruction
+    if _BLOCK in wanted:
+        anchor, caption = (part.strip() for part in wanted.split(_BLOCK, 1))
+        return _in_block(statement, anchor, caption)
+    if m := _OCCURRENCE.search(wanted):
+        return _nth_exact(statement, wanted[:m.start()], int(m.group(1)))
+    target = normalize_label(wanted)
+    hits = [r for r in statement.rows if normalize_label(r.caption) == target]
+    if not hits:
+        # Not printed exactly. Before reading that as "not printed at all", ask the
+        # ordinary matcher whether a real line comes close — a renamed caption must
+        # stop the row, not quietly become 0. Page furniture ("F" from "F-8") is not
+        # a line, so it is left out of this check.
+        from dataclasses import replace
+
+        lines = [r for r in statement.rows if re.search(r"[^\W\d_]{3,}", r.caption or "")]
+        near, why = find_row(replace(statement, rows=lines), wanted)
+        if near is not None:
+            return None, (f"'{wanted.strip()}' is not printed exactly, but "
+                          f"'{near.caption}' is close — confirm the caption and update "
+                          f"the mapping")
+        if not why.startswith("no row captioned like"):
+            return None, f"'{wanted.strip()}' is not printed exactly, and {why}"
+        return None, f"no row captioned like '{wanted.strip()}'"
+    if len(hits) > 1:
+        return None, (f"caption '{wanted.strip()}' is printed {len(hits)} times; "
+                      f"name the one wanted with '#n'")
+    return hits[0], "exact caption match"
+
+
 class _Term:
     """One resolved term of a sum: enough to explain the arithmetic afterwards."""
 
-    def __init__(self, sign: float, caption: str, printed: float, assumed_zero: bool = False):
+    def __init__(self, sign: float, caption: str, printed: float, assumed_zero: bool = False,
+                 not_printed: bool = False):
         self.sign, self.caption, self.printed = sign, caption, printed
         self.assumed_zero = assumed_zero
+        #: An optional term whose caption the filing does not print at all.
+        self.not_printed = not_printed
 
     def signed(self) -> float:
         return self.sign * self.printed
 
     def describe(self) -> str:
         lead = "-" if self.sign < 0 else "+"
-        note = " (no figure printed, treated as 0)" if self.assumed_zero else ""
+        if self.not_printed:
+            note = " (optional, not printed in this filing, treated as 0)"
+        elif self.assumed_zero:
+            note = " (no figure printed, treated as 0)"
+        else:
+            note = ""
         return f"{lead} {self.caption} {self.printed:,.2f}{note}"
 
 
@@ -205,9 +267,18 @@ def _lookup_sum(spec, statement, column):
     a dash in the wanted column, has already told us its value — the filing is
     saying "nothing happened here this period" — so it contributes 0 rather than
     failing the row.
+
+    The exception is a term the map marks optional with a trailing "?": a line the
+    filing prints only in quarters where it has something to report (Airtel's cash
+    flow drops "Sale of subsidiaries" entirely when nil). Such a term contributes 0
+    when its caption is absent from the statement — and only then. A caption that
+    is present but ambiguous still fails, and every optional zero is reported.
     """
     terms: list[_Term] = []
     for sign, instruction in _sum_terms(spec.resolve or ""):
+        optional = instruction.endswith(_OPTIONAL)
+        if optional:
+            instruction = instruction[:-len(_OPTIONAL)].rstrip()
         if instruction.startswith("const:"):
             try:
                 terms.append(_Term(sign, f"const {instruction.split(':', 1)[1]}",
@@ -221,8 +292,15 @@ def _lookup_sum(spec, statement, column):
             pdf_caption = None
             key = spec.key
 
-        row, why = _lookup(_Part, statement)
+        if optional:
+            row, why = _lookup_optional(instruction, statement)
+        else:
+            row, why = _lookup(_Part, statement)
         if row is None:
+            if optional and _not_printed(why):
+                caption = instruction.split(":", 1)[1].strip()
+                terms.append(_Term(sign, caption, 0.0, assumed_zero=True, not_printed=True))
+                continue
             return None, f"the sum term '{instruction}' did not resolve: {why}"
         if column.index >= len(row.values):
             return None, (f"the sum term '{instruction}' matched '{row.caption}', which "
@@ -506,6 +584,13 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                     message=f"row {bound.row} '{spec.key.label}': {why}"))
                 continue
 
+            absent = [t.caption for t in terms if t.not_printed]
+            if absent:
+                out.issues.append(Issue(
+                    code="optional_term_not_printed", severity="warning",
+                    message=f"row {bound.row} '{spec.key.label}': this filing does not "
+                            f"print {', '.join(repr(c) for c in absent)}; counted as 0. "
+                            f"If the filing renamed the line, update the mapping."))
             total = sum(term.signed() for term in terms)
             value.source = Source(
                 statement=statement.kind, page=statement.page,

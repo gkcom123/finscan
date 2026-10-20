@@ -208,8 +208,48 @@ class PdfDoc:
             of_kind = [s for s in self.statements if s.kind == wanted]
             found = next((s for s in of_kind if s.columns), None) or next(iter(of_kind), None)
             if found is not None:
-                return found
+                return self._continued(found)
         return None
+
+    def _continued(self, start: Statement) -> Statement:
+        """A primary statement printed over consecutive pages, read as one.
+
+        CCU prints its statement of financial position across two pages that each
+        carry the full title and the same dated columns — assets on one, liabilities
+        and equity on the next. Read as two statements, every liability and the
+        equity total sat on a page that no mapping could address: `balance_sheet`
+        and `title:` both resolve to the first.
+
+        Merged only when the next statement is on the very next page, is of the same
+        kind, has the same title, and reports the same periods. Rows keep page order,
+        so an exact caption match still returns the earlier page's line first.
+        """
+        if start.note is not None:
+            return start
+        position = next((i for i, s in enumerate(self.statements) if s is start), None)
+        if position is None:
+            return start
+
+        def periods(statement: Statement) -> list[tuple]:
+            return [(c.kind, c.months, c.end) for c in statement.columns]
+
+        wanted = periods(start)
+        if not wanted or not any(end for _, _, end in wanted):
+            return start
+        rows, last_page = list(start.rows), start.page
+        for following in self.statements[position + 1:]:
+            if (following.note is None and following.kind == start.kind
+                    and following.title == start.title
+                    and following.page == last_page + 1
+                    and periods(following) == wanted):
+                rows.extend(following.rows)
+                last_page = following.page
+            else:
+                break
+        if last_page == start.page:
+            return start
+        from dataclasses import replace
+        return replace(start, rows=rows)
 
     def titled(self, text: str) -> Statement | None:
         """The first primary statement whose title contains `text`.
@@ -225,7 +265,8 @@ class PdfDoc:
               if s.note is None and needle in normalize_dashes(s.title)]
         # A table of contents names the same section ("Section 1 ... Performance
         # at a glance ... 3") but has no columns; the real table does.
-        return next((s for s in titled if s.columns), None) or next(iter(titled), None)
+        found = next((s for s in titled if s.columns), None) or next(iter(titled), None)
+        return self._continued(found) if found is not None else None
 
     def note(self, number: int, end: str | None = None) -> Statement | None:
         """A note table, optionally the one for a particular period end.

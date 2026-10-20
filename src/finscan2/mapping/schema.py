@@ -44,7 +44,8 @@ class MappingRow:
     label: str
     section: str = "other"
     occurrence: int = 1
-    #: str = one caption · list = a sum · None = the filing has no such line
+    #: str = one caption · list = a sum · None = the filing has no such line.
+    #: A caption ending in "?" is optional: 0 when the filing does not print it.
     pdf: str | list[str] | None = None
     #: Signed filing captions which may each select a different statement.
     #: Used for a disclosed net figure whose gains and losses live in separate notes.
@@ -89,6 +90,10 @@ class MappingRow:
         if self.pdf is None:
             return f"absent:{self.note}" if self.note else "absent:"
         if isinstance(self.pdf, str):
+            # A trailing "?" marks the caption optional (see resolve._lookup_sum):
+            # routed through the sum path, which is where optional terms are read.
+            if self.pdf.strip().endswith("?"):
+                return f"sum:pdf:{self.pdf.strip()}"
             return f"pdf:{self.pdf}"
 
         terms = []

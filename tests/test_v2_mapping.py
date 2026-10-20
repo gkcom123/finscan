@@ -245,3 +245,19 @@ def test_appending_to_a_file_in_another_layout_still_keeps_unknown_keys(tmp_path
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["custom"] == 1
     assert [r["label"] for r in payload["rows"]] == ["Revenue"]
+
+
+def test_a_single_optional_caption_compiles_to_a_sum_instruction():
+    """Optional terms are read on the sum path, so one "caption?" is routed there."""
+    from finscan2.mapping.schema import MappingRow
+
+    row = MappingRow(label="Inventory", section="balance_sheet", pdf="Inventories?")
+    assert row.instruction() == "sum:pdf:Inventories?"
+
+
+def test_optional_markers_survive_in_a_list_of_captions():
+    from finscan2.mapping.schema import MappingRow
+
+    row = MappingRow(label="Acq", section="cash_flow",
+                     pdf=["Sale of subsidiaries?", "-Investment in joint venture?"])
+    assert row.instruction() == "sum:pdf:Sale of subsidiaries?|-pdf:Investment in joint venture?"
