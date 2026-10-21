@@ -32,12 +32,13 @@ from finscan2.schema import PARSER_VERSION, Issue, Page, PdfDoc, Statement
 _UNIT_PATTERNS: list[tuple[str, str]] = [
     (r"\bin\s+(?:rs\.?\s+)?crores?\b|\bcr\.?\b", "crores"),
     (r"\b(?:in\s+)?(?:lakhs?|lacs?)\b", "lakhs"),
-    (r"\b(?:in\s+)?billions?\b|\bbn\b", "billions"),
-    (r"\b(?:in\s+)?millions?\b|\bmn\b|\bmm\b", "millions"),
-    (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b", "thousands"),
+    (r"\b(?:in\s+)?billions?\b|\bbn\b|\bmiles\s+de\s+millones\b", "billions"),
+    (r"\b(?:in\s+)?millions?\b|\bmn\b|\bmm\b|\bmillones\b|\bM(?:Ch|Cl)\$", "millions"),
+    (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b|\bTh(?:Ch|Cl)\$", "thousands"),
 ]
 
 _CURRENCIES: list[tuple[str, str]] = [
+    (r"\bCLP\b|\bTh?(?:Ch|Cl)\$|\bMCh\$", "CLP"),
     (r"\bSAR\b|⃂|﷼", "SAR"), (r"\bAED\b", "AED"), (r"\bQAR\b", "QAR"),
     (r"\bINR\b|\bRs\.?\b|₹", "INR"), (r"\bRMB\b|\bCNY\b|¥", "CNY"),
     (r"\bHKD\b|\bHK\$", "HKD"), (r"\bUSD\b|\bUS\$", "USD"),

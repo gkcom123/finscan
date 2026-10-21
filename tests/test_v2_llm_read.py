@@ -55,6 +55,40 @@ def test_a_statement_continued_over_pages_is_one_statement():
     assert [r.caption for r in doc.statements[0].rows] == ["Revenue", "Finance income"]
 
 
+def test_an_untitled_continuation_page_joins_the_statement_before_it():
+    """BMV XBRL reports print no title on the page that carries the liabilities, or
+    the cash flow's investing and financing sections."""
+    cols = ["Close Current Quarter 2026-06-30", "Close Previous Exercise 2025-12-31"]
+    pages = {
+        1: {"tables": [{"title": "[210000] Statement of financial position", "units": "Currency: MXN",
+                        "columns": cols, "rows": [{"caption": "Total assets",
+                                                   "values": ["308,185,157,000", "312,735,701,000"]}]}]},
+        2: {"tables": [{"title": "", "units": "Currency: MXN", "columns": cols,
+                        "rows": [{"caption": "Total equity",
+                                  "values": ["180,665,962,000", "179,369,483,000"]}]}]},
+    }
+    doc = doc_from_tables("x.pdf", "0", pages, {}, "m")
+    assert len(doc.statements) == 1
+    assert [r.caption for r in doc.statements[0].rows] == ["Total assets", "Total equity"]
+
+
+def test_a_bmv_xbrl_statement_is_in_full_units_not_the_press_release_scale():
+    cols = ["2026-01-01 - 2026-06-30", "2025-01-01 - 2025-06-30"]
+    pages = {
+        1: {"tables": [{"title": "Estado de Resultados Consolidado",
+                        "units": "Cifras expresadas en millones de pesos",
+                        "columns": ["ACUMULADO 2026", "ACUMULADO 2025"],
+                        "rows": [{"caption": "EBITDA", "values": ["13,665", "14,109"]}]}]},
+        2: {"tables": [{"title": "[310000] Statement of comprehensive income", "units": "Currency: MXN",
+                        "columns": cols,
+                        "rows": [{"caption": "Revenue",
+                                  "values": ["102,707,892,000", "101,951,361,000"]}]}]},
+    }
+    doc = doc_from_tables("x.pdf", "0", pages, {}, "m")
+    press, xbrl = doc.statements
+    assert press.units == "millions" and xbrl.units == "units"
+
+
 def test_a_scanned_page_is_reported_as_unchecked_not_silently_trusted():
     doc = doc_from_tables("x.pdf", "0", {1: _page([{"caption": "Revenue",
                                                    "values": ["1", "2", "3", "4"]}])},

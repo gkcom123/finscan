@@ -66,6 +66,11 @@ class MappingRow:
     #: columns: a borrowings note prints "30 June 2026 Current" and
     #: "30 June 2026 Non-current" side by side.
     column: str | None = None
+    #: Multiplier for a figure that is not money — a "1.7%" printed where the model
+    #: holds 0.017 takes 0.01. Applied to the printed number INSTEAD of the table's
+    #: unit conversion, which would otherwise scale a percentage by the statement's
+    #: millions or thousands.
+    scale: float | None = None
 
     @property
     def key(self) -> tuple[str, str, int]:
@@ -117,7 +122,7 @@ class MappingRow:
             out["sources"] = self.sources
         else:
             out["pdf"] = self.pdf
-        for name in ("note", "statement", "basis", "sign", "column"):
+        for name in ("note", "statement", "basis", "sign", "column", "scale"):
             if getattr(self, name):
                 out[name] = getattr(self, name)
         return out
@@ -137,6 +142,7 @@ class MappingRow:
             basis=d.get("basis"),
             sign=d.get("sign"),
             column=d.get("column"),
+            scale=d.get("scale"),
         )
 
 

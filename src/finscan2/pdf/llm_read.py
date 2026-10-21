@@ -44,6 +44,13 @@ Rules:
 - Never compute, round, re-sign or reorder numbers. Omit headings that carry no numbers. Omit note-reference columns.
 - If the page has no table of figures, return {"tables": []}."""
 
+#: The role code that opens every BMV XBRL statement title: "[310000] Statement of ...".
+_XBRL_TITLE = re.compile(r"\s*\[\d{6}\]")
+
+#: Primary statements whose later pages may print no title of their own.
+_CONTINUED_KINDS = frozenset({"balance_sheet", "cash_flow", "comprehensive_income",
+                              "income_statement"})
+
 #: A page is sent when its text layer carries at least this many figures, or has
 #: no text at all (a scan). Narrative pages are not worth a model call.
 _MIN_FIGURES = 20
@@ -301,6 +308,7 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
     unchecked: list[int] = []
     inherited_group_headers: list[int] = []
     corrected: list[str] = []
+    previous_last_page = 0
 
     for page_no in sorted(pages_json):
         payload = pages_json[page_no] or {}
@@ -343,16 +351,31 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                 continue
             units = _sniff(f"{table.get('units') or ''}\n{title}\n{' '.join(headers)}",
                            _UNIT_PATTERNS)
+            if units is None and _XBRL_TITLE.match(title):
+                # A BMV XBRL statement ("[310000] Statement of ...") states only its
+                # currency and prints every figure in full. Left unset it would
+                # inherit the press release's scale from the same PDF.
+                units = "units"
             previous = statements[-1] if statements else None
-            same = (previous is not None and previous.title == title
-                    and [(c.months, c.end) for c in previous.columns]
-                    == [(c.months, c.end) for c in columns])
-            if same:
+            same_columns = (previous is not None
+                            and [(c.months, c.end) for c in previous.columns]
+                            == [(c.months, c.end) for c in columns])
+            same = same_columns and previous.title == title
+            # A continuation page often prints no title of its own (BMV XBRL reports:
+            # the balance sheet's liabilities and the cash flow's investing and
+            # financing sections). It belongs to the primary statement on the page
+            # before when its columns are the same.
+            untitled_continuation = (
+                same_columns and not title and previous.kind in _CONTINUED_KINDS
+                and page_no == previous_last_page + 1)
+            if same or untitled_continuation:
                 # A statement continued over pages under the same title and columns.
                 previous.rows.extend(rows)
+                previous_last_page = page_no
                 continue
             statements.append(Statement(page=page_no, kind=kind, title=title, heading="",
                                         columns=columns, rows=rows, units=units))
+            previous_last_page = page_no
 
     pages = [Page(page=n, source="vision" if n in pages_json else "text",
                   chars=len(page_texts.get(n, "")), text=page_texts.get(n, ""))

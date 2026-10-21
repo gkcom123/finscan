@@ -317,23 +317,50 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
 #: Two numeric dates spanning a period: "1.1.2026 - 30.06.2026", "1.1.2026 – 30.6.2026".
 #: CTP's report prints the year-to-date span this way; the first date is the start.
 _NUMERIC_RANGE = re.compile(
-    r"\b(\d{1,2})[./](\d{1,2})[./](\d{4})\s*[-–—]\s*(\d{1,2})[./](\d{1,2})[./](\d{4})\b")
+    r"\b(\d{1,2})[./](\d{1,2})[./](\d{4})(\s*[-–—]\s*|\s+)(\d{1,2})[./](\d{1,2})[./](\d{4})\b")
 
 
 def _numeric_range(text: str, day_first: bool | None) -> tuple[int, str] | None:
-    """(months, end date) of a dotted/slashed date range, or None."""
+    """(months, end date) of a dotted/slashed date range, or None.
+
+    The dash may be missing: Embotelladora Andina stacks "01.01.2026" over
+    "06.30.2026" in a column header, which flattens to the two dates with only a
+    space between. Without a dash the first date must be the 1st of a month, else two
+    adjacent single-date columns would read as a span.
+    """
     m = _NUMERIC_RANGE.search(text)
     if not m:
         return None
-    a1, b1, y1, a2, b2, y2 = (int(g) for g in m.groups())
-    if day_first is False or (a2 <= 12 < b2):
-        (m1, d1), (m2, d2) = (a1, b1), (a2, b2)
+    a1, b1, y1, sep, a2, b2, y2 = m.groups()
+    a1, b1, y1, a2, b2, y2 = (int(g) for g in (a1, b1, y1, a2, b2, y2))
+    if not sep.strip():
+        # No dash: the two dates are separate header lines, and a filer may print them
+        # in different orders — Embotelladora's quarter column is "01.04.2026"
+        # (1 April, day first) over "06.30.2026" (month first). The end date's own
+        # values settle its order; the start must be the first of a month, which
+        # settles the start's.
+        if b2 > 12:
+            m2, d2 = a2, b2
+        elif a2 > 12 or day_first is not False:
+            d2, m2 = a2, b2
+        else:
+            m2, d2 = a2, b2
+        starts = [(mm, dd) for mm, dd in ((b1, a1), (a1, b1)) if dd == 1 and 1 <= mm <= 12]
+        if not starts or not 1 <= m2 <= 12:
+            return None
+        m1 = starts[0][0]
     else:
-        (d1, m1), (d2, m2) = (a1, b1), (a2, b2)
-    if not (1 <= m1 <= 12 and 1 <= m2 <= 12):
+        if day_first is False or (a2 <= 12 < b2):
+            (m1, d1), (m2, d2) = (a1, b1), (a2, b2)
+        else:
+            (d1, m1), (d2, m2) = (a1, b1), (a2, b2)
+        if not (1 <= m1 <= 12 and 1 <= m2 <= 12):
+            return None
+    months = (y2 - y1) * 12 + m2 - m1 + 1
+    if months < 1:
         return None
     d2 = min(d2, monthrange(y2, m2)[1])
-    return (y2 - y1) * 12 + m2 - m1 + 1, date(y2, m2, d2).isoformat()
+    return months, date(y2, m2, d2).isoformat()
 
 
 #: Statements whose figures are flows over a period, as opposed to a position on a

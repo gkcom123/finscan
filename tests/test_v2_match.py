@@ -82,6 +82,28 @@ def test_cash_flow_continuation_rows_are_available_for_lookup():
     assert len(rows) == 1 and rows[0].source_page == 9
 
 
+def test_title_alternatives_fall_back_in_order():
+    """`title:A || B` reads the first statement any alternative names, so a row
+    survives a filer renumbering the XBRL role code."""
+    from dataclasses import replace
+
+    from finscan2.match.resolve import _statement_for
+
+    class Spec:
+        statement = "title:[310000] || Statement of comprehensive income, profit or loss"
+        key = type("K", (), {"section": "income_statement"})()
+
+    profit = replace(_statement(_ALMARAI), title="[310001] Statement of comprehensive income, "
+                                                 "profit or loss, by function of expense")
+    oci = replace(_statement(_ALMARAI), title="[410000] Statement of comprehensive income, "
+                                              "OCI components")
+    found, _ = _statement_for(Spec, PdfDoc(path="f.pdf", sha256="x", statements=[oci, profit]))
+    assert found.title.startswith("[310001]")
+
+    missing, why = _statement_for(Spec, PdfDoc(path="f.pdf", sha256="x", statements=[oci]))
+    assert missing is None and "no statement's title contains" in why
+
+
 def test_the_shortest_cumulative_column_is_preferred():
     """Fewer prior quarters to subtract means less exposure to a missing one."""
     both = [("January - June 2026", 6, "2026-06-30", "period"),

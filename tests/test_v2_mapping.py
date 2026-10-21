@@ -82,6 +82,19 @@ def test_a_carry_forward_row_round_trips_without_a_pdf_field(tmp_path):
     assert loaded.rows[0].instruction() == "carry:a peg"
 
 
+def test_a_scale_round_trips_and_reaches_the_compiled_row(tmp_path):
+    """A percentage printed as 1.7 for a model that holds 0.017."""
+    mapping = Mapping(company="x", sheet="Model", rows=[
+        MappingRow(label="Revenue", section="income_statement", pdf="Revenue", scale=0.01)])
+    path = mapping.save(tmp_path / "x.json")
+    assert '"scale": 0.01' in path.read_text(encoding="utf-8")
+    assert Mapping.load(path).rows[0].scale == 0.01
+
+    model, _ = compile_mapping(Mapping.load(path), _layout())
+    assert [r for r in model.rows if r.key.label == "Revenue"][0].scale == 0.01
+    assert RowSpec.from_dict(model.rows[0].to_dict()).scale == model.rows[0].scale
+
+
 # --------------------------------------------------------------------------- #
 # Compilation
 # --------------------------------------------------------------------------- #

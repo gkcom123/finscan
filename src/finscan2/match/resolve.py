@@ -114,6 +114,10 @@ class _SummedRow:
         self.values = [None] * index + [total]
 
 
+#: Separator between alternative titles of a `title:` statement.
+_TITLE_OR = " || "
+
+
 def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
     """The statement a row reads from: what the map says, else its section.
 
@@ -146,7 +150,10 @@ def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
 
     if wanted.startswith("title:"):
         text = wanted.split(":", 1)[1]
-        statement = doc.titled(text)
+        # "title:A || B": the first alternative that names a statement wins, so a
+        # row can survive a filer renumbering or rewording the title.
+        alternatives = [part.strip() for part in text.split(_TITLE_OR) if part.strip()]
+        statement = next((s for s in (doc.titled(a) for a in alternatives) if s), None)
         if statement is None:
             return None, f"no statement's title contains '{text}'"
         return statement, ""
@@ -654,8 +661,10 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             priors = {c: cells.get((bound.row, c)) for c in columns_to_subtract}
             # The workbook's own figures are in the sheet's units; the filing's are
             # in the filing's, so both are brought to the sheet's scale first.
-            scaled_printed = _scale(printed, _row_units(printed_row) or statement.units
-                                    or doc.units or model.units, model.units)
+            row_scale = getattr(spec, "scale", None)
+            scaled_printed = (printed * row_scale if row_scale is not None else
+                              _scale(printed, _row_units(printed_row) or statement.units
+                                     or doc.units or model.units, model.units))
             figure, adjustment, issue = basis_mod.decumulate(
                 scaled_printed, priors, columns_to_subtract, bound.row, letters)
             if issue:
@@ -666,6 +675,13 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                 continue
             value.adjustments.append(adjustment)
             value.units_from = value.units_to = model.units
+        elif getattr(spec, "scale", None) is not None:
+            # Not money: the map's own multiplier stands in for the unit conversion.
+            figure = printed * spec.scale
+            value.adjustments.append(Adjustment(
+                kind="scale",
+                detail=f"printed {printed:,} x {spec.scale:g} (the map's multiplier) "
+                       f"= {figure:,.6g}; no unit conversion applied"))
         else:
             source_units = (_row_units(printed_row) or statement.units or doc.units
                             or model.units)
