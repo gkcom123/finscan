@@ -66,9 +66,9 @@ _MONTHS_PHRASE = re.compile(
     re.IGNORECASE,
 )
 
-#: A bare date: "30 September 2025", "31 December, 2024". A balance-sheet column.
+#: A bare date: "30 September 2025", "31 December, 2024", "30-Jun-2026". A balance-sheet column.
 _FULL_DATE = re.compile(
-    rf"\b(\d{{1,2}})\s+\b({_MONTH_WORDS})\b,?\s*(\d{{4}})",
+    rf"\b(\d{{1,2}})[\s-]+\b({_MONTH_WORDS})\b[,\s-]*(\d{{4}})",
     re.IGNORECASE,
 )
 
@@ -273,6 +273,10 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         return Column(index=0, header=header.strip(), kind="period",
                       months=months, end=stop.isoformat())
 
+    if span := _numeric_range(text, day_first):
+        return Column(index=0, header=header.strip(), kind="period",
+                      months=span[0], end=span[1])
+
     quarter = _ORDINAL_QUARTER.search(text)
     if quarter:
         months = months or 3
@@ -308,6 +312,28 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
 
     kind = "period" if months else "point_in_time"
     return Column(index=0, header=header.strip(), kind=kind, months=months, end=end)
+
+
+#: Two numeric dates spanning a period: "1.1.2026 - 30.06.2026", "1.1.2026 – 30.6.2026".
+#: CTP's report prints the year-to-date span this way; the first date is the start.
+_NUMERIC_RANGE = re.compile(
+    r"\b(\d{1,2})[./](\d{1,2})[./](\d{4})\s*[-–—]\s*(\d{1,2})[./](\d{1,2})[./](\d{4})\b")
+
+
+def _numeric_range(text: str, day_first: bool | None) -> tuple[int, str] | None:
+    """(months, end date) of a dotted/slashed date range, or None."""
+    m = _NUMERIC_RANGE.search(text)
+    if not m:
+        return None
+    a1, b1, y1, a2, b2, y2 = (int(g) for g in m.groups())
+    if day_first is False or (a2 <= 12 < b2):
+        (m1, d1), (m2, d2) = (a1, b1), (a2, b2)
+    else:
+        (d1, m1), (d2, m2) = (a1, b1), (a2, b2)
+    if not (1 <= m1 <= 12 and 1 <= m2 <= 12):
+        return None
+    d2 = min(d2, monthrange(y2, m2)[1])
+    return (y2 - y1) * 12 + m2 - m1 + 1, date(y2, m2, d2).isoformat()
 
 
 #: Statements whose figures are flows over a period, as opposed to a position on a

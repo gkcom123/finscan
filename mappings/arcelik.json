@@ -72,6 +72,7 @@
     {"label": "Equity (as reported on balance sheet)", "section": "balance_sheet", "pdf": "Total equity"},
     {"label": "Reported Net Leverage (excluding IFRS-16 adjusments)", "section": "other", "pdf": null, "note": "the map does not say which statement this row comes from"},
     {"label": "FX rate average - TRY/USD", "section": "cash_flow", "carry_forward": true, "note": "a model-maintained TRY/USD rate, not reported by the filing"},
-    {"label": "FX rate  - TRY/USD (as at end of period)", "section": "cash_flow", "carry_forward": true, "note": "a model-maintained TRY/USD rate, not reported by the filing"}
+    {"label": "FX rate  - TRY/USD (as at end of period)", "section": "cash_flow", "carry_forward": true, "note": "a model-maintained TRY/USD rate, not reported by the filing"},
+    {"label": "VND Loans", "section": "other", "pdf": null, "note": "added 2026-10-21: new in the workbook, review · the map does not say which statement this row comes from"}
   ]
 }

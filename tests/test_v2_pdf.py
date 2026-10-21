@@ -546,6 +546,24 @@ def test_iso_date_range_column():
     assert [(c.months, c.end) for c in cols] == [(3, "2026-06-30"), (6, "2026-06-30")]
 
 
+def test_dotted_numeric_date_range_column():
+    """CTP's results: "1.1.2026 - 30.06.2026" is six months ending 30 June, not
+    a one-month column ending on its own first date."""
+    cols = parse_columns_from_headers(
+        ["1.1.2026 - 30.06.2026", "1.1.2025 - 30.06.2025 restated",
+         "Over the period 1.1.2026 – 31.3.2026"],
+        statement_kind="income_statement")
+    assert [(c.months, c.end) for c in cols] == [
+        (6, "2026-06-30"), (6, "2025-06-30"), (3, "2026-03-31")]
+
+
+def test_hyphenated_day_month_year_balance_column():
+    cols = parse_columns_from_headers(["30-Jun-2026", "31-Dec-2025"],
+                                      statement_kind="balance_sheet")
+    assert [(c.kind, c.end) for c in cols] == [
+        ("point_in_time", "2026-06-30"), ("point_in_time", "2025-12-31")]
+
+
 def test_xbrl_rounding_level_means_figures_in_units():
     """Gruma's BMV report: "Level of rounding ... THOUSAND OF DOLLARS" above
     figures printed in full. Rounding is precision; the scale is units."""
