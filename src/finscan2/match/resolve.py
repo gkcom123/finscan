@@ -265,7 +265,14 @@ class _Term:
         return f"{lead} {self.caption} {self.printed:,.2f}{note}"
 
 
-def _lookup_sum(spec, statement, column):
+#: Separates a sum term's caption from the statement that term alone is read in:
+#: "-Gasto por Depreciación @ title:23. PÉRDIDAS POR DETERIORO". A figure the
+#: filing splits over two statements (D&A in the income statement, the impairment
+#: that belongs with it in a note) is one row in the model.
+_TERM_STATEMENT = " @ "
+
+
+def _lookup_sum(spec, statement, column, scope=None):
     """Every term of a sum, or nothing.
 
     A term whose caption cannot be found at all fails the whole sum: that is a
@@ -280,9 +287,15 @@ def _lookup_sum(spec, statement, column):
     flow drops "Sale of subsidiaries" entirely when nil). Such a term contributes 0
     when its caption is absent from the statement — and only then. A caption that
     is present but ambiguous still fails, and every optional zero is reported.
+
+    A term may name its own statement (see `_TERM_STATEMENT`). Its column must cover
+    the same span as the row's, and is brought to the row's units, so a quarter is
+    never added to a year to date.
     """
     terms: list[_Term] = []
     for sign, instruction in _sum_terms(spec.resolve or ""):
+        instruction, _, override = instruction.partition(_TERM_STATEMENT)
+        instruction, override = instruction.strip(), override.strip()
         optional = instruction.endswith(_OPTIONAL)
         if optional:
             instruction = instruction[:-len(_OPTIONAL)].rstrip()
@@ -294,32 +307,56 @@ def _lookup_sum(spec, statement, column):
                 return None, f"'{instruction}' in the sum is not a number"
             continue
 
+        term_statement, term_column, factor = statement, column, 1.0
+        if override:
+            if scope is None:
+                return None, f"the sum term '{instruction}' names a statement, which this lookup cannot resolve"
+
+            class _Where:
+                statement = override
+                key = spec.key
+
+            term_statement, why = _statement_for(_Where, scope["doc"], scope["target"])
+            if term_statement is None:
+                return None, f"the sum term '{instruction}' is read in '{override}': {why}"
+            term_column, why = select_column(term_statement, scope["target"], scope["cadence"],
+                                             scope["point_in_time"])
+            if term_column is None:
+                return None, f"the sum term '{instruction}' in '{override}': {why}"
+            if (term_column.months or None) != (column.months or None):
+                return None, (f"the sum term '{instruction}' in '{override}' covers "
+                              f"{term_column.months or 'a point in'} month(s), but the row's "
+                              f"column covers {column.months or 'a point in'} — they cannot be added")
+            row_units = statement.units or scope["doc"].units or scope["units"]
+            term_units = term_statement.units or scope["doc"].units or scope["units"]
+            factor = (UNIT_MULTIPLIER.get(term_units, 1.0) / UNIT_MULTIPLIER.get(row_units, 1.0))
+
         class _Part:
             resolve = instruction
             pdf_caption = None
             key = spec.key
 
         if optional:
-            row, why = _lookup_optional(instruction, statement)
+            row, why = _lookup_optional(instruction, term_statement)
         else:
-            row, why = _lookup(_Part, statement)
+            row, why = _lookup(_Part, term_statement)
         if row is None:
             if optional and _not_printed(why):
                 caption = instruction.split(":", 1)[1].strip()
                 terms.append(_Term(sign, caption, 0.0, assumed_zero=True, not_printed=True))
                 continue
             return None, f"the sum term '{instruction}' did not resolve: {why}"
-        if column.index >= len(row.values):
+        if term_column.index >= len(row.values):
             return None, (f"the sum term '{instruction}' matched '{row.caption}', which "
                           f"has only {len(row.values)} value(s) — the wanted column is "
-                          f"number {column.index + 1}")
-        if column.index in getattr(row, "unverified", []):
+                          f"number {term_column.index + 1}")
+        if term_column.index in getattr(row, "unverified", []):
             return None, (f"the sum term '{instruction}' ('{row.caption}') was read by "
                           f"the vision model but not confirmed (see pdf/verify.py)")
-        if row.values[column.index] is None:
+        if row.values[term_column.index] is None:
             terms.append(_Term(sign, row.caption, 0.0, assumed_zero=True))
             continue
-        terms.append(_Term(sign, row.caption, row.values[column.index]))
+        terms.append(_Term(sign, row.caption, row.values[term_column.index] * factor))
     if not terms:
         return None, "the sum has no terms"
     return terms, ""
@@ -582,7 +619,11 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
         # because a sum of quarter-to-date figures needs de-cumulating exactly as a
         # single one does.
         if (spec.resolve or "").startswith("sum:"):
-            terms, why = _lookup_sum(spec, statement, column)
+            terms, why = _lookup_sum(spec, statement, column, {
+                "doc": doc, "target": target, "cadence": model.cadence_months,
+                "point_in_time": (spec.basis == "point_in_time"
+                                  or spec.key.section not in _FLOW_SECTIONS),
+                "units": model.units})
             if terms is None:
                 value.unresolved = why
                 out.values.append(value)

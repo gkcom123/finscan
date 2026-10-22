@@ -33,8 +33,8 @@ _UNIT_PATTERNS: list[tuple[str, str]] = [
     (r"\bin\s+(?:rs\.?\s+)?crores?\b|\bcr\.?\b", "crores"),
     (r"\b(?:in\s+)?(?:lakhs?|lacs?)\b", "lakhs"),
     (r"\b(?:in\s+)?billions?\b|\bbn\b|\bmiles\s+de\s+millones\b", "billions"),
-    (r"\b(?:in\s+)?millions?\b|\bmn\b|\bmm\b|\bmillones\b|\bM(?:Ch|Cl)\$", "millions"),
-    (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b|\bTh(?:Ch|Cl)\$", "thousands"),
+    (r"\b(?:in\s+)?millions?\b|\bmn\b|\bmm\b|\bmillones\b|\bM(?:Ch|Cl)\$|(?<!\w)MM\$", "millions"),
+    (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b|\bTh(?:Ch|Cl)\$|(?<!\w)M\$", "thousands"),
 ]
 
 _CURRENCIES: list[tuple[str, str]] = [

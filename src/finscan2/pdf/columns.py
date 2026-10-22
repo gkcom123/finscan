@@ -32,6 +32,7 @@ MONTHS: dict[str, int] = {
     "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
     "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11,
     "diciembre": 12,
+    "ene": 1, "abr": 4, "ago": 8, "dic": 12,
 }
 
 _MONTH_WORDS = "|".join(sorted(MONTHS, key=len, reverse=True))
@@ -277,6 +278,17 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         return Column(index=0, header=header.strip(), kind="period",
                       months=span[0], end=span[1])
 
+    if m := _ABBREV_RANGE.search(text):
+        d1, mon1, y1, d2, mon2, y2 = m.groups()
+        if mon1.lower() in MONTHS and mon2.lower() in MONTHS:
+            y1, y2 = (2000 + int(y) if len(y) == 2 else int(y) for y in (y1, y2))
+            m1, m2 = MONTHS[mon1.lower()], MONTHS[mon2.lower()]
+            span_months = (y2 - y1) * 12 + m2 - m1 + 1
+            if span_months >= 1:
+                end_day = min(int(d2), monthrange(y2, m2)[1])
+                return Column(index=0, header=header.strip(), kind="period",
+                              months=span_months, end=date(y2, m2, end_day).isoformat())
+
     quarter = _ORDINAL_QUARTER.search(text)
     if quarter:
         months = months or 3
@@ -314,10 +326,17 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
     return Column(index=0, header=header.strip(), kind=kind, months=months, end=end)
 
 
-#: Two numeric dates spanning a period: "1.1.2026 - 30.06.2026", "1.1.2026 – 30.6.2026".
-#: CTP's report prints the year-to-date span this way; the first date is the start.
+#: Two numeric dates spanning a period: "1.1.2026 - 30.06.2026", "1.1.2026 – 30.6.2026",
+#: Chile's "01-01-2026 30-06-2026" and "01.01.2026 al 30.06.2026". The first date is
+#: the start.
 _NUMERIC_RANGE = re.compile(
-    r"\b(\d{1,2})[./](\d{1,2})[./](\d{4})(\s*[-–—]\s*|\s+)(\d{1,2})[./](\d{1,2})[./](\d{4})\b")
+    r"\b(\d{1,2})[./-](\d{1,2})[./-](\d{4})(\s*[-–—]\s*|\s+(?:al|a|to|hasta)\s+|\s+)"
+    r"(\d{1,2})[./-](\d{1,2})[./-](\d{4})\b", re.IGNORECASE)
+
+
+#: Falabella's "01-ene-26 30-jun-26": two day-month-year dates with a month name.
+_ABBREV_RANGE = re.compile(
+    r"\b(\d{1,2})-([A-Za-z]{3,10})-(\d{2}|\d{4})\s*[-–—]?\s*(\d{1,2})-([A-Za-z]{3,10})-(\d{2}|\d{4})\b")
 
 
 def _numeric_range(text: str, day_first: bool | None) -> tuple[int, str] | None:

@@ -91,7 +91,16 @@ class MappingRow:
         if self.carry_forward:
             return f"carry:{self.note}" if self.note else "carry:"
         if self.sources is not None:
-            return "sources:" + json.dumps(self.sources, separators=(",", ":"))
+            # Signed captions that may each be read in their own statement: the same
+            # thing a sum does, so they share its machinery.
+            terms = []
+            for source in self.sources:
+                text, lead = source["caption"].strip(), ""
+                if text.startswith("-"):
+                    lead, text = "-", text[1:].strip()
+                where = f" @ {source['statement']}" if source.get("statement") else ""
+                terms.append(f"{lead}pdf:{text}{where}")
+            return "sum:" + "|".join(terms)
         if self.pdf is None:
             return f"absent:{self.note}" if self.note else "absent:"
         if isinstance(self.pdf, str):
