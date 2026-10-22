@@ -13,6 +13,8 @@ a "leftmost numeric column" rule reads a six-month figure as a quarter.
 """
 from __future__ import annotations
 
+import re
+
 from finscan2.model.schema import normalize_label
 from finscan2.schema import Column, Statement, StatementRow
 
@@ -27,6 +29,12 @@ def select_column(statement: Statement, period_end: str,
     """
     if not statement.columns:
         return None, "the statement's column headers could not be read"
+    nth = None
+    if header_contains and (m := re.search(r"\s*#(\d+)\s*$", header_contains)):
+        # "Reported#1": the first of several columns whose header holds the text.
+        # KOF prints a quarter and a six-month "Δ% Reported" side by side; neither
+        # carries a date, so only their order tells them apart.
+        nth, header_contains = int(m.group(1)), header_contains[:m.start()]
     if header_contains:
         wanted = normalize_label(header_contains)
         def holds(header: str) -> bool:
@@ -39,6 +47,11 @@ def select_column(statement: Statement, period_end: str,
         narrowed = [c for c in statement.columns if holds(c.header)]
         if not narrowed:
             return None, f"no column header contains '{header_contains}'"
+        if nth is not None:
+            if len(narrowed) < nth:
+                return None, (f"{len(narrowed)} column header(s) contain "
+                              f"'{header_contains}'; #{nth} does not exist")
+            narrowed = [narrowed[nth - 1]]
         statement = Statement(page=statement.page, kind=statement.kind, title=statement.title,
                               heading=statement.heading, columns=narrowed, rows=statement.rows)
 

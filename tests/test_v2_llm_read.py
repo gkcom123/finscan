@@ -60,3 +60,59 @@ def test_a_scanned_page_is_reported_as_unchecked_not_silently_trusted():
                                                    "values": ["1", "2", "3", "4"]}])},
                           {1: ""}, "m")
     assert any(i.code == "llm_unchecked" for i in doc.issues)
+
+
+# --------------------------------------------------------------------------- #
+# BMV / XBRL reports: Spanish rounding declaration, untitled continuation pages
+# --------------------------------------------------------------------------- #
+
+_BMV_HEADERS = ["Acumulado Año Actual 2026-01-01 - 2026-03-31",
+                "Acumulado Año Anterior 2025-01-01 - 2025-03-31"]
+_BMV_TITLE = "[520000] Estado de flujos de efectivo, método indirecto"
+
+
+def _bmv_pages(second_title=""):
+    rows = [{"caption": f"Línea {i}", "values": [f"{i},000,000", f"{i + 1},000,000"]}
+            for i in range(1, 12)]
+    return {
+        1: {"tables": [{"title": _BMV_TITLE, "units": "", "columns": _BMV_HEADERS,
+                        "rows": rows}]},
+        2: {"tables": [{"title": second_title, "units": "", "columns": _BMV_HEADERS,
+                        "rows": [{"caption": "Intereses pagados",
+                                  "values": ["1,230,956,000", "1,312,102,000"]}]}]},
+    }
+
+
+def _bmv_text(declared=True):
+    lines = [f"Línea {i} {i},000,000 {i + 1},000,000" for i in range(1, 12)]
+    cover = "Grado de redondeo utilizado en los estados 0\n" if declared else ""
+    return {1: cover + "\n".join(lines), 2: "Intereses pagados 1,230,956,000 1,312,102,000"}
+
+
+def test_a_spanish_xbrl_rounding_declaration_sets_the_units():
+    """KOF's BMV report prints no scale on any table; its cover declares rounding
+    "0" (whole pesos). Left unknown, those figures would be scaled as the merged
+    release's millions - a million times too large."""
+    doc = doc_from_tables("bmv.pdf", "0", _bmv_pages(), _bmv_text(), "m")
+    assert doc.units == "units"
+    assert all(s.units == "units" for s in doc.statements)
+    assert any(i.code == "units_from_rounding" for i in doc.issues)
+    assert not any(i.code == "units_unknown" for i in doc.issues)
+
+
+def test_without_a_declaration_the_units_stay_unknown():
+    doc = doc_from_tables("bmv.pdf", "0", _bmv_pages(), _bmv_text(declared=False), "m")
+    assert doc.units is None
+    assert any(i.code == "units_unknown" and i.severity == "error" for i in doc.issues)
+
+
+def test_an_untitled_table_on_the_next_page_continues_the_statement():
+    doc = doc_from_tables("bmv.pdf", "0", _bmv_pages(), _bmv_text(), "m")
+    assert len(doc.statements) == 1
+    assert doc.statements[0].rows[-1].caption == "Intereses pagados"
+
+
+def test_a_titled_table_on_the_next_page_is_its_own_statement():
+    doc = doc_from_tables("bmv.pdf", "0", _bmv_pages("[610000] Estado de cambios"),
+                          _bmv_text(), "m")
+    assert len(doc.statements) == 2

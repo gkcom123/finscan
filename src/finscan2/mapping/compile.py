@@ -89,6 +89,7 @@ def compile_mapping(mapping: Mapping, layout: SheetLayout) -> tuple[ModelMap, li
         spec.basis = decision.resolved_basis()
         spec.sign = decision.sign          # only ever what a human asserted
         spec.column = decision.column
+        spec.scale = decision.scale
         if decision.note:
             spec.review = decision.note
         model.rows.append(spec)

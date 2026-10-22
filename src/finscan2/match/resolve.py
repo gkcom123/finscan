@@ -666,6 +666,13 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                 continue
             value.adjustments.append(adjustment)
             value.units_from = value.units_to = model.units
+        elif getattr(spec, "scale", None) == "percent":
+            # A rate, not an amount: no currency scale applies to it.
+            figure = printed / 100.0
+            value.adjustments.append(Adjustment(
+                kind="scale", detail=f"percentage {printed:,.2f}% written as the "
+                                     f"fraction {figure:,.4f}"))
+            value.units_from = value.units_to = "percent"
         else:
             source_units = (_row_units(printed_row) or statement.units or doc.units
                             or model.units)

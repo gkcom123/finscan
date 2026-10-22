@@ -129,7 +129,13 @@ def table_section(statement: Statement, page_text: str) -> str:
 #: "Level of rounding used in financial statements: THOUSAND OF DOLLARS" above
 #: figures printed in full — 1,649,941,000.
 _ROUNDING = re.compile(
-    r"level\s+of\s+rounding[^:\n]*:\s*(thousands?|millions?)\b", re.IGNORECASE)
+    r"(?:level\s+of\s+rounding|grado\s+de\s+redondeo)[^:\n\d]*:?\s*"
+    r"(thousands?|millions?|miles|millones|0)\b", re.IGNORECASE)
+#: BMV/XBRL reports state their rounding in English ("Level of rounding used in
+#: financial statements: Thousands") or Spanish ("Grado de redondeo utilizado en los
+#: estados financieros: 0", where 0 means figures printed in full pesos).
+_ROUNDING_STEP = {"thousand": 1e3, "thousands": 1e3, "miles": 1e3,
+                  "million": 1e6, "millions": 1e6, "millones": 1e6, "0": 1.0}
 
 
 def _xbrl_rounding(doc: PdfDoc, statements: list[Statement]) -> str | None:
@@ -143,7 +149,7 @@ def _xbrl_rounding(doc: PdfDoc, statements: list[Statement]) -> str | None:
     match = next((m for p in doc.pages if (m := _ROUNDING.search(p.text or ""))), None)
     if match is None:
         return None
-    step = 1e3 if match.group(1).lower().startswith("thousand") else 1e6
+    step = _ROUNDING_STEP[match.group(1).lower()]
     figures = [abs(v) for s in statements if s.note is None for r in s.rows
                for v in r.values if v is not None and abs(v) >= step]
     # Counts ride along in these reports ("Number of employees 9,237") and are

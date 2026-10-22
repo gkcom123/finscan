@@ -344,9 +344,17 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             units = _sniff(f"{table.get('units') or ''}\n{title}\n{' '.join(headers)}",
                            _UNIT_PATTERNS)
             previous = statements[-1] if statements else None
-            same = (previous is not None and previous.title == title
-                    and [(c.months, c.end) for c in previous.columns]
-                    == [(c.months, c.end) for c in columns])
+            same_periods = (previous is not None
+                            and [(c.months, c.end) for c in previous.columns]
+                            == [(c.months, c.end) for c in columns])
+            # A continuation page prints no title of its own: Coca-Cola FEMSA's BMV
+            # report starts its cash flow under "[520000] ..." and carries investing
+            # and financing onto the next page with column headers only. Read as a
+            # separate untitled table, every line there fell outside the statement.
+            untitled_next_page = (not title and previous is not None
+                                  and previous.page in (page_no, page_no - 1)
+                                  and any(c.end for c in columns))
+            same = same_periods and (previous.title == title or untitled_next_page)
             if same:
                 # A statement continued over pages under the same title and columns.
                 previous.rows.extend(rows)
@@ -362,6 +370,21 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
 
     primary = [s for s in statements if s.units and s.columns]
     doc.units = primary[0].units if primary else None
+    if doc.units is None:
+        # A BMV/XBRL report prints no scale on its tables; it declares a rounding
+        # level once ("Grado de redondeo ...: 0"). Left unknown, its full-peso figures
+        # would be scaled as the merged release's millions - a million times too big.
+        from finscan2.pdf.read import _xbrl_rounding
+
+        if rounded := _xbrl_rounding(doc, statements):
+            doc.units = "units"
+            for statement in statements:
+                statement.units = statement.units or "units"
+            issues.append(Issue(
+                code="units_from_rounding", severity="info",
+                message=f"No table states a scale; the report declares its rounding level "
+                        f"as {rounded}, and its figures are multiples of it, so figures "
+                        f"are printed in full (units)."))
     doc.currency = next((c for s in statements
                          if (c := _sniff(" ".join([s.title] + [x.header for x in s.columns]),
                                          _CURRENCIES))), None) \

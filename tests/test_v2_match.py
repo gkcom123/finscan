@@ -787,3 +787,67 @@ def test_an_optional_caption_printed_twice_needs_an_occurrence():
     values = resolve_values(doc, resolved_map, path, "2026-06-30")
     assert values.values[0].value is None
     assert any("#n" in i.message for i in values.issues if i.code == "unresolved_row")
+
+
+# --------------------------------------------------------------------------- #
+# Percentages and choosing among same-named columns
+# --------------------------------------------------------------------------- #
+
+def _growth_statement():
+    from finscan2.schema import Column, Statement, StatementRow
+    headers = ["For the Second Quarter of: 2026", "For the Second Quarter of: 2025",
+               "For the Second Quarter of: Δ% Reported", "For the Second Quarter of: Δ% Comparable (6)",
+               "For the first Six Months of: Δ% Reported", "For the first Six Months of: Δ% Comparable (6)"]
+    cols = [Column(index=i, header=h, kind="point_in_time") for i, h in enumerate(headers)]
+    return Statement(page=1, kind="summary", title="SOUTH AMERICA DIVISION RESULTS OF OPERATIONS",
+                     heading="", columns=cols,
+                     rows=[StatementRow("Total Revenues (2)",
+                                        [30868.0, 27611.0, 11.8, 14.1, 8.4, 18.1], "")])
+
+
+def test_a_column_occurrence_picks_the_quarter_of_two_same_named_columns():
+    """KOF prints a quarter and a six-month 'Δ% Reported' side by side, neither dated."""
+    from finscan2.match.select import select_column
+
+    st = _growth_statement()
+    column, _ = select_column(st, "2026-06-30", 3, True, "Reported#1")
+    assert column.index == 2
+    column, _ = select_column(st, "2026-06-30", 3, True, "Comparable#2")
+    assert column.index == 5
+
+
+def test_two_same_named_columns_without_an_occurrence_are_refused():
+    from finscan2.match.select import select_column
+
+    column, why = select_column(_growth_statement(), "2026-06-30", 3, True, "Reported")
+    assert column is None and "2026-06-30" in why
+
+
+def test_a_missing_column_occurrence_is_refused():
+    from finscan2.match.select import select_column
+
+    column, why = select_column(_growth_statement(), "2026-06-30", 3, True, "Reported#3")
+    assert column is None and "#3 does not exist" in why
+
+
+def test_a_percent_row_is_written_as_a_fraction_and_never_unit_scaled():
+    """The model stores 0.043 where the filing prints 4.3% - and the document's
+    thousands must not touch a rate."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="pdf:Revenue growth",
+                                          extra_rows=[("Revenue growth", [4.3] * 4)])
+    resolved_map.bound[0].spec.scale = "percent"
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+    assert value.ok and abs(value.value - 0.043) < 1e-12
+    assert any(a.kind == "scale" and "fraction" in a.detail for a in value.adjustments)
+
+
+def test_the_percent_scale_round_trips_through_the_mapping(tmp_path):
+    from finscan2.mapping.schema import Mapping, MappingRow
+
+    m = Mapping(company="kof", sheet="Model", rows=[
+        MappingRow(label="Total", section="cash_flow", occurrence=3, pdf="Total revenues",
+                   column="Reported#1", basis="point_in_time", scale="percent")])
+    row = Mapping.load(m.save(tmp_path / "kof.json")).rows[0]
+    assert (row.scale, row.column, row.basis) == ("percent", "Reported#1", "point_in_time")

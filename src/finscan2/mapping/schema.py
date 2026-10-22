@@ -66,6 +66,9 @@ class MappingRow:
     #: columns: a borrowings note prints "30 June 2026 Current" and
     #: "30 June 2026 Non-current" side by side.
     column: str | None = None
+    #: "percent": the filing prints a percentage (4.3%) where the model stores a
+    #: fraction (0.043). Divided by 100 and never scaled by the document's units.
+    scale: str | None = None
 
     @property
     def key(self) -> tuple[str, str, int]:
@@ -117,7 +120,7 @@ class MappingRow:
             out["sources"] = self.sources
         else:
             out["pdf"] = self.pdf
-        for name in ("note", "statement", "basis", "sign", "column"):
+        for name in ("note", "statement", "basis", "sign", "column", "scale"):
             if getattr(self, name):
                 out[name] = getattr(self, name)
         return out
@@ -137,6 +140,7 @@ class MappingRow:
             basis=d.get("basis"),
             sign=d.get("sign"),
             column=d.get("column"),
+            scale=d.get("scale"),
         )
 
 
