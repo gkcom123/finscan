@@ -21,7 +21,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "29"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "41"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -50,6 +50,12 @@ PARSER_VERSION = "29"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 27: one-line header of month-first dates
                             # 28: "Performance at a glance" read as a summary table
                             # 29: "Financial Period Ended" columns stay year to date
+                            # 30: a mid-page "reconciliation of ..." table read as a summary
+                            # 31: LLM presentation tables inherit an unambiguous cover period
+                            # 32: LLM tables retain Turkish lira dotted-thousands values
+                            # 33: LLM verifier recognizes multi-group dotted thousands
+                            # 40: LLM table headers recover omitted Q/H group labels from page text
+                            # 41: LLM misread digits corrected from the page's printed line
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,
@@ -202,8 +208,55 @@ class PdfDoc:
             of_kind = [s for s in self.statements if s.kind == wanted]
             found = next((s for s in of_kind if s.columns), None) or next(iter(of_kind), None)
             if found is not None:
-                return found
+                return self._continued(found)
         return None
+
+    def _continued(self, start: Statement) -> Statement:
+        """A primary statement printed over consecutive pages, read as one.
+
+        CCU prints its statement of financial position across two pages that each
+        carry the full title and the same dated columns — assets on one, liabilities
+        and equity on the next. Read as two statements, every liability and the
+        equity total sat on a page that no mapping could address: `balance_sheet`
+        and `title:` both resolve to the first.
+
+        Merged only when the next statement is on the very next page, is of the same
+        kind, has the same title, and reports the same periods. Rows keep page order,
+        so an exact caption match still returns the earlier page's line first.
+        """
+        if start.note is not None:
+            return start
+        position = next((i for i, s in enumerate(self.statements) if s is start), None)
+        if position is None:
+            return start
+
+        def periods(statement: Statement) -> list[tuple]:
+            return [(c.kind, c.months, c.end) for c in statement.columns]
+
+        wanted = periods(start)
+        if not wanted or not any(end for _, _, end in wanted):
+            return start
+        def same_title(a: str, b: str) -> bool:
+            # A reader may print the company name on one page's title and not the
+            # next ("EMBOTELLADORA ANDINA S.A. AND SUBSIDIARIES Consolidated Interim
+            # Statements of Financial Position ..." / "Consolidated Interim ...").
+            a, b = a.strip().lower(), b.strip().lower()
+            return a == b or (bool(a) and bool(b) and (a.endswith(b) or b.endswith(a)))
+
+        rows, last_page = list(start.rows), start.page
+        for following in self.statements[position + 1:]:
+            if (following.note is None and following.kind == start.kind
+                    and same_title(following.title, start.title)
+                    and following.page == last_page + 1
+                    and periods(following) == wanted):
+                rows.extend(following.rows)
+                last_page = following.page
+            else:
+                break
+        if last_page == start.page:
+            return start
+        from dataclasses import replace
+        return replace(start, rows=rows)
 
     def titled(self, text: str) -> Statement | None:
         """The first primary statement whose title contains `text`.
@@ -213,12 +266,14 @@ class PdfDoc:
         an XBRL code ("[310000] Statement of comprehensive income"), which is
         stable from quarter to quarter where page numbers are not.
         """
-        needle = text.strip().lower()
+        normalize_dashes = lambda value: (value or "").replace("–", "-").replace("—", "-").replace("−", "-").lower()
+        needle = normalize_dashes(text.strip())
         titled = [s for s in self.statements
-                  if s.note is None and needle in (s.title or "").lower()]
+              if s.note is None and needle in normalize_dashes(s.title)]
         # A table of contents names the same section ("Section 1 ... Performance
         # at a glance ... 3") but has no columns; the real table does.
-        return next((s for s in titled if s.columns), None) or next(iter(titled), None)
+        found = next((s for s in titled if s.columns), None) or next(iter(titled), None)
+        return self._continued(found) if found is not None else None
 
     def note(self, number: int, end: str | None = None) -> Statement | None:
         """A note table, optionally the one for a particular period end.

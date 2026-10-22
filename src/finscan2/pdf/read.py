@@ -20,6 +20,7 @@ from finscan2.pdf.notes import extract_notes
 from finscan2.pdf.statements import (
     column_alignment,
     extract_continuation,
+    extract_embedded,
     extract_statement,
 )
 from finscan2.pdf.text import extract_page_text, render_tables
@@ -31,12 +32,13 @@ from finscan2.schema import PARSER_VERSION, Issue, Page, PdfDoc, Statement
 _UNIT_PATTERNS: list[tuple[str, str]] = [
     (r"\bin\s+(?:rs\.?\s+)?crores?\b|\bcr\.?\b", "crores"),
     (r"\b(?:in\s+)?(?:lakhs?|lacs?)\b", "lakhs"),
-    (r"\b(?:in\s+)?billions?\b|\bbn\b", "billions"),
-    (r"\b(?:in\s+)?millions?\b|\bmn\b|\bmm\b", "millions"),
-    (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b", "thousands"),
+    (r"\b(?:in\s+)?billions?\b|\bbn\b|\bmiles\s+de\s+millones\b", "billions"),
+    (r"\b(?:in\s+)?millions?\b|\bmn\b|\bmm\b|\bmillones\b|\bM(?:Ch|Cl)\$|(?<!\w)MM\$", "millions"),
+    (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b|\bTh(?:Ch|Cl)\$|(?<!\w)M\$", "thousands"),
 ]
 
 _CURRENCIES: list[tuple[str, str]] = [
+    (r"\bCLP\b|\bTh?(?:Ch|Cl)\$|\bMCh\$", "CLP"),
     (r"\bSAR\b|⃂|﷼", "SAR"), (r"\bAED\b", "AED"), (r"\bQAR\b", "QAR"),
     (r"\bINR\b|\bRs\.?\b|₹", "INR"), (r"\bRMB\b|\bCNY\b|¥", "CNY"),
     (r"\bHKD\b|\bHK\$", "HKD"), (r"\bUSD\b|\bUS\$", "USD"),
@@ -201,6 +203,8 @@ def _document_units(doc: PdfDoc) -> tuple[str | None, str | None, list[Issue]]:
                      + [p for p in doc.pages if p.page not in statement_pages]):
             if currency := _sniff(page.text, _CURRENCIES):
                 break
+    for statement, scale in found:
+        statement.units = scale
     return units, currency, issues
 
 
@@ -245,6 +249,7 @@ def read_pdf(
             if payload.get("parser_version") == PARSER_VERSION:
                 doc = PdfDoc.from_dict(payload)
                 doc.path = path      # the cache is keyed by content, not location
+                doc.units, doc.currency, _ = _document_units(doc)
                 return doc
             transcribed = {p["page"]: p.get("text", "")
                            for p in payload.get("pages", [])
@@ -322,6 +327,8 @@ def read_pdf(
                 # figures no primary statement prints — Almarai's D&A for the
                 # period appears only in the segment note.
                 note_pages.append((index, text))
+                if (embedded := extract_embedded(index, text, page=geometry)) is not None:
+                    statements.append(embedded)
 
     # Notes come last: a note reports "the period then ended", and only the primary
     # statements say how long that period is.

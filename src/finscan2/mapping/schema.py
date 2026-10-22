@@ -44,8 +44,12 @@ class MappingRow:
     label: str
     section: str = "other"
     occurrence: int = 1
-    #: str = one caption · list = a sum · None = the filing has no such line
+    #: str = one caption · list = a sum · None = the filing has no such line.
+    #: A caption ending in "?" is optional: 0 when the filing does not print it.
     pdf: str | list[str] | None = None
+    #: Signed filing captions which may each select a different statement.
+    #: Used for a disclosed net figure whose gains and losses live in separate notes.
+    sources: list[dict[str, str]] | None = None
     #: A constant, for a row no filing reports. Excludes `pdf`.
     value: float | None = None
     #: True for a row the filing never reports at all, whose figure is instead
@@ -62,6 +66,11 @@ class MappingRow:
     #: columns: a borrowings note prints "30 June 2026 Current" and
     #: "30 June 2026 Non-current" side by side.
     column: str | None = None
+    #: Multiplier for a figure that is not money — a "1.7%" printed where the model
+    #: holds 0.017 takes 0.01. Applied to the printed number INSTEAD of the table's
+    #: unit conversion, which would otherwise scale a percentage by the statement's
+    #: millions or thousands.
+    scale: float | None = None
 
     @property
     def key(self) -> tuple[str, str, int]:
@@ -81,9 +90,24 @@ class MappingRow:
             return f"const:{self.value}"
         if self.carry_forward:
             return f"carry:{self.note}" if self.note else "carry:"
+        if self.sources is not None:
+            # Signed captions that may each be read in their own statement: the same
+            # thing a sum does, so they share its machinery.
+            terms = []
+            for source in self.sources:
+                text, lead = source["caption"].strip(), ""
+                if text.startswith("-"):
+                    lead, text = "-", text[1:].strip()
+                where = f" @ {source['statement']}" if source.get("statement") else ""
+                terms.append(f"{lead}pdf:{text}{where}")
+            return "sum:" + "|".join(terms)
         if self.pdf is None:
             return f"absent:{self.note}" if self.note else "absent:"
         if isinstance(self.pdf, str):
+            # A trailing "?" marks the caption optional (see resolve._lookup_sum):
+            # routed through the sum path, which is where optional terms are read.
+            if self.pdf.strip().endswith("?"):
+                return f"sum:pdf:{self.pdf.strip()}"
             return f"pdf:{self.pdf}"
 
         terms = []
@@ -103,9 +127,11 @@ class MappingRow:
             out["value"] = self.value
         elif self.carry_forward:
             out["carry_forward"] = True
+        elif self.sources is not None:
+            out["sources"] = self.sources
         else:
             out["pdf"] = self.pdf
-        for name in ("note", "statement", "basis", "sign", "column"):
+        for name in ("note", "statement", "basis", "sign", "column", "scale"):
             if getattr(self, name):
                 out[name] = getattr(self, name)
         return out
@@ -117,6 +143,7 @@ class MappingRow:
             section=d.get("section", "other"),
             occurrence=int(d.get("occurrence", 1)),
             pdf=d.get("pdf"),
+            sources=d.get("sources"),
             value=d.get("value"),
             carry_forward=bool(d.get("carry_forward", False)),
             note=d.get("note", ""),
@@ -124,6 +151,7 @@ class MappingRow:
             basis=d.get("basis"),
             sign=d.get("sign"),
             column=d.get("column"),
+            scale=d.get("scale"),
         )
 
 
@@ -133,13 +161,15 @@ class Mapping:
     sheet: str
     rows: list[MappingRow] = field(default_factory=list)
     mapping_version: str = MAPPING_VERSION
-    #: How this company's filings are read. Absent: the rule-based reader.
-    #: "llm": every table page is read by the vision model instead (pdf/llm_read.py).
     reader: str | None = None
+    #: The scale the sheet's figures are kept in, for a sheet whose headers do not say.
+    units: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out = {"mapping_version": self.mapping_version, "company": self.company,
                "sheet": self.sheet}
+        if self.units:
+            out["units"] = self.units
         if self.reader:
             out["reader"] = self.reader
         out["rows"] = [r.to_dict() for r in self.rows]
@@ -150,7 +180,7 @@ class Mapping:
         return cls(company=d["company"], sheet=d["sheet"],
                    rows=[MappingRow.from_dict(r) for r in d.get("rows", [])],
                    mapping_version=d.get("mapping_version", MAPPING_VERSION),
-                   reader=d.get("reader"))
+                   reader=d.get("reader"), units=d.get("units"))
 
     def save(self, path: str | Path) -> Path:
         """One row per physical line, so a diff is one line per decision."""
@@ -159,10 +189,11 @@ class Mapping:
         rows = ",\n".join("    " + json.dumps(r.to_dict(), ensure_ascii=False)
                           for r in self.rows)
         reader = f'  "reader": {json.dumps(self.reader)},\n' if self.reader else ""
+        units = f'  "units": {json.dumps(self.units)},\n' if self.units else ""
         text = (f'{{\n  "mapping_version": "{self.mapping_version}",\n'
                 f'  "company": {json.dumps(self.company)},\n'
                 f'  "sheet": {json.dumps(self.sheet)},\n'
-                f'{reader}'
+                f'{units}{reader}'
                 f'  "rows": [\n{rows}\n  ]\n}}\n')
         path.write_text(text, encoding="utf-8")
         return path
@@ -170,6 +201,38 @@ class Mapping:
     @classmethod
     def load(cls, path: str | Path) -> "Mapping":
         return cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8")))
+
+    @staticmethod
+    def append_rows(path: str | Path, rows: list[MappingRow]) -> Path:
+        """Add rows to the end of a mapping file, leaving every existing line as is.
+
+        Not `load` + `save`: `from_dict` keeps only the keys this class knows, so a
+        round trip would silently drop any other top-level key a person added.
+        The new rows are spliced in before the closing `]` of `rows`; a file not in
+        the layout `save` writes is rewritten from its parsed JSON instead.
+        """
+        import re
+
+        path = Path(path)
+        text = path.read_text(encoding="utf-8")
+        added = ",\n".join("    " + json.dumps(r.to_dict(), ensure_ascii=False)
+                           for r in rows)
+        end = re.search(r"\}(\s*)\]\s*\}\s*$", text)
+        if end is not None:
+            spliced = text[:end.start() + 1] + ",\n" + added + text[end.start() + 1:]
+            try:
+                json.loads(spliced)
+            except ValueError:
+                spliced = None
+            if spliced is not None:
+                path.write_text(spliced, encoding="utf-8")
+                return path
+
+        payload = json.loads(text)
+        payload.setdefault("rows", []).extend(r.to_dict() for r in rows)
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                        encoding="utf-8")
+        return path
 
     def by_key(self) -> dict[tuple[str, str, int], MappingRow]:
         return {row.key: row for row in self.rows}

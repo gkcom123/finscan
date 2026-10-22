@@ -11,6 +11,6 @@ _work/
 profiles/
 samples/profiles/
 
-inbox/
+/inbox/**/*.pdf
+/inbox/**/*.json
 .env
-src/finscan/

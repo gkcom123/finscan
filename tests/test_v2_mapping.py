@@ -82,6 +82,19 @@ def test_a_carry_forward_row_round_trips_without_a_pdf_field(tmp_path):
     assert loaded.rows[0].instruction() == "carry:a peg"
 
 
+def test_a_scale_round_trips_and_reaches_the_compiled_row(tmp_path):
+    """A percentage printed as 1.7 for a model that holds 0.017."""
+    mapping = Mapping(company="x", sheet="Model", rows=[
+        MappingRow(label="Revenue", section="income_statement", pdf="Revenue", scale=0.01)])
+    path = mapping.save(tmp_path / "x.json")
+    assert '"scale": 0.01' in path.read_text(encoding="utf-8")
+    assert Mapping.load(path).rows[0].scale == 0.01
+
+    model, _ = compile_mapping(Mapping.load(path), _layout())
+    assert [r for r in model.rows if r.key.label == "Revenue"][0].scale == 0.01
+    assert RowSpec.from_dict(model.rows[0].to_dict()).scale == model.rows[0].scale
+
+
 # --------------------------------------------------------------------------- #
 # Compilation
 # --------------------------------------------------------------------------- #
@@ -211,3 +224,53 @@ def test_conversion_does_not_dress_an_unmatched_row_as_a_decision():
         "no filing caption" in by_label["Exchange Gain, net"].note
     # A caption a human typed that differs from the workbook's IS a decision.
     assert by_label["Other Expenses, net"].pdf == "Other (Expenses) / Income, net"
+
+
+def test_appending_rows_leaves_every_existing_line_untouched(tmp_path):
+    """A new workbook row is added without rewriting the human file: keys this
+    class does not model (CCU's `extra_statements`) and hand formatting survive."""
+    path = tmp_path / "ccu.json"
+    original = (
+        '{\n  "mapping_version": "2.0",\n  "company": "ccu",\n  "sheet": "Model",\n'
+        '  "extra_statements": [\n    {"title": "Nature of cost and expense"}\n  ],\n'
+        '  "rows": [\n'
+        '    {"label": "Revenue", "section": "income_statement", "pdf": "Net sales"}\n'
+        '  ]\n}\n')
+    path.write_text(original, encoding="utf-8")
+
+    Mapping.append_rows(path, [MappingRow(label="Royalties", section="income_statement",
+                                          pdf="Royalty income", note="added")])
+
+    text = path.read_text(encoding="utf-8")
+    assert text.startswith(original.split('"Net sales"}')[0] + '"Net sales"},\n')
+    assert '"extra_statements"' in text
+    assert [r.label for r in Mapping.load(path).rows] == ["Revenue", "Royalties"]
+
+
+def test_appending_to_a_file_in_another_layout_still_keeps_unknown_keys(tmp_path):
+    path = tmp_path / "x.json"
+    path.write_text('{"company": "x", "sheet": "Model", "custom": 1, "rows": []}',
+                    encoding="utf-8")
+
+    Mapping.append_rows(path, [MappingRow(label="Revenue", pdf="Revenue")])
+
+    import json
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["custom"] == 1
+    assert [r["label"] for r in payload["rows"]] == ["Revenue"]
+
+
+def test_a_single_optional_caption_compiles_to_a_sum_instruction():
+    """Optional terms are read on the sum path, so one "caption?" is routed there."""
+    from finscan2.mapping.schema import MappingRow
+
+    row = MappingRow(label="Inventory", section="balance_sheet", pdf="Inventories?")
+    assert row.instruction() == "sum:pdf:Inventories?"
+
+
+def test_optional_markers_survive_in_a_list_of_captions():
+    from finscan2.mapping.schema import MappingRow
+
+    row = MappingRow(label="Acq", section="cash_flow",
+                     pdf=["Sale of subsidiaries?", "-Investment in joint venture?"])
+    assert row.instruction() == "sum:pdf:Sale of subsidiaries?|-pdf:Investment in joint venture?"

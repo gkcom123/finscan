@@ -25,6 +25,7 @@ from finscan2.match.resolve import expected_period_end, resolve_values
 from finscan2.match.schema import Values
 from finscan2.model.discover import discover_sheet
 from finscan2.model.load import resolve as bind_map
+from finscan2.model.schema import ModelMap
 from finscan2.schema import Issue, PdfDoc
 from finscan2.write.column import WriteResult, write_column
 
@@ -37,6 +38,8 @@ class ApplyResult:
     write: WriteResult | None = None
     issues: list[Issue] = field(default_factory=list)
     refused: str = ""
+    #: The mapping compiled against this run's freshly discovered layout.
+    model: ModelMap | None = None
 
     @property
     def errors(self) -> list[Issue]:
@@ -130,6 +133,7 @@ def run(pdf_json: str | Path | list, mapping_path: str | Path, workbook: str | P
     # A1 — layout discovered fresh from the workbook, never from a cached copy.
     layout = discover_sheet(str(workbook), mapping.sheet)
     model, issues = compile_mapping(mapping, layout)
+    result.model = model
     result.issues.extend(issues)
 
     # A2 — bind, and refuse if any decision has nowhere to go.

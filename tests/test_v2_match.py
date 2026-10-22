@@ -82,6 +82,68 @@ def test_cash_flow_continuation_rows_are_available_for_lookup():
     assert len(rows) == 1 and rows[0].source_page == 9
 
 
+def test_title_alternatives_fall_back_in_order():
+    """`title:A || B` reads the first statement any alternative names, so a row
+    survives a filer renumbering the XBRL role code."""
+    from dataclasses import replace
+
+    from finscan2.match.resolve import _statement_for
+
+    class Spec:
+        statement = "title:[310000] || Statement of comprehensive income, profit or loss"
+        key = type("K", (), {"section": "income_statement"})()
+
+    profit = replace(_statement(_ALMARAI), title="[310001] Statement of comprehensive income, "
+                                                 "profit or loss, by function of expense")
+    oci = replace(_statement(_ALMARAI), title="[410000] Statement of comprehensive income, "
+                                              "OCI components")
+    found, _ = _statement_for(Spec, PdfDoc(path="f.pdf", sha256="x", statements=[oci, profit]))
+    assert found.title.startswith("[310001]")
+
+    missing, why = _statement_for(Spec, PdfDoc(path="f.pdf", sha256="x", statements=[oci]))
+    assert missing is None and "no statement's title contains" in why
+
+
+def test_a_sum_term_can_be_read_in_its_own_statement():
+    """D&A is in the income statement; the impairment that belongs with it is a note."""
+    from dataclasses import replace
+
+    from finscan2.mapping.schema import MappingRow
+    from finscan2.match.resolve import _lookup_sum
+    from finscan2.model.schema import RowKey, normalize_label
+
+    quarter = [("Trimestre", 3, "2026-06-30", "period")]
+    income = replace(_statement(quarter, [("Gasto por Depreciación", [-147237.0])]),
+                     title="ESTADOS DE RESULTADOS", units="thousands")
+    note = replace(_statement(quarter, [("Deterioro PPE *", [3751.0])]),
+                   title="23. PÉRDIDAS POR DETERIORO", units="thousands")
+    ytd = replace(_statement([("Acumulado", 6, "2026-06-30", "period")],
+                             [("Deterioro PPE *", [7835.0])]),
+                  title="23. PÉRDIDAS POR DETERIORO", units="thousands")
+    row = MappingRow(label="D&A", section="income_statement",
+                     pdf=["-Gasto por Depreciación", "Deterioro PPE @ title:PÉRDIDAS POR DETERIORO"])
+
+    class Spec:
+        resolve = row.instruction()
+        key = RowKey(label="D&A", section="income_statement")
+
+    scope = {"doc": PdfDoc(path="f.pdf", sha256="x", statements=[income, note]),
+             "target": "2026-06-30", "cadence": 3, "point_in_time": False, "units": "millions"}
+    terms, why = _lookup_sum(Spec, income, income.columns[0], scope)
+    assert why == "" and sum(t.signed() for t in terms) == 147237.0 + 3751.0
+
+    # A year to date added to a quarter is refused, not summed.
+    scope["doc"] = PdfDoc(path="f.pdf", sha256="x", statements=[income, ytd])
+    terms, why = _lookup_sum(Spec, income, income.columns[0], scope)
+    assert terms is None and "cannot be added" in why
+
+    # `sources` is the same thing, written as signed captions with their statements.
+    sources = MappingRow(label="FX", section="income_statement", sources=[
+        {"caption": "Gains", "statement": "title:NOTE 24"},
+        {"caption": "-Losses", "statement": "title:NOTE 25"}])
+    assert sources.instruction() == "sum:pdf:Gains @ title:NOTE 24|-pdf:Losses @ title:NOTE 25"
+
+
 def test_the_shortest_cumulative_column_is_preferred():
     """Fewer prior quarters to subtract means less exposure to a missing one."""
     both = [("January - June 2026", 6, "2026-06-30", "period"),
@@ -528,6 +590,81 @@ def test_a_caption_containing_a_comma_survives_term_splitting():
 
 
 # --------------------------------------------------------------------------- #
+# Optional terms: "caption?" counts as 0 when the filing does not print it
+# --------------------------------------------------------------------------- #
+
+def test_an_optional_term_the_filing_does_not_print_contributes_zero():
+    """Airtel's cash flow drops "Sale of subsidiaries" entirely in a quarter with
+    no disposal. Marked optional, its absence means 0, not a failed row."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="sum:pdf:Zakat|pdf:Income Tax?",
+        extra_rows=[("Zakat", [-26.573] * 4)])
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    value = values.values[0]
+    assert value.ok and round(value.value, 3) == round(_scaled(-26.573), 3)
+    assert "not printed in this filing, treated as 0" in value.adjustments[0].detail
+    assert not any(i.code == "unresolved_row" for i in values.issues)
+
+
+def test_an_optional_term_the_filing_prints_is_read_normally():
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="sum:pdf:Zakat|pdf:Income Tax?",
+        extra_rows=[("Zakat", [-26.573] * 4), ("Income Tax", [-10.578] * 4)])
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert round(values.values[0].value, 3) == round(_scaled(-37.151), 3)
+    assert not any(i.code == "optional_term_not_printed" for i in values.issues)
+
+
+def test_a_row_of_only_optional_terms_none_printed_is_written_as_zero():
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="sum:pdf:Zakat?|pdf:Income Tax?")
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert values.values[0].ok and values.values[0].value == 0
+    assert not any(i.severity == "error" for i in values.issues)
+
+
+def test_an_optional_zero_is_reported_every_time():
+    """A renamed caption would also read as "not printed", so the zero must never
+    be silent: a warning names the caption every quarter."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="sum:pdf:Zakat|pdf:Income Tax?",
+                                          extra_rows=[("Zakat", [1.0] * 4)])
+    issues = resolve_values(doc, resolved_map, path, "2026-06-30").issues
+    warned = [i for i in issues if i.code == "optional_term_not_printed"]
+    assert warned and warned[0].severity == "warning" and "Income Tax" in warned[0].message
+
+
+def test_an_ambiguous_optional_term_still_fails_instead_of_becoming_zero():
+    """Optional covers absence only. A caption that matches two lines is present
+    but unpinnable, and turning that into 0 would hide the ambiguity."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="sum:pdf:Zakat|pdf:Tax?",
+        extra_rows=[("Zakat", [1.0] * 4), ("Current Tax", [2.0] * 4),
+                    ("Deferred Tax", [3.0] * 4)])
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert values.values[0].value is None
+    assert any(i.code == "unresolved_row" for i in values.issues)
+
+
+def test_a_non_optional_term_still_fails_when_absent():
+    """The default is unchanged: only a "?" opts a term into reading absence as 0."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(resolve="sum:pdf:Zakat?|pdf:Income Tax")
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert values.values[0].value is None
+    assert any(i.code == "unresolved_row" for i in values.issues)
+
+
+# --------------------------------------------------------------------------- #
 # pdf: a single printed line, no sum
 # --------------------------------------------------------------------------- #
 
@@ -614,3 +751,101 @@ def test_a_column_can_be_chosen_by_its_header_text():
     assert select_column(st, "2026-06-30", 3, True)[0] is None          # ambiguous without it
     assert select_column(st, "2026-06-30", 3, True, "Current")[0].index == 0
     assert select_column(st, "2026-06-30", 3, True, "Non-current")[0].index == 1
+
+
+
+# --------------------------------------------------------------------------- #
+# A primary statement printed over consecutive pages is read as one
+# --------------------------------------------------------------------------- #
+
+def _two_page_balance_sheet(second_page: int = 5, second_end: str = "2026-06-30",
+                            second_title: str = "Statements of Financial Position"):
+    from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+
+    cols = lambda end: [Column(index=0, header="As of June 30, 2026", kind="point_in_time",
+                               end=end),
+                        Column(index=1, header="As of December 31, 2025",
+                               kind="point_in_time", end="2025-12-31")]
+    assets = Statement(page=4, kind="balance_sheet", title="Statements of Financial Position",
+                       heading="", columns=cols("2026-06-30"),
+                       rows=[StatementRow("Cash and cash equivalents", [10.0, 9.0], ""),
+                             StatementRow("Inventories", [5.0, 4.0], "")])
+    liabilities = Statement(page=second_page, kind="balance_sheet", title=second_title,
+                            heading="", columns=cols(second_end),
+                            rows=[StatementRow("Trade and other current payables", [7.0, 6.0], ""),
+                                  StatementRow("Total Shareholders' Equity", [20.0, 19.0], "")])
+    return PdfDoc(path="f.pdf", sha256="x", statements=[assets, liabilities])
+
+
+def test_a_balance_sheet_split_over_two_titled_pages_is_read_as_one():
+    """CCU's liabilities and equity page carried the same title as its assets page,
+    so no mapping could reach a single liability or the equity total."""
+    from finscan2.match.select import find_row
+
+    statement = _two_page_balance_sheet().statement("balance_sheet")
+    assert find_row(statement, "Trade and other current payables")[0] is not None
+    assert find_row(statement, "Total Shareholders' Equity")[0].values[0] == 20.0
+    assert find_row(statement, "Inventories")[0].values[0] == 5.0
+
+
+def test_the_title_lookup_reads_the_continuation_too():
+    from finscan2.match.select import find_row
+
+    statement = _two_page_balance_sheet().titled("Financial Position")
+    assert find_row(statement, "Trade and other current payables")[0] is not None
+
+
+def test_pages_that_are_not_consecutive_are_not_merged():
+    from finscan2.match.select import find_row
+
+    statement = _two_page_balance_sheet(second_page=9).statement("balance_sheet")
+    assert find_row(statement, "Trade and other current payables")[0] is None
+
+
+def test_a_page_reporting_different_periods_is_not_merged():
+    """Same title on the next page, but another date: a comparative or a different
+    entity's table, never a continuation."""
+    from finscan2.match.select import find_row
+
+    statement = _two_page_balance_sheet(second_end="2025-06-30").statement("balance_sheet")
+    assert find_row(statement, "Trade and other current payables")[0] is None
+
+
+def test_a_page_with_another_title_is_not_merged():
+    from finscan2.match.select import find_row
+
+    statement = _two_page_balance_sheet(second_title="Segment assets").statement("balance_sheet")
+    assert find_row(statement, "Trade and other current payables")[0] is None
+
+
+def test_merging_does_not_change_the_underlying_statements():
+    doc = _two_page_balance_sheet()
+    doc.statement("balance_sheet")
+    assert len(doc.statements[0].rows) == 2 and len(doc.statements[1].rows) == 2
+
+
+
+def test_an_optional_term_never_falls_back_to_a_near_match():
+    """CCU prints each page footer "F-8" as a row captioned "F". Containment found
+    that "F" inside an absent optional "Loan from related entities"; an optional
+    line is matched on its exact caption only, so absence stays absence."""
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="sum:pdf:Zakat|pdf:Loan from related entities?",
+        extra_rows=[("Zakat", [1.0] * 4), ("F", [-8.0] * 4)])
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+    assert round(value.value, 3) == round(_scaled(1.0), 3)
+    assert "not printed in this filing" in value.adjustments[0].detail
+
+
+def test_an_optional_caption_printed_twice_needs_an_occurrence():
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="sum:pdf:Zakat|pdf:Other cash movements?",
+        extra_rows=[("Zakat", [1.0] * 4), ("Other cash movements", [2.0] * 4),
+                    ("Other cash movements", [3.0] * 4)])
+    values = resolve_values(doc, resolved_map, path, "2026-06-30")
+    assert values.values[0].value is None
+    assert any("#n" in i.message for i in values.issues if i.code == "unresolved_row")

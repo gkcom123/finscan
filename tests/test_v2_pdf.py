@@ -112,6 +112,13 @@ def test_note_reference_column_is_dropped():
     assert row.values == [5868205.0, 5288402.0, 12028258.0, 11055492.0]
 
 
+def test_comma_separated_note_reference_pair_is_dropped():
+    """Xiaomi: note references 2, 3 precede four financial columns."""
+    row = parse_row("Cost of sales 2, 3 (87,312,691) (89,855,133) "
+                    "(164,644,189) (175,742,560)")
+    assert row.values == [-87312691.0, -89855133.0, -164644189.0, -175742560.0]
+
+
 def test_heading_rows_are_not_rows():
     assert parse_row("CASH FLOWS FROM OPERATING ACTIVITIES") is None
     assert parse_row("The accompanying notes form an integral part 2.6") is None
@@ -509,6 +516,27 @@ def test_note_table_scale_is_read_from_its_header_block():
     assert units == "thousands"
 
 
+def test_each_statement_keeps_its_own_detected_scale():
+    cash_flow = Statement(
+        page=27, kind="cash_flow", title="Cash Flow Statement (RMB millions)", heading="",
+        columns=[Column(index=0, header="Q2 2026", months=3)],
+        rows=[StatementRow("Cash flow", [10.0], "Cash flow 10")])
+    income = Statement(
+        page=30, kind="income_statement", title="Income Statement", heading="",
+        columns=[Column(index=0, header="Q2 2026 RMB'000", months=3)],
+        rows=[StatementRow("Revenue", [10000.0], "Revenue 10000")])
+    doc = _doc({27: "Cash Flow Statement (RMB millions)\nCash flow 10",
+                30: "Income Statement\nQ2 2026 RMB'000\nRevenue 10000"},
+               [cash_flow, income])
+
+    units, _, issues = _document_units(doc)
+
+    assert units == "millions"
+    assert cash_flow.units == "millions"
+    assert income.units == "thousands"
+    assert any(issue.code == "units_disagree" for issue in issues)
+
+
 def test_iso_date_range_column():
     """Gruma's BMV report: the span is two ISO dates, the second one the end."""
     cols = parse_columns_from_headers(
@@ -516,6 +544,24 @@ def test_iso_date_range_column():
          "Accumulated Current Year 2026-01-01 - 2026-06-30"],
         statement_kind="income_statement")
     assert [(c.months, c.end) for c in cols] == [(3, "2026-06-30"), (6, "2026-06-30")]
+
+
+def test_dotted_numeric_date_range_column():
+    """CTP's results: "1.1.2026 - 30.06.2026" is six months ending 30 June, not
+    a one-month column ending on its own first date."""
+    cols = parse_columns_from_headers(
+        ["1.1.2026 - 30.06.2026", "1.1.2025 - 30.06.2025 restated",
+         "Over the period 1.1.2026 – 31.3.2026"],
+        statement_kind="income_statement")
+    assert [(c.months, c.end) for c in cols] == [
+        (6, "2026-06-30"), (6, "2025-06-30"), (3, "2026-03-31")]
+
+
+def test_hyphenated_day_month_year_balance_column():
+    cols = parse_columns_from_headers(["30-Jun-2026", "31-Dec-2025"],
+                                      statement_kind="balance_sheet")
+    assert [(c.kind, c.end) for c in cols] == [
+        ("point_in_time", "2026-06-30"), ("point_in_time", "2025-12-31")]
 
 
 def test_xbrl_rounding_level_means_figures_in_units():

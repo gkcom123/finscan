@@ -41,7 +41,7 @@ def compile_mapping(mapping: Mapping, layout: SheetLayout) -> tuple[ModelMap, li
         company=mapping.company,
         sheet=layout.sheet,
         fingerprint=fingerprint(layout),
-        units=layout.units,
+        units=mapping.units or layout.units,
         cadence_months=layout.cadence_months,
         label_col=layout.label_col,
         header_row=layout.header_row,
@@ -89,6 +89,7 @@ def compile_mapping(mapping: Mapping, layout: SheetLayout) -> tuple[ModelMap, li
         spec.basis = decision.resolved_basis()
         spec.sign = decision.sign          # only ever what a human asserted
         spec.column = decision.column
+        spec.scale = decision.scale
         if decision.note:
             spec.review = decision.note
         model.rows.append(spec)

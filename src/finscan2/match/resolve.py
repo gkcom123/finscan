@@ -114,6 +114,10 @@ class _SummedRow:
         self.values = [None] * index + [total]
 
 
+#: Separator between alternative titles of a `title:` statement.
+_TITLE_OR = " || "
+
+
 def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
     """The statement a row reads from: what the map says, else its section.
 
@@ -146,7 +150,10 @@ def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
 
     if wanted.startswith("title:"):
         text = wanted.split(":", 1)[1]
-        statement = doc.titled(text)
+        # "title:A || B": the first alternative that names a statement wins, so a
+        # row can survive a filer renumbering or rewording the title.
+        alternatives = [part.strip() for part in text.split(_TITLE_OR) if part.strip()]
+        statement = next((s for s in (doc.titled(a) for a in alternatives) if s), None)
         if statement is None:
             return None, f"no statement's title contains '{text}'"
         return statement, ""
@@ -180,23 +187,92 @@ def _sum_terms(instruction: str) -> list[tuple[float, str]]:
     return terms
 
 
+#: Marks a sum term optional: "pdf:Inventories?". See _lookup_sum.
+_OPTIONAL = "?"
+
+
+def _not_printed(why: str) -> bool:
+    """True only when the caption is absent from the statement altogether.
+
+    Deliberately narrow. "matches 2 rows" or "no line after the block heading" are
+    NOT absence — they are a caption that is there but cannot be pinned down, and
+    turning those into 0 would hide exactly the ambiguity the matcher refused.
+    """
+    return why.startswith("no row captioned like") or " printed 0 time(s)" in why
+
+
+def _lookup_optional(instruction: str, statement):
+    """An optional term is matched on its exact caption only.
+
+    A line that may legitimately be missing must never fall back to containment
+    or word matching: the quarter it is missing is exactly when a near match is
+    wrong. CCU's report prints each page footer "F-8" as a row captioned "F", and
+    containment found that "F" inside an absent "Loan from related entities", so
+    the absent line read as -8. Exact on the normalized caption; "#n" and block
+    syntax keep their own rules. Printed more than once without "#n" is refused.
+    """
+    wanted = instruction.split(":", 1)[1] if ":" in instruction else instruction
+    if _BLOCK in wanted:
+        anchor, caption = (part.strip() for part in wanted.split(_BLOCK, 1))
+        return _in_block(statement, anchor, caption)
+    if m := _OCCURRENCE.search(wanted):
+        return _nth_exact(statement, wanted[:m.start()], int(m.group(1)))
+    target = normalize_label(wanted)
+    hits = [r for r in statement.rows if normalize_label(r.caption) == target]
+    if not hits:
+        # Not printed exactly. Before reading that as "not printed at all", ask the
+        # ordinary matcher whether a real line comes close — a renamed caption must
+        # stop the row, not quietly become 0. Page furniture ("F" from "F-8") is not
+        # a line, so it is left out of this check.
+        from dataclasses import replace
+
+        lines = [r for r in statement.rows if re.search(r"[^\W\d_]{3,}", r.caption or "")]
+        near, why = find_row(replace(statement, rows=lines), wanted)
+        if near is not None:
+            return None, (f"'{wanted.strip()}' is not printed exactly, but "
+                          f"'{near.caption}' is close — confirm the caption and update "
+                          f"the mapping")
+        if not why.startswith("no row captioned like"):
+            return None, f"'{wanted.strip()}' is not printed exactly, and {why}"
+        return None, f"no row captioned like '{wanted.strip()}'"
+    if len(hits) > 1:
+        return None, (f"caption '{wanted.strip()}' is printed {len(hits)} times; "
+                      f"name the one wanted with '#n'")
+    return hits[0], "exact caption match"
+
+
 class _Term:
     """One resolved term of a sum: enough to explain the arithmetic afterwards."""
 
-    def __init__(self, sign: float, caption: str, printed: float, assumed_zero: bool = False):
+    def __init__(self, sign: float, caption: str, printed: float, assumed_zero: bool = False,
+                 not_printed: bool = False):
         self.sign, self.caption, self.printed = sign, caption, printed
         self.assumed_zero = assumed_zero
+        #: An optional term whose caption the filing does not print at all.
+        self.not_printed = not_printed
 
     def signed(self) -> float:
         return self.sign * self.printed
 
     def describe(self) -> str:
         lead = "-" if self.sign < 0 else "+"
-        note = " (no figure printed, treated as 0)" if self.assumed_zero else ""
+        if self.not_printed:
+            note = " (optional, not printed in this filing, treated as 0)"
+        elif self.assumed_zero:
+            note = " (no figure printed, treated as 0)"
+        else:
+            note = ""
         return f"{lead} {self.caption} {self.printed:,.2f}{note}"
 
 
-def _lookup_sum(spec, statement, column):
+#: Separates a sum term's caption from the statement that term alone is read in:
+#: "-Gasto por Depreciación @ title:23. PÉRDIDAS POR DETERIORO". A figure the
+#: filing splits over two statements (D&A in the income statement, the impairment
+#: that belongs with it in a note) is one row in the model.
+_TERM_STATEMENT = " @ "
+
+
+def _lookup_sum(spec, statement, column, scope=None):
     """Every term of a sum, or nothing.
 
     A term whose caption cannot be found at all fails the whole sum: that is a
@@ -205,9 +281,24 @@ def _lookup_sum(spec, statement, column):
     a dash in the wanted column, has already told us its value — the filing is
     saying "nothing happened here this period" — so it contributes 0 rather than
     failing the row.
+
+    The exception is a term the map marks optional with a trailing "?": a line the
+    filing prints only in quarters where it has something to report (Airtel's cash
+    flow drops "Sale of subsidiaries" entirely when nil). Such a term contributes 0
+    when its caption is absent from the statement — and only then. A caption that
+    is present but ambiguous still fails, and every optional zero is reported.
+
+    A term may name its own statement (see `_TERM_STATEMENT`). Its column must cover
+    the same span as the row's, and is brought to the row's units, so a quarter is
+    never added to a year to date.
     """
     terms: list[_Term] = []
     for sign, instruction in _sum_terms(spec.resolve or ""):
+        instruction, _, override = instruction.partition(_TERM_STATEMENT)
+        instruction, override = instruction.strip(), override.strip()
+        optional = instruction.endswith(_OPTIONAL)
+        if optional:
+            instruction = instruction[:-len(_OPTIONAL)].rstrip()
         if instruction.startswith("const:"):
             try:
                 terms.append(_Term(sign, f"const {instruction.split(':', 1)[1]}",
@@ -216,25 +307,56 @@ def _lookup_sum(spec, statement, column):
                 return None, f"'{instruction}' in the sum is not a number"
             continue
 
+        term_statement, term_column, factor = statement, column, 1.0
+        if override:
+            if scope is None:
+                return None, f"the sum term '{instruction}' names a statement, which this lookup cannot resolve"
+
+            class _Where:
+                statement = override
+                key = spec.key
+
+            term_statement, why = _statement_for(_Where, scope["doc"], scope["target"])
+            if term_statement is None:
+                return None, f"the sum term '{instruction}' is read in '{override}': {why}"
+            term_column, why = select_column(term_statement, scope["target"], scope["cadence"],
+                                             scope["point_in_time"])
+            if term_column is None:
+                return None, f"the sum term '{instruction}' in '{override}': {why}"
+            if (term_column.months or None) != (column.months or None):
+                return None, (f"the sum term '{instruction}' in '{override}' covers "
+                              f"{term_column.months or 'a point in'} month(s), but the row's "
+                              f"column covers {column.months or 'a point in'} — they cannot be added")
+            row_units = statement.units or scope["doc"].units or scope["units"]
+            term_units = term_statement.units or scope["doc"].units or scope["units"]
+            factor = (UNIT_MULTIPLIER.get(term_units, 1.0) / UNIT_MULTIPLIER.get(row_units, 1.0))
+
         class _Part:
             resolve = instruction
             pdf_caption = None
             key = spec.key
 
-        row, why = _lookup(_Part, statement)
+        if optional:
+            row, why = _lookup_optional(instruction, term_statement)
+        else:
+            row, why = _lookup(_Part, term_statement)
         if row is None:
+            if optional and _not_printed(why):
+                caption = instruction.split(":", 1)[1].strip()
+                terms.append(_Term(sign, caption, 0.0, assumed_zero=True, not_printed=True))
+                continue
             return None, f"the sum term '{instruction}' did not resolve: {why}"
-        if column.index >= len(row.values):
+        if term_column.index >= len(row.values):
             return None, (f"the sum term '{instruction}' matched '{row.caption}', which "
                           f"has only {len(row.values)} value(s) — the wanted column is "
-                          f"number {column.index + 1}")
-        if column.index in getattr(row, "unverified", []):
+                          f"number {term_column.index + 1}")
+        if term_column.index in getattr(row, "unverified", []):
             return None, (f"the sum term '{instruction}' ('{row.caption}') was read by "
                           f"the vision model but not confirmed (see pdf/verify.py)")
-        if row.values[column.index] is None:
+        if row.values[term_column.index] is None:
             terms.append(_Term(sign, row.caption, 0.0, assumed_zero=True))
             continue
-        terms.append(_Term(sign, row.caption, row.values[column.index]))
+        terms.append(_Term(sign, row.caption, row.values[term_column.index] * factor))
     if not terms:
         return None, "the sum has no terms"
     return terms, ""
@@ -497,7 +619,11 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
         # because a sum of quarter-to-date figures needs de-cumulating exactly as a
         # single one does.
         if (spec.resolve or "").startswith("sum:"):
-            terms, why = _lookup_sum(spec, statement, column)
+            terms, why = _lookup_sum(spec, statement, column, {
+                "doc": doc, "target": target, "cadence": model.cadence_months,
+                "point_in_time": (spec.basis == "point_in_time"
+                                  or spec.key.section not in _FLOW_SECTIONS),
+                "units": model.units})
             if terms is None:
                 value.unresolved = why
                 out.values.append(value)
@@ -506,6 +632,13 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                     message=f"row {bound.row} '{spec.key.label}': {why}"))
                 continue
 
+            absent = [t.caption for t in terms if t.not_printed]
+            if absent:
+                out.issues.append(Issue(
+                    code="optional_term_not_printed", severity="warning",
+                    message=f"row {bound.row} '{spec.key.label}': this filing does not "
+                            f"print {', '.join(repr(c) for c in absent)}; counted as 0. "
+                            f"If the filing renamed the line, update the mapping."))
             total = sum(term.signed() for term in terms)
             value.source = Source(
                 statement=statement.kind, page=statement.page,
@@ -569,8 +702,10 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             priors = {c: cells.get((bound.row, c)) for c in columns_to_subtract}
             # The workbook's own figures are in the sheet's units; the filing's are
             # in the filing's, so both are brought to the sheet's scale first.
-            scaled_printed = _scale(printed, _row_units(printed_row) or statement.units
-                                    or doc.units or model.units, model.units)
+            row_scale = getattr(spec, "scale", None)
+            scaled_printed = (printed * row_scale if row_scale is not None else
+                              _scale(printed, _row_units(printed_row) or statement.units
+                                     or doc.units or model.units, model.units))
             figure, adjustment, issue = basis_mod.decumulate(
                 scaled_printed, priors, columns_to_subtract, bound.row, letters)
             if issue:
@@ -581,6 +716,13 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                 continue
             value.adjustments.append(adjustment)
             value.units_from = value.units_to = model.units
+        elif getattr(spec, "scale", None) is not None:
+            # Not money: the map's own multiplier stands in for the unit conversion.
+            figure = printed * spec.scale
+            value.adjustments.append(Adjustment(
+                kind="scale",
+                detail=f"printed {printed:,} x {spec.scale:g} (the map's multiplier) "
+                       f"= {figure:,.6g}; no unit conversion applied"))
         else:
             source_units = (_row_units(printed_row) or statement.units or doc.units
                             or model.units)
