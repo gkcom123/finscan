@@ -162,10 +162,14 @@ class Mapping:
     rows: list[MappingRow] = field(default_factory=list)
     mapping_version: str = MAPPING_VERSION
     reader: str | None = None
+    #: The scale the sheet's figures are kept in, for a sheet whose headers do not say.
+    units: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out = {"mapping_version": self.mapping_version, "company": self.company,
                "sheet": self.sheet}
+        if self.units:
+            out["units"] = self.units
         if self.reader:
             out["reader"] = self.reader
         out["rows"] = [r.to_dict() for r in self.rows]
@@ -176,7 +180,7 @@ class Mapping:
         return cls(company=d["company"], sheet=d["sheet"],
                    rows=[MappingRow.from_dict(r) for r in d.get("rows", [])],
                    mapping_version=d.get("mapping_version", MAPPING_VERSION),
-                   reader=d.get("reader"))
+                   reader=d.get("reader"), units=d.get("units"))
 
     def save(self, path: str | Path) -> Path:
         """One row per physical line, so a diff is one line per decision."""
@@ -185,10 +189,11 @@ class Mapping:
         rows = ",\n".join("    " + json.dumps(r.to_dict(), ensure_ascii=False)
                           for r in self.rows)
         reader = f'  "reader": {json.dumps(self.reader)},\n' if self.reader else ""
+        units = f'  "units": {json.dumps(self.units)},\n' if self.units else ""
         text = (f'{{\n  "mapping_version": "{self.mapping_version}",\n'
                 f'  "company": {json.dumps(self.company)},\n'
                 f'  "sheet": {json.dumps(self.sheet)},\n'
-                f'{reader}'
+                f'{units}{reader}'
                 f'  "rows": [\n{rows}\n  ]\n}}\n')
         path.write_text(text, encoding="utf-8")
         return path

@@ -41,8 +41,8 @@ DEFAULT_SECTION: Section = "income_statement"
 _EXACT_ONLY = {"valuation", "assumptions", "segment", "kpi", "guidance",
                "covenant", "capitalisation", "capitalization"}
 
-MAX_SCAN_ROWS = 400
-MAX_SCAN_COLS = 80
+MAX_SCAN_ROWS = 600
+MAX_SCAN_COLS = 200
 
 _UNIT_PATTERNS: list[tuple[str, str]] = [
     (r"\bcrores?\b|\bcr\.?\b", "crores"),
