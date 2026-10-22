@@ -113,8 +113,8 @@ class RowSpec:
     sign: Literal["positive", "negative"] | None = None
     #: Text the chosen column's header must contain (see MappingRow.column).
     column: str | None = None
-    #: "percent" divides the printed figure by 100 and skips unit scaling.
-    scale: str | None = None
+    #: Multiplier replacing the unit conversion (see MappingRow.scale).
+    scale: float | None = None
     #: Set by `learn` when a human should look at this row before it is trusted.
     review: str | None = None
     #: For a `formula` row whose reference-column formula embeds a hand-typed
@@ -126,8 +126,8 @@ class RowSpec:
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {"key": self.key.to_dict(), "row_hint": self.row_hint,
                                "kind": self.kind}
-        for name in ("resolve", "pdf_caption", "statement", "basis", "sign", "column", "scale",
-                     "review"):
+        for name in ("resolve", "pdf_caption", "statement", "basis", "sign", "column",
+                     "scale", "review"):
             value = getattr(self, name)
             if value is not None:
                 out[name] = value

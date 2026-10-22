@@ -236,10 +236,17 @@ class PdfDoc:
         wanted = periods(start)
         if not wanted or not any(end for _, _, end in wanted):
             return start
+        def same_title(a: str, b: str) -> bool:
+            # A reader may print the company name on one page's title and not the
+            # next ("EMBOTELLADORA ANDINA S.A. AND SUBSIDIARIES Consolidated Interim
+            # Statements of Financial Position ..." / "Consolidated Interim ...").
+            a, b = a.strip().lower(), b.strip().lower()
+            return a == b or (bool(a) and bool(b) and (a.endswith(b) or b.endswith(a)))
+
         rows, last_page = list(start.rows), start.page
         for following in self.statements[position + 1:]:
             if (following.note is None and following.kind == start.kind
-                    and following.title == start.title
+                    and same_title(following.title, start.title)
                     and following.page == last_page + 1
                     and periods(following) == wanted):
                 rows.extend(following.rows)

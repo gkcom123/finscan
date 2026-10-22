@@ -66,9 +66,11 @@ class MappingRow:
     #: columns: a borrowings note prints "30 June 2026 Current" and
     #: "30 June 2026 Non-current" side by side.
     column: str | None = None
-    #: "percent": the filing prints a percentage (4.3%) where the model stores a
-    #: fraction (0.043). Divided by 100 and never scaled by the document's units.
-    scale: str | None = None
+    #: Multiplier for a figure that is not money — a "1.7%" printed where the model
+    #: holds 0.017 takes 0.01. Applied to the printed number INSTEAD of the table's
+    #: unit conversion, which would otherwise scale a percentage by the statement's
+    #: millions or thousands.
+    scale: float | None = None
 
     @property
     def key(self) -> tuple[str, str, int]:
@@ -89,7 +91,16 @@ class MappingRow:
         if self.carry_forward:
             return f"carry:{self.note}" if self.note else "carry:"
         if self.sources is not None:
-            return "sources:" + json.dumps(self.sources, separators=(",", ":"))
+            # Signed captions that may each be read in their own statement: the same
+            # thing a sum does, so they share its machinery.
+            terms = []
+            for source in self.sources:
+                text, lead = source["caption"].strip(), ""
+                if text.startswith("-"):
+                    lead, text = "-", text[1:].strip()
+                where = f" @ {source['statement']}" if source.get("statement") else ""
+                terms.append(f"{lead}pdf:{text}{where}")
+            return "sum:" + "|".join(terms)
         if self.pdf is None:
             return f"absent:{self.note}" if self.note else "absent:"
         if isinstance(self.pdf, str):
@@ -151,10 +162,14 @@ class Mapping:
     rows: list[MappingRow] = field(default_factory=list)
     mapping_version: str = MAPPING_VERSION
     reader: str | None = None
+    #: The scale the sheet's figures are kept in, for a sheet whose headers do not say.
+    units: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out = {"mapping_version": self.mapping_version, "company": self.company,
                "sheet": self.sheet}
+        if self.units:
+            out["units"] = self.units
         if self.reader:
             out["reader"] = self.reader
         out["rows"] = [r.to_dict() for r in self.rows]
@@ -165,7 +180,7 @@ class Mapping:
         return cls(company=d["company"], sheet=d["sheet"],
                    rows=[MappingRow.from_dict(r) for r in d.get("rows", [])],
                    mapping_version=d.get("mapping_version", MAPPING_VERSION),
-                   reader=d.get("reader"))
+                   reader=d.get("reader"), units=d.get("units"))
 
     def save(self, path: str | Path) -> Path:
         """One row per physical line, so a diff is one line per decision."""
@@ -174,10 +189,11 @@ class Mapping:
         rows = ",\n".join("    " + json.dumps(r.to_dict(), ensure_ascii=False)
                           for r in self.rows)
         reader = f'  "reader": {json.dumps(self.reader)},\n' if self.reader else ""
+        units = f'  "units": {json.dumps(self.units)},\n' if self.units else ""
         text = (f'{{\n  "mapping_version": "{self.mapping_version}",\n'
                 f'  "company": {json.dumps(self.company)},\n'
                 f'  "sheet": {json.dumps(self.sheet)},\n'
-                f'{reader}'
+                f'{units}{reader}'
                 f'  "rows": [\n{rows}\n  ]\n}}\n')
         path.write_text(text, encoding="utf-8")
         return path

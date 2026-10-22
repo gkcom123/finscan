@@ -82,6 +82,68 @@ def test_cash_flow_continuation_rows_are_available_for_lookup():
     assert len(rows) == 1 and rows[0].source_page == 9
 
 
+def test_title_alternatives_fall_back_in_order():
+    """`title:A || B` reads the first statement any alternative names, so a row
+    survives a filer renumbering the XBRL role code."""
+    from dataclasses import replace
+
+    from finscan2.match.resolve import _statement_for
+
+    class Spec:
+        statement = "title:[310000] || Statement of comprehensive income, profit or loss"
+        key = type("K", (), {"section": "income_statement"})()
+
+    profit = replace(_statement(_ALMARAI), title="[310001] Statement of comprehensive income, "
+                                                 "profit or loss, by function of expense")
+    oci = replace(_statement(_ALMARAI), title="[410000] Statement of comprehensive income, "
+                                              "OCI components")
+    found, _ = _statement_for(Spec, PdfDoc(path="f.pdf", sha256="x", statements=[oci, profit]))
+    assert found.title.startswith("[310001]")
+
+    missing, why = _statement_for(Spec, PdfDoc(path="f.pdf", sha256="x", statements=[oci]))
+    assert missing is None and "no statement's title contains" in why
+
+
+def test_a_sum_term_can_be_read_in_its_own_statement():
+    """D&A is in the income statement; the impairment that belongs with it is a note."""
+    from dataclasses import replace
+
+    from finscan2.mapping.schema import MappingRow
+    from finscan2.match.resolve import _lookup_sum
+    from finscan2.model.schema import RowKey, normalize_label
+
+    quarter = [("Trimestre", 3, "2026-06-30", "period")]
+    income = replace(_statement(quarter, [("Gasto por Depreciación", [-147237.0])]),
+                     title="ESTADOS DE RESULTADOS", units="thousands")
+    note = replace(_statement(quarter, [("Deterioro PPE *", [3751.0])]),
+                   title="23. PÉRDIDAS POR DETERIORO", units="thousands")
+    ytd = replace(_statement([("Acumulado", 6, "2026-06-30", "period")],
+                             [("Deterioro PPE *", [7835.0])]),
+                  title="23. PÉRDIDAS POR DETERIORO", units="thousands")
+    row = MappingRow(label="D&A", section="income_statement",
+                     pdf=["-Gasto por Depreciación", "Deterioro PPE @ title:PÉRDIDAS POR DETERIORO"])
+
+    class Spec:
+        resolve = row.instruction()
+        key = RowKey(label="D&A", section="income_statement")
+
+    scope = {"doc": PdfDoc(path="f.pdf", sha256="x", statements=[income, note]),
+             "target": "2026-06-30", "cadence": 3, "point_in_time": False, "units": "millions"}
+    terms, why = _lookup_sum(Spec, income, income.columns[0], scope)
+    assert why == "" and sum(t.signed() for t in terms) == 147237.0 + 3751.0
+
+    # A year to date added to a quarter is refused, not summed.
+    scope["doc"] = PdfDoc(path="f.pdf", sha256="x", statements=[income, ytd])
+    terms, why = _lookup_sum(Spec, income, income.columns[0], scope)
+    assert terms is None and "cannot be added" in why
+
+    # `sources` is the same thing, written as signed captions with their statements.
+    sources = MappingRow(label="FX", section="income_statement", sources=[
+        {"caption": "Gains", "statement": "title:NOTE 24"},
+        {"caption": "-Losses", "statement": "title:NOTE 25"}])
+    assert sources.instruction() == "sum:pdf:Gains @ title:NOTE 24|-pdf:Losses @ title:NOTE 25"
+
+
 def test_the_shortest_cumulative_column_is_preferred():
     """Fewer prior quarters to subtract means less exposure to a missing one."""
     both = [("January - June 2026", 6, "2026-06-30", "period"),

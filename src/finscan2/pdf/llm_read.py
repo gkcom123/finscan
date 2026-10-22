@@ -44,6 +44,13 @@ Rules:
 - Never compute, round, re-sign or reorder numbers. Omit headings that carry no numbers. Omit note-reference columns.
 - If the page has no table of figures, return {"tables": []}."""
 
+#: The role code that opens every BMV XBRL statement title: "[310000] Statement of ...".
+_XBRL_TITLE = re.compile(r"\s*\[\d{6}\]")
+
+#: Primary statements whose later pages may print no title of their own.
+_CONTINUED_KINDS = frozenset({"balance_sheet", "cash_flow", "comprehensive_income",
+                              "income_statement"})
+
 #: A page is sent when its text layer carries at least this many figures, or has
 #: no text at all (a scan). Narrative pages are not worth a model call.
 _MIN_FIGURES = 20
@@ -55,6 +62,17 @@ _GROUP_PERIOD = re.compile(r"\b([1-4])\s*([QH])\s*(\d{2,4})\b", re.IGNORECASE)
 _BARE_YEAR = re.compile(r"^\s*((?:19|20)\d{2}|\d{2})\*?\s*$")
 _TL_OR_TRY = re.compile(r"\b(?:tl|try)\b", re.IGNORECASE)
 _DOTTED_THOUSANDS = re.compile(r"^-?\d{1,3}(?:\.\d{3})+$")
+#: Chilean/European grouping that no other reading can explain: two or more
+#: dot-separated groups ("1.512.033.764"), or dotted groups with a decimal comma
+#: ("1.234,56"). Safe in any column; a single group ("1.234") is not.
+_DOTTED_GROUPS = re.compile(r"\d{1,3}(?:\.\d{3}){2,}")
+_DOTTED_DECIMAL = re.compile(r"\d{1,3}(?:\.\d{3})+,\d+")
+#: A decimal comma ("177,67"). A US thousands comma is always followed by three
+#: digits, so one or two digits can only be a decimal.
+_DECIMAL_COMMA = re.compile(r"\d+,\d{1,2}")
+#: Chilean-peso scale markers ("M$", "MM$"). A table in them prints whole units of
+#: the scale, so a lone "748.160" is 748,160 and not 748.16.
+_PESO_SCALE = re.compile(r"(?<!\w)MM?\$|\bCLP\b|\bCh\$", re.IGNORECASE)
 _NON_MONETARY_COLUMN = re.compile(
     r"%|rate|margin|multiple|leverage|y/y|q/q|variance|var\b|change",
     re.IGNORECASE,
@@ -77,8 +95,12 @@ def _page_text(page) -> str:
 def _printed(text: str) -> set[float]:
     from finscan2.pdf.statements import parse_number
 
+    tokens = _FIGURE.findall(text or "")
+    # A decimal comma is only read on a page that also prints dotted thousands: in a
+    # US-format page "56,51" is a misread "5,651", never 56.51.
+    european = any(_DOTTED_GROUPS.fullmatch(t.strip().strip("()").lstrip("-")) for t in tokens)
     out = set()
-    for token in _FIGURE.findall(text or ""):
+    for token in tokens:
         value = parse_number(token)
         if value is not None:
             out.add(value)
@@ -89,19 +111,60 @@ def _printed(text: str) -> set[float]:
             if value is not None:
                 out.add(value)
                 out.add(-value)
+        if european and _DECIMAL_COMMA.fullmatch(compact.lstrip("-")):
+            value = parse_number(compact.replace(",", "."))
+            if value is not None:
+                out.add(value)
+                out.add(-value)
     return out
 
 
-def _number(cell, header: str):
-    """Parse an LLM cell, preserving TL's dotted thousands separators."""
+def _is_european_table(table: dict) -> bool:
+    """True when a table prints dotted thousands ("1.512.033.764").
+
+    The marker that licenses the Chilean/European readings below: two or more dot
+    groups cannot be anything else, whereas a lone "1.234" or "56,51" can.
+    """
+    for row in table.get("rows") or []:
+        for cell in row.get("values") or []:
+            body = str(cell or "").replace(" ", "").replace("−", "-").strip().strip("()").lstrip("-")
+            if _DOTTED_GROUPS.fullmatch(body) or _DOTTED_DECIMAL.fullmatch(body):
+                return True
+    return False
+
+
+def _european(body: str, header: str, context: str, european: bool = False) -> str | None:
+    """A Chilean/Turkish/European-format figure as plain digits, or None.
+
+    `header` is the column's own header (where TL/TRY mark a dotted-thousands
+    table); `context` adds the table's printed units (where "M$" does); `european`
+    says the table prints dotted thousands elsewhere. A lone "1.234" is only
+    thousands, and "177,67" only a decimal, when one of them says so.
+    """
+    if _DOTTED_DECIMAL.fullmatch(body):
+        return body.replace(".", "").replace(",", ".")
+    if _DOTTED_GROUPS.fullmatch(body):
+        return body.replace(".", "")
+    if _DOTTED_THOUSANDS.fullmatch(body) and (
+            european or _TL_OR_TRY.search(header) or _PESO_SCALE.search(context)):
+        return body.replace(".", "")
+    if european and _DECIMAL_COMMA.fullmatch(body):
+        return body.replace(",", ".")
+    return None
+
+
+def _number(cell, header: str, units: str = "", european: bool = False):
+    """Parse an LLM cell, preserving dotted thousands and decimal commas."""
     from finscan2.pdf.statements import parse_number
 
     if cell is None or str(cell).strip() in {"", "-", "–", "—"}:
         return None
     text = str(cell).replace(" ", "").replace("%", "")
     compact = text.strip().strip("()").replace("−", "-")
-    if _TL_OR_TRY.search(header) and _DOTTED_THOUSANDS.fullmatch(compact):
-        text = text.replace(".", "")
+    plain = _european(compact.lstrip("-"), header, f"{header} {units}", european)
+    if plain is not None:
+        lead = "-" if compact.startswith("-") else ""
+        text = f"({lead}{plain})" if text.startswith("(") and text.endswith(")") else f"{lead}{plain}"
     return parse_number(text)
 
 
@@ -240,34 +303,71 @@ def _inherit_flow_note_periods(statements) -> list[int]:
     return inherited
 
 
+def _printed_line(caption: str, text: str, count: int):
+    """The figures the page's text layer prints for a caption, or None.
+
+    Only when exactly one printed line starts with the caption's first words, and
+    it holds at least `count` figures; the last `count` are returned, so a note
+    reference printed before the figures falls away.
+    """
+    from finscan2.model.schema import normalize_label
+
+    words = normalize_label(caption).split()[:5]
+    if not words or not count:
+        return None
+    lead = " ".join(words)
+    candidates = set()
+    for line in text.split("\n"):
+        if not normalize_label(line).startswith(lead):
+            continue
+        tokens = _FIGURE.findall(line)
+        if len(tokens) >= count:
+            candidates.add(tuple(tokens[-count:]))
+    return next(iter(candidates)) if len(candidates) == 1 else None
+
+
+def _signs_from_text(caption: str, values: list, text: str, headers: list[str],
+                     units: str = "", european: bool = False):
+    """Restore the sign the page prints where the model read the right digits.
+
+    Every printed figure is accepted in either sign (a layout may show the sign by
+    a column, not a bracket), so a dropped parenthesis passes verification and
+    writes an expense as income. When the line's figures all agree with the row in
+    size, the line is the right one and its own signs are authoritative.
+    """
+    filled = [j for j, v in enumerate(values) if v is not None]
+    tokens = _printed_line(caption, text, len(filled))
+    if tokens is None:
+        return values, []
+    parsed = {j: _number(token, headers[j] if j < len(headers) else "", units, european)
+              for j, token in zip(filled, tokens)}
+    if any(parsed[j] is None or abs(parsed[j]) != abs(values[j]) for j in filled):
+        return values, []
+    fixed, changes = list(values), []
+    for j in filled:
+        if parsed[j] != values[j]:
+            fixed[j] = parsed[j]
+            changes.append(f"'{caption}' sign {values[j]:,.0f} -> {parsed[j]:,.0f}")
+    return fixed, changes
+
+
 def _repair_from_text(caption: str, values: list, unverified: list[int],
-                      text: str, headers: list[str]):
+                      text: str, headers: list[str], units: str = "",
+                      european: bool = False):
     """Replace a misread figure with the one the page's text layer prints for the line.
 
     Only when one printed line starts with the caption, every figure the model got
     right agrees with that line, and each replaced figure keeps its digit count: a
     one-digit slip, not a different number.
     """
-    from finscan2.model.schema import normalize_label
-
-    words = normalize_label(caption).split()[:5]
     filled = [j for j, v in enumerate(values) if v is not None]
-    if not words or not unverified or not filled:
+    if not unverified or not filled:
         return values, unverified, []
-    lead = " ".join(words)
-
-    candidates = set()
-    for line in text.split("\n"):
-        if not normalize_label(line).startswith(lead):
-            continue
-        tokens = _FIGURE.findall(line)
-        if len(tokens) >= len(filled):
-            candidates.add(tuple(tokens[-len(filled):]))
-    if len(candidates) != 1:
+    tokens = _printed_line(caption, text, len(filled))
+    if tokens is None:
         return values, unverified, []
-    tokens = next(iter(candidates))
 
-    parsed = {j: _number(token, headers[j] if j < len(headers) else "")
+    parsed = {j: _number(token, headers[j] if j < len(headers) else "", units, european)
               for j, token in zip(filled, tokens)}
     if any(parsed[j] is None for j in filled):
         return values, unverified, []
@@ -276,10 +376,19 @@ def _repair_from_text(caption: str, values: list, unverified: list[int],
 
     fixed = list(values)
     changes = []
+    # A digit-count change is a different number, not a slip — unless the row's
+    # alignment with the printed line is proven: a figure the model got right
+    # already agreed with it, or every column holds a figure so the right-aligned
+    # tokens cannot have shifted. Dropped digits ("909.333.911" read as "99.333.931")
+    # are the commonest vision error on dense dotted-thousands tables. Only trusted
+    # there: elsewhere, text lines carry fragments and footnote markers that make a
+    # right-aligned token match wrong ("12,203" split into "12" and "203").
+    aligned = european and (any(j not in unverified for j in filled)
+                            or len(filled) == len(values))
     for j in unverified:
         if j not in parsed or parsed[j] == values[j]:
             continue
-        if len(str(int(abs(parsed[j])))) != len(str(int(abs(values[j])))):
+        if not aligned and len(str(int(abs(parsed[j])))) != len(str(int(abs(values[j])))):
             continue
         changes.append(f"'{caption}' {values[j]:,.0f} -> {parsed[j]:,.0f}")
         fixed[j] = parsed[j]
@@ -301,6 +410,7 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
     unchecked: list[int] = []
     inherited_group_headers: list[int] = []
     corrected: list[str] = []
+    previous_last_page = 0
 
     for page_no in sorted(pages_json):
         payload = pages_json[page_no] or {}
@@ -322,8 +432,11 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             if _inherit_group_period_headers(columns, text):
                 inherited_group_headers.append(page_no)
             rows: list[StatementRow] = []
+            table_units = str(table.get("units") or "")
+            european = _is_european_table(table)
             for row in table.get("rows") or []:
-                values = [_number(v, headers[index] if index < len(headers) else "")
+                values = [_number(v, headers[index] if index < len(headers) else "",
+                                  table_units, european)
                           for index, v in enumerate(row.get("values") or [])]
                 if not any(v is not None for v in values):
                     continue
@@ -332,7 +445,11 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                               [j for j, v in enumerate(values) if v is not None and v not in printed])
                 if unverified:
                     values, unverified, changes = _repair_from_text(
-                        caption, values, unverified, text, headers)
+                        caption, values, unverified, text, headers, table_units, european)
+                    corrected.extend(f"page {page_no}: {c}" for c in changes)
+                if european and printed is not None:
+                    values, changes = _signs_from_text(caption, values, text, headers,
+                                                       table_units, european)
                     corrected.extend(f"page {page_no}: {c}" for c in changes)
                 if unverified:
                     unprinted[page_no] = unprinted.get(page_no, 0) + len(unverified)
@@ -343,24 +460,31 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                 continue
             units = _sniff(f"{table.get('units') or ''}\n{title}\n{' '.join(headers)}",
                            _UNIT_PATTERNS)
+            if units is None and _XBRL_TITLE.match(title):
+                # A BMV XBRL statement ("[310000] Statement of ...") states only its
+                # currency and prints every figure in full. Left unset it would
+                # inherit the press release's scale from the same PDF.
+                units = "units"
             previous = statements[-1] if statements else None
-            same_periods = (previous is not None
+            same_columns = (previous is not None
                             and [(c.months, c.end) for c in previous.columns]
                             == [(c.months, c.end) for c in columns])
-            # A continuation page prints no title of its own: Coca-Cola FEMSA's BMV
-            # report starts its cash flow under "[520000] ..." and carries investing
-            # and financing onto the next page with column headers only. Read as a
-            # separate untitled table, every line there fell outside the statement.
-            untitled_next_page = (not title and previous is not None
-                                  and previous.page in (page_no, page_no - 1)
-                                  and any(c.end for c in columns))
-            same = same_periods and (previous.title == title or untitled_next_page)
-            if same:
+            same = same_columns and previous.title == title
+            # A continuation page often prints no title of its own (BMV XBRL reports:
+            # the balance sheet's liabilities and the cash flow's investing and
+            # financing sections). It belongs to the primary statement on the page
+            # before when its columns are the same.
+            untitled_continuation = (
+                same_columns and not title and previous.kind in _CONTINUED_KINDS
+                and page_no == previous_last_page + 1)
+            if same or untitled_continuation:
                 # A statement continued over pages under the same title and columns.
                 previous.rows.extend(rows)
+                previous_last_page = page_no
                 continue
             statements.append(Statement(page=page_no, kind=kind, title=title, heading="",
                                         columns=columns, rows=rows, units=units))
+            previous_last_page = page_no
 
     pages = [Page(page=n, source="vision" if n in pages_json else "text",
                   chars=len(page_texts.get(n, "")), text=page_texts.get(n, ""))
