@@ -83,6 +83,14 @@ def compile_mapping(mapping: Mapping, layout: SheetLayout) -> tuple[ModelMap, li
             continue
 
         bound_keys.add(key)
+        if decision.copy_formula:
+            # Not read from the filing: the writer copies this row's latest formula.
+            spec.kind = "formula"
+            spec.resolve = decision.instruction()
+            if decision.note:
+                spec.review = decision.note
+            model.rows.append(spec)
+            continue
         spec.kind = "input"
         spec.resolve = decision.instruction()
         spec.statement = decision.resolved_statement()

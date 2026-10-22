@@ -69,7 +69,7 @@ def select_column(statement: Statement, period_end: str,
                                 "without a repeated period header")
             ends = ", ".join(sorted({c.end or "?" for c in statement.columns}))
             return None, f"no column ends on {period_end} (found: {ends})"
-        chosen, note = prefer_total(matches)
+        chosen, note = prefer_total(matches, statement.rows)
         if chosen is None:
             return None, note
         return chosen, f"balance column matched by end date{f' · {note}' if note else ''}"
@@ -77,7 +77,7 @@ def select_column(statement: Statement, period_end: str,
     exact = [c for c in statement.columns
              if c.end == period_end and c.months == cadence_months]
     if exact:
-        chosen, note = prefer_total(exact)
+        chosen, note = prefer_total(exact, statement.rows)
         if chosen is None:
             return None, note
         return chosen, (f"standalone {cadence_months}-month column"
@@ -89,7 +89,8 @@ def select_column(statement: Statement, period_end: str,
         # The shortest cumulative column needs the fewest prior quarters
         # subtracted, so it is the least exposed to a missing prior column.
         shortest = min(c.months or 99 for c in cumulative)
-        chosen, note = prefer_total([c for c in cumulative if c.months == shortest])
+        chosen, note = prefer_total([c for c in cumulative if c.months == shortest],
+                                    statement.rows)
         if chosen is None:
             return None, note
         return chosen, (f"only a {chosen.months}-month cumulative column for "
@@ -144,22 +145,44 @@ def direction_variants(normalized: str) -> list[str]:
     return []
 
 
-def prefer_total(columns: list[Column]) -> tuple[Column | None, str]:
+def prefer_total(columns: list[Column],
+                 rows: list[StatementRow] | None = None) -> tuple[Column | None, str]:
     """Pick between columns that match a period equally well.
 
     A note's segment table has one column per segment, all for the same period, so
     the period tests cannot separate them. The total is what a company-level model
     reads; anything else has to be asked for by name, and a tie with no total is
     refused rather than resolved by position.
+
+    The one tie that is no tie: the same period printed twice with the same figure
+    on every line. Tencent's income statement sets "2Q2025 vs 2Q2024" beside
+    "2Q2025 vs 1Q2025", so the quarter appears twice, identically; either column
+    gives the same value, so the first is taken.
     """
     if len(columns) == 1:
         return columns[0], ""
     totals = [c for c in columns if (c.header or "").strip().lower() == "total"]
     if len(totals) == 1:
         return totals[0], "the note's total column"
+    if rows and _identical(columns, rows):
+        return columns[0], (f"the period is printed {len(columns)} times with the same "
+                            f"figure on every line")
     headers = ", ".join(repr(c.header) for c in columns[:5])
     return None, (f"{len(columns)} columns match this period ({headers}) and none is "
                   f"the total, so which one is wanted cannot be decided here")
+
+
+def _identical(columns: list[Column], rows: list[StatementRow]) -> bool:
+    """True when the columns carry the same header, span and value on every row."""
+    first = columns[0]
+    if any((c.header, c.months, c.end) != (first.header, first.months, first.end)
+           for c in columns[1:]):
+        return False
+    def at(row: StatementRow, column: Column):
+        return row.values[column.index] if column.index < len(row.values) else None
+    figures = [row for row in rows if at(row, first) is not None]
+    return bool(figures) and all(at(row, c) == at(row, first)
+                                 for row in rows for c in columns[1:])
 
 
 def find_row(statement: Statement, caption: str,

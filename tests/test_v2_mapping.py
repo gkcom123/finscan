@@ -274,3 +274,22 @@ def test_optional_markers_survive_in_a_list_of_captions():
     row = MappingRow(label="Acq", section="cash_flow",
                      pdf=["Sale of subsidiaries?", "-Investment in joint venture?"])
     assert row.instruction() == "sum:pdf:Sale of subsidiaries?|-pdf:Investment in joint venture?"
+
+
+def test_copy_formula_round_trips_and_compiles_to_a_formula_row(tmp_path):
+    """Tencent's average FX rate: typed in 2Q, =AVERAGE(...) in other quarters."""
+    path = Mapping(company="x", sheet="Model", rows=[
+        MappingRow(label="FX rate average", section="other", copy_formula=True)]).save(
+        tmp_path / "x.json")
+    assert '"copy_formula": true' in path.read_text(encoding="utf-8")
+    assert '"pdf"' not in path.read_text(encoding="utf-8")
+
+    row = Mapping.load(path).rows[0]
+    assert row.copy_formula and row.instruction() == "formula:latest"
+
+    layout = SheetLayout(sheet="Model", rows=[
+        RowLayout(row=9, label="FX rate average", section="other", role="input",
+                  has_formula=False)])
+    model, issues = compile_mapping(Mapping.load(path), layout)
+    assert not issues
+    assert model.rows[0].kind == "formula" and model.rows[0].resolve == "formula:latest"

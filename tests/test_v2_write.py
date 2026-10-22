@@ -301,3 +301,17 @@ def test_a_recipe_row_switches_to_the_annual_actual_at_fiscal_year_end(tmp_path)
     cell = load_workbook(out)["Model"].cell(10, 8)
     assert cell.value == "=C10-G10-F10-E10"
     assert result.formulas_copied == 1
+
+
+def test_the_latest_formula_in_a_row_is_found_past_typed_values():
+    """Copy-formula rows take the nearest real formula to the left, skipping a
+    typed rate and a typed expression that references no cell."""
+    from openpyxl import Workbook
+
+    from finscan2.write.column import latest_formula_cell
+
+    ws = Workbook().active
+    ws["C5"], ws["D5"], ws["E5"], ws["F5"] = 0.1381, "=AVERAGE(C6:D6)", "=1/7.0176", 0.13855
+    cell = latest_formula_cell(ws, row=5, write_col=7, label_col=2)
+    assert cell is not None and cell.coordinate == "D5"
+    assert latest_formula_cell(ws, row=8, write_col=7, label_col=2) is None

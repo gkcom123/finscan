@@ -101,9 +101,52 @@ def _read_cells(workbook_path: str, sheet: str,
         for row, col in cells:
             value = worksheet.cell(row, col).value
             out[(row, col)] = value if isinstance(value, (int, float)) and not isinstance(value, bool) else None
-        return out
     finally:
         book.close()
+
+    missing = [cell for cell, value in out.items() if value is None]
+    if missing:
+        # A typed expression ("=(-15482581-255436)/1000000") references no cell, so
+        # it has exactly one value even without Excel's cache. Anything that
+        # references a cell is still refused, as above.
+        formulas = load_workbook(workbook_path, data_only=False)
+        try:
+            worksheet = sheet_named(formulas, sheet)
+            for row, col in missing:
+                out[(row, col)] = literal_value(worksheet.cell(row, col).value)
+        finally:
+            formulas.close()
+    return out
+
+
+def literal_value(formula) -> float | None:
+    """The value of a formula made only of numbers and + - * / ^ ( ), else None.
+
+    Parsed, never `eval`-ed: any name, call or cell reference returns None.
+    """
+    import ast
+    import operator
+
+    if not (isinstance(formula, str) and formula.startswith("=")):
+        return None
+    ops = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
+           ast.Div: operator.truediv, ast.Pow: operator.pow,
+           ast.USub: operator.neg, ast.UAdd: operator.pos}
+
+    def walk(node):
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) \
+                and not isinstance(node.value, bool):
+            return float(node.value)
+        if isinstance(node, ast.BinOp) and type(node.op) in ops:
+            return ops[type(node.op)](walk(node.left), walk(node.right))
+        if isinstance(node, ast.UnaryOp) and type(node.op) in ops:
+            return ops[type(node.op)](walk(node.operand))
+        raise ValueError("not a literal expression")
+
+    try:
+        return walk(ast.parse(formula[1:].replace("^", "**"), mode="eval").body)
+    except (SyntaxError, ValueError, ZeroDivisionError, OverflowError, TypeError):
+        return None
 
 
 class _SummedRow:
@@ -214,7 +257,15 @@ def _lookup_optional(instruction: str, statement):
     wanted = instruction.split(":", 1)[1] if ":" in instruction else instruction
     if _BLOCK in wanted:
         anchor, caption = (part.strip() for part in wanted.split(_BLOCK, 1))
-        return _in_block(statement, anchor, caption)
+        row, why = _in_block(statement, anchor, caption)
+        # Missing from the block AND from the whole statement is plain absence (Vesta
+        # prints "Costs of debt issuance" in its financing section only in quarters
+        # that raise debt). Printed elsewhere in the statement is not: that is the
+        # line in the wrong block, and stays an error.
+        if (row is None and why.startswith("no '")
+                and not any(_plain(r.caption) == _plain(caption) for r in statement.rows)):
+            return None, f"no row captioned like '{caption}' in the statement"
+        return row, why
     if m := _OCCURRENCE.search(wanted):
         return _nth_exact(statement, wanted[:m.start()], int(m.group(1)))
     target = normalize_label(wanted)

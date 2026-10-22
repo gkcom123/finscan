@@ -57,6 +57,12 @@ class MappingRow:
     #: forward unchanged from the reference column rather than looked up or defaulted.
     #: Excludes `pdf` and `value`.
     carry_forward: bool = False
+    #: True for a row the analyst fills with a formula in some periods and a typed
+    #: figure in others — Tencent's average FX rate is typed in 2Q but is
+    #: =AVERAGE(prior end rate, this end rate) in 1Q/3Q/4Q. The row's most recent
+    #: formula is copied into the new column, shifted like any formula copy.
+    #: Excludes `pdf`, `value` and `carry_forward`.
+    copy_formula: bool = False
     note: str = ""
     #: Overrides, present only where the derived default is wrong.
     statement: str | None = None
@@ -90,6 +96,8 @@ class MappingRow:
             return f"const:{self.value}"
         if self.carry_forward:
             return f"carry:{self.note}" if self.note else "carry:"
+        if self.copy_formula:
+            return "formula:latest"
         if self.sources is not None:
             # Signed captions that may each be read in their own statement: the same
             # thing a sum does, so they share its machinery.
@@ -127,6 +135,8 @@ class MappingRow:
             out["value"] = self.value
         elif self.carry_forward:
             out["carry_forward"] = True
+        elif self.copy_formula:
+            out["copy_formula"] = True
         elif self.sources is not None:
             out["sources"] = self.sources
         else:
@@ -146,6 +156,7 @@ class MappingRow:
             sources=d.get("sources"),
             value=d.get("value"),
             carry_forward=bool(d.get("carry_forward", False)),
+            copy_formula=bool(d.get("copy_formula", False)),
             note=d.get("note", ""),
             statement=d.get("statement"),
             basis=d.get("basis"),

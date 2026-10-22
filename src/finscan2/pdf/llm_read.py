@@ -400,7 +400,7 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                     page_texts: dict[int, str], model_name: str):
     """The LLM's tables as a PdfDoc — the same contract the rule-based reader keeps."""
     from finscan2.pdf.columns import parse_columns_from_headers
-    from finscan2.pdf.read import _CURRENCIES, _UNIT_PATTERNS, _sniff
+    from finscan2.pdf.read import _CURRENCIES, _UNIT_PATTERNS, _sniff, whole_units
     from finscan2.pdf.statements import _inherit_title_period, _stated_span, classify
     from finscan2.schema import Issue, Page, PdfDoc, Statement, StatementRow
 
@@ -460,6 +460,10 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
                 continue
             units = _sniff(f"{table.get('units') or ''}\n{title}\n{' '.join(headers)}",
                            _UNIT_PATTERNS)
+            if units is None and whole_units(text):
+                # "(In US dollars)" printed on the page, with no scale anywhere: the
+                # figures are whole units. Read from the page's own text layer.
+                units = "units"
             if units is None and _XBRL_TITLE.match(title):
                 # A BMV XBRL statement ("[310000] Statement of ...") states only its
                 # currency and prints every figure in full. Left unset it would

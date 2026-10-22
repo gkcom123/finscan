@@ -323,3 +323,20 @@ def test_a_row_left_blank_records_nothing():
                                        unresolved="no row captioned like 'Zakat'"))
     assert apply_bindings(values, model) == []
     assert model.rows[0].pdf_caption is None
+
+
+def test_a_caption_pointing_at_another_caption_is_read_without_excel_cache(tmp_path):
+    """An openpyxl-saved workbook stores "=+B3" with no cached text; the label must
+    still read, or mirrored rows (and section headings among them) vanish."""
+    from openpyxl import Workbook, load_workbook
+
+    from finscan2.model.discover import _caption
+
+    path = tmp_path / "m.xlsx"
+    book = Workbook()
+    sheet = book.active
+    sheet["B3"], sheet["B9"], sheet["B10"] = "Net Leverage", "=+B3", "=B3&\" x\""
+    book.save(path)
+    formulas, values = load_workbook(path)["Sheet"], load_workbook(path, data_only=True)["Sheet"]
+    assert _caption(formulas, values, 9, 2) == "Net Leverage"
+    assert _caption(formulas, values, 10, 2) == ""

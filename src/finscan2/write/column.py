@@ -109,6 +109,17 @@ def _copy_style(source, target) -> None:
         target._style = source._style
 
 
+def latest_formula_cell(worksheet, row: int, write_col: int, label_col: int):
+    """The nearest cell left of `write_col` in `row` holding a formula that
+    references other cells, or None. A typed expression ("=1/7.0176") is not one."""
+    for col in range(write_col - 1, label_col, -1):
+        cell = worksheet.cell(row, col)
+        value = cell.value
+        if isinstance(value, str) and value.startswith("=") and _references_cells(value):
+            return cell
+    return None
+
+
 def write_column(values: Values, resolved_map: ResolvedMap, workbook_path: str,
                  output_path: str, period_end: str | None = None) -> WriteResult:
     """Write the resolved values into a new column of a copy of the workbook."""
@@ -161,6 +172,17 @@ def write_column(values: Values, resolved_map: ResolvedMap, workbook_path: str,
                 continue
 
             if spec.kind == "formula":
+                if spec.resolve == "formula:latest":
+                    latest = latest_formula_cell(worksheet, row, write_col, model.label_col)
+                    if latest is None:
+                        result.rows_skipped += 1
+                        result.issues.append(Issue(
+                            code="no_formula_to_copy", severity="warning",
+                            message=f"{letter}{row} ('{spec.key.label}') was left blank: "
+                                    f"the mapping copies this row's latest formula, but no "
+                                    f"earlier column holds one."))
+                        continue
+                    source = latest
                 formula = source.value
                 if spec.formula_recipe is not None:
                     built = _ttm_margin_plug_formula(

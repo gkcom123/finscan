@@ -15,6 +15,7 @@ from datetime import date, datetime
 from typing import Any
 
 from openpyxl import load_workbook
+from openpyxl.utils import column_index_from_string
 
 from finscan2.model.schema import Section
 
@@ -182,7 +183,11 @@ def _effective(worksheet, values_sheet, row: int, col: int) -> Any:
     return value
 
 
-def _caption(worksheet, values_sheet, row: int, col: int) -> str:
+#: A caption that is only a pointer to another cell: "=B86", "=+B136", "=$B$12".
+_CAPTION_REF = re.compile(r"^=\+?\$?([A-Z]{1,3})\$?(\d+)$")
+
+
+def _caption(worksheet, values_sheet, row: int, col: int, depth: int = 0) -> str:
     """The caption a reader sees in a cell.
 
     A model often mirrors a block of line items further down the sheet by making
@@ -193,7 +198,18 @@ def _caption(worksheet, values_sheet, row: int, col: int) -> str:
     """
     text = _text(worksheet.cell(row, col).value)
     if text.startswith("="):
-        return _text(values_sheet.cell(row, col).value)
+        cached = _text(values_sheet.cell(row, col).value)
+        if cached or depth >= 5:
+            return cached
+        # No cached value: a workbook last saved by openpyxl (FinScan's own output,
+        # before Excel has reopened it) stores formulas without their results. A
+        # caption that only points at another caption ("=+B136") is still readable
+        # by following the reference; without this, Vesta's mirrored labels vanish
+        # on the next run and the section headings among them with them.
+        if ref := _CAPTION_REF.match(text.replace(" ", "")):
+            return _caption(worksheet, values_sheet, int(ref.group(2)),
+                            column_index_from_string(ref.group(1)), depth + 1)
+        return cached
     return text
 
 

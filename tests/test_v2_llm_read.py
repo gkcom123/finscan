@@ -171,3 +171,14 @@ def test_presentation_group_labels_restore_missing_quarter_headers():
         (3, "2026-03-31"), (None, None)]
     assert columns[0].header == "2Q26 2026"
     assert any(issue.code == "llm_inherited_group_period_headers" for issue in doc.issues)
+
+
+def test_a_currency_only_unit_line_means_figures_are_whole_units():
+    """Vesta's statements say "(In US dollars)" and nothing else about scale."""
+    from finscan2.pdf.read import whole_units
+
+    assert whole_units("Statements of Financial Position\n(In US dollars)")
+    assert whole_units("For the three-month periods ended March 31, 2026 (In Mexican pesos)")
+    assert not whole_units("(In thousands of US dollars)")
+    assert not whole_units("(In millions of Mexican pesos)")
+    assert not whole_units("Revenue in US dollars grew 12%")

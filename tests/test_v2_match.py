@@ -913,3 +913,65 @@ def test_the_percent_scale_round_trips_through_the_mapping(tmp_path):
                    column="Reported#1", basis="point_in_time", scale="percent")])
     row = Mapping.load(m.save(tmp_path / "kof.json")).rows[0]
     assert (row.scale, row.column, row.basis) == ("percent", "Reported#1", "point_in_time")
+
+
+def _twice(second_revenue: float) -> Statement:
+    """Tencent's layout: "2Q2025 2Q2024 | 2Q2025 1Q2025" — the quarter printed twice."""
+    columns = [Column(index=0, header="Unaudited 2Q2025", months=3, end="2025-06-30"),
+               Column(index=1, header="Unaudited 2Q2024", months=3, end="2024-06-30"),
+               Column(index=2, header="Unaudited 2Q2025", months=3, end="2025-06-30"),
+               Column(index=3, header="Unaudited 1Q2025", months=3, end="2025-03-31")]
+    rows = [StatementRow(caption="Revenues", values=[184504.0, 161117.0, second_revenue, 180022.0],
+                         raw=""),
+            StatementRow(caption="Cost of revenues", values=[-79491.0, -75222.0, -79491.0, -79529.0],
+                         raw="")]
+    return Statement(page=5, kind="income_statement", title="INCOME STATEMENT", heading="",
+                     columns=columns, rows=rows)
+
+
+def test_a_period_printed_twice_with_identical_figures_is_read():
+    column, why = select_column(_twice(184504.0), "2025-06-30", 3, point_in_time=False)
+    assert column is not None and column.index == 0
+    assert "printed 2 times" in why
+
+
+def test_a_period_printed_twice_with_different_figures_is_still_refused():
+    column, why = select_column(_twice(184000.0), "2025-06-30", 3, point_in_time=False)
+    assert column is None
+    assert "cannot be decided" in why
+
+
+def _cash_flow(*captions: str) -> Statement:
+    return Statement(page=6, kind="cash_flow", title="Statements of Cash Flows", heading="",
+                     columns=[Column(index=0, header="March 31, 2026", months=3, end="2026-03-31")],
+                     rows=[StatementRow(caption=c, values=[-1.0], raw="") for c in captions])
+
+
+def test_an_optional_block_line_absent_from_the_whole_statement_counts_as_not_printed():
+    """Vesta prints "Costs of debt issuance" in its financing section only in quarters
+    that raise debt; the operating section's amortization line must not stand in."""
+    from finscan2.match.resolve import _lookup_optional, _not_printed
+
+    statement = _cash_flow("Amortization of debt issuance costs", "Interest paid", "Loans paid")
+    row, why = _lookup_optional("pdf:Interest paid > Costs of debt issuance", statement)
+    assert row is None and _not_printed(why)
+
+
+def test_an_optional_block_line_printed_outside_its_block_is_still_an_error():
+    from finscan2.match.resolve import _lookup_optional, _not_printed
+
+    statement = _cash_flow("Costs of debt issuance", "Interest paid", "Loans paid")
+    row, why = _lookup_optional("pdf:Interest paid > Costs of debt issuance", statement)
+    assert row is None and not _not_printed(why)
+
+
+def test_a_typed_expression_has_a_value_without_excel_cache():
+    """De-cumulation reads prior quarters; the analyst's "=(-15482581-255436)/1000000"
+    has one value even in a file openpyxl saved, but a reference never guesses."""
+    from finscan2.match.resolve import literal_value
+
+    assert literal_value("=(-15482581-255436)/1000000") == -15.738017
+    assert literal_value("=6789/10^6") == 0.006789
+    assert literal_value("=AP7+1") is None
+    assert literal_value("=SUM(1,2)") is None
+    assert literal_value("=__import__('os')") is None

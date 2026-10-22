@@ -37,6 +37,22 @@ _UNIT_PATTERNS: list[tuple[str, str]] = [
     (r"['’]000s?\b|\bin\s+thousands?\b|\bthousands?\b|\bmiles\b|\bTh(?:Ch|Cl)\$|(?<!\w)M\$", "thousands"),
 ]
 
+#: "(In US dollars)", "(In Mexican pesos)": a statement heading that names only its
+#: currency, with no thousands/millions, prints its figures in full. Vesta's
+#: statements say exactly this and nothing else about scale; read as "unknown", the
+#: sheet's own scale (millions) would be assumed and every figure written a million
+#: times too large.
+_WHOLE_UNITS = re.compile(
+    r"\(\s*(?:amounts\s+|figures\s+)?(?:expressed\s+)?in\s+"
+    r"(?:(?:u\.?\s?s\.?|us|united\s+states|mexican|chilean|canadian)\s+)?"
+    r"(?:dollars|pesos|euros)\s*\)", re.IGNORECASE)
+
+
+def whole_units(text: str) -> bool:
+    """True when `text` declares figures in whole currency units, scale-free."""
+    return bool(_WHOLE_UNITS.search(text or ""))
+
+
 _CURRENCIES: list[tuple[str, str]] = [
     (r"\bCLP\b|\bTh?(?:Ch|Cl)\$|\bMCh\$", "CLP"),
     (r"\bSAR\b|⃂|﷼", "SAR"), (r"\bAED\b", "AED"), (r"\bQAR\b", "QAR"),
@@ -183,6 +199,8 @@ def _document_units(doc: PdfDoc) -> tuple[str | None, str | None, list[Issue]]:
         section = table_section(statement, text_by_page.get(statement.page, ""))
         if scale := _sniff(section, _UNIT_PATTERNS):
             found.append((statement, scale))
+        elif whole_units(section):
+            found.append((statement, "units"))
         currency = currency or _sniff(section, _CURRENCIES)
 
     issues: list[Issue] = []
