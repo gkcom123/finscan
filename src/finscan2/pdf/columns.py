@@ -170,9 +170,16 @@ _MONTHS_AS_OF = re.compile(
 #: "Second-quarter 2026 transactions", "first quarter 2026".
 _ORDINAL_QUARTER = re.compile(
     r"\b(first|second|third|fourth|1st|2nd|3rd|4th|primer|segundo|tercer|cuarto)"
-    r"[\s-]*quarter[\s-]*(\d{4})?",
+    r"[\s-]*quarter(?:[\s-]*of:?)?[\s-]*(\d{4})?",
     re.IGNORECASE,
 )
+
+#: "For the first Six Months of: 2026": a calendar year to date, named in words.
+_FIRST_N_MONTHS = re.compile(
+    r"\bfirst\s+(three|six|nine|twelve|3|6|9|12)[\s-]+months?(?:\s+of:?)?\s+((?:19|20)\d{2})\b",
+    re.IGNORECASE,
+)
+_N_MONTHS = {"three": 3, "six": 6, "nine": 9, "twelve": 12, "3": 3, "6": 6, "9": 9, "12": 12}
 
 _ORDINALS = {
     "first": 1, "1st": 1, "primer": 1,
@@ -295,6 +302,10 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         year_text = quarter.group(2)
         if year_text:
             end = _month_end(int(year_text), _ORDINALS[quarter.group(1).lower()] * 3)
+
+    if end is None and (m := _FIRST_N_MONTHS.search(text)):
+        months = _N_MONTHS[m.group(1).lower()]
+        end = _month_end(int(m.group(2)), months)
 
     if end is None:
         if m := _RANGE.search(text):
@@ -448,6 +459,16 @@ def parse_columns_from_headers(
         columns.append(column)
 
     _repair_duplicate_comparative_year(columns)
+
+    # "2Q26 | 2Q26 % of Rev.": a share-of-revenue column beside the amount it is a
+    # share of. Both parse to the same period, and the tie then refuses every row
+    # of the table. The amount is the figure; the percentage column is undated —
+    # but only when such an amount column exists, so a table of percentages alone
+    # (margins, growth) keeps its dates.
+    amounts = {(c.end, c.months) for c in columns if c.end and "%" not in c.header}
+    for column in columns:
+        if "%" in column.header and (column.end, column.months) in amounts:
+            column.end = None
 
     # A span the table states once above its dated columns ("Quarter Ended" over
     # "Jun-26  Jun-25"), passed in by the caller who saw the header block.

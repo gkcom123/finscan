@@ -182,3 +182,36 @@ def test_a_currency_only_unit_line_means_figures_are_whole_units():
     assert not whole_units("(In thousands of US dollars)")
     assert not whole_units("(In millions of Mexican pesos)")
     assert not whole_units("Revenue in US dollars grew 12%")
+
+
+def test_release_headers_with_of_and_first_n_months_are_dated():
+    """KOF's release: "For the Second Quarter of: 2026" / "For the first Six Months of: 2026"."""
+    from finscan2.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers([
+        "For the Second Quarter of: 2026", "For the Second Quarter of: 2025",
+        "For the Second Quarter of: Δ% Reported", "For the first Six Months of: 2026"])
+    assert [(c.months, c.end) for c in cols] == [
+        (3, "2026-06-30"), (3, "2025-06-30"), (3, None), (6, "2026-06-30")]
+
+
+def test_a_share_of_revenue_column_does_not_tie_with_its_amount():
+    from finscan2.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers(["2Q26", "2Q26 % of Rev.", "2Q25", "2Q25 % of Rev."])
+    assert [c.end for c in cols] == ["2026-06-30", None, "2025-06-30", None]
+    # A table of percentages alone keeps its dates.
+    assert [c.end for c in parse_columns_from_headers(["2Q26 %", "2Q25 %"])] == [
+        "2026-06-30", "2025-06-30"]
+
+
+def test_a_table_titled_with_the_running_page_header_is_a_continuation():
+    """BMV reports print "KOF Consolidado" atop every page; the model sometimes
+    returns it as the title of a table's second page."""
+    from finscan2.pdf.llm_read import _is_running_header, _running_headers
+
+    pages = {n: f"KOF Consolidado\nClave de Cotización: KOF\nbody {n}" for n in range(1, 7)}
+    running = _running_headers(pages)
+    assert _is_running_header("KOF Consolidado", running)
+    assert _is_running_header("KOF", running)
+    assert not _is_running_header("[800100] Notas - Subclasificaciones", running)

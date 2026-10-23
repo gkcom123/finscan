@@ -195,6 +195,30 @@ def _read_page(page_no: int, encoded: str) -> dict:
         return {"tables": [], "error": f"{type(error).__name__}: {error}"[:300]}
 
 
+def _norm_line(text: str) -> str:
+    return " ".join((text or "").lower().split())
+
+
+def _running_headers(page_texts: dict[int, str]) -> set[str]:
+    """Lines printed at the top of most pages: "KOF Consolidado" on every page of a
+    BMV report. A table the model titles with one of these has no title of its own."""
+    from collections import Counter
+
+    tops = Counter()
+    for text in page_texts.values():
+        lines = [_norm_line(l) for l in (text or "").splitlines() if l.strip()][:2]
+        tops.update(set(lines))
+    pages = len(page_texts)
+    return {line for line, n in tops.items() if pages >= 3 and n >= max(3, pages // 2)}
+
+
+def _is_running_header(title: str, running: set[str]) -> bool:
+    """`title` is a running page header, or the start of one ("KOF")."""
+    wanted = _norm_line(title)
+    return bool(wanted) and any(line == wanted or line.startswith(wanted + " ")
+                                for line in running)
+
+
 def _cover_period_end(page_text: str) -> str | None:
     """The period a presentation's cover unambiguously declares, if any."""
     ends: set[str] = set()
@@ -412,6 +436,7 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
     corrected: list[str] = []
     previous_last_page = 0
 
+    running = _running_headers(page_texts)
     for page_no in sorted(pages_json):
         payload = pages_json[page_no] or {}
         if payload.get("error"):
@@ -479,7 +504,8 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             # financing sections). It belongs to the primary statement on the page
             # before when its columns are the same.
             untitled_continuation = (
-                same_columns and not title and previous.kind in _CONTINUED_KINDS
+                same_columns and (not title or _is_running_header(title, running))
+                and previous.kind in _CONTINUED_KINDS
                 and page_no == previous_last_page + 1)
             if same or untitled_continuation:
                 # A statement continued over pages under the same title and columns.
