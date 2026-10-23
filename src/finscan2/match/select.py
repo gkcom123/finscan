@@ -247,8 +247,8 @@ def find_row(statement: Statement, caption: str,
     # Containment, longest first: "revenue from contracts with customers" should
     # beat "revenue" when both are present.
     for target in sorted(wanted, key=len, reverse=True):
-        hits = [row for normalized, row in rows
-                if target and (target in normalized or normalized in target)]
+        hits = _distinct([row for normalized, row in rows
+                          if target and (target in normalized or normalized in target)])
         if len(hits) == 1:
             return hits[0], "caption matched by containment"
         if len(hits) > 1:
@@ -261,7 +261,8 @@ def find_row(statement: Statement, caption: str,
         words = set(target.split())
         if len(words) < 2:
             continue
-        hits = [row for normalized, row in rows if words <= set(normalized.split())]
+        hits = _distinct([row for normalized, row in rows
+                          if words <= set(normalized.split())])
         if len(hits) == 1:
             return hits[0], "caption matched on every word"
         if len(hits) > 1:
@@ -270,6 +271,24 @@ def find_row(statement: Statement, caption: str,
                           f"({captions})")
 
     return None, f"no row captioned like '{caption}'"
+
+
+def _distinct(hits: list[StatementRow]) -> list[StatementRow]:
+    """Matches with one line printed twice counted once.
+
+    JD's cash-flow statement ends with a free-cash-flow block that repeats "Net cash
+    (used in)/provided by operating activities", same caption, same figures. Either
+    copy gives the same number, so the repeat is no ambiguity. Rows that differ in
+    caption or in any figure stay separate and are still refused.
+    """
+    seen: set[tuple] = set()
+    out: list[StatementRow] = []
+    for row in hits:
+        key = (normalize_label(row.caption), tuple(row.values))
+        if key not in seen:
+            seen.add(key)
+            out.append(row)
+    return out
 
 
 def field_aliases(field_id: str) -> list[str]:

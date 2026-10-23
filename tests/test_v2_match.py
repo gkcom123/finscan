@@ -194,6 +194,22 @@ def test_an_ambiguous_caption_is_refused_rather_than_guessed():
     assert row is None and "matches 2 rows" in why
 
 
+def test_one_line_printed_twice_is_not_ambiguous():
+    # JD repeats the operating line in the free-cash-flow block of its cash flow.
+    caption = "Net cash (used in)/provided by operating activities"
+    statement = _statement(_ALMARAI, [(caption, [555.0]), ("Free cash flow", [1.0]),
+                                      (caption, [555.0])])
+    row, why = find_row(statement, "Net cash provided by operating activities")
+    assert row.values == [555.0] and "every word" in why
+
+
+def test_a_repeated_caption_with_different_figures_is_still_refused():
+    caption = "Net cash (used in)/provided by operating activities"
+    statement = _statement(_ALMARAI, [(caption, [555.0]), (caption, [556.0])])
+    row, why = find_row(statement, "Net cash provided by operating activities")
+    assert row is None and "matches 2 rows" in why
+
+
 def test_a_caption_that_is_absent_is_refused():
     statement = _statement(_ALMARAI, [("Revenue", [1.0])])
     row, why = find_row(statement, "Zakat")
