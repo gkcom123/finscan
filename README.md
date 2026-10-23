@@ -79,7 +79,10 @@ row number, so inserting rows in Excel changes nothing:
 
 `pdf` is one caption, a list to sum (a leading `-` subtracts), or `null` when
 the filing has no such line. Optional overrides: `statement`, `column`, `basis`,
-`sign`, `value` (a constant), `carry_forward`. A top-level `"reader": "rules"`
+`sign`, `scale`, `value` (a constant), `carry_forward`. `scale` replaces currency
+unit conversion with a numeric multiplier; `"scale": "percent"` means `0.01`,
+so a printed `4.3%` is written as the Excel fraction `0.043`.
+A top-level `"reader": "rules"`
 switches a company from the vision-model reader to the rule-based one.
 
 ## How the workbook is read
@@ -90,6 +93,28 @@ columns and their cadence, the column to write (a pre-formatted empty slot, else
 the next one), and each row's role from its reference cell — blue = input,
 black = formula copied forward, a formula with no cell references (`=-26.5-10.5`)
 = an input typed in place.
+
+### CocaCola BMV filings
+
+The CocaCola mapping uses the LLM vision reader (`"reader": "llm"`) and stable BMV statement
+codes (`[210000]`, `[310000]`, `[520000]`) plus the detailed notes (`[800100]`,
+`[800200]`). These captions and sums were checked against the Q1 filing and the
+model's Q1 column. Keep historical PDFs in a subfolder such as `q1/`; only PDFs
+directly in the company folder are read for the current run.
+
+Run `finscan2 company cocacola` with both current-quarter PDFs (the Spanish BMV
+filing and the English results release) and the model in the company folder.
+Both PDFs are read with the LLM reader and merged, retaining each table's units
+and source filename. The BMV filing supplies detailed financial statements;
+the results release supplies operating/non-operating splits and segment tables.
+The standalone income-statement quarter is selected by date, closing balances
+are not de-cumulated, and year-to-date cash flow is reduced by the model's prior
+quarters. Continuation pages and their zero-valued rows are retained.
+Adjusted EBITDA combines the release's operating income with the BMV operational
+D&A note, converting their different source units before summing. Missing or
+ambiguous inputs remain unresolved rather than substituting broader totals or
+last quarter's figures. The existing explicitly carried FX rates still require
+manual review.
 
 ## Tests
 

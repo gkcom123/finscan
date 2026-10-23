@@ -1,12 +1,33 @@
 """The opt-in LLM reader — offline: the model's JSON is stubbed, nothing is called."""
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 from finscan2.mapping.schema import Mapping
 from finscan2.pdf.llm_read import doc_from_tables
 
 _HEADERS = ["2nd Quarter Ended 30/06/2026 RM'000", "2nd Quarter Ended 30/06/2025 RM'000",
             "Financial Period Ended 30/06/2026 RM'000", "Financial Period Ended 30/06/2025 RM'000"]
 _TITLE = "UNAUDITED CONDENSED CONSOLIDATED STATEMENT OF COMPREHENSIVE INCOME"
+
+
+def test_vision_request_includes_text_to_check_dense_table_headers(monkeypatch):
+    from finscan2 import llm
+    from finscan2.pdf.llm_read import _read_page
+
+    calls = []
+
+    class Model:
+        def invoke(self, messages):
+            calls.append(messages)
+            return SimpleNamespace(content='{"tables": []}')
+
+    monkeypatch.setattr(llm, "chat_model", lambda: Model())
+    text = "2026 % of Rev. 2025 % of Rev. Reported Comparable"
+    assert _read_page(12, "image", text) == {"tables": []}
+    content = calls[0][1]["content"]
+    assert text in content[0]["text"]
+    assert content[1]["image_url"]["url"] == "data:image/png;base64,image"
 
 
 def _page(rows):

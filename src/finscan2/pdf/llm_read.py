@@ -27,7 +27,7 @@ from pathlib import Path
 
 #: Bump when the prompt changes what a page read returns; older caches are kept
 #: (re-reading costs money and moves figures) but are reported as older.
-PROMPT_VERSION = "2"
+PROMPT_VERSION = "3"
 
 #: Kept free of any one filer's wording: it describes layouts, not companies.
 PROMPT = """You extract financial tables from one page of a company filing.
@@ -39,6 +39,7 @@ Return ONLY a JSON object, no prose, no code fences:
                        "values": [<one entry per column: the number exactly as printed, as a string, keeping parentheses, signs and separators; null if the cell is blank or a dash>]}]}]}
 Rules:
 - Columns: build each header from all the header text above that column, top to bottom, including a label printed once across a group of columns (such as a period or "year to date" label) — repeat it for every column it spans.
+- Keep every value column, including percentages and comparisons. Never truncate a wide table or replace its current-year header with the comparison year. Use the supplied PDF text to check digits and captions, and the image to determine column alignment.
 - Captions: a caption can wrap over several lines, including lines printed above and below its own figures; join all its parts into one caption. Keep a leading bullet or dash out of the caption.
 - One row per printed line item, in printed order. Include subtotal and total lines, using the printed caption or "" when the line has none.
 - Never compute, round, re-sign or reorder numbers. Omit headings that carry no numbers. Omit note-reference columns.
@@ -177,7 +178,7 @@ def _render(pdf, page_no: int) -> str:
     return base64.b64encode(buffer.getvalue()).decode("ascii")
 
 
-def _read_page(page_no: int, encoded: str) -> dict:
+def _read_page(page_no: int, encoded: str, text: str = "") -> dict:
     """One model call: the page image in, the page's tables as JSON out."""
     from finscan2.llm import chat_model
 
@@ -185,7 +186,7 @@ def _read_page(page_no: int, encoded: str) -> dict:
         response = chat_model().invoke([
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": [
-                {"type": "text", "text": f"Page {page_no}."},
+                {"type": "text", "text": f"Page {page_no}.\nPDF text layer:\n{text}"},
                 {"type": "image_url", "image_url": {
                     "url": f"data:image/png;base64,{encoded}", "detail": "high"}}]},
         ])
@@ -634,7 +635,8 @@ def read_pdf_llm(path: str | Path, sha: str, cache_dir: str | Path | None = None
     if missing and enabled:
         # Only the network calls run in parallel; rendering happened above.
         with ThreadPoolExecutor(max_workers=6) as pool:
-            for n, result in zip(missing, pool.map(lambda n: _read_page(n, images[n]), missing)):
+            for n, result in zip(missing, pool.map(
+                    lambda n: _read_page(n, images[n], page_texts[n]), missing)):
                 pages_json[n] = result
         if cached:
             cached.parent.mkdir(parents=True, exist_ok=True)

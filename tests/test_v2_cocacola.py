@@ -152,3 +152,44 @@ def test_reviewed_mapping_reproduces_q1_and_resolves_q2(tmp_path, quarter):
         assert value.ok, value.unresolved
         assert value.value == pytest.approx(expected[value.label][quarter - 1])
     assert len(values.resolved) == len(expected)
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_both_filings_supply_values_with_their_own_units(tmp_path, reverse):
+    mapping = Mapping.load(Path(__file__).resolve().parents[1] / "mappings" / "cocacola.json")
+    expected = {"Revenues": 76318.440, "Depreciation & amortisation": 4354.9,
+                "Adj. EBITDA": 15008.9}
+    mapping.rows = [r for r in mapping.rows if r.label in expected]
+    layout = SheetLayout(
+        sheet="Model", reference_col=3, write_col=4, units="millions",
+        period_dates={3: "2026-03-31"},
+        rows=[RowLayout(i, r.label, r.section, "input", False)
+              for i, r in enumerate(mapping.rows, start=5)])
+    model, issues = compile_mapping(mapping, layout)
+    assert not issues
+    book = Workbook()
+    book.active.title = "Model"
+    path = tmp_path / "model.xlsx"
+    book.save(path)
+    book.close()
+    columns = [Column(0, "Q2 2026", months=3, end="2026-06-30"),
+               Column(1, "H1 2026", months=6, end="2026-06-30")]
+    bmv = PdfDoc(path="bmv.pdf", sha256="bmv", units="units", statements=[
+        Statement(17, "income_statement", "[310000] Estado de resultados", "",
+                  columns=columns, rows=[StatementRow("Ingresos", [76318440000, 147243817000], "")]),
+        Statement(30, "other", "[700002] Datos informativos", "",
+                  columns=columns, rows=[StatementRow(
+                      "Depreciación y amortización operativa", [4354900000, 8697189000], "")]),
+    ])
+    release = PdfDoc(path="release.pdf", sha256="release", units="millions", statements=[
+        Statement(8, "income_statement", "CONSOLIDATED INCOME STATEMENT", "",
+                  columns=columns, rows=[StatementRow("Operating income", [10654, 19686], "")]),
+    ])
+    docs = [release, bmv] if reverse else [bmv, release]
+    merged = PdfDoc.merge(docs)
+    values = resolve_values(merged, bind_map(model, layout), str(path), "2026-06-30")
+    assert len(values.resolved) == len(expected)
+    for value in values.values:
+        assert value.ok, value.unresolved
+        assert value.value == pytest.approx(expected[value.label])
+    assert {s.source for s in merged.statements} == {"bmv.pdf", "release.pdf"}
