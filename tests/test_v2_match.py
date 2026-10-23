@@ -6,6 +6,8 @@ Uno's six-column statement where the standalone quarter is the second column.
 """
 from __future__ import annotations
 
+import pytest
+
 from finscan2.match.basis import decumulate, fiscal_year_start, periods_to_subtract, prior_columns
 from finscan2.match.select import find_row, select_column
 from finscan2.schema import Column, PdfDoc, Statement, StatementRow
@@ -908,17 +910,50 @@ def test_a_missing_column_occurrence_is_refused():
     assert column is None and "#3 does not exist" in why
 
 
-def test_a_percent_row_is_written_as_a_fraction_and_never_unit_scaled():
+@pytest.mark.parametrize(("printed", "expected"), [
+    (4.3, 0.043), (-1.4, -0.014), (0.0, 0.0), (None, 0.0),
+])
+def test_a_percent_row_is_written_as_a_fraction_and_never_unit_scaled(printed, expected):
     """The model stores 0.043 where the filing prints 4.3% - and the document's
     thousands must not touch a rate."""
     from finscan2.match.resolve import resolve_values
 
     doc, resolved_map, path = _tiny_model(resolve="pdf:Revenue growth",
-                                          extra_rows=[("Revenue growth", [4.3] * 4)])
+                                          extra_rows=[("Revenue growth", [printed] * 4)])
     resolved_map.bound[0].spec.scale = "percent"
     value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
-    assert value.ok and abs(value.value - 0.043) < 1e-12
+    assert value.ok and value.value == pytest.approx(expected)
     assert any(a.kind == "scale" and "fraction" in a.detail for a in value.adjustments)
+
+
+@pytest.mark.parametrize("scale", ["percent", 0.01])
+def test_explicit_scales_are_applied_before_decumulation(scale):
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="pdf:Revenue growth", extra_rows=[("Revenue growth", [10.0] * 4)],
+        reference_value=0.04)
+    doc.statements[0].columns = [doc.statements[0].columns[2]]
+    resolved_map.bound[0].spec.scale = scale
+
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+
+    assert value.ok and value.value == pytest.approx(0.06)
+    assert value.source.printed == 10.0
+
+
+def test_a_numeric_scale_remains_a_multiplier_without_unit_conversion():
+    from finscan2.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="pdf:Revenue growth", extra_rows=[("Revenue growth", [4.3] * 4)])
+    resolved_map.bound[0].spec.scale = 2.0
+
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+
+    assert value.ok and value.value == pytest.approx(8.6)
+    assert any(a.kind == "scale" and "map's multiplier" in a.detail
+               for a in value.adjustments)
 
 
 def test_the_percent_scale_round_trips_through_the_mapping(tmp_path):

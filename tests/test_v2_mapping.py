@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+import pytest
 from openpyxl import Workbook
 
 from finscan2.mapping.compile import compile_mapping, unmapped_inputs
@@ -82,16 +83,16 @@ def test_a_carry_forward_row_round_trips_without_a_pdf_field(tmp_path):
     assert loaded.rows[0].instruction() == "carry:a peg"
 
 
-def test_a_scale_round_trips_and_reaches_the_compiled_row(tmp_path):
+@pytest.mark.parametrize("scale", [0.01, "percent"])
+def test_a_scale_round_trips_and_reaches_the_compiled_row(tmp_path, scale):
     """A percentage printed as 1.7 for a model that holds 0.017."""
     mapping = Mapping(company="x", sheet="Model", rows=[
-        MappingRow(label="Revenue", section="income_statement", pdf="Revenue", scale=0.01)])
+        MappingRow(label="Revenue", section="income_statement", pdf="Revenue", scale=scale)])
     path = mapping.save(tmp_path / "x.json")
-    assert '"scale": 0.01' in path.read_text(encoding="utf-8")
-    assert Mapping.load(path).rows[0].scale == 0.01
+    assert Mapping.load(path).rows[0].scale == scale
 
     model, _ = compile_mapping(Mapping.load(path), _layout())
-    assert [r for r in model.rows if r.key.label == "Revenue"][0].scale == 0.01
+    assert [r for r in model.rows if r.key.label == "Revenue"][0].scale == scale
     assert RowSpec.from_dict(model.rows[0].to_dict()).scale == model.rows[0].scale
 
 

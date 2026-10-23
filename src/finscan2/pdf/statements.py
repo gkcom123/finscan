@@ -49,7 +49,7 @@ _TITLE_PATTERNS: list[tuple[str, StatementKind]] = [
 
 _TITLE_LINE = re.compile(
     r"^[^\n]*(?:\b(?:statement|statements|schedule)\s+of\b|\bperformance\s+at\s+a\s+glance\b"
-    r"|\b(?:income\s+statements?|balance\s+sheets?)\b)[^\n]*$",
+    r"|\b(?:income\s+statements?|balance\s+sheets?)\b|\[\d{6}\])[^\n]*$",
     re.IGNORECASE,
 )
 
@@ -84,6 +84,15 @@ _NOISE_CAPTION = re.compile(
 
 
 def classify(title: str) -> StatementKind:
+    xbrl = re.match(r"\s*\[(\d{6})\]", title or "")
+    if xbrl:
+        kinds: dict[str, StatementKind] = {
+            "210000": "balance_sheet", "310000": "income_statement",
+            "410000": "comprehensive_income", "520000": "cash_flow",
+            "610000": "equity", "800100": "balance_sheet",
+            "800200": "income_statement",
+        }
+        return kinds.get(xbrl.group(1), "other")
     low = (title or "").lower()
     for pattern, kind in _TITLE_PATTERNS:
         if re.search(pattern, low):
@@ -158,7 +167,8 @@ def _title_and_heading(text: str) -> tuple[str, str, int]:
         # a registered address), not the body.
         if title and looks_like_data_row(line):
             break
-        if not title and _TITLE_LINE.match(line) and classify(line) != "other":
+        if (not title and _TITLE_LINE.match(line) and classify(line) != "other"
+                and not re.search(r"\.{3,}\s*\d+\s*$", line)):
             title, body_start = line.strip(), i + 1
             continue
         if title and not heading and _HEADING_LINE.match(line):
@@ -474,6 +484,8 @@ def extract_continuation(text: str, page, previous: Statement) -> list[Statement
     """
     if page is None or not previous.columns:
         return []
+    if re.search(r"(?m)^\s*\[\d{6}\]", text):
+        return []
     layout = table_layout(page)
     if layout is None:
         return []
@@ -483,6 +495,10 @@ def extract_continuation(text: str, page, previous: Statement) -> list[Statement
     lines = text.splitlines()
     first_data = next((i for i, line in enumerate(lines) if looks_like_data_row(line)),
                       len(lines))
+    if layout.rows and layout.rows[0][0]:
+        first_caption = layout.rows[0][0]
+        first_data = next((i for i, line in enumerate(lines[:first_data])
+                           if line.strip().startswith(first_caption)), first_data)
     rows = _parse_rows(lines[first_data:])
     if len(rows) < MIN_STATEMENT_ROWS:
         return []

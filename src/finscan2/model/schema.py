@@ -114,7 +114,7 @@ class RowSpec:
     #: Text the chosen column's header must contain (see MappingRow.column).
     column: str | None = None
     #: Multiplier replacing the unit conversion (see MappingRow.scale).
-    scale: float | None = None
+    scale: float | Literal["percent"] | None = None
     #: Set by `learn` when a human should look at this row before it is trusted.
     review: str | None = None
     #: For a `formula` row whose reference-column formula embeds a hand-typed

@@ -21,7 +21,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from finscan2.model.schema import normalize_label
 
@@ -75,8 +75,8 @@ class MappingRow:
     #: Multiplier for a figure that is not money — a "1.7%" printed where the model
     #: holds 0.017 takes 0.01. Applied to the printed number INSTEAD of the table's
     #: unit conversion, which would otherwise scale a percentage by the statement's
-    #: millions or thousands.
-    scale: float | None = None
+    #: millions or thousands. "percent" is shorthand for 0.01.
+    scale: float | Literal["percent"] | None = None
 
     @property
     def key(self) -> tuple[str, str, int]:

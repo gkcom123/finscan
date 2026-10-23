@@ -748,12 +748,12 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                        f"({column.header}) — treated as 0"))
 
         figure = printed
+        row_scale = 0.01 if spec.scale == "percent" else spec.scale
         if columns_to_subtract:
             letters = {c: get_column_letter(c) for c in columns_to_subtract}
             priors = {c: cells.get((bound.row, c)) for c in columns_to_subtract}
             # The workbook's own figures are in the sheet's units; the filing's are
             # in the filing's, so both are brought to the sheet's scale first.
-            row_scale = getattr(spec, "scale", None)
             scaled_printed = (printed * row_scale if row_scale is not None else
                               _scale(printed, _row_units(printed_row) or statement.units
                                      or doc.units or model.units, model.units))
@@ -767,12 +767,14 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                 continue
             value.adjustments.append(adjustment)
             value.units_from = value.units_to = model.units
-        elif getattr(spec, "scale", None) is not None:
+        elif row_scale is not None:
             # Not money: the map's own multiplier stands in for the unit conversion.
-            figure = printed * spec.scale
+            figure = printed * row_scale
+            scale_detail = ("percent to fraction" if spec.scale == "percent"
+                            else "the map's multiplier")
             value.adjustments.append(Adjustment(
                 kind="scale",
-                detail=f"printed {printed:,} x {spec.scale:g} (the map's multiplier) "
+                detail=f"printed {printed:,} x {row_scale:g} ({scale_detail}) "
                        f"= {figure:,.6g}; no unit conversion applied"))
         else:
             source_units = (_row_units(printed_row) or statement.units or doc.units
