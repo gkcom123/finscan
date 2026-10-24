@@ -100,9 +100,24 @@ def _looks_derived(label: str) -> bool:
     Word-boundary matching, so an ordinary expense line is never mistaken for a
     ratio because a ratio word happens to sit inside one of its words.
     """
-    if any(token in (label or "") for token in _SKIP_RAW):
+    if any(token in (label or "") for token in _SKIP_RAW) and not _names_debt(label):
         return True
     return bool(_SKIP_RE.search(normalize_label(label)))
+
+
+#: A debt instrument named with its coupon: "4.875% Notes due 2044", "Lines of
+#: credit of SOFR+1.20% till 2029". The "%" is the coupon, not a ratio; Grupo
+#: Bimbo's model lists ~30 such rows, every one of which was dropped as a ratio.
+_DEBT_WORDS = re.compile(
+    r"\b(?:notes?|noted|bonds?|loans?|lines?\s+of\s+credit|credit\s+facility|facility|"
+    r"facilities|debentures?|certificates?|issuance|issued)\b", re.IGNORECASE)
+_YEAR = re.compile(r"\b(?:19|20)\d{2}\b")
+
+
+def _names_debt(label: str) -> bool:
+    text = label or ""
+    return bool(_DEBT_WORDS.search(text)
+                and (_YEAR.search(text) or re.search(r"\bperpetual\b", text, re.IGNORECASE)))
 
 
 def _is_bidirectional(label: str) -> bool:

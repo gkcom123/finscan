@@ -354,6 +354,43 @@ def _pipe_header_columns(lines: list[str], kind: str) -> list[Column]:
     return columns if len(dated) >= 2 else []
 
 
+#: A header line of ISO dates only: "2026-03-31 2025-12-31", or ranges
+#: "2026-01-01 - 2026-03-31 2025-01-01 - 2025-03-31".
+_ISO_HEADER_LINE = re.compile(
+    r"^\s*(?:\d{4}-\d{2}-\d{2}(?:\s*-\s*\d{4}-\d{2}-\d{2})?\s*)+$")
+
+
+def _iso_header_columns(lines: list[str], kind: str) -> list:
+    """Columns from the ISO dates of a BMV/XBRL header.
+
+    The English BMV report wraps its column labels ("Close Current" over "Quarter",
+    "Accumulated Current" over "Year"), so the label lines read as nothing; the dates
+    say everything a column needs: a range is a period of known length, a single date
+    a balance at that date. A four-column flow header prints its ranges over two lines
+    (each quarter range beside its label, the year-to-date ranges below), so ranges
+    gathered from several lines are put in BMV's fixed order: newest period first,
+    the quarter before the year to date.
+    """
+    from finscan2.pdf.columns import parse_columns_from_headers
+
+    found: list[list[tuple[str, str]]] = []
+    for line in lines:
+        ranges = re.findall(r"(\d{4}-\d{2}-\d{2})\s*-\s*(\d{4}-\s?\d{2}-\s?\d{2})", line)
+        if ranges:
+            found.append([(a, b.replace(" ", "")) for a, b in ranges])
+    if found:
+        ranges = [r for line in found for r in line]
+        if len(found) > 1:
+            ranges.sort(key=lambda r: (r[1], r[0]), reverse=True)
+        return parse_columns_from_headers([f"{a} - {b}" for a, b in ranges],
+                                          statement_kind=kind)
+    for line in reversed(lines):
+        if _ISO_HEADER_LINE.match(line):
+            return parse_columns_from_headers(re.findall(r"\d{4}-\d{2}-\d{2}", line),
+                                              statement_kind=kind)
+    return []
+
+
 def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     """Read one page into a Statement, or None when it is not a statement page.
 
@@ -385,6 +422,11 @@ def extract_statement(page_no: int, text: str, page=None) -> Statement | None:
     if not columns:
         columns = _month_year_header_columns(lines[body_start:first_data], kind,
                                              _stated_span(f"{heading}\n{header_text}"))
+    if not columns or re.match(r"\s*\[\d{6}\]", title):
+        # BMV/XBRL: the ISO dates are the authority whenever they name more columns.
+        iso = _iso_header_columns(lines[body_start:first_data], kind)
+        if len(iso) > len(columns):
+            columns = iso
     _inherit_title_period(columns, title, kind)
 
     # A first row of small figures only ("GRUMA USA Sales Volume 380 391 (12)")
@@ -486,23 +528,27 @@ def extract_continuation(text: str, page, previous: Statement) -> list[Statement
         return []
     if re.search(r"(?m)^\s*\[\d{6}\]", text):
         return []
-    layout = table_layout(page)
-    if layout is None:
-        return []
-    columns = parse_columns_from_headers(layout.headers, statement_kind=previous.kind)
-    if _signature(columns) != _signature(previous.columns):
-        return []
     lines = text.splitlines()
     first_data = next((i for i, line in enumerate(lines) if looks_like_data_row(line)),
                       len(lines))
-    if layout.rows and layout.rows[0][0]:
+    layout = table_layout(page)
+    columns = (parse_columns_from_headers(layout.headers, statement_kind=previous.kind)
+               if layout is not None else [])
+    if _signature(columns) != _signature(previous.columns):
+        # Grupo Bimbo's English BMV report wraps the repeated header's labels, so
+        # geometry reads no columns; its ISO-date line still names the periods.
+        layout = None
+        columns = _iso_header_columns(lines[:first_data], previous.kind)
+        if _signature(columns) != _signature(previous.columns):
+            return []
+    if layout is not None and layout.rows and layout.rows[0][0]:
         first_caption = layout.rows[0][0]
         first_data = next((i for i, line in enumerate(lines[:first_data])
                            if line.strip().startswith(first_caption)), first_data)
     rows = _parse_rows(lines[first_data:])
     if len(rows) < MIN_STATEMENT_ROWS:
         return []
-    if len(layout.ranges) == len(columns):
+    if layout is not None and len(layout.ranges) == len(columns):
         rows = [_slot_by_position(row, layout) for row in rows]
     return rows
 

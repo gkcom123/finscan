@@ -1026,3 +1026,18 @@ def test_a_typed_expression_has_a_value_without_excel_cache():
     assert literal_value("=AP7+1") is None
     assert literal_value("=SUM(1,2)") is None
     assert literal_value("=__import__('os')") is None
+
+
+def test_a_sum_term_can_name_its_own_column():
+    """Grupo Bimbo's debt annex: one TOTAL row over twelve currency/maturity columns."""
+    from finscan2.match.resolve import _TERM_COLUMN
+
+    caption, _, header = "Total banks ## Domestic currency Until 2 years".partition(_TERM_COLUMN)
+    assert (caption, header) == ("Total banks", "Domestic currency Until 2 years")
+    cols = [Column(index=i, header=h, kind="point_in_time") for i, h in
+            enumerate(["Domestic currency Current year", "Domestic currency Until 2 years",
+                       "Foreign currency Until 2 years"])]
+    st = Statement(page=28, kind="other", title="[800001]", heading="", columns=cols,
+                   rows=[StatementRow(caption="Total banks", values=[0.0, 4988517000.0, 3449949000.0], raw="")])
+    col, _ = select_column(st, "2026-03-31", 3, True, header_contains=header)
+    assert col.index == 1

@@ -147,12 +147,14 @@ def table_section(statement: Statement, page_text: str) -> str:
 #: figures printed in full — 1,649,941,000.
 _ROUNDING = re.compile(
     r"(?:level\s+of\s+rounding|grado\s+de\s+redondeo)[^:\n\d]*:?\s*"
-    r"(thousands?|millions?|miles|millones|0)\b", re.IGNORECASE)
+    r"(thousands?|millions?|miles|millones|000|0)\b", re.IGNORECASE)
 #: BMV/XBRL reports state their rounding in English ("Level of rounding used in
 #: financial statements: Thousands") or Spanish ("Grado de redondeo utilizado en los
 #: estados financieros: 0", where 0 means figures printed in full pesos).
 _ROUNDING_STEP = {"thousand": 1e3, "thousands": 1e3, "miles": 1e3,
-                  "million": 1e6, "millions": 1e6, "millones": 1e6, "0": 1.0}
+                  "million": 1e6, "millions": 1e6, "millones": 1e6, "0": 1.0,
+                  # Grupo Bimbo's English BMV report: "...: 000", i.e. rounded to thousands.
+                  "000": 1e3}
 
 
 def _xbrl_rounding(doc: PdfDoc, statements: list[Statement]) -> str | None:
@@ -236,7 +238,56 @@ def cache_path(cache_dir: str | Path, sha: str) -> Path:
     return Path(cache_dir) / f"{sha}.json"
 
 
+def supplement_path(path: str | Path) -> Path:
+    """`<filing>.supplement.json`: tables a person transcribed for this PDF."""
+    return Path(f"{path}.supplement.json")
+
+
 def read_pdf(
+    path: str | Path,
+    *,
+    cache_dir: str | Path | None = None,
+    use_cache: bool = True,
+    ocr_enabled: bool = True,
+    reader: str | None = None,
+) -> PdfDoc:
+    """Read a filing, then add any supplement transcribed for it.
+
+    A supplement holds tables neither reader can parse on its own: Grupo Bimbo's
+    BMV report prints its regional tables under image titles and its debt detail
+    as free-form blocks. It is in the LLM reader's page-table format and goes
+    through the same builder, so every figure is checked against the page's text
+    layer and an unprinted one is never written. It is read fresh every run: it is
+    a reviewed input, like the mapping, not a cache.
+    """
+    doc = _read_pdf(path, cache_dir=cache_dir, use_cache=use_cache,
+                    ocr_enabled=ocr_enabled, reader=reader)
+    extra = supplement_path(path)
+    if extra.exists():
+        _add_supplement(doc, path, extra)
+    return doc
+
+
+def _add_supplement(doc: PdfDoc, path: str | Path, extra: Path) -> None:
+    import pdfplumber
+
+    from finscan2.pdf.llm_read import _page_text, doc_from_tables
+
+    payload = json.loads(extra.read_text(encoding="utf-8"))
+    pages_json = {int(k): v for k, v in (payload.get("pages") or {}).items()}
+    with pdfplumber.open(str(path)) as pdf:
+        texts = {n: _page_text(pdf.pages[n - 1]) for n in pages_json if 0 < n <= len(pdf.pages)}
+    source = payload.get("source", "supplement")
+    added = doc_from_tables(str(path), doc.sha256, pages_json, texts, source)
+    doc.statements.extend(added.statements)
+    unverified = sum(len(r.unverified) for s in added.statements for r in s.rows)
+    doc.issues.append(Issue(
+        code="supplement_added", severity="info" if not unverified else "warning",
+        message=f"{len(added.statements)} table(s) added from {extra.name} ({source}); "
+                f"{unverified} figure(s) not printed on their page and so never written."))
+
+
+def _read_pdf(
     path: str | Path,
     *,
     cache_dir: str | Path | None = None,

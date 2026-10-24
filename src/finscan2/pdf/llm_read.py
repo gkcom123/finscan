@@ -617,7 +617,10 @@ def read_pdf_llm(path: str | Path, sha: str, cache_dir: str | Path | None = None
         store = json.loads(cached.read_text(encoding="utf-8"))
         if store.get("model") != model_name:
             store = {}
-    pages_json = {int(k): v for k, v in (store.get("pages") or {}).items()}
+    # A page that failed (rate limit, no credits, network) is not a read: it is
+    # retried next time rather than served from the cache forever.
+    pages_json = {int(k): v for k, v in (store.get("pages") or {}).items()
+                  if not (isinstance(v, dict) and v.get("error"))}
 
     page_texts: dict[int, str] = {}
     wanted: list[int] = []
@@ -643,7 +646,8 @@ def read_pdf_llm(path: str | Path, sha: str, cache_dir: str | Path | None = None
             cached.write_text(json.dumps({
                 "sha256": sha, "prompt_version": PROMPT_VERSION,
                 "model": model_name,
-                "pages": {str(k): v for k, v in sorted(pages_json.items())},
+                "pages": {str(k): v for k, v in sorted(pages_json.items())
+                          if not (isinstance(v, dict) and v.get("error"))},
             }, indent=1, ensure_ascii=False), encoding="utf-8")
 
     older = store.get("prompt_version") not in (None, PROMPT_VERSION) and not missing

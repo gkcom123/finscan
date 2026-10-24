@@ -74,7 +74,8 @@ _FULL_DATE = re.compile(
 )
 
 #: "Q2 2026", "2Q26", "2Q 2026".
-_QUARTER = re.compile(r"\b(?:Q([1-4])\s*(\d{2,4})|([1-4])Q\s*(\d{2,4}))\b", re.IGNORECASE)
+#: "1Q26", "Q1 2026", and the Spanish "1T26" (primer trimestre) of BMV commentary.
+_QUARTER = re.compile(r"\b(?:Q([1-4])\s*(\d{2,4})|([1-4])[QT]\s*(\d{2,4}))\b", re.IGNORECASE)
 
 
 def _month_end(year: int, month: int) -> str:
@@ -213,6 +214,22 @@ _MONTH_YEAR = re.compile(
     r"\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[-'’](\d{2})\b",
     re.IGNORECASE)
 
+#: A Spanish full date: "31 de marzo de 2026", "30 de junio del 2026".
+_SPANISH_MONTHS = {"enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+                   "julio": 7, "agosto": 8, "septiembre": 9, "setiembre": 9, "octubre": 10,
+                   "noviembre": 11, "diciembre": 12}
+_SPANISH_DATE = re.compile(
+    r"\b(\d{1,2})\s+de\s+(" + "|".join(_SPANISH_MONTHS) + r")\s+(?:de|del)\s+(\d{4})\b",
+    re.IGNORECASE)
+
+#: "March, 2026", "Jun, 2026", "Dec 2025": a balance-sheet column headed by a month
+#: and a four-digit year with no day (Grupo Bimbo's release). The month's last day.
+_MONTH_COMMA_YEAR = re.compile(
+    r"^\s*(january|february|march|april|may|june|july|august|september|october|"
+    r"november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\.?,?\s+"
+    r"((?:19|20)\d{2})\s*$",
+    re.IGNORECASE)
+
 #: A month-first date: "June 30, 2026", the US and Indian form.
 _MONTH_FIRST_DATE = re.compile(rf"\b({_MONTH_WORDS})\s+(\d{{1,2}}),?\s*(\d{{4}})\b",
                                re.IGNORECASE)
@@ -321,6 +338,12 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         elif m := _MONTH_YEAR.search(text):
             # "Jun-26": the IR Pack's column header is a month and a two-digit year.
             end = _month_end(2000 + int(m.group(2)), MONTHS[m.group(1).lower()])
+        elif m := _MONTH_COMMA_YEAR.match(text):
+            end = _month_end(int(m.group(2)), MONTHS[m.group(1).lower()])
+        elif m := _SPANISH_DATE.search(text):
+            month, day, year = _SPANISH_MONTHS[m.group(2).lower()], int(m.group(1)), int(m.group(3))
+            end = (_month_end(year, month) if day >= 28
+                   else date(year, month, day).isoformat())
         elif m := _MONTH_FIRST_DATE.search(text):
             month, day, year = MONTHS[m.group(1).lower()], int(m.group(2)), int(m.group(3))
             end = (_month_end(year, month) if day >= 28

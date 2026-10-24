@@ -340,3 +340,14 @@ def test_a_caption_pointing_at_another_caption_is_read_without_excel_cache(tmp_p
     formulas, values = load_workbook(path)["Sheet"], load_workbook(path, data_only=True)["Sheet"]
     assert _caption(formulas, values, 9, 2) == "Net Leverage"
     assert _caption(formulas, values, 10, 2) == ""
+
+
+def test_a_coupon_in_a_debt_caption_is_not_a_ratio():
+    """Grupo Bimbo lists its bonds by coupon; "%" there names the instrument."""
+    from finscan2.model.learn import _looks_derived
+
+    for caption in ("4.875% Notes due 2044", "Lines of credit of SOFR+1.20% till 2029",
+                    "Credit Facility EURIBOR + 0.95% 2028", "USD 500mn Perpetual bond - 5.95%"):
+        assert not _looks_derived(caption), caption
+    for caption in ("% of sales or stated otherwise", "Gross margin %", "EBITDA margin (%)"):
+        assert _looks_derived(caption), caption

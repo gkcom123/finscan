@@ -322,6 +322,12 @@ class _Term:
 #: that belongs with it in a note) is one row in the model.
 _TERM_STATEMENT = " @ "
 
+#: Separates a sum term's caption from the header of the column that term alone is
+#: read in: "Total banks ## Domestic currency Until 2 years". Grupo Bimbo's debt
+#: annex prints one TOTAL row across twelve currency/maturity columns, and the
+#: model's local-currency debt is the six domestic columns added together.
+_TERM_COLUMN = " ## "
+
 
 def _lookup_sum(spec, statement, column, scope=None):
     """Every term of a sum, or nothing.
@@ -347,6 +353,8 @@ def _lookup_sum(spec, statement, column, scope=None):
     for sign, instruction in _sum_terms(spec.resolve or ""):
         instruction, _, override = instruction.partition(_TERM_STATEMENT)
         instruction, override = instruction.strip(), override.strip()
+        instruction, _, term_header = instruction.partition(_TERM_COLUMN)
+        instruction, term_header = instruction.strip(), term_header.strip()
         optional = instruction.endswith(_OPTIONAL)
         if optional:
             instruction = instruction[:-len(_OPTIONAL)].rstrip()
@@ -381,6 +389,14 @@ def _lookup_sum(spec, statement, column, scope=None):
             row_units = statement.units or scope["doc"].units or scope["units"]
             term_units = term_statement.units or scope["doc"].units or scope["units"]
             factor = (UNIT_MULTIPLIER.get(term_units, 1.0) / UNIT_MULTIPLIER.get(row_units, 1.0))
+
+        if term_header:
+            if scope is None:
+                return None, f"the sum term '{instruction}' names a column, which this lookup cannot resolve"
+            term_column, why = select_column(term_statement, scope["target"], scope["cadence"],
+                                             scope["point_in_time"], header_contains=term_header)
+            if term_column is None:
+                return None, f"the sum term '{instruction}' column '{term_header}': {why}"
 
         class _Part:
             resolve = instruction

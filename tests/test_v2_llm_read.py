@@ -236,3 +236,54 @@ def test_a_table_titled_with_the_running_page_header_is_a_continuation():
     assert _is_running_header("KOF Consolidado", running)
     assert _is_running_header("KOF", running)
     assert not _is_running_header("[800100] Notas - Subclasificaciones", running)
+
+
+def test_a_month_comma_year_balance_sheet_header_is_dated():
+    """Grupo Bimbo's balance sheet: "March, 2026 | Dec, 2025 | % Change"."""
+    from finscan2.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers(["March, 2026", "Dec, 2025", "% Change"],
+                                      statement_kind="balance_sheet")
+    assert [c.end for c in cols] == ["2026-03-31", "2025-12-31", None]
+    assert parse_columns_from_headers(["May 2026 sales growth"])[0].end is None
+
+
+def test_bmv_iso_header_lines_give_columns_in_order():
+    """Grupo Bimbo's English BMV report wraps its column labels; the ISO dates decide.
+    A four-column flow header prints its ranges over two lines."""
+    from finscan2.pdf.statements import _iso_header_columns
+
+    bs = _iso_header_columns(["Concept Close Current Close Previous", "Quarter Exercise",
+                              "2026-03-31 2025-12-31"], "balance_sheet")
+    assert [(c.kind, c.end) for c in bs] == [("point_in_time", "2026-03-31"),
+                                             ("point_in_time", "2025-12-31")]
+    flows = _iso_header_columns([
+        "Concept Quarter Current Year Accumulated Current Quarter Previous Year Accumulated Previous",
+        "2026-04-01 - 2026-06-30 Year 2025-04-01 - 2025-06-30 Year",
+        "2026-01-01 - 2026-06-30 2025-01-01 - 2025-06-30"], "income_statement")
+    assert [(c.months, c.end) for c in flows] == [(3, "2026-06-30"), (6, "2026-06-30"),
+                                                  (3, "2025-06-30"), (6, "2025-06-30")]
+
+
+def test_a_rounding_level_of_000_means_whole_units():
+    from finscan2.pdf.read import _ROUNDING, _ROUNDING_STEP
+
+    m = _ROUNDING.search("Level of rounding used in financial statements: 000")
+    assert m and _ROUNDING_STEP[m.group(1).lower()] == 1e3
+
+
+def test_spanish_dates_and_trimestre_labels_are_dated():
+    """BMV commentary: "1T26"; debt note: "31 de marzo de 2026"."""
+    from finscan2.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers(["Ventas Netas 1T26", "Ventas Netas 1T25", "% Var. (MXN)"])
+    assert [(c.months, c.end) for c in cols] == [(3, "2026-03-31"), (3, "2025-03-31"), (None, None)]
+    bs = parse_columns_from_headers(["Valor Razonable", "31 de marzo de 2026", "31 de diciembre de 2025"],
+                                    statement_kind="balance_sheet")
+    assert [c.end for c in bs] == [None, "2026-03-31", "2025-12-31"]
+
+
+def test_a_supplement_lives_beside_its_pdf():
+    from finscan2.pdf.read import supplement_path
+
+    assert str(supplement_path("inbox/x/Report.pdf")).endswith("Report.pdf.supplement.json")
