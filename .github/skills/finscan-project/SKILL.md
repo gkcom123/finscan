@@ -1,354 +1,122 @@
 ---
 name: finscan-project
-description: "Use when working on the FinScan project: extracting financial data from company PDFs, mapping values into Excel models, debugging wrong period/unit/sign/label matches, managing profiles, running the CLI/API, or extending the LangGraph pipeline."
+description: "Use when working on the FinScan project: reading company results PDFs, writing a new period column into Excel models, editing per-company mappings, debugging wrong captions/periods/units/signs, or running the finscan2 CLI."
 ---
 
 # FinScan Project Skill
 
 ## Purpose
 
-FinScan reads a company's financial-results PDF and writes the current reporting period into that company's Excel model. It writes only hardcoded input cells, preserves the model's formulas, and creates a new output workbook instead of modifying the source workbook.
+FinScan reads a company's quarterly results PDF and writes that period into the
+company's Excel model as a new column. It writes input cells only, copies formula
+cells forward, and saves a new workbook; the source workbook is never modified.
 
-The project is designed for many companies whose Excel layouts differ. Workbook structure is discovered from the workbook itself; company-specific exceptions are stored in JSON profiles rather than hardcoded in Python.
+Everything company-specific lives in one reviewed, git-tracked file,
+`mappings/<company>.json`. Code stays company-agnostic: never hardcode a company,
+caption or row number in Python.
 
-## Architecture At A Glance
+## Running
 
-```text
-PDF + Excel model
-        |
-        v
-  ingest_pdf              Read PDF text, tables, page metadata, OCR fallback
-        |
-        v
-  discover_workbook       Find relevant sheets, labels, dates, units, colors, rows
-        |
-        v
-  extract_financials      Extract canonical financial fields from the PDF
-        |
-        v
-  resolve_profile         Load/create the company's layout profile
-        |
-        v
-  normalize               Convert values to base units, derive safe missing fields
-        |
-        v
-  refine_mapping          Apply profile overrides, aliases, fuzzy/LLM caption mapping
-        |
-        v
-  extract_label_rows      Resolve rows not covered by canonical extraction
-        |
-        v
-  check_periods           Confirm the PDF period belongs in the next workbook column
-        |
-        v
-  crosscheck              Compare model formulas with reported filing values
-        |
-        v
-  validate                Check identities, signs, coverage, and blocking errors
-        |
-        +--> retry once for extraction/validation errors
-        |
-        v
-  write_excel             Write blue inputs, copy black formulas, add comments/audit
-        |
-        v
-  report                  Produce the review report and final status
+```bash
+finscan2 company <name>      # inbox/<Name>/ — case-insensitive folder name
+finscan2 companies           # every folder under inbox/
+# options: --dry-run  --period-end YYYY-MM-DD  --no-cache  --sheet <sheet>
 ```
 
-Graph wiring is defined in `src/finscan/graph/build.py`; node implementations are in `src/finscan/graph/nodes.py`.
+Each run (`src/finscan2/cli.py`):
 
-## Repository Layout
+1. Read every PDF → `<pdf>.pdf.json` (rewritten each run; reads cached in
+   `_work/pdfcache` by SHA-256). Reader is the vision model by default;
+   `"reader": "rules"` in the mapping selects the rule-based reader. A
+   `<pdf>.pdf.supplement.json` beside a PDF adds hand-supplied tables, verified
+   against the page text.
+2. Mapping: created if missing; otherwise only workbook input rows it lacks are
+   appended (marked `added <date>: … review`); otherwise untouched.
+3. `apply.run`: discover the sheet, compile the mapping onto it, check the
+   period, resolve values, validate, write `inbox/<key>_v2_output.<ext>`.
+4. Rewrite `models/<key>_model.json` and `_work/<key>_<period>_values.json` /
+   `_report.md`. Nothing reads these back.
 
-```text
-src/finscan/
-  cli.py                  Command-line interface
-  config.py               Environment-backed settings
-  profiles.py             Company layout profiles and profile store
-  schemas.py              Canonical fields, row mappings, issues, write results
-  periods.py              Period continuity checks
-  validate.py             Accounting identities, signs, and plausibility checks
-  crosscheck.py           Formula/subtotal comparisons
-  api/main.py             FastAPI service and HTTP endpoints
-  graph/build.py          LangGraph construction and run entry point
-  graph/nodes.py          Pipeline node implementations
-  graph/state.py          Shared LangGraph state
-  excel/discovery.py      Workbook layout discovery
-  excel/mapper.py         Alias, fuzzy, and LLM caption mapping
-  excel/style_probe.py    Excel color/theme/style interpretation
-  excel/writer.py         Workbook writing, formula copying, scaling, comments
-  extract/pdf_reader.py   PDF text/table extraction and OCR support
-  extract/extractor.py    Structured and label-based LLM extraction
-  extract/normalize.py    Units and normalization
-  llm/factory.py          OpenAI/Azure model construction
+## Layout
 
-profiles/                  One JSON layout/profile file per company
-inbox/<company>/            Source PDF and source Excel model
-inbox/<company>_output.*   Generated workbook
-_work/                      Working artifacts
-samples/                   Local sample generation and fixtures
-tests/                     Automated tests
-docs/                      API, demo, connector, and run documentation
+```
+src/finscan2/
+  cli.py            the two commands
+  company.py        inbox/<Company>/ conventions; ambiguity is an error
+  apply.py          bind → period → resolve → validate → write
+  config.py, llm.py model provider (OpenAI / Azure OpenAI via .env)
+  aliases.py        filing spellings of canonical fields
+  pdf/              read.py (rules + supplements), llm_read.py (vision), verify.py,
+                    ocr.py, statements.py, columns.py, notes.py
+  model/            discover.py (sheet layout), style_probe.py (cell colour roles),
+                    learn.py + propose_captions.py (mapping proposals)
+  mapping/          schema.py (the file), propose.py, compile.py
+  match/            select.py (caption lookup), resolve.py (values, periods,
+                    de-cumulation, sums), basis.py
+  write/column.py   copy workbook, write inputs, copy formulas, comments
+mappings/           one per company — the human contract
+tests/              offline; the model is stubbed
 ```
 
-## Core Excel Contract
+## Invariants — do not break
 
-FinScan derives the workbook's rules instead of assuming a fixed layout.
+- **Formula cells are never overwritten.** Inputs are blue (or plain numbers when
+  a sheet has no colour convention); a formula with no cell references
+  (`=-26.5-10.5`) is an input typed in place and is written, never copied.
+- **The mapping is keyed by `(label, section, occurrence)`**, never row number.
+  A mapping row that binds to nothing (`mapping_row_unbound`) blocks the write.
+- **A run never rewrites existing mapping lines.** New rows are appended with
+  `Mapping.append_rows`, which preserves keys the schema does not model.
+- **No write across a period gap** or into a column that already holds the period.
+- **A vision-read or supplied figure is written only when the page's text layer
+  (or the table's arithmetic) confirms it**; otherwise the cell is left blank with
+  the reason (`unverified_figure`).
+- **Sections stay apart**: a cash-flow "Depreciation" never reads the P&L line.
+- **The filing's printed sign is kept** unless the mapping negates the caption
+  (a leading `-`) or asserts `sign`.
 
-### Blue and black cells
+## Mapping rows
 
-- Blue hardcoded input cells are eligible for extracted values.
-- Black formula cells are copied forward with translated references.
-- Green and red linked cells are not treated as ordinary inputs.
-- A formula is never overwritten, even if its font is blue.
-- Cells inside merged ranges are skipped.
-- The source workbook is never modified; the output is a copy.
-
-Color detection supports literal RGB, indexed colors, and theme colors with tint. The implementation is in `excel/style_probe.py`.
-
-### Period columns
-
-`excel/discovery.py` identifies the latest existing period and the next write column. `periods.py` checks that the filing period follows the latest model period using the model's cadence and a month-end tolerance.
-
-A period gap or duplicate period is a safety error. Current behavior is sheet-scoped where possible: a blocked sheet is skipped while unrelated sheets that have valid continuity may still be written.
-
-Do not use `--allow-period-gap` for production data. It is intended only for testing and writes into a slot that may represent a different period.
-
-### Units
-
-Values move through the pipeline in base units. At write time, each sheet is scaled independently using its detected units:
-
-```text
-units       1
-thousands   1,000
-lakhs       100,000
-millions    1,000,000
-crores      10,000,000
-billions    1,000,000,000
+```json
+{"label": "Revenue", "section": "income_statement", "pdf": "Net sales"}
+{"label": "Taxes", "section": "cash_flow", "pdf": ["-Income taxes paid", "Tax refunds?"]}
+{"label": "Adj. EBITDA", "section": "income_statement", "pdf": "EBITDA", "statement": "title:Quarter-on-Quarter"}
+{"label": "FX rate", "section": "other", "carry_forward": true, "note": "peg, typed by hand"}
+{"label": "FX rate average", "section": "other", "copy_formula": true}
 ```
 
-Per-share fields are not scaled. Sheet units can be inferred from reference-column magnitudes when the workbook header is stale.
+- `pdf`: caption | list to sum (`-` subtracts) | `null` (not in the filing).
+- In a caption: `?` = optional (0 when not printed); `#2` = the 2nd exact match;
+  `Heading > Caption` = the line after a heading; ` @ title:<text>` = read this
+  term in another table; ` ## <column header>` = read this term in that column.
+- Overrides: `statement` (`title:<text>`, `title:A || B`), `column` (header text,
+  `Reported#1`), `basis`, `sign`, `scale`, `value` (constant), `carry_forward`,
+  `copy_formula` (copy the row's latest formula).
 
-### Sign conventions
+## Debugging
 
-Some models store expenses as positive numbers and subtract them; others store them as negative numbers and add them. FinScan detects the convention for validation and preserves the workbook row convention when safe.
+1. Run with `--dry-run` and read `_work/<key>_<period>_report.md` — every row's
+   value, source caption and adjustments.
+2. Wrong or blank value → inspect `inbox/<Company>/<pdf>.pdf.json` for the
+   statement, its columns (`end`, `months`) and the caption actually printed;
+   fix the mapping row, not the code, when the filing is just worded differently.
+3. Wrong column/period → check `period_dates` and `write_col` in
+   `models/<key>_model.json`.
+4. Back-test a mapping against a period the model already has: resolve it for
+   that period and compare each value with the analyst's column.
+5. Parser bugs belong in `pdf/`; bump `PARSER_VERSION` in `schema.py` so stale
+   caches are re-parsed.
 
-Important fixed-sign cases:
+## Deployment
 
-- `cost_of_revenue` is forced negative when printed positive.
-- `non_controlling_interest` is a deduction in models whose attributable-profit formula uses `PAT + NCI`; writer sign handling follows the row's prior-period convention.
-- FX, valuation, fair-value, remeasurement, and gain/loss rows are bidirectional and must not be forced to match the prior-period sign.
-- Cash paid/tax paid/dividends paid labels are negative; cash interest income/received labels are positive.
-
-Sign and scale guards live mainly in `excel/writer.py`; field-level rules live in `validate.py`.
-
-## Extraction Paths
-
-There are two extraction paths.
-
-### Canonical extraction
-
-`extract.extractor.extract()` asks the model for structured canonical fields such as revenue, cost of revenue, finance costs, tax, and cash flow totals. The result contains values, source captions, confidence, period metadata, and source text.
-
-Use this path whenever the workbook row can be mapped reliably to a canonical field.
-
-### Label fallback
-
-`extract_for_labels()` handles workbook rows that do not map to a canonical field, or canonical rows whose main extraction was missing. The label fallback is the riskier path because a PDF may contain the same caption in multiple statements, periods, currencies, or units.
-
-The normal legacy path sends a batch of labels to one LLM call. It has deterministic protections for:
-
-- mixed six-month versus quarterly columns;
-- subtotal matches;
-- bare-number/uncaptioned rows;
-- raw absolute-currency tables mixed with millions-scale statements;
-- cash-flow direction words.
-
-The opt-in reliable path is enabled with:
-
-```powershell
-finscan company jd --reliable-labels
-```
-
-or:
-
-```text
-FINSCAN_RELIABLE_LABELS=true
-```
-
-Reliable-label mode resolves each queued label in an individual focused extraction call (rather than one shared batch call) and reports unresolved rows explicitly. Note: leaving a row blank instead of copying it from a prior period or defaulting it to zero is unconditional behavior, in every mode, not something reliable-label mode turns on — an input row with no defensible PDF value is always left blank (`input_row_left_blank`) so the gap is visible instead of looking like a freshly extracted figure.
-
-The reliable mode is currently a rollout path. Validate it against real company workbooks before making it the global default.
-
-## Profiles
-
-Profiles are stored in `profiles/<company_key>.json` and contain:
-
-- enabled sheets;
-- workbook fingerprint;
-- confirmation state;
-- `label_overrides`: Excel caption to canonical field;
-- `label_search_overrides`: Excel caption to actual PDF caption;
-- `field_composites`: company-specific calculated field definitions;
-- `unmapped_rows`: rows that must not be assigned by fuzzy/LLM mapping;
-- profile history.
-
-Profiles are data, not code. Use a profile override when one company's model label has a company-specific meaning. For example, an Excel row named `Operating expenses` may actually correspond to the PDF caption `Maintenance expenses`.
-
-Useful commands:
-
-```powershell
-finscan profiles list
-finscan profiles show jd
-finscan profiles confirm jd --sheets Model
-finscan profiles map jd --label "Turnover (net)" --field revenue_from_operations
-```
-
-A new or unconfirmed profile is not the same as a period failure. The CLI defaults to no confirmation gate, but API or explicit legacy settings can require confirmation.
-
-## CLI Workflows
-
-Use the project interpreter on Windows:
-
-```powershell
-c:/Project/finscan/.venv/Scripts/python.exe -m finscan.cli company jd --reliable-labels --report _tmp_jd.md
-```
-
-Common commands:
-
-```powershell
-# Inspect workbook layout without PDF or LLM calls
-finscan inspect "inbox/jd/JD Inc_2Q26_14 Aug 2026.xlsx" --json
-
-# Inspect PDF statement-page detection
-finscan inspect-pdf "inbox/jd/JD.com Announces Second Quarter and Interim 2026 Results.pdf" --show
-
-# Process an explicit PDF and workbook
-finscan run input.pdf model.xlsx --out model_updated.xlsx --report report.md
-
-# Process a company folder under inbox/
-finscan company jd --reliable-labels --report report.md
-
-# Process several PDFs oldest first
-finscan batch path/to/pdf-folder model.xlsx --out model_updated.xlsx
-
-# Skip mapping LLM calls
-finscan company jd --no-llm-mapping
-
-# Testing only: override a period gap
-finscan company jd --allow-period-gap
-```
-
-Avoid using plain `python` in the current Windows setup unless the active environment is known to be the project venv. The plain interpreter may lack reportlab or other project dependencies.
-
-## API Workflow
-
-Start the service locally:
-
-```powershell
-uvicorn finscan.api.main:app --port 8080
-```
-
-Main endpoints:
-
-- `POST /inspect`: inspect a workbook without PDF extraction or writing.
-- `POST /jobs`: extract, discover, and map without writing.
-- `POST /profiles/{key}/confirm`: confirm the company layout.
-- `POST /jobs/{id}/apply`: write a prepared job.
-- `POST /extract-and-apply`: run extraction and writing in one request.
-- `GET /jobs/{id}/download`: download the generated workbook.
-- `GET /profiles` and `GET /profiles/{key}`: inspect profiles.
-
-Connector and Copilot Studio details are in `docs/copilot_connector.yaml` and `docs/copilot_studio_setup.md`.
-
-## Reports and Provenance
-
-Every run produces a markdown report containing:
-
-- status;
-- company and period metadata;
-- enabled/in-scope sheets;
-- row mappings and confidence;
-- errors and warnings;
-- extraction and profile notes;
-- formula crosschecks;
-- rows with copied formulas, left blank, or skipped (input values are never carried forward or defaulted — only the model's own formulas are carried forward).
-
-Every written cell receives an Excel comment describing its field, PDF caption, match method, confidence, or formula origin. The writer also maintains a `FinScan_Audit` sheet.
-
-When a value looks wrong, inspect the cell comment and report before changing code. They identify whether the value came from:
-
-- canonical extraction;
-- alias/fuzzy/LLM mapping;
-- label fallback;
-- profile override;
-- formula copy;
-- left-blank behavior (`input_row_left_blank`) when no defensible value exists.
-- formula carry-forward (the model's own calculation, not an extracted value).
-
-## Debugging Workflow
-
-1. Reproduce with a fresh CLI run and a temporary report.
-2. Make sure Excel is closed. An open output workbook causes `PermissionError` and leaves an older output file untouched.
-3. Inspect the exact output cell with openpyxl using `data_only=False`.
-4. Read the cell comment to identify the extraction path.
-5. Inspect the raw PDF text directly with `read_pdf(...).as_prompt_text(statements_only=False)`.
-6. Compare the printed value, period column, sign, and units with the workbook value.
-7. Check whether the row was canonical, label fallback, left blank, or formula-derived (formulas are the only thing ever carried forward from a prior period).
-8. Prefer a deterministic guard at the source path that produced the value. Do not patch only the final Excel cell.
-9. Add a focused test and rerun the full suite.
-
-Example cell inspection:
-
-```powershell
-c:/Project/finscan/.venv/Scripts/python.exe -c "import openpyxl; ws=openpyxl.load_workbook('inbox/jd_output.xlsx', data_only=False)['Model']; c=ws['AL14']; print(c.value); print(c.comment.text if c.comment else None)"
-```
-
-Raw PDF inspection:
-
-```powershell
-c:/Project/finscan/.venv/Scripts/python.exe -c "from finscan.extract.pdf_reader import read_pdf; print(read_pdf('input.pdf').as_prompt_text(statements_only=False))"
-```
-
-Never trust a previously generated workbook without checking its timestamp, lock state, and provenance comment.
+Azure Container Apps Job plus an optional Job API for Foundry:
+`docs/FinModelUpdater_Deployment.md`.
 
 ## Testing
 
-Run the complete suite with the project interpreter:
-
-```powershell
-c:/Project/finscan/.venv/Scripts/python.exe -m pytest -q
+```bash
+pytest -q
 ```
 
-The expected suite currently reports 80 passing tests. Tests use stubbed LLM behavior and do not require network access.
-
-For changes to extraction or writing, validation should include:
-
-- static/editor diagnostics;
-- the narrowest relevant test;
-- the full pytest suite;
-- one live CLI run against the affected company when a real filing is available;
-- direct openpyxl inspection of the regenerated output cell.
-
-## Extension Rules
-
-- Add a canonical field in `schemas.py`, its aliases and label, then update relevant identities in `validate.py`.
-- Do not add company-specific caption meanings to general extraction heuristics; use a profile override.
-- Keep source-row text and provenance when adding extraction logic.
-- Prefer null plus a visible review issue over a plausible guessed number.
-- Do not trust prompt wording as the only protection; add a deterministic check for period, scale, sign, and source-row validity.
-- Do not use a single prior-period anchor as the only scale/sign signal when it can be zero, formula-based, or subject to genuine volatility.
-- Keep formula cells protected and preserve the source workbook.
-- Add tests for every new guard, especially false-positive and ambiguous cases.
-- Avoid broad refactors while fixing one company's filing; first identify the exact extraction/write path.
-
-## Current Known Risk Areas
-
-- PDFs may contain several tables with the same caption but different periods, currencies, or units.
-- LLM caption mapping is nondeterministic unless constrained by profile data or explicit candidates.
-- A raw PDF may have both cumulative and quarterly columns.
-- OCR can drop parentheses or alter punctuation.
-- Carry-forward/default-to-zero for unresolved input rows was removed project-wide (2026-09-16): an unmatched input row is now always left blank (`input_row_left_blank`), in every mode, so an extraction gap is always visible instead of looking like a freshly extracted figure.
-- An open Excel output file prevents regeneration and can create a stale-file false alarm.
-- A workbook can contain a sheet with a different cadence from the main model; period checks must remain sheet-scoped.
-
-When in doubt, stop the write for the affected row, report the ambiguity, and ask for a profile mapping or human confirmation instead of silently choosing a value.
+Add a focused test beside the module you change (`tests/test_v2_<area>.py`),
+built from a minimal in-memory workbook or a literal page of text.
