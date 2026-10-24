@@ -1,6 +1,6 @@
 ---
 name: finscan-project
-description: "Use when working on the FinScan project: reading company results PDFs, writing a new period column into Excel models, editing per-company mappings, debugging wrong captions/periods/units/signs, or running the finscan2 CLI."
+description: "Use when working on the FinScan project: reading company results PDFs, writing a new period column into Excel models, editing per-company mappings, debugging wrong captions/periods/units/signs, or running the finscan CLI."
 ---
 
 # FinScan Project Skill
@@ -18,12 +18,12 @@ caption or row number in Python.
 ## Running
 
 ```bash
-finscan2 company <name>      # inbox/<Name>/ — case-insensitive folder name
-finscan2 companies           # every folder under inbox/
+finscan company <name>      # inbox/<Name>/ — case-insensitive folder name
+finscan companies           # every folder under inbox/
 # options: --dry-run  --period-end YYYY-MM-DD  --no-cache  --sheet <sheet>
 ```
 
-Each run (`src/finscan2/cli.py`):
+Each run (`src/finscan/cli.py`):
 
 1. Read every PDF → `<pdf>.pdf.json` (rewritten each run; reads cached in
    `_work/pdfcache` by SHA-256). Reader is the vision model by default;
@@ -40,7 +40,7 @@ Each run (`src/finscan2/cli.py`):
 ## Layout
 
 ```
-src/finscan2/
+src/finscan/
   cli.py            the two commands
   company.py        inbox/<Company>/ conventions; ambiguity is an error
   apply.py          bind → period → resolve → validate → write

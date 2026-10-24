@@ -5,7 +5,7 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font
 from openpyxl.styles.colors import Color
 
-from finscan2.model.style_probe import (
+from finscan.model.style_probe import (
     Role,
     Theme,
     apply_tint,

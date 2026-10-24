@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from finscan2.mapping.schema import Mapping
-from finscan2.pdf.llm_read import doc_from_tables
+from finscan.mapping.schema import Mapping
+from finscan.pdf.llm_read import doc_from_tables
 
 _HEADERS = ["2nd Quarter Ended 30/06/2026 RM'000", "2nd Quarter Ended 30/06/2025 RM'000",
             "Financial Period Ended 30/06/2026 RM'000", "Financial Period Ended 30/06/2025 RM'000"]
@@ -12,8 +12,8 @@ _TITLE = "UNAUDITED CONDENSED CONSOLIDATED STATEMENT OF COMPREHENSIVE INCOME"
 
 
 def test_vision_request_includes_text_to_check_dense_table_headers(monkeypatch):
-    from finscan2 import llm
-    from finscan2.pdf.llm_read import _read_page
+    from finscan import llm
+    from finscan.pdf.llm_read import _read_page
 
     calls = []
 
@@ -196,7 +196,7 @@ def test_presentation_group_labels_restore_missing_quarter_headers():
 
 def test_a_currency_only_unit_line_means_figures_are_whole_units():
     """Vesta's statements say "(In US dollars)" and nothing else about scale."""
-    from finscan2.pdf.read import whole_units
+    from finscan.pdf.read import whole_units
 
     assert whole_units("Statements of Financial Position\n(In US dollars)")
     assert whole_units("For the three-month periods ended March 31, 2026 (In Mexican pesos)")
@@ -207,7 +207,7 @@ def test_a_currency_only_unit_line_means_figures_are_whole_units():
 
 def test_release_headers_with_of_and_first_n_months_are_dated():
     """KOF's release: "For the Second Quarter of: 2026" / "For the first Six Months of: 2026"."""
-    from finscan2.pdf.columns import parse_columns_from_headers
+    from finscan.pdf.columns import parse_columns_from_headers
 
     cols = parse_columns_from_headers([
         "For the Second Quarter of: 2026", "For the Second Quarter of: 2025",
@@ -217,7 +217,7 @@ def test_release_headers_with_of_and_first_n_months_are_dated():
 
 
 def test_a_share_of_revenue_column_does_not_tie_with_its_amount():
-    from finscan2.pdf.columns import parse_columns_from_headers
+    from finscan.pdf.columns import parse_columns_from_headers
 
     cols = parse_columns_from_headers(["2Q26", "2Q26 % of Rev.", "2Q25", "2Q25 % of Rev."])
     assert [c.end for c in cols] == ["2026-06-30", None, "2025-06-30", None]
@@ -229,7 +229,7 @@ def test_a_share_of_revenue_column_does_not_tie_with_its_amount():
 def test_a_table_titled_with_the_running_page_header_is_a_continuation():
     """BMV reports print "KOF Consolidado" atop every page; the model sometimes
     returns it as the title of a table's second page."""
-    from finscan2.pdf.llm_read import _is_running_header, _running_headers
+    from finscan.pdf.llm_read import _is_running_header, _running_headers
 
     pages = {n: f"KOF Consolidado\nClave de Cotización: KOF\nbody {n}" for n in range(1, 7)}
     running = _running_headers(pages)
@@ -240,7 +240,7 @@ def test_a_table_titled_with_the_running_page_header_is_a_continuation():
 
 def test_a_month_comma_year_balance_sheet_header_is_dated():
     """Grupo Bimbo's balance sheet: "March, 2026 | Dec, 2025 | % Change"."""
-    from finscan2.pdf.columns import parse_columns_from_headers
+    from finscan.pdf.columns import parse_columns_from_headers
 
     cols = parse_columns_from_headers(["March, 2026", "Dec, 2025", "% Change"],
                                       statement_kind="balance_sheet")
@@ -251,7 +251,7 @@ def test_a_month_comma_year_balance_sheet_header_is_dated():
 def test_bmv_iso_header_lines_give_columns_in_order():
     """Grupo Bimbo's English BMV report wraps its column labels; the ISO dates decide.
     A four-column flow header prints its ranges over two lines."""
-    from finscan2.pdf.statements import _iso_header_columns
+    from finscan.pdf.statements import _iso_header_columns
 
     bs = _iso_header_columns(["Concept Close Current Close Previous", "Quarter Exercise",
                               "2026-03-31 2025-12-31"], "balance_sheet")
@@ -266,7 +266,7 @@ def test_bmv_iso_header_lines_give_columns_in_order():
 
 
 def test_a_rounding_level_of_000_means_whole_units():
-    from finscan2.pdf.read import _ROUNDING, _ROUNDING_STEP
+    from finscan.pdf.read import _ROUNDING, _ROUNDING_STEP
 
     m = _ROUNDING.search("Level of rounding used in financial statements: 000")
     assert m and _ROUNDING_STEP[m.group(1).lower()] == 1e3
@@ -274,7 +274,7 @@ def test_a_rounding_level_of_000_means_whole_units():
 
 def test_spanish_dates_and_trimestre_labels_are_dated():
     """BMV commentary: "1T26"; debt note: "31 de marzo de 2026"."""
-    from finscan2.pdf.columns import parse_columns_from_headers
+    from finscan.pdf.columns import parse_columns_from_headers
 
     cols = parse_columns_from_headers(["Ventas Netas 1T26", "Ventas Netas 1T25", "% Var. (MXN)"])
     assert [(c.months, c.end) for c in cols] == [(3, "2026-03-31"), (3, "2025-03-31"), (None, None)]
@@ -284,6 +284,6 @@ def test_spanish_dates_and_trimestre_labels_are_dated():
 
 
 def test_a_supplement_lives_beside_its_pdf():
-    from finscan2.pdf.read import supplement_path
+    from finscan.pdf.read import supplement_path
 
     assert str(supplement_path("inbox/x/Report.pdf")).endswith("Report.pdf.supplement.json")

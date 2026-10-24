@@ -1,0 +1,544 @@
+"""Parse a statement's column headers into month spans and end dates.
+
+This is the piece the original FinScan lacked, and the reason it could not tell a standalone quarter
+from a year-to-date figure. An IAS 34 interim statement prints both under one
+heading — "FOR THE THREE-MONTH AND SIX-MONTH PERIODS ENDED 30 JUNE 2026" — so the
+basis of a value is a property of the column it was read from, never of the page.
+
+Headers are routinely stacked across lines:
+
+    April - June     April - June     January - June   January - June
+    2026             2025             2026             2025
+    (Unaudited)      (Unaudited)      (Unaudited)      (Unaudited)
+
+so the block is flattened to one line before matching, and patterns allow any
+whitespace between a month name and its year.
+"""
+from __future__ import annotations
+
+import re
+from calendar import monthrange
+from datetime import date
+
+from finscan.schema import Column
+
+MONTHS: dict[str, int] = {
+    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11,
+    "december": 12,
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+    "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+    # Spanish, for LatAm filings
+    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+    "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11,
+    "diciembre": 12,
+    "ene": 1, "abr": 4, "ago": 8, "dic": 12,
+}
+
+_MONTH_WORDS = "|".join(sorted(MONTHS, key=len, reverse=True))
+
+MONTH_COUNT_WORDS: dict[str, int] = {
+    "three": 3, "3": 3, "tres": 3,
+    "six": 6, "6": 6, "seis": 6,
+    "nine": 9, "9": 9, "nueve": 9,
+    "twelve": 12, "12": 12, "doce": 12,
+}
+
+#: "April - June 2026", "1 July - 30 September 2025". The span between the two
+#: months inclusive is what the column accumulates: Apr-Jun = 3, Jan-Sep = 9.
+_RANGE = re.compile(
+    rf"\b(?:\d{{1,2}}\s+)?({_MONTH_WORDS})\b(?:\s+\d{{1,2}})?\s*[-–—]\s*(?:\d{{1,2}}\s+)?"
+    rf"\b({_MONTH_WORDS})\b(?:\s+\d{{1,2}})?,?\s*(\d{{4}})",
+    re.IGNORECASE,
+)
+
+#: "Three-month period ended 30 June 2026", "9 months ended 30 September 2025".
+_MONTHS_ENDED = re.compile(
+    r"\b(three|six|nine|twelve|3|6|9|12)[\s-]month?s?\b"
+    rf"(?:[\s-]periods?)?\s*(?:ended|ending)\s*(\d{{1,2}})\s+\b({_MONTH_WORDS})\b,?\s*(\d{{4}})",
+    re.IGNORECASE,
+)
+
+#: The same phrase with no date attached: "Three months ended" printed once above
+#: two dated columns, which is how most filings lay out a comparative statement.
+_MONTHS_PHRASE = re.compile(
+    r"\b(three|six|nine|twelve|3|6|9|12)[\s-]month?s?\b"
+    r"(?:[\s-]periods?)?\s*(?:ended|ending)\b",
+    re.IGNORECASE,
+)
+
+#: A bare date: "30 September 2025", "31 December, 2024", "30-Jun-2026". A balance-sheet column.
+_FULL_DATE = re.compile(
+    rf"\b(\d{{1,2}})[\s-]+\b({_MONTH_WORDS})\b[,\s-]*(\d{{4}})",
+    re.IGNORECASE,
+)
+
+#: "Q2 2026", "2Q26", "2Q 2026".
+#: "1Q26", "Q1 2026", and the Spanish "1T26" (primer trimestre) of BMV commentary.
+_QUARTER = re.compile(r"\b(?:Q([1-4])\s*(\d{2,4})|([1-4])[QT]\s*(\d{2,4}))\b", re.IGNORECASE)
+
+
+def _month_end(year: int, month: int) -> str:
+    return date(year, month, monthrange(year, month)[1]).isoformat()
+
+
+def _span(start_month: int, end_month: int) -> int:
+    """Inclusive month span, wrapping a fiscal year that crosses December."""
+    return (end_month - start_month) % 12 + 1
+
+
+def flatten(text: str) -> str:
+    """Header blocks are stacked across lines; matching needs them on one."""
+    return re.sub(r"\s+", " ", (text or "").replace("|", " ")).strip()
+
+
+def parse_columns(header_block: str) -> list[Column]:
+    """Columns implied by a statement's header block, left to right.
+
+    Tried in order of how much they tell us: an explicit month range, then an
+    "N months ended" phrase, then a quarter label, then a bare date. The first
+    pattern that matches decides, because a header mixing forms (a date line
+    under a range line) would otherwise yield two columns per real column.
+    """
+    flat = flatten(header_block)
+    if not flat:
+        return []
+
+    columns: list[Column] = []
+
+    for m in _RANGE.finditer(flat):
+        start, end, year = MONTHS[m.group(1).lower()], MONTHS[m.group(2).lower()], int(m.group(3))
+        columns.append(Column(
+            index=len(columns), header=m.group(0).strip(), kind="period",
+            months=_span(start, end), end=_month_end(year, end),
+        ))
+    if columns:
+        return columns
+
+    # "Three months ended" printed once, above several dated columns. The phrase
+    # supplies the span, the dates supply the columns. With two phrases over an
+    # even number of dates ("three and nine months ended" above 3M, 3M, 9M, 9M),
+    # the dates are split between them in printed order.
+    phrases = [MONTH_COUNT_WORDS[m.group(1).lower()] for m in _MONTHS_PHRASE.finditer(flat)]
+    dates = list(_FULL_DATE.finditer(flat))
+    if phrases and dates and len(dates) % len(phrases) == 0:
+        per_phrase = len(dates) // len(phrases)
+        for position, m in enumerate(dates):
+            months = phrases[position // per_phrase]
+            month, year = MONTHS[m.group(2).lower()], int(m.group(3))
+            columns.append(Column(
+                index=len(columns), header=m.group(0).strip(), kind="period",
+                months=months, end=_month_end(year, month),
+            ))
+        return columns
+
+    for m in _MONTHS_ENDED.finditer(flat):
+        months = MONTH_COUNT_WORDS[m.group(1).lower()]
+        year, month = int(m.group(4)), MONTHS[m.group(3).lower()]
+        columns.append(Column(
+            index=len(columns), header=m.group(0).strip(), kind="period",
+            months=months, end=_month_end(year, month),
+        ))
+    if columns:
+        return columns
+
+    for m in _QUARTER.finditer(flat):
+        q = int(m.group(1) or m.group(3))
+        raw_year = m.group(2) or m.group(4)
+        year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
+        columns.append(Column(
+            index=len(columns), header=m.group(0).strip(), kind="period",
+            months=3, end=_month_end(year, q * 3),
+        ))
+    if columns:
+        return columns
+
+    for m in _FULL_DATE.finditer(flat):
+        day, month, year = int(m.group(1)), MONTHS[m.group(2).lower()], int(m.group(3))
+        columns.append(Column(
+            index=len(columns), header=m.group(0).strip(), kind="point_in_time",
+            months=None, end=date(year, month, min(day, monthrange(year, month)[1])).isoformat(),
+        ))
+    return columns
+
+
+#: "6 months as of 30/06/2026", "3 months as of 31/03/2026". Fibra Uno's form.
+_MONTHS_AS_OF = re.compile(
+    r"\b(three|six|nine|twelve|3|6|9|12)\s*months?\s*(?:as\s+of|ended|ending|to)\b",
+    re.IGNORECASE,
+)
+
+#: "Second-quarter 2026 transactions", "first quarter 2026".
+_ORDINAL_QUARTER = re.compile(
+    r"\b(first|second|third|fourth|1st|2nd|3rd|4th|primer|segundo|tercer|cuarto)"
+    r"[\s-]*quarter(?:[\s-]*of:?)?[\s-]*(\d{4})?",
+    re.IGNORECASE,
+)
+
+#: "For the first Six Months of: 2026": a calendar year to date, named in words.
+_FIRST_N_MONTHS = re.compile(
+    r"\bfirst\s+(three|six|nine|twelve|3|6|9|12)[\s-]+months?(?:\s+of:?)?\s+((?:19|20)\d{2})\b",
+    re.IGNORECASE,
+)
+_N_MONTHS = {"three": 3, "six": 6, "nine": 9, "twelve": 12, "3": 3, "6": 6, "9": 9, "12": 12}
+
+_ORDINALS = {
+    "first": 1, "1st": 1, "primer": 1,
+    "second": 2, "2nd": 2, "segundo": 2,
+    "third": 3, "3rd": 3, "tercer": 3,
+    "fourth": 4, "4th": 4, "cuarto": 4,
+}
+
+#: A year-to-date column headed only by its year: "YTD 2026", "Acumulado 2025".
+#: A variance column under the same band ("YTD VAR (%)") carries no year and so
+#: never matches.
+_YTD_YEAR = re.compile(
+    r"\b(?:YTD|year[\s-]to[\s-]date|acumulado|acum\.?)\s+((?:19|20)\d{2})\s*$",
+    re.IGNORECASE,
+)
+
+#: Two ISO dates spanning a period: "2026-04-01 - 2026-06-30". The text layer
+#: sometimes breaks the second date ("2026- 06-30"), so spaces are tolerated.
+_ISO_RANGE = re.compile(
+    r"\b(\d{4})-(\d{2})-(\d{2})\s*[-–—]\s*(\d{4})-\s*(\d{2})-\s*(\d{2})\b")
+
+#: "Quarter ended", "Half year ended", "Previous year ended": India's SEBI results
+#: name a column's span in words, without a month count.
+_PERIOD_MONTHS = {"quarter": 3, "half year": 6, "nine months": 9, "year": 12}
+_PERIOD_ENDED = re.compile(r"\b(quarter|half[\s-]+year|nine[\s-]+months|year)\s+ended\b",
+                           re.IGNORECASE)
+
+#: "Jun-26", "Mar-26": a month and a two-digit year, as Airtel's IR Pack heads
+#: its columns.
+_MONTH_YEAR = re.compile(
+    r"\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[-'’](\d{2})\b",
+    re.IGNORECASE)
+
+#: A Spanish full date: "31 de marzo de 2026", "30 de junio del 2026".
+_SPANISH_MONTHS = {"enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+                   "julio": 7, "agosto": 8, "septiembre": 9, "setiembre": 9, "octubre": 10,
+                   "noviembre": 11, "diciembre": 12}
+_SPANISH_DATE = re.compile(
+    r"\b(\d{1,2})\s+de\s+(" + "|".join(_SPANISH_MONTHS) + r")\s+(?:de|del)\s+(\d{4})\b",
+    re.IGNORECASE)
+
+#: "March, 2026", "Jun, 2026", "Dec 2025": a balance-sheet column headed by a month
+#: and a four-digit year with no day (Grupo Bimbo's release). The month's last day.
+_MONTH_COMMA_YEAR = re.compile(
+    r"^\s*(january|february|march|april|may|june|july|august|september|october|"
+    r"november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\.?,?\s+"
+    r"((?:19|20)\d{2})\s*$",
+    re.IGNORECASE)
+
+#: A month-first date: "June 30, 2026", the US and Indian form.
+_MONTH_FIRST_DATE = re.compile(rf"\b({_MONTH_WORDS})\s+(\d{{1,2}}),?\s*(\d{{4}})\b",
+                               re.IGNORECASE)
+_YEAR_TO_DATE_WORDS = re.compile(
+    r"\b(?:financial\s+)?period\s+ended\b|\byear[\s-]+to[\s-]+date\b|\bytd\b"
+    r"|\bcumulative\b|\bacumulado\b", re.IGNORECASE)
+
+#: A numeric date: 30/06/2026, 31-03-2026, 2026-06-30.
+_NUMERIC_DATE = re.compile(r"\b(\d{1,4})[/.-](\d{1,2})[/.-](\d{2,4})\b")
+
+
+def parse_numeric_date(text: str, day_first: bool | None = None) -> str | None:
+    """ISO date from a numeric form, or None.
+
+    Order is inferred from the values where it can be: a first field above 12 is a
+    day, a second field above 12 is a month printed second. When both are 12 or
+    under the caller's `day_first` decides — a statement's other columns usually
+    settle it, since period ends cluster on the 30th and 31st.
+    """
+    match = _NUMERIC_DATE.search(text or "")
+    if not match:
+        return None
+    a, b, c = (int(match.group(1)), int(match.group(2)), int(match.group(3)))
+
+    if len(match.group(1)) == 4:                  # 2026-06-30
+        year, month, day = a, b, c
+    else:
+        year = c if c > 99 else 2000 + c
+        if a > 12:
+            day, month = a, b
+        elif b > 12:
+            month, day = a, b
+        elif day_first is False:
+            month, day = a, b
+        else:
+            day, month = a, b                     # day-first is the wider convention
+    if not (1 <= month <= 12):
+        return None
+    day = min(day, monthrange(year, month)[1])
+    return date(year, month, day).isoformat()
+
+
+def parse_single_column(header: str, day_first: bool | None = None) -> Column:
+    """One column's own header text into a Column.
+
+    Used when the layout pass has already separated the columns, so each string
+    describes exactly one column and the ambiguity of a flattened block is gone.
+    """
+    text = flatten(header)
+
+    months: int | None = None
+    if m := _MONTHS_AS_OF.search(text):
+        months = MONTH_COUNT_WORDS[m.group(1).lower()]
+    elif m := _MONTHS_PHRASE.search(text):
+        months = MONTH_COUNT_WORDS[m.group(1).lower()]
+    elif m := _PERIOD_ENDED.search(text):
+        months = _PERIOD_MONTHS[re.sub(r"[\s-]+", " ", m.group(1).lower())]
+
+    end: str | None = None
+    # "2026-01-01 - 2026-06-30": the BMV (XBRL) report states each column's span
+    # as two ISO dates. The second is the end; the first must not be read as one.
+    if m := _ISO_RANGE.search(text):
+        start = date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        stop = date(int(m.group(4)), int(m.group(5)), int(m.group(6)))
+        months = (stop.year - start.year) * 12 + stop.month - start.month + 1
+        return Column(index=0, header=header.strip(), kind="period",
+                      months=months, end=stop.isoformat())
+
+    if span := _numeric_range(text, day_first):
+        return Column(index=0, header=header.strip(), kind="period",
+                      months=span[0], end=span[1])
+
+    if m := _ABBREV_RANGE.search(text):
+        d1, mon1, y1, d2, mon2, y2 = m.groups()
+        if mon1.lower() in MONTHS and mon2.lower() in MONTHS:
+            y1, y2 = (2000 + int(y) if len(y) == 2 else int(y) for y in (y1, y2))
+            m1, m2 = MONTHS[mon1.lower()], MONTHS[mon2.lower()]
+            span_months = (y2 - y1) * 12 + m2 - m1 + 1
+            if span_months >= 1:
+                end_day = min(int(d2), monthrange(y2, m2)[1])
+                return Column(index=0, header=header.strip(), kind="period",
+                              months=span_months, end=date(y2, m2, end_day).isoformat())
+
+    quarter = _ORDINAL_QUARTER.search(text)
+    if quarter:
+        months = months or 3
+        year_text = quarter.group(2)
+        if year_text:
+            end = _month_end(int(year_text), _ORDINALS[quarter.group(1).lower()] * 3)
+
+    if end is None and (m := _FIRST_N_MONTHS.search(text)):
+        months = _N_MONTHS[m.group(1).lower()]
+        end = _month_end(int(m.group(2)), months)
+
+    if end is None:
+        if m := _RANGE.search(text):
+            start_month = MONTHS[m.group(1).lower()]
+            end_month, year = MONTHS[m.group(2).lower()], int(m.group(3))
+            months = months or _span(start_month, end_month)
+            end = _month_end(year, end_month)
+        elif m := _FULL_DATE.search(text):
+            end = _month_end(int(m.group(3)), MONTHS[m.group(2).lower()])
+            day = int(m.group(1))
+            if day < 28:                          # a mid-month date is stated exactly
+                end = date(int(m.group(3)), MONTHS[m.group(2).lower()], day).isoformat()
+        elif m := _MONTH_YEAR.search(text):
+            # "Jun-26": the IR Pack's column header is a month and a two-digit year.
+            end = _month_end(2000 + int(m.group(2)), MONTHS[m.group(1).lower()])
+        elif m := _MONTH_COMMA_YEAR.match(text):
+            end = _month_end(int(m.group(2)), MONTHS[m.group(1).lower()])
+        elif m := _SPANISH_DATE.search(text):
+            month, day, year = _SPANISH_MONTHS[m.group(2).lower()], int(m.group(1)), int(m.group(3))
+            end = (_month_end(year, month) if day >= 28
+                   else date(year, month, day).isoformat())
+        elif m := _MONTH_FIRST_DATE.search(text):
+            month, day, year = MONTHS[m.group(1).lower()], int(m.group(2)), int(m.group(3))
+            end = (_month_end(year, month) if day >= 28
+                   else date(year, month, day).isoformat())
+        elif iso := parse_numeric_date(text, day_first):
+            end = iso
+        elif m := _QUARTER.search(text):
+            q = int(m.group(1) or m.group(3))
+            raw_year = m.group(2) or m.group(4)
+            year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
+            months, end = months or 3, _month_end(year, q * 3)
+
+    kind = "period" if months else "point_in_time"
+    return Column(index=0, header=header.strip(), kind=kind, months=months, end=end)
+
+
+#: Two numeric dates spanning a period: "1.1.2026 - 30.06.2026", "1.1.2026 – 30.6.2026",
+#: Chile's "01-01-2026 30-06-2026" and "01.01.2026 al 30.06.2026". The first date is
+#: the start.
+_NUMERIC_RANGE = re.compile(
+    r"\b(\d{1,2})[./-](\d{1,2})[./-](\d{4})(\s*[-–—]\s*|\s+(?:al|a|to|hasta)\s+|\s+)"
+    r"(\d{1,2})[./-](\d{1,2})[./-](\d{4})\b", re.IGNORECASE)
+
+
+#: Falabella's "01-ene-26 30-jun-26": two day-month-year dates with a month name.
+_ABBREV_RANGE = re.compile(
+    r"\b(\d{1,2})-([A-Za-z]{3,10})-(\d{2}|\d{4})\s*[-–—]?\s*(\d{1,2})-([A-Za-z]{3,10})-(\d{2}|\d{4})\b")
+
+
+def _numeric_range(text: str, day_first: bool | None) -> tuple[int, str] | None:
+    """(months, end date) of a dotted/slashed date range, or None.
+
+    The dash may be missing: Embotelladora Andina stacks "01.01.2026" over
+    "06.30.2026" in a column header, which flattens to the two dates with only a
+    space between. Without a dash the first date must be the 1st of a month, else two
+    adjacent single-date columns would read as a span.
+    """
+    m = _NUMERIC_RANGE.search(text)
+    if not m:
+        return None
+    a1, b1, y1, sep, a2, b2, y2 = m.groups()
+    a1, b1, y1, a2, b2, y2 = (int(g) for g in (a1, b1, y1, a2, b2, y2))
+    if not sep.strip():
+        # No dash: the two dates are separate header lines, and a filer may print them
+        # in different orders — Embotelladora's quarter column is "01.04.2026"
+        # (1 April, day first) over "06.30.2026" (month first). The end date's own
+        # values settle its order; the start must be the first of a month, which
+        # settles the start's.
+        if b2 > 12:
+            m2, d2 = a2, b2
+        elif a2 > 12 or day_first is not False:
+            d2, m2 = a2, b2
+        else:
+            m2, d2 = a2, b2
+        starts = [(mm, dd) for mm, dd in ((b1, a1), (a1, b1)) if dd == 1 and 1 <= mm <= 12]
+        if not starts or not 1 <= m2 <= 12:
+            return None
+        m1 = starts[0][0]
+    else:
+        if day_first is False or (a2 <= 12 < b2):
+            (m1, d1), (m2, d2) = (a1, b1), (a2, b2)
+        else:
+            (d1, m1), (d2, m2) = (a1, b1), (a2, b2)
+        if not (1 <= m1 <= 12 and 1 <= m2 <= 12):
+            return None
+    months = (y2 - y1) * 12 + m2 - m1 + 1
+    if months < 1:
+        return None
+    d2 = min(d2, monthrange(y2, m2)[1])
+    return months, date(y2, m2, d2).isoformat()
+
+
+#: Statements whose figures are flows over a period, as opposed to a position on a
+#: date. Only on these does a date-only column header mean "year to date".
+FLOW_STATEMENTS = {"income_statement", "comprehensive_income", "cash_flow", "equity"}
+
+
+def _infer_fiscal_year_start(columns: list[Column]) -> int | None:
+    """The fiscal year's first month, from any column that states its own span.
+
+    "6 months as of 30/06/2026" fixes the year as starting in January; the same
+    statement's date-only columns then inherit it.
+    """
+    # Only a cumulative column runs from the year's start. A three-month column is
+    # a standalone quarter, and reading a fiscal year off it puts the year's start
+    # at the quarter's start — which is how "As of 30/06/2026" became three months
+    # instead of six on Fibra Uno's cash flow.
+    for column in columns:
+        if column.months and column.months > 3 and column.end:
+            end_month = int(column.end[5:7])
+            return (end_month - column.months) % 12 + 1
+    return None
+
+
+def _repair_duplicate_comparative_year(columns: list[Column]) -> None:
+    """Repair a duplicated comparison year in a current/comparative period pair."""
+    for index in range(2, len(columns) - 1, 2):
+        current_ytd, comparative_ytd = columns[index - 2:index]
+        current, comparative = columns[index:index + 2]
+        if not all(column.end for column in (current_ytd, comparative_ytd, current, comparative)):
+            continue
+        if (current_ytd.end[:4] == comparative_ytd.end[:4]
+                or current_ytd.end[5:] != comparative_ytd.end[5:]
+                or current.end != comparative.end != comparative_ytd.end
+                or current.end != comparative_ytd.end
+                or current_ytd.months != comparative_ytd.months
+                or current.months != comparative.months):
+            continue
+        current_year = current_ytd.end[:4]
+        current.end = current_year + current.end[4:]
+        current.header = re.sub(r"(?:19|20)\d{2}\s*$", current_year, current.header)
+
+
+def parse_columns_from_headers(
+    headers: list[str], *, statement_kind: str = "", fiscal_year_start_month: int = 1,
+    default_months: int | None = None,
+) -> list[Column]:
+    """Columns from per-column header strings produced by the layout pass."""
+    # Settle day/month order once for the statement: if any column's numeric date
+    # is unambiguous, every other column follows the same convention.
+    day_first: bool | None = None
+    for header in headers:
+        if m := _NUMERIC_DATE.search(flatten(header)):
+            if len(m.group(1)) != 4:
+                if int(m.group(1)) > 12:
+                    day_first = True
+                    break
+                if int(m.group(2)) > 12:
+                    day_first = False
+                    break
+
+    columns: list[Column] = []
+    for header in headers:
+        column = parse_single_column(header, day_first)
+        column.index = len(columns)
+        columns.append(column)
+
+    _repair_duplicate_comparative_year(columns)
+
+    # "2Q26 | 2Q26 % of Rev.": a share-of-revenue column beside the amount it is a
+    # share of. Both parse to the same period, and the tie then refuses every row
+    # of the table. The amount is the figure; the percentage column is undated —
+    # but only when such an amount column exists, so a table of percentages alone
+    # (margins, growth) keeps its dates.
+    amounts = {(c.end, c.months) for c in columns if c.end and "%" not in c.header}
+    for column in columns:
+        if "%" in column.header and (column.end, column.months) in amounts:
+            column.end = None
+
+    # A span the table states once above its dated columns ("Quarter Ended" over
+    # "Jun-26  Jun-25"), passed in by the caller who saw the header block.
+    if default_months:
+        for column in columns:
+            if (column.end and column.months is None
+                    and not _YEAR_TO_DATE_WORDS.search(flatten(column.header))):
+                column.months, column.kind = default_months, "period"
+
+    # "YTD 2026": a year under a year-to-date band, as Gruma prints beside "2Q26".
+    # The year alone gives no end month; the quarter columns beside it do — the
+    # year to date runs to the latest quarter end the statement reports.
+    quarter_ends = [c.end for c in columns if c.months == 3 and c.end]
+    if quarter_ends:
+        end_month = int(max(quarter_ends)[5:7])
+        for column in columns:
+            if column.end is None and (m := _YTD_YEAR.search(flatten(column.header))):
+                column.end = _month_end(int(m.group(1)), end_month)
+                column.months = (end_month - fiscal_year_start_month) % 12 + 1
+                column.kind = "period"
+
+    # On a flow statement a column headed only by a date ("As of 30/06/2026") is a
+    # year-to-date figure, not a position: Fibra Uno's cash flow states the span
+    # once in the page heading and never in the column. The span is therefore the
+    # months from the fiscal year's start to that date — taken from a sibling
+    # column that does state its own span, else from the caller's default.
+    if statement_kind in FLOW_STATEMENTS:
+        start = _infer_fiscal_year_start(columns) or fiscal_year_start_month
+        for column in columns:
+            if column.months is None and column.end:
+                end_month = int(column.end[5:7])
+                column.months = (end_month - start) % 12 + 1
+                column.kind = "period"
+    return columns
+
+
+def dedupe_stacked(columns: list[Column]) -> list[Column]:
+    """Drop a repeated header that a stacked block printed twice.
+
+    Some filings restate the column dates on a second line ("30 June 2026" under
+    "April - June 2026"); after flattening that reads as two columns with the same
+    end date. Consecutive duplicates of header text and end date are collapsed.
+    """
+    out: list[Column] = []
+    for col in columns:
+        if out and out[-1].header.lower() == col.header.lower() and out[-1].end == col.end:
+            continue
+        col.index = len(out)
+        out.append(col)
+    return out

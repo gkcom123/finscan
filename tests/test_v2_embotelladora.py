@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from finscan2.pdf.columns import parse_single_column
-from finscan2.pdf.read import _CURRENCIES, _UNIT_PATTERNS, _sniff
-from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+from finscan.pdf.columns import parse_single_column
+from finscan.pdf.read import _CURRENCIES, _UNIT_PATTERNS, _sniff
+from finscan.schema import Column, PdfDoc, Statement, StatementRow
 
 
 @pytest.mark.parametrize("header, months, end", [

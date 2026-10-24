@@ -10,11 +10,11 @@ from datetime import datetime
 import pytest
 from openpyxl import Workbook
 
-from finscan2.mapping.compile import compile_mapping, unmapped_inputs
-from finscan2.mapping.convert import from_model_map
-from finscan2.mapping.schema import Mapping, MappingRow
-from finscan2.model.discover import RowLayout, SheetLayout
-from finscan2.model.schema import ModelMap, RowKey, RowSpec
+from finscan.mapping.compile import compile_mapping, unmapped_inputs
+from finscan.mapping.convert import from_model_map
+from finscan.mapping.schema import Mapping, MappingRow
+from finscan.model.discover import RowLayout, SheetLayout
+from finscan.model.schema import ModelMap, RowKey, RowSpec
 
 
 def _layout(rows=None):
@@ -263,14 +263,14 @@ def test_appending_to_a_file_in_another_layout_still_keeps_unknown_keys(tmp_path
 
 def test_a_single_optional_caption_compiles_to_a_sum_instruction():
     """Optional terms are read on the sum path, so one "caption?" is routed there."""
-    from finscan2.mapping.schema import MappingRow
+    from finscan.mapping.schema import MappingRow
 
     row = MappingRow(label="Inventory", section="balance_sheet", pdf="Inventories?")
     assert row.instruction() == "sum:pdf:Inventories?"
 
 
 def test_optional_markers_survive_in_a_list_of_captions():
-    from finscan2.mapping.schema import MappingRow
+    from finscan.mapping.schema import MappingRow
 
     row = MappingRow(label="Acq", section="cash_flow",
                      pdf=["Sale of subsidiaries?", "-Investment in joint venture?"])

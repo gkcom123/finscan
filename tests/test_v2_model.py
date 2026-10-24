@@ -1,4 +1,4 @@
-"""Stage 2 (finscan2.model) — offline tests. No workbook, no LLM, no network.
+"""Stage 2 (finscan.model) — offline tests. No workbook, no LLM, no network.
 
 The property these exist to protect: a map is keyed by caption and section, so
 inserting or deleting rows in a model must not break it, while renaming or
@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import copy
 
-from finscan2.model.discover import RowLayout, SheetLayout, assign_sections, detect_section
-from finscan2.model.load import resolve
-from finscan2.model.schema import ModelMap, RowKey, RowSpec, normalize_label
+from finscan.model.discover import RowLayout, SheetLayout, assign_sections, detect_section
+from finscan.model.load import resolve
+from finscan.model.schema import ModelMap, RowKey, RowSpec, normalize_label
 
 
 def _layout(rows: list[tuple[int, str, str]], **kwargs) -> SheetLayout:
@@ -137,7 +137,7 @@ def test_a_row_mapped_as_skip_is_not_reported_unmapped():
 
 
 def test_changed_captions_raise_drift_but_still_bind_what_they_can():
-    from finscan2.model.discover import fingerprint
+    from finscan.model.discover import fingerprint
 
     layout = _layout(_ROWS)
     model = _map(_ROWS)
@@ -178,7 +178,7 @@ def test_map_round_trips_through_json(tmp_path):
 
 def test_balance_sheet_rows_are_proposed_as_point_in_time():
     """A cash balance must never be de-cumulated; the map is where that is said."""
-    from finscan2.model.learn import propose
+    from finscan.model.learn import propose
 
     layout = _layout([(7, "Revenue", "income_statement"),
                       (95, "Cash and equivalents", "balance_sheet")])
@@ -189,7 +189,7 @@ def test_balance_sheet_rows_are_proposed_as_point_in_time():
 
 
 def test_headings_and_ratios_are_proposed_as_skip():
-    from finscan2.model.learn import propose
+    from finscan.model.learn import propose
 
     layout = _layout([(29, "As % of Net sales or stated otherwise", "income_statement"),
                       (41, "D&A / sales", "income_statement"),
@@ -200,7 +200,7 @@ def test_headings_and_ratios_are_proposed_as_skip():
 
 
 def test_a_formula_row_is_never_an_input():
-    from finscan2.model.learn import propose
+    from finscan.model.learn import propose
 
     layout = SheetLayout(sheet="Model", rows=[
         RowLayout(row=10, label="Gross Profit", section="income_statement",
@@ -214,7 +214,7 @@ def test_a_caption_that_is_itself_a_formula_is_read_from_its_cached_value():
     """Models mirror blocks of line items by making the caption a formula
     ("=+B121"). Read undisplayed that is one letter, and the row silently drops
     out of the map — eight leverage rows vanished from Almarai's map that way."""
-    from finscan2.model.discover import _caption
+    from finscan.model.discover import _caption
 
     class _Cell:
         def __init__(self, value): self.value = value
@@ -232,7 +232,7 @@ def test_a_ratio_word_inside_an_expense_caption_does_not_skip_the_row():
     """'General and Administration Expenses' was skipped as a derived ratio,
     because 'administ-ratio-n' contains 'ratio'. A real expense line dropped out
     of the map with a reason that read as though it had been considered."""
-    from finscan2.model.learn import propose
+    from finscan.model.learn import propose
 
     layout = _layout([(13, "General and Administration Expenses", "income_statement"),
                       (14, "Administrative expenses", "income_statement"),
@@ -242,7 +242,7 @@ def test_a_ratio_word_inside_an_expense_caption_does_not_skip_the_row():
 
 
 def test_derived_captions_are_still_skipped_on_whole_words():
-    from finscan2.model.learn import _looks_derived
+    from finscan.model.learn import _looks_derived
 
     for caption in ("Gross Margin %", "Gross margin", "Operating Margins",
                     "Revenue growth", "Y-o-Y Growth", "Net Debt / EBITDA (x)",
@@ -257,7 +257,7 @@ def test_a_bidirectional_caption_gets_no_inferred_sign_convention():
     """Almarai's "Other (Expenses) / Income, net" printed (30,302) one quarter and
     11,991 the next. A row frozen as 'negative' from the prior column would have
     written -11,991 — wrong, with a plausible provenance comment attached."""
-    from finscan2.model.learn import propose
+    from finscan.model.learn import propose
 
     layout = _layout([(14, "Other (Expenses) / Income, net", "income_statement"),
                       (15, "FX gain / (loss)", "income_statement"),
@@ -275,9 +275,9 @@ def test_bind_records_the_caption_the_filing_actually_printed():
     """`learn` never opens a PDF, so a `pdf:` instruction can only carry the
     WORKBOOK's caption. After a run has matched the row, the filing's own wording
     is known and worth keeping."""
-    from finscan2.match.schema import ResolvedValue, Source, Values
-    from finscan2.model.bind import apply as apply_bindings
-    from finscan2.model.schema import ModelMap, RowKey, RowSpec
+    from finscan.match.schema import ResolvedValue, Source, Values
+    from finscan.model.bind import apply as apply_bindings
+    from finscan.model.schema import ModelMap, RowKey, RowSpec
 
     model = ModelMap(company="almarai", sheet="Model", rows=[
         RowSpec(key=RowKey(label="Impairment (Loss) / Reversal on Financial Assets",
@@ -310,9 +310,9 @@ def test_bind_records_the_caption_the_filing_actually_printed():
 def test_a_row_left_blank_records_nothing():
     """A row that did not match has no filing caption to record, and inventing one
     would make the next run look resolved."""
-    from finscan2.match.schema import ResolvedValue, Values
-    from finscan2.model.bind import apply as apply_bindings
-    from finscan2.model.schema import ModelMap, RowKey, RowSpec
+    from finscan.match.schema import ResolvedValue, Values
+    from finscan.model.bind import apply as apply_bindings
+    from finscan.model.schema import ModelMap, RowKey, RowSpec
 
     model = ModelMap(company="x", sheet="Model", rows=[
         RowSpec(key=RowKey(label="Zakat", section="income_statement"),
@@ -330,7 +330,7 @@ def test_a_caption_pointing_at_another_caption_is_read_without_excel_cache(tmp_p
     still read, or mirrored rows (and section headings among them) vanish."""
     from openpyxl import Workbook, load_workbook
 
-    from finscan2.model.discover import _caption
+    from finscan.model.discover import _caption
 
     path = tmp_path / "m.xlsx"
     book = Workbook()
@@ -344,7 +344,7 @@ def test_a_caption_pointing_at_another_caption_is_read_without_excel_cache(tmp_p
 
 def test_a_coupon_in_a_debt_caption_is_not_a_ratio():
     """Grupo Bimbo lists its bonds by coupon; "%" there names the instrument."""
-    from finscan2.model.learn import _looks_derived
+    from finscan.model.learn import _looks_derived
 
     for caption in ("4.875% Notes due 2044", "Lines of credit of SOFR+1.20% till 2029",
                     "Credit Facility EURIBOR + 0.95% 2028", "USD 500mn Perpetual bond - 5.95%"):

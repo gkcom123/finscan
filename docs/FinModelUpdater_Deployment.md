@@ -1,14 +1,14 @@
-# FinModelUpdater (FinScan 2) — Azure Deployment and Foundry Invocation
+# FinModelUpdater (FinScan) — Azure Deployment and Foundry Invocation
 
-How to run FinScan 2 in Azure as a container, and how an Azure AI Foundry agent
+How to run FinScan in Azure as a container, and how an Azure AI Foundry agent
 invokes it.
 
-> **Status.** FinScan 2 today is a command-line tool (`finscan2 company <name>` /
-> `finscan2 companies`). The Dockerfile, job definition, Job API and OpenAPI spec
+> **Status.** FinScan today is a command-line tool (`finscan company <name>` /
+> `finscan companies`). The Dockerfile, job definition, Job API and OpenAPI spec
 > described below are **not yet in the repository** — this document is the plan
 > for building them.
 
-Related: [finscan2_architecture.md](finscan2_architecture.md) §4, §16–25.
+Related: [finscan_architecture.md](finscan_architecture.md) §4, §16–25.
 
 ---
 
@@ -16,15 +16,15 @@ Related: [finscan2_architecture.md](finscan2_architecture.md) §4, §16–25.
 
 ### Phase A — batch job (no code changes)
 
-FinScan 2 has no web server, so the Azure shape is a **Container Apps Job**: a
-container that starts, runs `finscan2 companies` (or one company), writes outputs
+FinScan has no web server, so the Azure shape is a **Container Apps Job**: a
+container that starts, runs `finscan companies` (or one company), writes outputs
 and exits. Mounting Azure file shares where `inbox/` and `_work/` would be keeps
 the existing folder conventions.
 
 ```
-Azure Container Registry ── image: finscan2 (code + reviewed mappings)
+Azure Container Registry ── image: finscan (code + reviewed mappings)
         │
-Container Apps Job (manual or scheduled) ── runs: finscan2 companies
+Container Apps Job (manual or scheduled) ── runs: finscan companies
         │  env: FINSCAN_LLM_PROVIDER, model key from a secret / Key Vault
         ├─ /app/inbox  ← Azure Files share: PDFs + models in, *_v2_output.* out
         └─ /app/_work  ← Azure Files share: PDF read cache, values + reports
@@ -53,7 +53,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src ./src
 COPY mappings ./mappings
 RUN pip install --no-cache-dir .
-ENTRYPOINT ["finscan2"]
+ENTRYPOINT ["finscan"]
 CMD ["companies"]
 ```
 
@@ -73,7 +73,7 @@ _work/
 RG=finscan-rg; LOC=uksouth; ACR=finscanacr01
 az group create -n $RG -l $LOC
 az acr create -n $ACR -g $RG --sku Basic
-az acr build -r $ACR -t finscan2:1.0 .
+az acr build -r $ACR -t finscan:1.0 .
 ```
 
 ### 2.3 Storage — one account, two file shares
@@ -103,7 +103,7 @@ Volume mounts are set through YAML: `az containerapp job create --yaml job.yaml`
 
 | Setting | Value |
 |---|---|
-| Image | `<acr>.azurecr.io/finscan2:1.0` |
+| Image | `<acr>.azurecr.io/finscan:1.0` |
 | Args | `companies` (default) |
 | Volumes | `inbox` → `/app/inbox`, `work` → `/app/_work` |
 | Secret | `openai-key` (or a Key Vault reference) |
@@ -116,7 +116,7 @@ Volume mounts are set through YAML: `az containerapp job create --yaml job.yaml`
 1. Upload filings and models into `finscan-inbox/<Company>/`
    (`az storage file upload-batch`). Keep only the quarter being written in the
    company folder; older filings go in `past/`.
-2. Start the job: `az containerapp job start -n finscan2-job -g $RG`.
+2. Start the job: `az containerapp job start -n finscan-job -g $RG`.
    For a single company, start with overridden args `company <name>`
    (e.g. *Run with overrides* in the portal).
 3. Download `inbox/<company>_v2_output.*` and the audit files in `_work/`
@@ -142,7 +142,7 @@ Foundry agent ── OpenAPI tool ──►  FinScan Job API  (small Container A
                                      │   └─ starts a Container Apps Job execution
                                      │      with args: company tencent
                                      ▼
-                                   finscan2 worker (the Container Apps Job, §2)
+                                   finscan worker (the Container Apps Job, §2)
                                      │ reads inbox/Tencent/, writes
                                      ▼ tencent_v2_output.xlsx + _work/tencent_<period>_report.md
 Agent polls GET /jobs/{id} ──► state, rows written / blank, warnings, download link

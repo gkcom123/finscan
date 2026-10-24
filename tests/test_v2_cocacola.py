@@ -7,14 +7,14 @@ from types import SimpleNamespace
 import pytest
 from openpyxl import Workbook
 
-from finscan2.mapping.compile import compile_mapping
-from finscan2.mapping.schema import Mapping
-from finscan2.match.resolve import resolve_values
-from finscan2.model.discover import RowLayout, SheetLayout
-from finscan2.model.load import resolve as bind_map
-from finscan2.pdf import statements
-from finscan2.pdf.llm_read import doc_from_tables
-from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+from finscan.mapping.compile import compile_mapping
+from finscan.mapping.schema import Mapping
+from finscan.match.resolve import resolve_values
+from finscan.model.discover import RowLayout, SheetLayout
+from finscan.model.load import resolve as bind_map
+from finscan.pdf import statements
+from finscan.pdf.llm_read import doc_from_tables
+from finscan.schema import Column, PdfDoc, Statement, StatementRow
 
 
 @pytest.mark.parametrize(("code", "kind"), [

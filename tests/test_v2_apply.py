@@ -12,8 +12,8 @@ from datetime import datetime
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font
 
-from finscan2.apply import check_period, run
-from finscan2.mapping.schema import Mapping, MappingRow
+from finscan.apply import check_period, run
+from finscan.mapping.schema import Mapping, MappingRow
 
 BLUE = Font(color="FF0000FF")
 
@@ -182,8 +182,8 @@ def test_a_sheet_with_no_dates_cannot_establish_a_period():
 def test_a_failing_identity_is_a_warning_not_a_refusal():
     """An identity fails whenever a component is deliberately blank, which is a
     legitimate state here — so it is something to read, not a reason to withhold."""
-    from finscan2.match.schema import ResolvedValue, Values
-    from finscan2.validate import check
+    from finscan.match.schema import ResolvedValue, Values
+    from finscan.validate import check
 
     values = Values(company="x", sheet="Model", period_end="2026-06-30",
                     write_col=5, units="millions")
@@ -200,8 +200,8 @@ def test_a_failing_identity_is_a_warning_not_a_refusal():
 
 
 def test_an_identity_that_holds_is_silent():
-    from finscan2.match.schema import ResolvedValue, Values
-    from finscan2.validate import check
+    from finscan.match.schema import ResolvedValue, Values
+    from finscan.validate import check
 
     values = Values(company="x", sheet="Model", period_end="2026-06-30",
                     write_col=5, units="millions")
@@ -217,8 +217,8 @@ def test_an_identity_that_holds_is_silent():
 def test_an_identity_with_a_missing_component_is_skipped():
     """Asserting an identity against rows that are not all there would produce a
     finding about a blank, which the blank already reports itself."""
-    from finscan2.match.schema import ResolvedValue, Values
-    from finscan2.validate import check
+    from finscan.match.schema import ResolvedValue, Values
+    from finscan.validate import check
 
     values = Values(company="x", sheet="Model", period_end="2026-06-30",
                     write_col=5, units="millions")
@@ -229,8 +229,8 @@ def test_an_identity_with_a_missing_component_is_skipped():
 
 
 def test_low_coverage_is_reported_as_a_configuration_problem():
-    from finscan2.match.schema import ResolvedValue, Values
-    from finscan2.validate import coverage
+    from finscan.match.schema import ResolvedValue, Values
+    from finscan.validate import coverage
 
     values = Values(company="x", sheet="Model", period_end="2026-06-30",
                     write_col=5, units="millions")

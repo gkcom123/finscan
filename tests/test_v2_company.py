@@ -1,4 +1,4 @@
-"""Company path resolution — the convention behind `finscan2 company <key> <stage>`.
+"""Company path resolution — the convention behind `finscan company <key> <stage>`.
 
 The interesting cases are the refusals. Picking one of two PDFs is how a run
 silently reads last quarter's filing, which looks exactly like a correct run —
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from finscan2.company import CompanyError, company_keys, project_root, resolve
+from finscan.company import CompanyError, company_keys, project_root, resolve
 
 
 def _tree(tmp_path, *, pdfs=("filing.pdf",), excels=("Model_1Q26.xlsx",), extra=()):
@@ -73,7 +73,7 @@ def test_a_missing_stage_input_names_the_command_that_makes_it(tmp_path):
     root = _tree(tmp_path)
     paths = resolve("almarai", root)
     with pytest.raises(CompanyError) as caught:
-        paths.require("values", "python -m finscan2.cli company almarai match")
+        paths.require("values", "python -m finscan.cli company almarai match")
     assert "company almarai match" in str(caught.value)
 
 
@@ -85,7 +85,7 @@ def test_an_explicit_override_wins_over_the_convention(tmp_path):
 
 def test_the_root_is_found_by_walking_up_to_the_inbox(tmp_path):
     root = _tree(tmp_path)
-    deep = root / "src" / "finscan2" / "match"
+    deep = root / "src" / "finscan" / "match"
     deep.mkdir(parents=True)
     assert project_root(deep) == root.resolve()
 

@@ -1,4 +1,4 @@
-"""Stage 1 (finscan2.pdf) — offline tests. No PDF, no LLM, no network.
+"""Stage 1 (finscan.pdf) — offline tests. No PDF, no LLM, no network.
 
 Header shapes here are taken verbatim from real filings in inbox/: Almarai's
 interim accounts, Tencent's quarterly release and Koc Holding's convenience
@@ -6,9 +6,9 @@ translation. v1 is untouched by all of this.
 """
 from __future__ import annotations
 
-from finscan2.pdf.columns import parse_columns
-from finscan2.pdf.titles import ExtraTitle
-from finscan2.pdf.statements import (
+from finscan.pdf.columns import parse_columns
+from finscan.pdf.titles import ExtraTitle
+from finscan.pdf.statements import (
     classify,
     column_alignment,
     extract_statement,
@@ -16,7 +16,7 @@ from finscan2.pdf.statements import (
     parse_number,
     parse_row,
 )
-from finscan2.schema import Column, Statement, StatementRow
+from finscan.schema import Column, Statement, StatementRow
 
 
 # --------------------------------------------------------------------------- #
@@ -223,7 +223,7 @@ def test_column_alignment_flags_a_misread_header():
 #   30/06/2026       transactions          31/03/2026       30/06/2025
 # --------------------------------------------------------------------------- #
 
-from finscan2.pdf.columns import (  # noqa: E402
+from finscan.pdf.columns import (  # noqa: E402
     parse_columns_from_headers,
     parse_numeric_date,
     parse_single_column,
@@ -334,8 +334,8 @@ def test_cache_is_ignored_when_the_parser_changed(tmp_path):
     change, which is indistinguishable from the fix not working."""
     import json
 
-    from finscan2.pdf.read import cache_path
-    from finscan2.schema import PARSER_VERSION, PdfDoc
+    from finscan.pdf.read import cache_path
+    from finscan.schema import PARSER_VERSION, PdfDoc
 
     stale = PdfDoc(path="x.pdf", sha256="abc", parser_version="0")
     target = cache_path(tmp_path, "abc")
@@ -361,7 +361,7 @@ def test_cache_is_ignored_when_the_parser_changed(tmp_path):
 # The word boxes below are the real ones from that page, trimmed.
 # --------------------------------------------------------------------------- #
 
-from finscan2.pdf.layout import table_layout  # noqa: E402
+from finscan.pdf.layout import table_layout  # noqa: E402
 
 
 class _Page:
@@ -458,8 +458,8 @@ def test_day_prefixed_month_range():
 # Scale is read from the table, never from narrative
 # --------------------------------------------------------------------------- #
 
-from finscan2.pdf.read import _document_units  # noqa: E402
-from finscan2.schema import Page, PdfDoc  # noqa: E402
+from finscan.pdf.read import _document_units  # noqa: E402
+from finscan.schema import Page, PdfDoc  # noqa: E402
 
 
 def _doc(pages: dict[int, str], statements: list[Statement]) -> PdfDoc:
@@ -599,7 +599,7 @@ def test_ocr_figures_are_confirmed_only_by_independent_evidence():
     """Airtel's scanned results: gpt-5.4 read 35,929 (twice) where the page
     prints 36,929, and (1,082) where the scan's own OCR layer says "11,082)".
     The text layer and the table's arithmetic settle both; nothing else counts."""
-    from finscan2.pdf.verify import verify_rows
+    from finscan.pdf.verify import verify_rows
 
     transcription = "\n".join([
         "Income |  |",

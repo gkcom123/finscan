@@ -33,11 +33,11 @@ inbox/<Company>/<anything>.xlsx     # the model (.xlsm also works)
 Then run one company, or all of them:
 
 ```bash
-finscan2 company almarai
-finscan2 companies
+finscan company almarai
+finscan companies
 ```
 
-(`python -m finscan2.cli ...` works the same without the install step.)
+(`python -m finscan.cli ...` works the same without the install step.)
 
 Each company run:
 
@@ -102,7 +102,7 @@ codes (`[210000]`, `[310000]`, `[520000]`) plus the detailed notes (`[800100]`,
 model's Q1 column. Keep historical PDFs in a subfolder such as `q1/`; only PDFs
 directly in the company folder are read for the current run.
 
-Run `finscan2 company cocacola` with both current-quarter PDFs (the Spanish BMV
+Run `finscan company cocacola` with both current-quarter PDFs (the Spanish BMV
 filing and the English results release) and the model in the company folder.
 Both PDFs are read with the LLM reader and merged, retaining each table's units
 and source filename. The BMV filing supplies detailed financial statements;
@@ -125,7 +125,7 @@ pytest -q        # offline; the model is stubbed
 ## Layout
 
 ```
-src/finscan2/
+src/finscan/
   cli.py          company <name> | companies
   company.py      inbox/<Company>/ file conventions
   apply.py        bind, check period, resolve, validate, write
@@ -141,4 +141,4 @@ mappings/         one reviewed mapping per company (git-tracked)
 docs/             architecture and running guide
 ```
 
-Architecture: [docs/finscan2_architecture.md](docs/finscan2_architecture.md).
+Architecture: [docs/finscan_architecture.md](docs/finscan_architecture.md).
