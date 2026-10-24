@@ -140,6 +140,49 @@ Close generated workbooks in Excel before running.
 
 ---
 
+## Run the service locally (API + MCP)
+
+The same runs, behind an HTTP API and an MCP server — what Copilot Studio will call
+once deployed. Runs start as local processes (`FINSCAN_RUNNER=local`).
+
+```bash
+# in .env (see .env.example): FINSCAN_API_KEY=<any secret>, FINSCAN_RUNNER=local
+finscan-api                                  # http://localhost:8000, docs at /docs
+```
+
+Try it with the API key in the `x-api-key` header:
+
+```bash
+K=<your FINSCAN_API_KEY>
+curl -s localhost:8000/health
+curl -s -H "x-api-key: $K" localhost:8000/companies
+curl -s -H "x-api-key: $K" -X POST localhost:8000/upload-links/Tencent     # open the link to upload
+curl -s -H "x-api-key: $K" -H "content-type: application/json" \
+     -d '{"company": "Tencent", "dry_run": true}' localhost:8000/jobs        # -> job id
+curl -s -H "x-api-key: $K" localhost:8000/jobs/<job id>                    # running / succeeded …
+```
+
+Each run keeps `job.json`, `result.json` and `run.log` in `_work/jobs/<job id>/`.
+
+**MCP** is at `http://localhost:8000/mcp` (Streamable HTTP, same `x-api-key`). To try it
+from Copilot Studio before deploying, expose the port with a tunnel (e.g. ngrok or
+VS Code port forwarding), set `FINSCAN_PUBLIC_URL` to the tunnel's URL so links work,
+and add the MCP tool in Copilot Studio with that URL.
+
+**In Docker**, as it will run in Azure:
+
+```bash
+docker build -t finscan:dev .
+docker run --rm -p 8000:8000 -e FINSCAN_API_KEY=$K \
+  -v "$PWD/inbox:/app/inbox" -v "$PWD/_work:/app/_work" finscan:dev finscan-api
+docker run --rm -v "$PWD/inbox:/app/inbox" -v "$PWD/_work:/app/_work" \
+  finscan:dev finscan company tencent --dry-run                            # the Job's role
+```
+
+Mappings are baked into the image: rebuild it after a mapping change. A run in a
+container that appends new mapping rows reports them in its result; add them to
+`mappings/` through git.
+
 ## Troubleshooting
 
 **`mapping_row_unbound`: nothing written**

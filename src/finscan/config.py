@@ -29,6 +29,33 @@ class Settings(BaseSettings):
     # verification on LLM API calls — never enable this in production.
     finscan_insecure_ssl: bool = False
 
+    # ---- Service (finscan.service): the API + MCP server in front of the runs ----
+    #: Required by every protected endpoint (header `x-api-key`). Also signs the
+    #: short-lived upload/download links unless FINSCAN_LINK_SECRET is set.
+    finscan_api_key: str = ""
+    finscan_link_secret: str = ""
+    #: The folder holding inbox/, mappings/, models/, _work/. Empty: found by
+    #: walking up from the working directory, as the CLI does.
+    finscan_root: str = ""
+    #: How runs are started: "local" (a process on this machine) or "azure"
+    #: (a Container Apps Job execution).
+    finscan_runner: str = "local"
+    #: Base URL used in the links handed to users and agents.
+    finscan_public_url: str = "http://localhost:8000"
+    #: Host names the MCP endpoint accepts (comma-separated, "host:*" for any port).
+    #: Empty: no host check (the API key still guards the endpoint).
+    finscan_allowed_hosts: str = ""
+    finscan_link_minutes: int = 30
+    finscan_max_upload_mb: int = 200
+
+    # ---- Azure Container Apps Job (finscan_runner = "azure") ----
+    azure_subscription_id: str = ""
+    azure_resource_group: str = ""
+    azure_job_name: str = ""
+    #: The image and container name of the Job; a run overrides only its arguments.
+    azure_job_image: str = ""
+    azure_job_container: str = "finscan"
+
     @property
     def configured(self) -> bool:
         if self.finscan_llm_provider.lower() == "azure":

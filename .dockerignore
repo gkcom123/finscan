@@ -1,0 +1,22 @@
+# Data and outputs: mounted at run time, never baked into the image
+inbox/
+input/
+_work/
+models/
+
+# Secrets and local environments
+.env
+.venv/
+venv/
+
+# Not needed in the image
+.git/
+.github/
+docs/
+tests/
+_tmp_*
+*.egg-info/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.DS_Store
