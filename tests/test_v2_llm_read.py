@@ -144,6 +144,30 @@ def test_an_undated_presentation_table_inherits_the_cover_quarter_for_money_only
     assert any(issue.code == "llm_inherited_cover_period" for issue in doc.issues)
 
 
+def test_year_to_date_columns_get_their_own_year_and_a_span_from_the_cover():
+    pages = {5: {"tables": [{
+        "title": "Statement of cash flows",
+        "units": "R$ thousands",
+        "columns": ["Parent YTD 2026", "Parent Reclassified YTD 2025",
+                    "Consolidated YTD 2026", "Consolidated Reclassified YTD 2025"],
+        "rows": [{"caption": "Depreciation", "values": ["1", "2", "3", "4"]}],
+    }]}}
+    doc = doc_from_tables("x.pdf", "0", pages,
+                          {1: "Interim Financial Information 1Q26", 5: "Depreciation 1 2 3 4"}, "m")
+    assert [(c.kind, c.months, c.end) for c in doc.statements[0].columns] == [
+        ("period", 3, "2026-03-31"), ("period", 3, "2025-03-31"),
+        ("period", 3, "2026-03-31"), ("period", 3, "2025-03-31")]
+
+
+def test_the_cover_quarter_ends_on_the_last_day_of_its_month():
+    from finscan.pdf.llm_read import _cover_period_end
+
+    assert _cover_period_end("1Q26") == "2026-03-31"
+    assert _cover_period_end("Q2 2026") == "2026-06-30"
+    assert _cover_period_end("3Q26") == "2026-09-30"
+    assert _cover_period_end("4Q26") == "2026-12-31"
+
+
 def _cash_page(caption, values):
     return {1: {"tables": [{"title": "Statement of cash flows", "units": "TRY thousands",
                           "columns": ["June 30, 2026", "June 30, 2025"],

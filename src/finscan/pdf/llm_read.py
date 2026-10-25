@@ -228,15 +228,24 @@ def _cover_period_end(page_text: str) -> str | None:
         raw_year = match.group(2) or match.group(4)
         year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
         month = quarter * 3
-        if month == 12:
-            ends.add(f"{year}-12-31")
-        else:
-            ends.add(f"{year}-{month:02d}-30")
+        ends.add(f"{year}-{month:02d}-{monthrange(year, month)[1]:02d}")
     return next(iter(ends)) if len(ends) == 1 else None
 
 
+#: A column that says it runs from the start of the year to the period end.
+_YEAR_TO_DATE_HEADER = re.compile(
+    r"\b(?:ytd|year[\s-]+to[\s-]+date|cumulative|accumulated|acumulad[oa])\b", re.IGNORECASE)
+_HEADER_YEAR = re.compile(r"\b((?:19|20)\d{2})\b")
+
+
 def _inherit_cover_period(statements, cover_end: str) -> list[int]:
-    """Date undated monetary presentation tables without inventing comparison dates."""
+    """Date undated monetary presentation tables without inventing comparison dates.
+
+    A column naming a different year ("YTD 2025") is the comparative of the cover
+    period, so it is dated a year back rather than to the cover period itself: two
+    columns claiming one date cannot be told apart. A year-to-date column also
+    gets its span, which is what lets a flow be reduced to a quarter.
+    """
     inherited: list[int] = []
     for statement in statements:
         if not statement.columns or any(column.end for column in statement.columns):
@@ -245,7 +254,11 @@ def _inherit_cover_period(statements, cover_end: str) -> list[int]:
         for column in statement.columns:
             if _NON_MONETARY_COLUMN.search(column.header):
                 continue
-            column.end = cover_end
+            years = {int(year) for year in _HEADER_YEAR.findall(column.header)}
+            column.end = (f"{years.pop()}{cover_end[4:]}"
+                          if len(years) == 1 else cover_end)
+            if column.months is None and _YEAR_TO_DATE_HEADER.search(column.header):
+                column.kind, column.months = "period", int(column.end[5:7])
             changed = True
         if changed:
             inherited.append(statement.page)

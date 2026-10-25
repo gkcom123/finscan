@@ -272,14 +272,23 @@ class PdfDoc:
         an XBRL code ("[310000] Statement of comprehensive income"), which is
         stable from quarter to quarter where page numbers are not.
         """
+        found = self.titled_all(text)
+        return found[0] if found else None
+
+    def titled_all(self, text: str) -> list[Statement]:
+        """Every primary statement whose title contains `text`, readable ones first.
+
+        A filing may print the same short title ("Consolidated") over several
+        tables, so a caller that knows which lines it needs can choose among them.
+        """
         normalize_dashes = lambda value: (value or "").replace("–", "-").replace("—", "-").replace("−", "-").lower()
         needle = normalize_dashes(text.strip())
         titled = [s for s in self.statements
               if s.note is None and needle in normalize_dashes(s.title)]
         # A table of contents names the same section ("Section 1 ... Performance
         # at a glance ... 3") but has no columns; the real table does.
-        found = next((s for s in titled if s.columns), None) or next(iter(titled), None)
-        return self._continued(found) if found is not None else None
+        ordered = [s for s in titled if s.columns] + [s for s in titled if not s.columns]
+        return [self._continued(s) for s in ordered]
 
     def note(self, number: int, end: str | None = None) -> Statement | None:
         """A note table, optionally the one for a particular period end.

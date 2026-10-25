@@ -17,7 +17,6 @@ import re
 from datetime import date
 from pathlib import Path
 
-from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
 from finscan.match import basis as basis_mod
@@ -27,6 +26,7 @@ from finscan.model.learn import _is_bidirectional
 from finscan.model.load import ResolvedMap
 from finscan.model.schema import normalize_label
 from finscan.model.discover import sheet_named
+from finscan.model.workbook import open_workbook
 from finscan.schema import Issue, PdfDoc
 
 UNIT_MULTIPLIER: dict[str, float] = {
@@ -94,7 +94,7 @@ def _read_cells(workbook_path: str, sheet: str,
     back as None here, and the caller refuses rather than guessing."""
     if not cells:
         return {}
-    book = load_workbook(workbook_path, data_only=True)
+    book = open_workbook(workbook_path, data_only=True)
     try:
         worksheet = sheet_named(book, sheet)
         out: dict[tuple[int, int], float | None] = {}
@@ -109,7 +109,7 @@ def _read_cells(workbook_path: str, sheet: str,
         # A typed expression ("=(-15482581-255436)/1000000") references no cell, so
         # it has exactly one value even without Excel's cache. Anything that
         # references a cell is still refused, as above.
-        formulas = load_workbook(workbook_path, data_only=False)
+        formulas = open_workbook(workbook_path, data_only=False)
         try:
             worksheet = sheet_named(formulas, sheet)
             for row, col in missing:
@@ -161,6 +161,54 @@ class _SummedRow:
 _TITLE_OR = " || "
 
 
+def _wanted_captions(spec) -> list[tuple[str, int | None]]:
+    """The captions a row reads from its own statement, with any `#n` occurrence.
+
+    Terms that name another statement (`@ title:...`), optional terms, constants
+    and fields are not required of the row's statement.
+    """
+    instruction = getattr(spec, "resolve", "") or ""
+    if instruction.startswith("pdf:"):
+        terms = [(1.0, instruction)]
+    elif instruction.startswith("sum:"):
+        terms = _sum_terms(instruction)
+    else:
+        return []
+    captions = []
+    for _, term in terms:
+        if not term.startswith("pdf:") or _TERM_STATEMENT in term or term.endswith(_OPTIONAL):
+            continue
+        wanted = term.split(":", 1)[1]
+        occurrence = _OCCURRENCE.search(wanted)
+        caption = _OCCURRENCE.sub("", wanted).strip()
+        if caption and _BLOCK not in caption:
+            captions.append((caption, int(occurrence.group(1)) if occurrence else None))
+    return captions
+
+
+def _prints(statement, caption: str, occurrence: int | None) -> bool:
+    """True when the statement can supply this caption (the nth exact line, if asked)."""
+    if occurrence is None:
+        return find_row(statement, caption)[0] is not None
+    target = normalize_label(caption)
+    return sum(1 for r in statement.rows if normalize_label(r.caption) == target) >= occurrence
+
+
+def _holding_captions(candidates: list, captions: list[tuple[str, int | None]]):
+    """The first statement carrying every wanted caption, else the first readable one.
+
+    Several tables may share a title ("Consolidated" over a note's table and over
+    the loans table). The first is kept whenever it holds the lines — which is every
+    mapping that worked before this — and a later one is used only when the first
+    could not have supplied them.
+    """
+    if len(candidates) > 1 and captions:
+        for candidate in candidates:
+            if all(_prints(candidate, caption, occurrence) for caption, occurrence in captions):
+                return candidate
+    return candidates[0]
+
+
 def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
     """The statement a row reads from: what the map says, else its section.
 
@@ -193,13 +241,17 @@ def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
 
     if wanted.startswith("title:"):
         text = wanted.split(":", 1)[1]
-        # "title:A || B": the first alternative that names a statement wins, so a
-        # row can survive a filer renumbering or rewording the title.
+        # "title:A || B": the alternatives are tried in order, so a row can survive a
+        # filer renumbering or rewording the title. Among the statements they name,
+        # the first holding the row's captions is read (see _holding_captions).
         alternatives = [part.strip() for part in text.split(_TITLE_OR) if part.strip()]
-        statement = next((s for s in (doc.titled(a) for a in alternatives) if s), None)
-        if statement is None:
+        candidates: list = []
+        for alternative in alternatives:
+            candidates.extend(s for s in doc.titled_all(alternative)
+                              if not any(s is seen for seen in candidates))
+        if not candidates:
             return None, f"no statement's title contains '{text}'"
-        return statement, ""
+        return _holding_captions(candidates, _wanted_captions(spec)), ""
 
     statement = doc.statement(wanted)
     if statement is None:

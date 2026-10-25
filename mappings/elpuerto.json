@@ -47,6 +47,20 @@
     {"label": "Market cap", "section": "balance_sheet", "pdf": null, "note": "market data, not in the filing: type it by hand"},
     {"label": "Equity (as reported on balance sheet)", "section": "balance_sheet", "pdf": "Total equity"},
     {"label": "FX rate average - MXN/USD", "section": "cash_flow", "carry_forward": true, "note": "never in the filing: carried forward unchanged from the previous column (1Q26 = 1/17.5661); update by hand when the analyst's rate changes"},
-    {"label": "FX rate  - MXN/USD (as at end of period)", "section": "cash_flow", "carry_forward": true, "note": "never in the filing: carried forward unchanged from the previous column (1Q26 = 1/17.939); update by hand when the analyst's rate changes"}
+    {"label": "FX rate  - MXN/USD (as at end of period)", "section": "cash_flow", "carry_forward": true, "note": "never in the filing: carried forward unchanged from the previous column (1Q26 = 1/17.939); update by hand when the analyst's rate changes"},
+    {"label": "Credit Suisse Credit Facility due June 2018 (fixed monthly interest rate of 9.31%)", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like 'Credit Suisse Credit Facility due June 2018 (fixed monthly interest rate of 9.31%)'"},
+    {"label": "TIIE + 0.35% Notes (certificados bursátiles) due 2017", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like 'TIIE + 0.35% Notes (certificados bursátiles) due 2017'"},
+    {"label": "9.36% Notes (certificados bursátiles) due 2018", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '9.36% Notes (certificados bursátiles) due 2018'"},
+    {"label": "4.22% Notes (certificados bursátiles) due 2020", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '4.22% Notes (certificados bursátiles) due 2020'"},
+    {"label": "8.53% Notes (certificados bursátiles) due 2020", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '8.53% Notes (certificados bursátiles) due 2020'"},
+    {"label": "7.64% Notes (certificados bursátiles) due 2022", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '7.64% Notes (certificados bursátiles) due 2022'"},
+    {"label": "3.95% Notes due 2024 (US$ 300mn)", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '3.95% Notes due 2024 (US$ 300mn)'"},
+    {"label": "3.875% Notes due 2026 (US$ 750 mn)", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '3.875% Notes due 2026 (US$ 750 mn)'"},
+    {"label": "7.94% notes due 2027", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '7.94% notes due 2027'"},
+    {"label": "7.96% notes due 2029", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '7.96% notes due 2029'"},
+    {"label": "8.03% notes due 2030", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '8.03% notes due 2030'"},
+    {"label": "6.26% notes due 2032", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '6.26% notes due 2032'"},
+    {"label": "6.66% notes due 2037", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '6.66% notes due 2037'"},
+    {"label": "5.75% notes due 2038", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-24: new in the workbook, review · no row captioned like '5.75% notes due 2038'"}
   ]
 }

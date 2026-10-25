@@ -21,7 +21,6 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 
-from openpyxl import load_workbook
 from openpyxl.comments import Comment
 from openpyxl.formula.translate import Translator
 from openpyxl.utils import get_column_letter
@@ -31,6 +30,7 @@ from finscan.match.schema import Values
 from finscan.model.discover import _references_cells
 from finscan.model.load import ResolvedMap
 from finscan.model.schema import FormulaRecipe, ModelMap
+from finscan.model.workbook import open_workbook
 from finscan.schema import Issue
 
 AUDIT_SHEET = "FinScan_Audit"
@@ -144,7 +144,7 @@ def write_column(values: Values, resolved_map: ResolvedMap, workbook_path: str,
     shutil.copyfile(workbook_path, output_path)
 
     keep_vba = Path(output_path).suffix.lower() in {".xlsm", ".xltm"}
-    book = load_workbook(output_path, data_only=False, keep_vba=keep_vba)
+    book = open_workbook(output_path, data_only=False, keep_vba=keep_vba)
     try:
         worksheet = sheet_named(book, sheet_name)
         reference = model.reference_col

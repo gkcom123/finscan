@@ -14,10 +14,10 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any
 
-from openpyxl import load_workbook
 from openpyxl.utils import column_index_from_string
 
 from finscan.model.schema import Section
+from finscan.model.workbook import open_workbook
 
 #: Section keywords, checked against a normalized caption. A row inherits the
 #: section of the last keyword above it, which is how a cash-flow "Depreciation"
@@ -324,8 +324,8 @@ def discover_sheet(path: str, sheet: str) -> SheetLayout:
     """Describe one sheet's layout. Opens the workbook read-only; writes nothing."""
     from finscan.model.style_probe import Role, Theme, probe_cell
 
-    workbook = load_workbook(path, data_only=False)
-    values_book = load_workbook(path, data_only=True)
+    workbook = open_workbook(path, data_only=False)
+    values_book = open_workbook(path, data_only=True)
     try:
         theme = Theme.from_workbook(workbook)
         worksheet = sheet_named(workbook, sheet)
