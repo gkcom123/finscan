@@ -529,6 +529,37 @@ def test_an_absent_declaration_that_has_gone_stale_is_an_error():
     assert "Exchange Gain, net" in stale[0].message
 
 
+def test_a_filing_line_more_generic_than_the_label_is_not_a_stale_declaration():
+    """'Revenues' is printed, but the absent row is 'Non-Recurring Licensing
+    revenues': the specific line has not appeared."""
+    from finscan.match.resolve import _is_part_of_label
+
+    assert _is_part_of_label("Revenues", "Non-Recurring Licensing revenues")
+    assert not _is_part_of_label("Exchange Gain, net", "Exchange Gain, net")
+    assert not _is_part_of_label("Zakat and income tax", "Zakat")
+
+
+def test_a_caption_may_name_the_wordings_of_different_quarters():
+    from finscan.match.resolve import resolve_values
+
+    for printed in ("Income taxes", "Income tax (expense) benefit"):
+        doc, resolved_map, path = _tiny_model(
+            resolve="pdf:Income taxes || Income tax (expense) benefit",
+            extra_rows=[("Income before income taxes", [9.0] * 4), (printed, [-5.0] * 4)])
+        value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+        assert value.ok and value.value == _scaled(-5.0), printed
+
+
+def test_alternative_captions_never_fall_back_to_a_near_match():
+    from finscan.match.resolve import resolve_values
+
+    doc, resolved_map, path = _tiny_model(
+        resolve="pdf:Income taxes || Income tax (expense) benefit",
+        extra_rows=[("Income before income taxes", [9.0] * 4)])
+    value = resolve_values(doc, resolved_map, path, "2026-06-30").values[0]
+    assert value.value is None and "no row captioned like any of" in value.unresolved
+
+
 # --------------------------------------------------------------------------- #
 # sum: several printed lines into one model row
 # --------------------------------------------------------------------------- #

@@ -75,7 +75,8 @@ _FULL_DATE = re.compile(
 
 #: "Q2 2026", "2Q26", "2Q 2026".
 #: "1Q26", "Q1 2026", and the Spanish "1T26" (primer trimestre) of BMV commentary.
-_QUARTER = re.compile(r"\b(?:Q([1-4])\s*(\d{2,4})|([1-4])[QT]\s*(\d{2,4}))\b", re.IGNORECASE)
+_QUARTER = re.compile(
+    r"\b(?:Q([1-4])\s*['’‘´`]?(\d{2,4})|([1-4])[QT]\s*['’‘´`]?(\d{2,4}))\b", re.IGNORECASE)
 
 
 def _month_end(year: int, month: int) -> str:

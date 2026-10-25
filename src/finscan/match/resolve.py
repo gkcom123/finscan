@@ -188,6 +188,8 @@ def _wanted_captions(spec) -> list[tuple[str, int | None]]:
 
 def _prints(statement, caption: str, occurrence: int | None) -> bool:
     """True when the statement can supply this caption (the nth exact line, if asked)."""
+    if _CAPTION_OR in caption:
+        return _first_printed(statement, [a.strip() for a in caption.split(_CAPTION_OR)])[0] is not None
     if occurrence is None:
         return find_row(statement, caption)[0] is not None
     target = normalize_label(caption)
@@ -492,6 +494,29 @@ _OCCURRENCE = re.compile(r"\s*#(\d+)\s*$")
 #: subsidiary, and the subsidiary is named once, on the block's first row.
 _BLOCK = " > "
 
+#: "Income taxes || Income tax (expense) benefit": the same line under the wordings
+#: a filer has used in different quarters. Each alternative must match EXACTLY.
+_CAPTION_OR = " || "
+
+
+def _first_printed(statement, alternatives: list[str]):
+    """The row printed under the first of these exact captions that appears.
+
+    Exact only: an alternative that is merely close would be the guess the mapping
+    exists to avoid. A caption printed twice under one wording is ambiguous and is
+    refused, and none being printed reads as absence ("no row captioned like").
+    """
+    for alternative in alternatives:
+        target = normalize_label(alternative)
+        hits = [r for r in statement.rows if normalize_label(r.caption) == target]
+        if len(hits) == 1:
+            return hits[0], f"exact caption match on '{alternative}'"
+        if len(hits) > 1:
+            return None, (f"caption '{alternative}' is printed {len(hits)} times; "
+                          f"add #n to say which")
+    return None, "no row captioned like any of: " + ", ".join(
+        repr(a) for a in alternatives)
+
 
 def _plain(text: str) -> str:
     """normalize_label without accents: a heading typed "GRUMA CENTROAMERICA"
@@ -533,6 +558,12 @@ def _nth_exact(statement, caption: str, n: int):
     return hits[n - 1], f"occurrence #{n} of an exact caption match"
 
 
+def _is_part_of_label(caption: str, label: str) -> bool:
+    """True when the printed caption is a strictly shorter piece of the label."""
+    printed, wanted = normalize_label(caption), normalize_label(label)
+    return bool(printed) and printed != wanted and f" {printed} " in f" {wanted} "
+
+
 def _lookup(spec, statement):
     """Find the printed row for a map spec's `resolve` instruction.
 
@@ -554,6 +585,8 @@ def _lookup(spec, statement):
         return find_row(statement, spec.key.label)
     if instruction.startswith("pdf:"):
         wanted = instruction.split(":", 1)[1]
+        if _CAPTION_OR in wanted:
+            return _first_printed(statement, [a.strip() for a in wanted.split(_CAPTION_OR)])
         if _BLOCK in wanted:
             anchor, caption = (part.strip() for part in wanted.split(_BLOCK, 1))
             return _in_block(statement, anchor, caption)
@@ -697,7 +730,7 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             # different filing.
             if statement is not None:
                 found, _ = _lookup(spec, statement)
-                if found is not None:
+                if found is not None and not _is_part_of_label(found.caption, spec.key.label):
                     out.issues.append(Issue(
                         code="absent_declaration_stale", severity="error",
                         message=f"row {bound.row} '{spec.key.label}' is declared absent, "

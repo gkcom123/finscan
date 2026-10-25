@@ -250,6 +250,16 @@ def test_a_share_of_revenue_column_does_not_tie_with_its_amount():
         "2026-06-30", "2025-06-30"]
 
 
+def test_a_quarter_label_with_a_typographic_apostrophe_is_dated():
+    from finscan.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers(["1Q\u201926", "%", "1Q\u201925", "%", "Change %"])
+    assert [(c.months, c.end) for c in cols[:3:2]] == [
+        (3, "2026-03-31"), (3, "2025-03-31")]
+    cols = parse_columns_from_headers(["2Q\u00b426 (Millions of U.S. Dollars)"])
+    assert (cols[0].months, cols[0].end) == (3, "2026-06-30")
+
+
 def test_a_table_titled_with_the_running_page_header_is_a_continuation():
     """BMV reports print "KOF Consolidado" atop every page; the model sometimes
     returns it as the title of a table's second page."""

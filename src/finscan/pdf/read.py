@@ -304,6 +304,14 @@ def _read_pdf(
 
     path = str(path)
     sha = sha256_of(path)
+    if path.lower().endswith(".zip"):
+        from finscan.pdf.xbrl import read_package
+
+        return read_package(path, sha)
+    if path.lower().endswith((".xlsx", ".xlsm")):
+        from finscan.pdf.sheets import read_workbook
+
+        return read_workbook(path, sha)
     if reader == "llm":
         from finscan.pdf.llm_read import read_pdf_llm
 

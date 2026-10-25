@@ -112,21 +112,40 @@ def resolve(key: str, root: Path | None = None, *, pdf: str | None = None,
         raise CompanyError(f"No folder inbox/{key}. Available: {available}")
     folder = folders[0]
 
+    # Excel files in the folder are the analyst's model, plus any filing published
+    # as a workbook (PTT's FINANCIAL_STATEMENTS.XLSX). Telling them apart means
+    # opening them, so it is done only when there is something to tell apart.
+    excel_files = [p for p in folder.iterdir()
+                   if p.suffix.lower() in _EXCEL_SUFFIXES
+                   and not any(marker in p.name for marker in _OUTPUT_MARKERS)]
+    filing_workbooks: list[Path] = []
+    if excel:
+        others = [p for p in excel_files if p.resolve() != Path(excel).resolve()]
+    else:
+        others = excel_files if len(excel_files) > 1 else []
+    if others:
+        from finscan.pdf.sheets import is_filing_workbook
+
+        filing_workbooks = [p for p in others if is_filing_workbook(p)]
+        excel_files = [p for p in excel_files if p not in filing_workbooks]
+
     if pdf:
         pdf_paths = [Path(pdf)]
     else:
-        pdf_paths = sorted(p for p in folder.glob("*.pdf") if not p.name.startswith("."))
+        # A BMV XBRL package (`.zip`) or a workbook of statements is a filing like
+        # any PDF in the folder.
+        pdf_paths = sorted((p for p in (*folder.glob("*.pdf"), *folder.glob("*.zip"),
+                                        *filing_workbooks)
+                            if not p.name.startswith(".")), key=lambda p: p.name.lower())
         if not pdf_paths:
-            raise CompanyError(f"No PDF in {folder}. --pdf <path>")
+            raise CompanyError(f"No PDF, BMV XBRL .zip or filing workbook in {folder}. "
+                               f"--pdf <path>")
     pdf_path = pdf_paths[0]
 
     if excel:
         excel_path = Path(excel)
     else:
-        candidates = [p for p in folder.iterdir()
-                      if p.suffix.lower() in _EXCEL_SUFFIXES
-                      and not any(marker in p.name for marker in _OUTPUT_MARKERS)]
-        excel_path = _one(candidates, "Excel model", folder, "--excel <path>")
+        excel_path = _one(excel_files, "Excel model", folder, "--excel <path>")
 
     slug = key.lower()
     return CompanyPaths(
