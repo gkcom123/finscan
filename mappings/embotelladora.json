@@ -43,7 +43,7 @@
     {"label": "FX rate average - Ch$/USD", "section": "other", "carry_forward": true, "note": "the model holds 1/rate (1Q26 = 1/886.57) and the mapping cannot invert; Note 2.5.3 prints 892.56 for 2Q26. Carried forward: type =1/rate by hand"},
     {"label": "FX rate end of period - Ch$/USD", "section": "other", "carry_forward": true, "note": "the model holds 1/rate (1Q26 = 1/926.27) and the mapping cannot invert; Note 2.5.3 prints 922.21 at 06.30.2026. Carried forward: type =1/rate by hand"},
     {"label": "Company Reported Leverage", "section": "cash_flow", "pdf": null, "note": "the company's press-release figure; not in the 6-K"},
-    {"label": "Balancing figure", "section": "cash_flow", "pdf": null, "note": "added 2026-10-23: new in the workbook, review · no row captioned like 'Balancing figure'"},
-    {"label": "Company reported net debt", "section": "balance_sheet", "pdf": null, "note": "added 2026-10-23: new in the workbook, review · no row captioned like 'Company reported net debt'"}
+    {"label": "Balancing figure", "section": "cash_flow", "pdf": null, "note": "a plug the analyst derives in the model, not a filing line: type it by hand"},
+    {"label": "Company reported net debt", "section": "balance_sheet", "pdf": null, "note": "the company's own net debt figure is not in the financial statements (it is in the earnings release): type it by hand"}
   ]
 }

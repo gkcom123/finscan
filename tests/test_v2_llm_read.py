@@ -93,6 +93,44 @@ def test_an_untitled_continuation_page_joins_the_statement_before_it():
     assert [r.caption for r in doc.statements[0].rows] == ["Total assets", "Total equity"]
 
 
+def test_a_headerless_table_split_onto_the_next_page_takes_the_trailing_dates_before_it():
+    """A debt note's last row can land on the next page with no title or headers."""
+    pages = {
+        1: {"tables": [{"title": "Senior Notes", "units": "",
+                        "columns": ["Interest payable", "Rate", "30 June 2026", "31 December 2025"],
+                        "rows": [{"caption": "Jan. 2032", "values": [None, None, "8,735,000", "8,983,350"]}]}]},
+        2: {"tables": [{"title": "", "units": "", "columns": ["", ""],
+                        "rows": [{"caption": "Feb. 2038", "values": ["8,735,000", None]}]}]},
+    }
+    doc = doc_from_tables("x.pdf", "0", pages, {}, "m")
+    assert [c.end for c in doc.statements[1].columns] == ["2026-06-30", "2025-12-31"]
+
+
+def test_a_segment_note_without_a_span_reads_as_the_year_to_date():
+    pages = {
+        1: {"tables": [{"title": "Estado de Resultados", "units": "",
+                        "columns": ["01-ene-26 30-jun-26", "01-abr-26 30-jun-26"],
+                        "rows": [{"caption": "Ingresos", "values": ["10", "5"]}]}]},
+        2: {"tables": [{"title": "Nota 37 - Informacion por Segmentos", "units": "",
+                        "columns": ["30-jun-26 Chile", "30-jun-26 Peru"],
+                        "rows": [{"caption": "Costos de Venta, Total", "values": ["(6)", "(4)"]}]}]},
+    }
+    doc = doc_from_tables("x.pdf", "0", pages, {}, "m")
+    assert [(c.end, c.months) for c in doc.statements[1].columns] == [("2026-06-30", 6)] * 2
+
+
+def test_a_continued_statement_read_with_and_without_its_subtitle_is_one_statement():
+    cols = ["01-ene-26 30-jun-26", "01-ene-25 30-jun-25"]
+    pages = {
+        1: {"tables": [{"title": "Estado de Flujo\nCorrespondiente a los periodos terminados", "units": "",
+                        "columns": cols, "rows": [{"caption": "Dividendos recibidos", "values": ["1", "2"]}]}]},
+        2: {"tables": [{"title": "Estado de Flujo", "units": "", "columns": cols,
+                        "rows": [{"caption": "Dividendos pagados", "values": ["3", "4"]}]}]},
+    }
+    doc = doc_from_tables("x.pdf", "0", pages, {}, "m")
+    assert len(doc.statements) == 1 and len(doc.statements[0].rows) == 2
+
+
 def test_a_bmv_xbrl_statement_is_in_full_units_not_the_press_release_scale():
     cols = ["2026-01-01 - 2026-06-30", "2025-01-01 - 2025-06-30"]
     pages = {

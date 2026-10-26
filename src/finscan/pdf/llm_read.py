@@ -341,6 +341,64 @@ def _inherit_flow_note_periods(statements) -> list[int]:
     return inherited
 
 
+_SEGMENT_TITLE = re.compile(r"segmento|segment", re.IGNORECASE)
+
+
+def _span_segment_columns(statements) -> list[int]:
+    """Give a segment table's dated columns the span its interim period covers.
+
+    A segment note prints "30-jun-26" over each segment and never says how many
+    months that is. It reports the fiscal year to date, so the span is the longest
+    one any other table of the filing prints for the same end date.
+    """
+    spans: dict[str, int] = {}
+    for statement in statements:
+        for column in statement.columns:
+            if column.end and column.months:
+                spans[column.end] = max(spans.get(column.end, 0), column.months)
+    inherited: list[int] = []
+    for statement in statements:
+        if not _SEGMENT_TITLE.search(statement.title or ""):
+            continue
+        changed = False
+        for column in statement.columns:
+            if column.end and column.months is None and column.end in spans:
+                column.kind, column.months = "period", spans[column.end]
+                changed = True
+        if changed:
+            inherited.append(statement.page)
+    return inherited
+
+
+def _inherit_split_table_dates(statements) -> list[int]:
+    """Date the headerless remainder of a table that ran onto the next page.
+
+    A debt note's last row can land on the following page under no title and no
+    column headers. Its columns are the final ones of the table before it (the
+    left-hand ones hold maturity and rate), so they take that table's dates when
+    the previous table's trailing columns are dated and as many as this one has.
+    """
+    inherited: list[int] = []
+    for position, statement in enumerate(statements):
+        count = len(statement.columns)
+        if (statement.title or not count
+                or any(c.end or c.header.strip() for c in statement.columns)):
+            continue
+        # The table it continues is the nearest one before it, on this page or the last,
+        # that has at least as many columns, the final ones dated.
+        for previous in reversed(statements[max(0, position - 3):position]):
+            if previous.page not in (statement.page, statement.page - 1):
+                break
+            tail = previous.columns[-count:]
+            if len(previous.columns) >= count and all(c.end for c in tail):
+                for column, source in zip(statement.columns, tail):
+                    column.header, column.kind = source.header, source.kind
+                    column.months, column.end = source.months, source.end
+                inherited.append(statement.page)
+                break
+    return inherited
+
+
 def _printed_line(caption: str, text: str, count: int):
     """The figures the page's text layer prints for a caption, or None.
 
@@ -512,7 +570,11 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             same_columns = (previous is not None
                             and [(c.months, c.end) for c in previous.columns]
                             == [(c.months, c.end) for c in columns])
-            same = same_columns and previous.title == title
+            same = same_columns and (
+                previous.title == title
+                # The same heading read with or without its subtitle lines on the next page.
+                or (title and previous.title and page_no == previous_last_page + 1
+                    and previous.title.split("\n")[0].strip() == title.split("\n")[0].strip()))
             # A continuation page often prints no title of its own (BMV XBRL reports:
             # the balance sheet's liabilities and the cash flow's investing and
             # financing sections). It belongs to the primary statement on the page
@@ -572,6 +634,18 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
             severity="info",
             message="Inferred period dates for undated flow note table(s) on page(s) "
                     f"{inherited_pages} from the primary statements' matching year columns."))
+
+    if inherited_pages := _span_segment_columns(statements):
+        issues.append(Issue(
+            code="llm_segment_span_inferred", severity="info",
+            message="Segment table(s) on page(s) "
+                    f"{inherited_pages} print no span; read as the fiscal year to date."))
+
+    if inherited_pages := _inherit_split_table_dates(statements):
+        issues.append(Issue(
+            code="llm_inherited_split_table_dates", severity="info",
+            message="Dated the headerless table(s) on page(s) "
+                    f"{inherited_pages} from the trailing columns of the table before them."))
 
     if corrected:
         issues.append(Issue(

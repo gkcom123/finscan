@@ -21,7 +21,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "47"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "49"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -62,6 +62,8 @@ PARSER_VERSION = "47"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 45: "March, 2026" balance-sheet headers dated
                             # 46: BMV/XBRL tables take their columns from the ISO-date header line
                             # 47: Spanish dates and "1T26" labels dated; BMV continuation pages joined by ISO dates
+                            # 48: quarter labels with a typographic apostrophe ("1Q’26", "2Q´26") dated
+                            # 49: a headerless table split onto the next page takes the previous table's trailing dates
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,

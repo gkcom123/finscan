@@ -42,7 +42,7 @@
     {"label": "Inventory", "section": "balance_sheet", "pdf": "Inventories"},
     {"label": "Trade debtors/receivables", "section": "balance_sheet", "pdf": ["Due from related parties", "Trade receivables, third parties"]},
     {"label": "Trade creditors /payables", "section": "balance_sheet", "pdf": ["Due to related parties", "Trade payables, third parties"]},
-    {"label": "Lease Liabilities", "section": "other", "pdf": null, "note": "the reference cell was the hand-typed expression '=4500.736+8074.731' — name its components as a list to make this a sum"},
+    {"label": "Lease Liabilities", "section": "other", "pdf": ["Short-term lease liabilities @ title:a) Short-term borrowings", "Long-term lease liabilities @ title:b) Long-term borrowings"], "statement": "title:a) Short-term borrowings", "note": "learned from 1Q26: =4500.736+8074.731 (short-term + long-term lease liabilities, Note 6; printed in thousands of TRY)"},
     {"label": "TRY Loans", "section": "other", "pdf": "Turkish Lira", "statement": "title:NOTE 6 - BORROWINGS a) Short-term borrowings (Continued)", "column": "TRY Equivalent"},
     {"label": "EUR Loans", "section": "other", "pdf": "Euro", "statement": "title:NOTE 6 - BORROWINGS a) Short-term borrowings (Continued)", "column": "TRY Equivalent"},
     {"label": "USD Loans", "section": "other", "pdf": "US Dollar", "statement": "title:NOTE 6 - BORROWINGS a) Short-term borrowings (Continued)", "column": "TRY Equivalent"},
@@ -62,7 +62,7 @@
     {"label": "PLN Loans", "section": "other", "pdf": "Polish Zloty", "statement": "title:NOTE 6 - BORROWINGS a) Short-term borrowings (Continued)", "column": "TRY Equivalent"},
     {"label": "CZK Loans", "section": "other", "pdf": "Czech Koruna", "statement": "title:NOTE 6 - BORROWINGS a) Short-term borrowings (Continued)", "column": "TRY Equivalent"},
     {"label": "MAD loans", "section": "other", "pdf": "Egyptian Pound", "statement": "title:NOTE 6 - BORROWINGS a) Short-term borrowings (Continued)", "column": "TRY Equivalent"},
-    {"label": "Other Loans", "section": "other", "pdf": null, "note": "the reference cell was the hand-typed expression '=223+2' — name its components as a list to make this a sum"},
+    {"label": "Other Loans", "section": "other", "pdf": null, "note": "1Q26 was typed =223+2; the components are not identifiable in the filings (2Q26 prints HKD 172 and EGP 192 in the currency table): type it by hand"},
     {"label": "USD bonds", "section": "other", "pdf": null, "note": "the map does not say which statement this row comes from"},
     {"label": "EUR bonds", "section": "other", "pdf": null, "note": "the map does not say which statement this row comes from"},
     {"label": "TRY bonds", "section": "other", "pdf": null, "note": "the map does not say which statement this row comes from"},
@@ -73,6 +73,6 @@
     {"label": "Reported Net Leverage (excluding IFRS-16 adjusments)", "section": "other", "pdf": null, "note": "the map does not say which statement this row comes from"},
     {"label": "FX rate average - TRY/USD", "section": "cash_flow", "carry_forward": true, "note": "a model-maintained TRY/USD rate, not reported by the filing"},
     {"label": "FX rate  - TRY/USD (as at end of period)", "section": "cash_flow", "carry_forward": true, "note": "a model-maintained TRY/USD rate, not reported by the filing"},
-    {"label": "VND Loans", "section": "other", "pdf": null, "note": "added 2026-10-21: new in the workbook, review · the map does not say which statement this row comes from"}
+    {"label": "VND Loans", "section": "other", "value": 0, "note": "the model holds 0 and 2Q26's debt-currency table lists no VND line"}
   ]
 }
