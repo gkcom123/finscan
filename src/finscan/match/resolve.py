@@ -263,7 +263,8 @@ def _statement_for(spec, doc: PdfDoc, period_end: str | None = None):
 
 
 #: Separator between the terms of a `sum:`. Not a comma: filing captions contain
-#: commas ("Other Expenses, net"), and splitting on one would shred them.
+#: commas ("Other Expenses, net"), and splitting on one would shred them. A doubled
+#: "||" is a caption alternative inside one term, never a separator.
 _TERM_SEPARATOR = "|"
 
 
@@ -271,7 +272,7 @@ def _sum_terms(instruction: str) -> list[tuple[float, str]]:
     """Parse "sum:pdf:Zakat|-field:income_tax" into [(+1, "pdf:Zakat"), (-1, ...)]."""
     body = instruction.split(":", 1)[1]
     terms: list[tuple[float, str]] = []
-    for raw in body.split(_TERM_SEPARATOR):
+    for raw in re.split(r"(?<!\|)\|(?!\|)", body):
         text = raw.strip()
         if not text:
             continue
@@ -428,6 +429,8 @@ def _lookup_sum(spec, statement, column, scope=None):
             class _Where:
                 statement = override
                 key = spec.key
+                # So that, among tables sharing the title, the one printing this term is read.
+                resolve = f"pdf:{instruction}"
 
             term_statement, why = _statement_for(_Where, scope["doc"], scope["target"])
             if term_statement is None:

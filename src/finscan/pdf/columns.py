@@ -76,7 +76,15 @@ _FULL_DATE = re.compile(
 #: "Q2 2026", "2Q26", "2Q 2026".
 #: "1Q26", "Q1 2026", and the Spanish "1T26" (primer trimestre) of BMV commentary.
 _QUARTER = re.compile(
-    r"\b(?:Q([1-4])\s*['’‘´`]?(\d{2,4})|([1-4])[QT]\s*['’‘´`]?(\d{2,4}))\b", re.IGNORECASE)
+    r"(?:\b(?:Q([1-4])\s*['’‘´`]?(\d{2,4})|([1-4])[QT]\s*['’‘´`]?(\d{2,4}))\b"
+    r"|['’‘´`](\d{2})\s*Q([1-4])\b)", re.IGNORECASE)
+
+
+def _quarter_of(m: re.Match) -> tuple[int, str]:
+    """(quarter, raw year) from a _QUARTER match, whichever form matched."""
+    if m.group(6):
+        return int(m.group(6)), m.group(5)
+    return int(m.group(1) or m.group(3)), m.group(2) or m.group(4)
 
 
 def _month_end(year: int, month: int) -> str:
@@ -144,8 +152,7 @@ def parse_columns(header_block: str) -> list[Column]:
         return columns
 
     for m in _QUARTER.finditer(flat):
-        q = int(m.group(1) or m.group(3))
-        raw_year = m.group(2) or m.group(4)
+        q, raw_year = _quarter_of(m)
         year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
         columns.append(Column(
             index=len(columns), header=m.group(0).strip(), kind="period",
@@ -352,8 +359,7 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         elif iso := parse_numeric_date(text, day_first):
             end = iso
         elif m := _QUARTER.search(text):
-            q = int(m.group(1) or m.group(3))
-            raw_year = m.group(2) or m.group(4)
+            q, raw_year = _quarter_of(m)
             year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
             months, end = months or 3, _month_end(year, q * 3)
 

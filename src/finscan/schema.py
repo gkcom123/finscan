@@ -7,6 +7,7 @@ shape is the interface and these classes are only a convenience for producing it
 """
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
@@ -21,7 +22,7 @@ SCHEMA_VERSION = "1.0"
 #: the right key for "same document" but says nothing about "same parser". A
 #: fixed parser silently served pre-fix output until the cache was deleted by
 #: hand, which looks exactly like the fix not working.
-PARSER_VERSION = "49"        # 4: a lone "-" is kept as a None placeholder, at its
+PARSER_VERSION = "52"        # 4: a lone "-" is kept as a None placeholder, at its
                             #    printed column position, instead of being dropped
                             #    (which silently shifted every later column left)
                             # 5: tiered headers (band row over label row) read by
@@ -64,6 +65,9 @@ PARSER_VERSION = "49"        # 4: a lone "-" is kept as a None placeholder, at i
                             # 47: Spanish dates and "1T26" labels dated; BMV continuation pages joined by ISO dates
                             # 48: quarter labels with a typographic apostrophe ("1Q’26", "2Q´26") dated
                             # 49: a headerless table split onto the next page takes the previous table's trailing dates
+                            # 50: segment-note columns dated but spanless take the fiscal year to date
+                            # 51: consecutive pages whose titles differ only by subtitle lines join
+                            # 52: "'26 Q2" quarter labels dated; "(CONTINUED)" titles join their statement
 
 #: How a page's text was recovered. Recorded per page because it changes how much
 #: the figures on it can be trusted: a vision transcription is not reproducible,
@@ -247,8 +251,14 @@ class PdfDoc:
         def same_title(a: str, b: str) -> bool:
             # A reader may print the company name on one page's title and not the
             # next ("EMBOTELLADORA ANDINA S.A. AND SUBSIDIARIES Consolidated Interim
-            # Statements of Financial Position ..." / "Consolidated Interim ...").
-            a, b = a.strip().lower(), b.strip().lower()
+            # Statements of Financial Position ..." / "Consolidated Interim ..."), and
+            # the next page may add "(CONTINUED)" / "continuación".
+            def plain(text: str) -> str:
+                text = re.sub(r"\(?\s*(?:continued|cont['’]d|continuaci[oó]n)\s*\)?", "",
+                              text.strip().lower())
+                return re.sub(r"[\s,.:;-]+$", "", text).strip()
+
+            a, b = plain(a), plain(b)
             return a == b or (bool(a) and bool(b) and (a.endswith(b) or b.endswith(a)))
 
         rows, last_page = list(start.rows), start.page

@@ -208,7 +208,7 @@ def _run(paths, base: Path, *, dry_run: bool, period_end: str | None, no_cache: 
     mapping_status = sync_mapping(paths, doc, sheet, dry_run)
 
     # 3. apply
-    result = apply_run(",".join(str(p) for p in paths.pdf_jsons), paths.mapping,
+    result = apply_run([str(p) for p in paths.pdf_jsons], paths.mapping,
                        paths.excel, paths.output, period_end, dry_run)
 
     # 4. derived files, rewritten every run.
