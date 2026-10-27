@@ -14,3 +14,11 @@ samples/profiles/
 /inbox/**/*.pdf
 /inbox/**/*.json
 .env
+
+# macOS Finder metadata
+.DS_Store
+
+# Azure deployment (holds keys)
+azure-vars.sh
+job.yaml
+api.yaml

@@ -20,11 +20,11 @@ pip install -e .
 Check it landed:
 
 ```bash
-finscan2 --help
+finscan --help
 pytest -q          # offline, no API key needed
 ```
 
-If `finscan2` is not found, use `python -m finscan2.cli` in its place.
+If `finscan` is not found, use `python -m finscan.cli` in its place.
 
 ## Step 2: add the model key
 
@@ -42,7 +42,7 @@ OPENAI_API_KEY=sk-...
 Verify:
 
 ```bash
-python -c "from finscan2.llm import chat_model; chat_model(); print('LLM ok')"
+python -c "from finscan.llm import chat_model; chat_model(); print('LLM ok')"
 ```
 
 ## Step 3: put the files in
@@ -64,7 +64,7 @@ inbox/Almarai/<model>.xlsx
 ## Step 4: dry run (writes nothing)
 
 ```bash
-finscan2 company almarai --dry-run
+finscan company almarai --dry-run
 ```
 
 Reads the PDF, checks the mapping and resolves every row, but writes no workbook
@@ -74,7 +74,7 @@ would append, without touching the file.
 ## Step 5: the real run
 
 ```bash
-finscan2 company almarai
+finscan company almarai
 ```
 
 The summary shows where the column went, what happened to the mapping and where
@@ -118,7 +118,7 @@ them by hand (see "The mapping" in the README), re-run, then commit the mapping.
 If the model's sheet is not called `Model`, name it on that first run:
 
 ```bash
-finscan2 company gruma --sheet Model_USD
+finscan company gruma --sheet Model_USD
 ```
 
 ## Step 7: the next quarter
@@ -131,14 +131,57 @@ marked `added <date>: … review`, so check `git diff mappings/` after a run.
 ## All companies
 
 ```bash
-finscan2 companies             # every folder under inbox/
-finscan2 companies --dry-run
+finscan companies             # every folder under inbox/
+finscan companies --dry-run
 ```
 
 The batch continues past a failing company and lists the failures at the end.
 Close generated workbooks in Excel before running.
 
 ---
+
+## Run the service locally (API + MCP)
+
+The same runs, behind an HTTP API and an MCP server — what Copilot Studio will call
+once deployed. Runs start as local processes (`FINSCAN_RUNNER=local`).
+
+```bash
+# in .env (see .env.example): FINSCAN_API_KEY=<any secret>, FINSCAN_RUNNER=local
+finscan-api                                  # http://localhost:8000, docs at /docs
+```
+
+Try it with the API key in the `x-api-key` header:
+
+```bash
+K=<your FINSCAN_API_KEY>
+curl -s localhost:8000/health
+curl -s -H "x-api-key: $K" localhost:8000/companies
+curl -s -H "x-api-key: $K" -X POST localhost:8000/upload-links/Tencent     # open the link to upload
+curl -s -H "x-api-key: $K" -H "content-type: application/json" \
+     -d '{"company": "Tencent", "dry_run": true}' localhost:8000/jobs        # -> job id
+curl -s -H "x-api-key: $K" localhost:8000/jobs/<job id>                    # running / succeeded …
+```
+
+Each run keeps `job.json`, `result.json` and `run.log` in `_work/jobs/<job id>/`.
+
+**MCP** is at `http://localhost:8000/mcp` (Streamable HTTP, same `x-api-key`). To try it
+from Copilot Studio before deploying, expose the port with a tunnel (e.g. ngrok or
+VS Code port forwarding), set `FINSCAN_PUBLIC_URL` to the tunnel's URL so links work,
+and add the MCP tool in Copilot Studio with that URL.
+
+**In Docker**, as it will run in Azure:
+
+```bash
+docker build -t finscan:dev .
+docker run --rm -p 8000:8000 -e FINSCAN_API_KEY=$K \
+  -v "$PWD/inbox:/app/inbox" -v "$PWD/_work:/app/_work" finscan:dev finscan-api
+docker run --rm -v "$PWD/inbox:/app/inbox" -v "$PWD/_work:/app/_work" \
+  finscan:dev finscan company tencent --dry-run                            # the Job's role
+```
+
+Mappings are baked into the image: rebuild it after a mapping change. A run in a
+container that appends new mapping rows reports them in its result; add them to
+`mappings/` through git.
 
 ## Troubleshooting
 

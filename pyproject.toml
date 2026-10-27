@@ -10,7 +10,8 @@ requires-python = ">=3.10"
 dynamic = ["dependencies"]
 
 [project.scripts]
-finscan2 = "finscan2.cli:main"
+finscan = "finscan.cli:main"
+finscan-api = "finscan.service.app:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }

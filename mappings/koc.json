@@ -17,7 +17,7 @@
     {"label": "Consolidated revenues", "section": "income_statement", "pdf": "Revenue"},
     {"label": "Consolidated operating profit", "section": "income_statement", "pdf": "Operating profit"},
     {"label": "Depreciation and amortisation", "section": "income_statement", "pdf": "Depreciation and amortisation", "statement": "cash_flow"},
-    {"label": "Other adjustments", "section": "income_statement", "pdf": null, "note": "the reference cell was the hand-typed expression '=28954-15720-2490' — name its components as a list to make this a sum"},
+    {"label": "Other adjustments", "section": "income_statement", "pdf": null, "note": "reference was typed =28954-15720-2490; the only filing in the inbox is the 9M 2025 report, which cannot identify the components: type it by hand"},
     {"label": "Consolidated net profit attributable to Equity holders", "section": "income_statement", "pdf": "Equity holders of the parent"},
     {"label": "Cash flow from operations", "section": "cash_flow", "pdf": "Total cash flows from operating activities"},
     {"label": "Cash flow from investments", "section": "cash_flow", "pdf": "Total cash flows from investing activities"},

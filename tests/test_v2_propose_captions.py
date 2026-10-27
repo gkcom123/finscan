@@ -6,9 +6,9 @@ of — and, more importantly, what it refuses to be made of.
 """
 from __future__ import annotations
 
-from finscan2.model import propose_captions as pc
-from finscan2.model.schema import ModelMap, RowKey, RowSpec
-from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+from finscan.model import propose_captions as pc
+from finscan.model.schema import ModelMap, RowKey, RowSpec
+from finscan.schema import Column, PdfDoc, Statement, StatementRow
 
 
 def _doc(rows, kind="income_statement"):
@@ -108,7 +108,7 @@ def _run_with_answers(pairs, proposals):
     class _Client:
         def invoke(self, prompt): return answer
 
-    import finscan2.llm as llm
+    import finscan.llm as llm
     original = llm.structured
     llm.structured = lambda cls: _Client()
     try:

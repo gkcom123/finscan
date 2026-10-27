@@ -21,3 +21,13 @@ openpyxl>=3.1.5
 
 # Utils
 python-dotenv>=1.2.3
+
+# Service: REST API + MCP server (finscan.service)
+fastapi>=0.141.1
+uvicorn>=0.52.4
+python-multipart>=0.0.32
+mcp>=2.3.0,<3
+
+# Azure Container Apps Job launcher (FINSCAN_RUNNER=azure)
+azure-identity>=1.26.0
+azure-mgmt-appcontainers>=5.1.0

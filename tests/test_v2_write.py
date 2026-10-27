@@ -1,4 +1,4 @@
-"""Stage 4 (finscan2.write) — the three invariants, on a real workbook.
+"""Stage 4 (finscan.write) — the three invariants, on a real workbook.
 
 Builds a small model in a temp directory rather than mocking openpyxl: the things
 that go wrong here — a formula overwritten, a source file modified, a date not
@@ -11,11 +11,11 @@ from datetime import datetime
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font
 
-from finscan2.match.schema import ResolvedValue, Source, Values
-from finscan2.model.discover import RowLayout, SheetLayout
-from finscan2.model.load import resolve
-from finscan2.model.schema import ModelMap, RowKey, RowSpec
-from finscan2.write.column import AUDIT_SHEET, write_column
+from finscan.match.schema import ResolvedValue, Source, Values
+from finscan.model.discover import RowLayout, SheetLayout
+from finscan.model.load import resolve
+from finscan.model.schema import ModelMap, RowKey, RowSpec
+from finscan.write.column import AUDIT_SHEET, write_column
 
 BLUE = Font(color="FF0000FF")
 
@@ -206,8 +206,8 @@ def test_no_write_column_refuses_rather_than_guessing(tmp_path):
 def test_a_formula_referencing_no_cell_is_never_copied_forward(tmp_path):
     """Almarai's tax row holds "=-26.573-10.578" — two hand-typed figures. Copying
     it forward puts last quarter's tax in this quarter and calls it a formula copy."""
-    from finscan2.model.discover import RowLayout, SheetLayout
-    from finscan2.model.schema import ModelMap, RowKey, RowSpec
+    from finscan.model.discover import RowLayout, SheetLayout
+    from finscan.model.schema import ModelMap, RowKey, RowSpec
 
     source = _workbook(tmp_path / "model.xlsx")
     book = load_workbook(source)
@@ -240,8 +240,8 @@ def test_a_formula_referencing_no_cell_is_never_copied_forward(tmp_path):
 
 def _recipe_map_and_layout(write_col: int, *, period_dates: dict[int, str]):
     """Revenue at row 5, a recipe-bearing 'Adj. EBITDA' row at row 10."""
-    from finscan2.model.discover import RowLayout, SheetLayout
-    from finscan2.model.schema import FormulaRecipe, ModelMap, RowKey, RowSpec
+    from finscan.model.discover import RowLayout, SheetLayout
+    from finscan.model.schema import FormulaRecipe, ModelMap, RowKey, RowSpec
 
     reference_col = write_col - 1
     layout = SheetLayout(
@@ -301,3 +301,17 @@ def test_a_recipe_row_switches_to_the_annual_actual_at_fiscal_year_end(tmp_path)
     cell = load_workbook(out)["Model"].cell(10, 8)
     assert cell.value == "=C10-G10-F10-E10"
     assert result.formulas_copied == 1
+
+
+def test_the_latest_formula_in_a_row_is_found_past_typed_values():
+    """Copy-formula rows take the nearest real formula to the left, skipping a
+    typed rate and a typed expression that references no cell."""
+    from openpyxl import Workbook
+
+    from finscan.write.column import latest_formula_cell
+
+    ws = Workbook().active
+    ws["C5"], ws["D5"], ws["E5"], ws["F5"] = 0.1381, "=AVERAGE(C6:D6)", "=1/7.0176", 0.13855
+    cell = latest_formula_cell(ws, row=5, write_col=7, label_col=2)
+    assert cell is not None and cell.coordinate == "D5"
+    assert latest_formula_cell(ws, row=8, write_col=7, label_col=2) is None

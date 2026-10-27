@@ -6,9 +6,9 @@ US-format table is a misread "5,651" and must keep its old reading.
 """
 from __future__ import annotations
 
-from finscan2.pdf.columns import parse_columns_from_headers
-from finscan2.pdf.llm_read import doc_from_tables
-from finscan2.pdf.read import _UNIT_PATTERNS, _sniff
+from finscan.pdf.columns import parse_columns_from_headers
+from finscan.pdf.llm_read import doc_from_tables
+from finscan.pdf.read import _UNIT_PATTERNS, _sniff
 
 _COLUMNS = ["Acumulado 01-01-2026 30-06-2026", "Acumulado 01-01-2025 30-06-2025"]
 

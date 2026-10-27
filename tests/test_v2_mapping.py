@@ -7,13 +7,14 @@ from __future__ import annotations
 
 from datetime import datetime
 
+import pytest
 from openpyxl import Workbook
 
-from finscan2.mapping.compile import compile_mapping, unmapped_inputs
-from finscan2.mapping.convert import from_model_map
-from finscan2.mapping.schema import Mapping, MappingRow
-from finscan2.model.discover import RowLayout, SheetLayout
-from finscan2.model.schema import ModelMap, RowKey, RowSpec
+from finscan.mapping.compile import compile_mapping, unmapped_inputs
+from finscan.mapping.convert import from_model_map
+from finscan.mapping.schema import Mapping, MappingRow
+from finscan.model.discover import RowLayout, SheetLayout
+from finscan.model.schema import ModelMap, RowKey, RowSpec
 
 
 def _layout(rows=None):
@@ -82,16 +83,16 @@ def test_a_carry_forward_row_round_trips_without_a_pdf_field(tmp_path):
     assert loaded.rows[0].instruction() == "carry:a peg"
 
 
-def test_a_scale_round_trips_and_reaches_the_compiled_row(tmp_path):
+@pytest.mark.parametrize("scale", [0.01, "percent"])
+def test_a_scale_round_trips_and_reaches_the_compiled_row(tmp_path, scale):
     """A percentage printed as 1.7 for a model that holds 0.017."""
     mapping = Mapping(company="x", sheet="Model", rows=[
-        MappingRow(label="Revenue", section="income_statement", pdf="Revenue", scale=0.01)])
+        MappingRow(label="Revenue", section="income_statement", pdf="Revenue", scale=scale)])
     path = mapping.save(tmp_path / "x.json")
-    assert '"scale": 0.01' in path.read_text(encoding="utf-8")
-    assert Mapping.load(path).rows[0].scale == 0.01
+    assert Mapping.load(path).rows[0].scale == scale
 
     model, _ = compile_mapping(Mapping.load(path), _layout())
-    assert [r for r in model.rows if r.key.label == "Revenue"][0].scale == 0.01
+    assert [r for r in model.rows if r.key.label == "Revenue"][0].scale == scale
     assert RowSpec.from_dict(model.rows[0].to_dict()).scale == model.rows[0].scale
 
 
@@ -262,15 +263,34 @@ def test_appending_to_a_file_in_another_layout_still_keeps_unknown_keys(tmp_path
 
 def test_a_single_optional_caption_compiles_to_a_sum_instruction():
     """Optional terms are read on the sum path, so one "caption?" is routed there."""
-    from finscan2.mapping.schema import MappingRow
+    from finscan.mapping.schema import MappingRow
 
     row = MappingRow(label="Inventory", section="balance_sheet", pdf="Inventories?")
     assert row.instruction() == "sum:pdf:Inventories?"
 
 
 def test_optional_markers_survive_in_a_list_of_captions():
-    from finscan2.mapping.schema import MappingRow
+    from finscan.mapping.schema import MappingRow
 
     row = MappingRow(label="Acq", section="cash_flow",
                      pdf=["Sale of subsidiaries?", "-Investment in joint venture?"])
     assert row.instruction() == "sum:pdf:Sale of subsidiaries?|-pdf:Investment in joint venture?"
+
+
+def test_copy_formula_round_trips_and_compiles_to_a_formula_row(tmp_path):
+    """Tencent's average FX rate: typed in 2Q, =AVERAGE(...) in other quarters."""
+    path = Mapping(company="x", sheet="Model", rows=[
+        MappingRow(label="FX rate average", section="other", copy_formula=True)]).save(
+        tmp_path / "x.json")
+    assert '"copy_formula": true' in path.read_text(encoding="utf-8")
+    assert '"pdf"' not in path.read_text(encoding="utf-8")
+
+    row = Mapping.load(path).rows[0]
+    assert row.copy_formula and row.instruction() == "formula:latest"
+
+    layout = SheetLayout(sheet="Model", rows=[
+        RowLayout(row=9, label="FX rate average", section="other", role="input",
+                  has_formula=False)])
+    model, issues = compile_mapping(Mapping.load(path), layout)
+    assert not issues
+    assert model.rows[0].kind == "formula" and model.rows[0].resolve == "formula:latest"

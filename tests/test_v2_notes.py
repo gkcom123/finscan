@@ -5,9 +5,9 @@ layer produced it — including the damage, because the damage is the point.
 """
 from __future__ import annotations
 
-from finscan2.pdf import repair
-from finscan2.pdf.notes import extract_notes, note_blocks
-from finscan2.pdf.statements import parse_row
+from finscan.pdf import repair
+from finscan.pdf.notes import extract_notes, note_blocks
+from finscan.pdf.statements import parse_row
 
 #: Note 10 as pdfplumber gives it: leading digits severed from their numbers.
 _SEGMENT_NOTE = """\
@@ -143,7 +143,7 @@ def test_a_short_row_that_cannot_be_reconciled_is_dropped_with_a_reason():
 def test_a_note_is_addressed_by_number_and_period():
     """"Total Assets" appears under two periods with different figures; the period
     end is what separates them."""
-    from finscan2.schema import PdfDoc
+    from finscan.schema import PdfDoc
 
     statements, _ = extract_notes(15, _SEGMENT_NOTE, _SPANS)
     doc = PdfDoc(path="f.pdf", sha256="x", statements=statements)
@@ -155,7 +155,7 @@ def test_a_note_is_addressed_by_number_and_period():
 def test_the_total_column_wins_when_several_match_the_period():
     """Five segment columns share one period, so the period tests cannot separate
     them. A tie with no total is refused rather than resolved by position."""
-    from finscan2.match.select import prefer_total, select_column
+    from finscan.match.select import prefer_total, select_column
 
     statements, _ = extract_notes(15, _SEGMENT_NOTE, _SPANS)
     column, why = select_column(statements[0], "2026-06-30", 3, point_in_time=False)
@@ -172,7 +172,7 @@ def test_a_parser_upgrade_reuses_a_cached_vision_transcription(tmp_path):
     model again, or figures a reviewer already checked move for no reason."""
     import json
 
-    from finscan2.pdf import read as read_mod
+    from finscan.pdf import read as read_mod
 
     cache = tmp_path / "cache"
     cache.mkdir()
@@ -213,9 +213,9 @@ def test_a_parser_upgrade_reuses_a_cached_vision_transcription(tmp_path):
 def test_learn_finds_a_caption_the_primary_statement_never_prints():
     """Almarai's D&A for the period appears only in the segment note, so a row
     looking for it in the income statement can never match — and stayed blank."""
-    from finscan2.model import propose_captions as pc
-    from finscan2.model.schema import ModelMap, RowKey, RowSpec
-    from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+    from finscan.model import propose_captions as pc
+    from finscan.model.schema import ModelMap, RowKey, RowSpec
+    from finscan.schema import Column, PdfDoc, Statement, StatementRow
 
     income = Statement(
         page=6, kind="income_statement", title="t", heading="h",
@@ -243,9 +243,9 @@ def test_learn_finds_a_caption_the_primary_statement_never_prints():
 def test_a_caption_printed_in_two_different_notes_is_refused():
     """The same caption in one note across several periods is not ambiguity — a note
     reports several periods. Two DIFFERENT notes printing it is."""
-    from finscan2.model import propose_captions as pc
-    from finscan2.model.schema import ModelMap, RowKey, RowSpec
-    from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+    from finscan.model import propose_captions as pc
+    from finscan.model.schema import ModelMap, RowKey, RowSpec
+    from finscan.schema import Column, PdfDoc, Statement, StatementRow
 
     def _note_statement(number: int) -> Statement:
         return Statement(
@@ -277,12 +277,12 @@ def test_a_cumulative_note_figure_becomes_the_quarter(tmp_path):
 
     from openpyxl import Workbook
 
-    from finscan2.mapping.compile import compile_mapping
-    from finscan2.mapping.schema import Mapping, MappingRow
-    from finscan2.match.resolve import resolve_values
-    from finscan2.model.discover import discover_sheet
-    from finscan2.model.load import resolve as bind_map
-    from finscan2.schema import PdfDoc
+    from finscan.mapping.compile import compile_mapping
+    from finscan.mapping.schema import Mapping, MappingRow
+    from finscan.match.resolve import resolve_values
+    from finscan.model.discover import discover_sheet
+    from finscan.model.load import resolve as bind_map
+    from finscan.schema import PdfDoc
 
     book = Workbook()
     sheet = book.active
@@ -319,9 +319,9 @@ def test_a_primary_statement_is_preferred_over_a_note():
     differ in SIGN: the cash flow adds it back (+1,256,307), which is the convention
     the model stores, while the note shows it as an expense (-1,256,307). Reaching
     for the note first hands the model the wrong sign."""
-    from finscan2.model import propose_captions as pc
-    from finscan2.model.schema import ModelMap, RowKey, RowSpec
-    from finscan2.schema import Column, PdfDoc, Statement, StatementRow
+    from finscan.model import propose_captions as pc
+    from finscan.model.schema import ModelMap, RowKey, RowSpec
+    from finscan.schema import Column, PdfDoc, Statement, StatementRow
 
     income = Statement(page=6, kind="income_statement", title="t", heading="h",
                        columns=[], rows=[StatementRow(caption="Revenue", values=[1.0],

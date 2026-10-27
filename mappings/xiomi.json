@@ -16,7 +16,7 @@
     {"label": "Finance income", "section": "income_statement", "pdf": "Finance income"},
     {"label": "Current and deferred income tax and social contribution", "section": "income_statement", "pdf": "Income tax expenses"},
     {"label": "Non-controlling interest", "section": "income_statement", "pdf": "— Non-controlling interests"},
-    {"label": "Depreciation, depletion & amortization", "section": "income_statement", "pdf": null, "note": "the reference cell was the hand-typed expression '=1457.375+953.724' — name its components as a list to make this a sum"},
+    {"label": "Depreciation, depletion & amortization", "section": "income_statement", "pdf": ["Depreciation of property, plant and equipment, right-of-use assets and investment properties", "Amortization of intangible assets"], "statement": "title:Expenses by nature", "note": "reference was typed =1457.375+953.724 = depreciation of PPE (incl. right-of-use assets) + amortization of intangibles from note 3 'Expenses by nature'; 1Q26 reproduces exactly as the six-month figure less the 2Q figure (3,156.404-1,699.029; 1,829.497-875.773)"},
     {"label": "Balancing figure", "section": "cash_flow", "pdf": null, "note": "no row captioned like 'Balancing figure' · model call failed: Error code: 404 - {'error': {'type': 'invalid_request_err…"},
     {"label": "Tangible fixed assets", "section": "balance_sheet", "pdf": null, "note": "no row captioned like 'Tangible fixed assets' · model call failed: Error code: 404 - {'error': {'type': 'invalid_reques…"},
     {"label": "Inventory", "section": "balance_sheet", "pdf": null, "note": "no row captioned like 'Inventory' · model call failed: Error code: 404 - {'error': {'type': 'invalid_request_error', 'c…"},
@@ -29,7 +29,7 @@
     {"label": "Debt  Including Lease obligations", "section": "balance_sheet", "pdf": null, "note": "no row captioned like 'Debt Including Lease obligations' · model call failed: Error code: 404 - {'error': {'type': 'inv…"},
     {"label": "Cash and cash equivalents", "section": "balance_sheet", "pdf": "Cash and cash equivalents", "note": "the reference cell was the hand-typed expression '=(200000+18247657+53443271+26334483)/1000' — name its components as a list to make this a sum"},
     {"label": "Equity (as reported on balance sheet)", "section": "balance_sheet", "pdf": null, "note": "no row captioned like 'Equity (as reported on balance sheet)' · model call failed: Error code: 404 - {'error': {'type':…"},
-    {"label": "FX rate average - USD/RMB", "section": "cash_flow", "pdf": null, "note": "the reference cell was the hand-typed expression '=1/6.9244' — name its components as a list to make this a sum"},
-    {"label": "FX rate  - USD/RMB (as at end of period)", "section": "cash_flow", "pdf": null, "note": "the reference cell was the hand-typed expression '=1/6.899' — name its components as a list to make this a sum"}
+    {"label": "FX rate average - USD/RMB", "section": "cash_flow", "pdf": null, "note": "market rate (1Q26 = 1/6.9244), not in the filing: type it by hand"},
+    {"label": "FX rate  - USD/RMB (as at end of period)", "section": "cash_flow", "pdf": null, "note": "market rate (1Q26 = 1/6.899), not in the filing: type it by hand"}
   ]
 }
