@@ -288,6 +288,43 @@ def test_a_share_of_revenue_column_does_not_tie_with_its_amount():
         "2026-06-30", "2025-06-30"]
 
 
+def test_a_year_first_quarter_label_is_dated():
+    from finscan.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers(["\u201926 Q2", "\u201926 Q1", "\u201925 Q2"])
+    assert [c.end for c in cols] == ["2026-06-30", "2026-03-31", "2025-06-30"]
+
+
+def test_a_sum_term_may_offer_caption_alternatives():
+    from finscan.match.resolve import _sum_terms
+
+    assert _sum_terms("sum:pdf:A || pdf:B|-pdf:C") == [(1.0, "pdf:A || pdf:B"), (-1.0, "pdf:C")]
+
+
+def test_a_balance_sheet_continued_on_the_next_page_is_one_statement():
+    from finscan.schema import Column, PdfDoc, Statement, StatementRow
+
+    cols = lambda: [Column(index=0, header="31 Mar 2026", kind="point_in_time", end="2026-03-31")]
+    first = Statement(page=4, kind="balance_sheet", title="STATEMENT OF FINANCIAL POSITION",
+                      heading="", columns=cols(), rows=[StatementRow(caption="Share capital", values=[1.0], raw="")])
+    second = Statement(page=5, kind="balance_sheet", title="STATEMENT OF FINANCIAL POSITION (CONTINUED)",
+                       heading="", columns=cols(), rows=[StatementRow(caption="Intangible assets", values=[2.0], raw="")])
+    doc = PdfDoc(path="f.pdf", sha256="x", statements=[first, second])
+    assert [r.caption for r in doc.statement("balance_sheet").rows] == ["Share capital", "Intangible assets"]
+
+
+def test_half_year_labels_and_half_ended_headers_get_a_six_month_span():
+    from finscan.pdf.columns import parse_columns_from_headers
+
+    cols = parse_columns_from_headers(["Half Year H125", "Half Year H126", "Half Ended June 30 2026",
+                                       "Quarter Ended June 30 2026"])
+    assert [(c.months, c.end) for c in cols] == [
+        (6, "2025-06-30"), (6, "2026-06-30"), (6, "2026-06-30"), (3, "2026-06-30")]
+    from finscan.pdf.columns import parse_single_column
+
+    assert parse_single_column("3 Months March 2026").months == 3
+
+
 def test_a_quarter_label_with_a_typographic_apostrophe_is_dated():
     from finscan.pdf.columns import parse_columns_from_headers
 

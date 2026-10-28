@@ -161,6 +161,16 @@ def parse_columns(header_block: str) -> list[Column]:
     if columns:
         return columns
 
+    for m in _HALF.finditer(flat):
+        half, raw_year = _half_of(m)
+        year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
+        columns.append(Column(
+            index=len(columns), header=m.group(0).strip(), kind="period",
+            months=6, end=_month_end(year, half * 6),
+        ))
+    if columns:
+        return columns
+
     for m in _FULL_DATE.finditer(flat):
         day, month, year = int(m.group(1)), MONTHS[m.group(2).lower()], int(m.group(3))
         columns.append(Column(
@@ -212,9 +222,19 @@ _ISO_RANGE = re.compile(
 
 #: "Quarter ended", "Half year ended", "Previous year ended": India's SEBI results
 #: name a column's span in words, without a month count.
-_PERIOD_MONTHS = {"quarter": 3, "half year": 6, "nine months": 9, "year": 12}
-_PERIOD_ENDED = re.compile(r"\b(quarter|half[\s-]+year|nine[\s-]+months|year)\s+ended\b",
+_PERIOD_MONTHS = {"quarter": 3, "half year": 6, "half": 6, "nine months": 9, "year": 12}
+_PERIOD_ENDED = re.compile(r"\b(quarter|half(?:[\s-]+year)?|nine[\s-]+months|year)\s+ended\b",
                            re.IGNORECASE)
+
+#: "H126", "1H26", "H1 2026": a half-year label. H1 is the six months to June; H2 the
+#: six months to December.
+_HALF = re.compile(
+    r"\b(?:H([12])\s*['’‘´`]?(\d{2,4})|([12])H\s*['’‘´`]?(\d{2,4}))\b", re.IGNORECASE)
+
+
+def _half_of(m: re.Match) -> tuple[int, str]:
+    """(half, raw year) from a _HALF match, whichever form matched."""
+    return int(m.group(1) or m.group(3)), m.group(2) or m.group(4)
 
 #: "Jun-26", "Mar-26": a month and a two-digit year, as Airtel's IR Pack heads
 #: its columns.
@@ -295,6 +315,9 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
         months = MONTH_COUNT_WORDS[m.group(1).lower()]
     elif m := _PERIOD_ENDED.search(text):
         months = _PERIOD_MONTHS[re.sub(r"[\s-]+", " ", m.group(1).lower())]
+    elif m := re.match(r"\s*(three|six|nine|twelve|3|6|9|12)[\s-]*months?\b", text, re.IGNORECASE):
+        # "3 Months March": the span leads the header and the month names the end.
+        months = MONTH_COUNT_WORDS[m.group(1).lower()]
 
     end: str | None = None
     # "2026-01-01 - 2026-06-30": the BMV (XBRL) report states each column's span
@@ -362,6 +385,10 @@ def parse_single_column(header: str, day_first: bool | None = None) -> Column:
             q, raw_year = _quarter_of(m)
             year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
             months, end = months or 3, _month_end(year, q * 3)
+        elif m := _HALF.search(text):
+            half, raw_year = _half_of(m)
+            year = int(raw_year) if len(raw_year) == 4 else 2000 + int(raw_year)
+            months, end = months or 6, _month_end(year, half * 6)
 
     kind = "period" if months else "point_in_time"
     return Column(index=0, header=header.strip(), kind=kind, months=months, end=end)
