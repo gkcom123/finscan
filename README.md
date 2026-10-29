@@ -82,8 +82,53 @@ the filing has no such line. Optional overrides: `statement`, `column`, `basis`,
 `sign`, `scale`, `value` (a constant), `carry_forward`. `scale` replaces currency
 unit conversion with a numeric multiplier; `"scale": "percent"` means `0.01`,
 so a printed `4.3%` is written as the Excel fraction `0.043`.
+`basis` is `point_in_time` (never de-cumulated) or `quarter` (a flow, de-cumulated
+when the filing prints only year-to-date). A row's section normally decides, so
+`"basis": "quarter"` is for a cash item that sits under a heading the sheet reads
+as `other`. A leading `-` negates only inside a list: write `["-Employee benefits"]`.
+A top-level `"units"` (say `"millions"`) states the model's unit when it cannot be sniffed.
 A top-level `"reader": "rules"`
 switches a company from the vision-model reader to the rule-based one.
+
+A caption may list the exact wordings a filer has used in different quarters,
+`"pdf": "Income taxes || Income tax (expense) benefit"`: the first one printed is
+read, none printed is an error, and a merely similar line is never substituted.
+Alternatives also work inside a list of captions to sum, and a term may read its
+own table: `"pdf": ["Long-term @ title:CASH FLOWS", "Payments of lease liabilities @ title:CASH FLOWS"]`
+picks, among the tables sharing that title, the one printing each term.
+
+`"statement": "title:<text>"` reads the first statement whose title contains the
+text. When several tables share a title (a filing may print "Consolidated" over
+more than one table), the first one that holds the row's captions is read;
+`title:A || B` tries alternative titles in order. `"column": "Consolidated"` keeps
+only the columns whose header holds that text, for filings printing parent and
+consolidated figures side by side.
+
+Keep only the quarter being written directly in the company folder. Earlier
+filings belong in a subfolder (`q1/`): a run refuses a folder whose filings
+report different periods.
+
+**BMV XBRL packages.** The exchange publishes a Mexican issuer's quarterly report
+as an XBRL package (a `.zip`, e.g. `ifrsxbrl_1576477_2026-02_1.zip`, from the
+issuer's "Información financiera" page on bmv.com.mx), not as a PDF. Put the `.zip`
+in the company folder beside any press release: it is read as a filing, with each
+figure taken from the report's own data (no page reading, no model call). Its
+statements carry the BMV role code in their title (`title:[520000]` is the cash
+flow, `[210000]` the balance sheet, `[310000]` the income statement), Spanish
+captions and whole pesos, so a mapping row names them as it would a BMV PDF.
+When a press release is read beside it, give each row an explicit `statement`:
+both documents have a balance sheet and an income statement.
+
+**Filings published as Excel.** A workbook of statements (one sheet per statement,
+e.g. PTT Exploration and Production's `FINANCIAL_STATEMENTS.XLSX`) beside the model
+is told apart from it by its contents and read as a filing, cell values taken as
+they are. Each statement's title is built from its sheet as
+`Consolidated Statement of Income For the three-month period ended 30 June 2026`,
+so `title:Consolidated Statement of Income For the three-month` is stable from
+quarter to quarter. A statement printed over several pages of a sheet is joined.
+Where two currencies sit side by side, name one with `"column": "US Dollar"`. A
+line the filing leaves out when it is nil (no cells) is not a row: mark it
+optional with a trailing `?` where that is the analyst's practice.
 
 ## How the workbook is read
 

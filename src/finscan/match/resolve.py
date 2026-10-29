@@ -38,6 +38,17 @@ UNIT_MULTIPLIER: dict[str, float] = {
 _FLOW_SECTIONS = {"income_statement", "cash_flow"}
 
 
+def _is_point_in_time(spec) -> bool:
+    """A balance is never de-cumulated. A row's section decides, unless the mapping says
+    `basis: quarter` — a flow that sits under a heading the sheet reads as 'other'
+    (Quiport's cash items below its 'Net Debt' block)."""
+    if spec.basis == "point_in_time":
+        return True
+    if spec.basis == "quarter":
+        return False
+    return spec.key.section not in _FLOW_SECTIONS
+
+
 #: A unit printed on the row itself, as its caption's last words: Airtel's IR Pack
 #: summary prints "Market Capitalization  Rs Bn  11,559" beside rows in "Rs Mn".
 _ROW_UNIT = re.compile(r"\b(?:rs\.?|inr|₹|us\$|usd)\s*(mn|million|bn|billion|cr|crore)s?\s*$",
@@ -639,8 +650,7 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             statement, why = _statement_for(spec, doc)
             plans[bound.row] = (statement, None, None, None)
             continue
-        point_in_time = (spec.basis == "point_in_time"
-                         or spec.key.section not in _FLOW_SECTIONS)
+        point_in_time = _is_point_in_time(spec)
         statement, why = _statement_for(spec, doc, target)
         if statement is None:
             plans[bound.row] = (None, None, None, why)
@@ -776,8 +786,7 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
         if (spec.resolve or "").startswith("sum:"):
             terms, why = _lookup_sum(spec, statement, column, {
                 "doc": doc, "target": target, "cadence": model.cadence_months,
-                "point_in_time": (spec.basis == "point_in_time"
-                                  or spec.key.section not in _FLOW_SECTIONS),
+                "point_in_time": _is_point_in_time(spec),
                 "units": model.units})
             if terms is None:
                 value.unresolved = why

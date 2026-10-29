@@ -175,6 +175,20 @@ def test_presentation_headers_are_copied_and_short_quarter_label_is_preserved(tm
     assert sheet.cell(4, 5).value == "3Q"
 
 
+def test_a_quarter_label_with_a_two_digit_year_is_preserved(tmp_path):
+    """Quiport's headers read 1Q26; the next column must read 3Q26, not 'Q3 2026'."""
+    source = _workbook(tmp_path / "model.xlsx")
+    book = load_workbook(source)
+    book["Model"].cell(4, 4, "2Q26")
+    book.save(source)
+
+    model, layout = _map_and_layout()
+    model.header_row = 4
+    result = write_column(_values(), resolve(model, layout), str(source),
+                          str(tmp_path / "model_updated.xlsx"))
+    assert load_workbook(result.output_path)["Model"].cell(4, 5).value == "3Q26"
+
+
 def test_a_missing_date_row_is_reported_not_ignored(tmp_path):
     source = _workbook(tmp_path / "model.xlsx")
     model, layout = _map_and_layout()

@@ -16,6 +16,7 @@ is indistinguishable from one nobody got to.
 """
 from __future__ import annotations
 
+import re
 import shutil
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -303,7 +304,12 @@ def _write_period_header(worksheet, model, write_col: int, period_end: str,
             quarter = (parsed.month - 1) // 3 + 1
             reference = worksheet.cell(model.header_row, model.reference_col)
             existing = str(reference.value or "").strip().upper()
-            header.value = f"{quarter}Q" if len(existing) == 2 and existing[0] in "1234" and existing[1] == "Q" else f"Q{quarter} {parsed.year}"
+            if len(existing) == 2 and existing[0] in "1234" and existing[1] == "Q":
+                header.value = f"{quarter}Q"
+            elif re.fullmatch(r"[1-4]Q\d{2}", existing):
+                header.value = f"{quarter}Q{parsed.year % 100:02d}"
+            else:
+                header.value = f"Q{quarter} {parsed.year}"
             _copy_style(reference, header)
 
 

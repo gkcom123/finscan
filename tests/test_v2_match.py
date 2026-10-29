@@ -259,6 +259,23 @@ def test_a_gap_in_the_model_is_refused():
     assert columns == [] and problem
 
 
+def test_a_flow_under_an_other_heading_is_decumulated_when_the_mapping_says_quarter():
+    """Quiport's cash items sit below a 'Net Debt' block the sheet reads as 'other',
+    which is point-in-time by default: a six-month cash flow must still be split."""
+    from types import SimpleNamespace
+
+    from finscan.match.resolve import _is_point_in_time
+
+    def spec(section, basis=None):
+        return SimpleNamespace(basis=basis, key=SimpleNamespace(section=section))
+
+    assert _is_point_in_time(spec("other"))
+    assert not _is_point_in_time(spec("other", "quarter"))
+    assert _is_point_in_time(spec("cash_flow", "point_in_time"))
+    assert not _is_point_in_time(spec("cash_flow"))
+    assert _is_point_in_time(spec("balance_sheet"))
+
+
 def test_decumulation_subtracts_the_prior_columns():
     value, adjustment, issue = decumulate(
         1_801_121.0, {45: 590_412.0, 46: 598_300.0}, [45, 46], row=45,
