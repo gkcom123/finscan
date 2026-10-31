@@ -124,6 +124,8 @@ class AzureJobLauncher:
 
 def _flags(job: dict) -> list[str]:
     flags = ["--dry-run"] if job.get("dry_run") else []
+    if job.get("relearn"):
+        flags.append("--relearn")
     if job.get("period_end"):
         flags += ["--period-end", job["period_end"]]
     return flags
@@ -163,13 +165,15 @@ class JobStore:
         jobs = [json.loads(p.read_text(encoding="utf-8")) for p in self.dir.glob("*/job.json")]
         return sorted(jobs, key=lambda j: j["created"], reverse=True)
 
-    def start(self, company: str, *, dry_run: bool, period_end: str | None) -> dict:
+    def start(self, company: str, *, dry_run: bool, period_end: str | None,
+              relearn: bool = False) -> dict:
         with self._lock:
             for job in self.all():
                 if job["company"] == company and self.view(job)["state"] in ACTIVE:
                     raise CompanyBusy(f"a run for {company} is already active (job {job['id']})")
             job = self._save({"id": uuid.uuid4().hex[:12], "company": company,
                               "dry_run": dry_run, "period_end": period_end,
+                              "relearn": relearn,
                               "created": _now(), "state": "queued", "handle": None})
         try:
             job["handle"] = self.launcher.start(job)
@@ -184,7 +188,8 @@ class JobStore:
 
     def view(self, job: dict) -> dict:
         """The job as callers see it: its state, and the run's outcome when there is one."""
-        out = {k: job.get(k) for k in ("id", "company", "dry_run", "period_end", "created")}
+        out = {k: job.get(k) for k in ("id", "company", "dry_run", "period_end", "relearn",
+                                       "created")}
         result = self.result(job)
         if result is not None:
             state = {"written": "succeeded", "dry_run": "succeeded",

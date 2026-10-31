@@ -85,8 +85,8 @@ def create_app(settings=None, service: Service | None = None) -> FastAPI:
 
     @app.post("/jobs", status_code=202)
     def start_job(company: str = Body(...), dry_run: bool = Body(True),
-                  period_end: str | None = Body(None)) -> dict:
-        return service.start_job(company, dry_run, period_end)
+                  period_end: str | None = Body(None), relearn: bool = Body(False)) -> dict:
+        return service.start_job(company, dry_run, period_end, relearn)
 
     @app.get("/jobs")
     def jobs(company: str | None = None, limit: int = Query(20, le=200)) -> dict:
@@ -147,6 +147,9 @@ def _page(company: str, action: str, token: str) -> str:
         "<p>Choose this quarter's filing PDF(s) — upload a report and its press release "
         "together if the company publishes both. Add the model workbook only if it "
         "changed. Previous files are kept in <code>past/</code>.</p>"
+        "<p><b>New company?</b> Upload its model workbook and its latest filing; the "
+        "first run learns the mapping from them. A reviewed mapping can be uploaded "
+        "as a <code>.json</code> file.</p>"
         f"<form method=post enctype=multipart/form-data action='{html.escape(action)}'>"
         f"<input type=hidden name=token value='{html.escape(token)}'>"
         "<p><input type=file name=files multiple required "

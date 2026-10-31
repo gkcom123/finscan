@@ -10,10 +10,19 @@ Each company run does the same four things, in order (see finscan/runner.py):
             unchanged PDF is not re-read (a vision read costs money and can return
             different digits); a changed PDF has a new hash and is read afresh.
 2. mapping  mappings/<key>.json is the one human file, git-tracked.
-            * missing: proposed from the workbook and the filing, then written.
+            * missing (a new company): LEARNED from the workbook and the filing —
+              each row matched to the filing line whose printed comparatives
+              equal the analyst's own figures, then by caption, then by a model
+              for what is left — and written.
             * present: the workbook is checked for writable rows the mapping does
-              not cover. Those rows alone are proposed and appended, marked for
+              not cover. Those rows alone are learned and appended, marked for
               review. With none, the file is not touched.
+            * --relearn: learned afresh; the old one is kept in past/.
+            Either way the mapping is CHECKED: resolved for the periods the filing
+            prints as comparatives and compared with the model. A learned row whose
+            figures differ is withheld — written blank, with the reason.
+            With FINSCAN_MAPPING_DIR set (a container), learned mappings are
+            written there instead, beside a read-only mappings/.
 3. apply    resolve the filing against the mapping and write the new column to
             inbox/<key>_v2_output.<ext>.
 4. derived  models/<key>_model.json (the mapping compiled against this run's
@@ -46,7 +55,8 @@ def job_result_path(root: Path, job_id: str) -> Path:
 def _run_company(key: str, args) -> int:
     """One company: run it, print the summary, save the outcome when asked."""
     outcome = run_company(key, dry_run=args.dry_run, period_end=args.period_end,
-                          no_cache=args.no_cache, sheet=args.sheet)
+                          no_cache=args.no_cache, sheet=args.sheet,
+                          relearn=getattr(args, "relearn", False))
     _print_run_summary(outcome)
     targets = [Path(p) for p in [getattr(args, "result_json", None)] if p]
     if job_id := os.environ.get(JOB_ID_ENV):
@@ -126,6 +136,18 @@ def _print_run_summary(outcome: RunResult) -> None:
     if outcome.mapping:
         print(f"  {paint('Mapping', '2'):<{width}} {short(outcome.mapping)}: "
               f"{outcome.mapping_status}")
+    if check := outcome.mapping_check:
+        print(f"  {paint('Checked', '2'):<{width}} against the model for "
+              f"{', '.join(check['compared_with']) or 'no period'}: "
+              f"{paint(str(check['verified']) + ' verified', '32')}  ·  "
+              f"{check['differs']} differ  ·  {check['unchecked']} not checkable")
+        for row in [r for r in check["rows"] if r["status"] == "differs"][:5]:
+            print(f"  {'':<{width - (8 if color else 0)}}   row {row['row']} "
+                  f"{row['label']}: {row['detail']}")
+    if outcome.withheld:
+        print(f"  {paint('Withheld', '1;33'):<{width}} {len(outcome.withheld)} learned "
+              f"row(s) written blank: {', '.join(outcome.withheld[:5])}"
+              + ("…" if len(outcome.withheld) > 5 else ""))
     label = "Derived"
     for path in outcome.artifacts:
         print(f"  {paint(label, '2'):<{width}} {short(path)}")
@@ -153,6 +175,9 @@ def main(argv: list[str] | None = None) -> int:
     co = sub.add_parser("company", help="Run the quarter for one inbox company.")
     co.add_argument("key", help="Company folder under inbox/ (case-insensitive)")
     co.add_argument("--result-json", help="Also save the outcome as JSON at this path")
+    co.add_argument("--relearn", action="store_true",
+                    help="Learn the mapping afresh from the workbook and the filing "
+                         "(the old one is kept in past/; a dry run saves nothing)")
     _add_run_args(co)
 
     cos = sub.add_parser("companies", help="Run the quarter for every inbox company.")

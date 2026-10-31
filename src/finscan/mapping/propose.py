@@ -38,18 +38,40 @@ class Change:
 
 def propose_mapping(layout: SheetLayout, company: str,
                     doc: PdfDoc | None = None,
-                    use_llm: bool = True) -> tuple[Mapping, dict[str, int]]:
-    """Propose the human mapping for one workbook against one filing."""
+                    use_llm: bool = True,
+                    workbook: str | None = None) -> tuple[Mapping, dict[str, int]]:
+    """Propose the human mapping for one workbook against one filing.
+
+    With the `workbook`, rows are first matched BY VALUE: the filing line whose
+    printed comparatives equal the analyst's figures for the same periods
+    (`mapping/learn_values.py`). Captions and the model then place only the rows
+    the values could not.
+    """
     model = propose_model(layout, company)
     counts: dict[str, int] = {}
 
     captions: dict[int, str | None] = {}
     statements: dict[int, str] = {}
     notes: dict[int, str] = {}
+    by_value: dict = {}
     if doc is not None:
         proposals = propose_captions.deterministic(model, doc)
+        if workbook:
+            by_value, ambiguous = _match_by_value(model, layout, doc, workbook)
+            for proposal in proposals:
+                if (found := by_value.get(proposal.row)) is not None:
+                    proposal.caption, proposal.method = found.caption, "value"
+                    proposal.statement = found.statement or proposal.statement
+                    proposal.why, proposal.candidates = found.why, []
+                elif proposal.row in ambiguous and proposal.caption is None:
+                    proposal.why = ambiguous[proposal.row]
         if use_llm:
-            proposals = propose_captions.with_model(proposals, doc)
+            try:
+                proposals = propose_captions.with_model(proposals, doc)
+            except Exception as error:      # no key or no network: rows stay unmatched
+                for proposal in proposals:
+                    if proposal.caption is None:
+                        proposal.why = f"{proposal.why} · no model pass ({error})"
         counts = propose_captions.apply(model, proposals)
         for proposal in proposals:
             captions[proposal.row] = proposal.caption
@@ -69,15 +91,34 @@ def propose_mapping(layout: SheetLayout, company: str,
             pdf=captions.get(spec.row_hint),
             statement=statements.get(spec.row_hint),
         )
+        if (found := by_value.get(spec.row_hint)) is not None:
+            row.pdf, row.statement, row.basis = found.pdf, found.statement, found.basis
+            row.column = found.column
+            row.note = f"learned by value ({', '.join(found.periods)})"
         # A literal expression in the reference cell names the components a sum
         # should read, so it travels into the note where a human will see it.
-        if spec.review and "hand-typed expression" in spec.review:
+        elif spec.review and "hand-typed expression" in spec.review:
             row.note = _expression_note(spec.review)
         elif row.pdf is None:
             row.note = notes.get(spec.row_hint, "no matching line found in the filing")
         mapping.rows.append(row)
 
     return mapping, counts
+
+
+def _match_by_value(model, layout: SheetLayout, doc: PdfDoc, workbook: str):
+    from finscan.mapping.learn_values import ModelFigures, match_by_value
+    from finscan.match.resolve import expected_period_end
+
+    rows = [(spec.row_hint, spec.key.label, spec.key.section)
+            for spec in model.rows if spec.kind == "input"]
+    if not rows:
+        return {}, {}
+    figures = ModelFigures.read(workbook, layout.sheet, layout.period_dates,
+                                layout.cadence_months, layout.units,
+                                [row for row, _, _ in rows])
+    target = expected_period_end(layout.period_dates, layout.cadence_months)
+    return match_by_value(doc, rows, figures, target)
 
 
 def _short(why: str, limit: int = 120) -> str:

@@ -4,6 +4,10 @@ Folder rules are the CLI's (finscan/company.py): one company per folder, any
 number of filings for ONE quarter, exactly one source workbook, generated workbooks
 recognised by their name. An upload keeps those rules true: a new filing moves the
 previous quarter's filings to `past/`, a new workbook moves the old one there too.
+
+A company needs no mapping to be ready: its first run learns one. A reviewed
+mapping can be uploaded as a `.json` file; it replaces the learned one (which is
+kept in `past/`).
 """
 from __future__ import annotations
 
@@ -13,7 +17,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import BinaryIO
 
-from finscan.company import _EXCEL_SUFFIXES, _OUTPUT_MARKERS
+from finscan.company import _EXCEL_SUFFIXES, _OUTPUT_MARKERS, mapping_dir, mapping_paths
 
 SUPPLEMENT_SUFFIX = ".pdf.supplement.json"
 
@@ -53,6 +57,8 @@ def describe(root: Path, folder: Path) -> dict:
     """One company's readiness, as the API and MCP tools report it."""
     key = folder.name.lower()
     filings, workbooks = _filings(folder), _workbooks(folder)
+    mapping, _ = mapping_paths(root, key)
+    has_mapping = mapping.exists()
     problems = []
     if not filings:
         problems.append("no filing PDF uploaded")
@@ -66,7 +72,11 @@ def describe(root: Path, folder: Path) -> dict:
         "filings": [p.name for p in filings],
         "supplements": sorted(p.name for p in folder.glob(f"*{SUPPLEMENT_SUFFIX}")),
         "model": workbooks[0].name if len(workbooks) == 1 else None,
-        "has_mapping": (root / "mappings" / f"{key}.json").exists(),
+        "has_mapping": has_mapping,
+        #: reviewed (shipped with FinScan) · learned (by a run, or uploaded) · none —
+        #: with none, the first run learns it from the model and the filing.
+        "mapping": ("none" if not has_mapping
+                    else "reviewed" if mapping.parent == root / "mappings" else "learned"),
         "ready": not problems,
         "problems": problems,
     }
@@ -81,18 +91,20 @@ def list_companies(root: Path) -> list[dict]:
 
 
 def kind_of(filename: str) -> str:
-    """filing · supplement · model — or refused."""
+    """filing · supplement · model · mapping — or refused."""
     low = filename.lower()
     if low.endswith(SUPPLEMENT_SUFFIX):
         return "supplement"
+    if low.endswith(".json") and not low.endswith(".pdf.json"):
+        return "mapping"
     if low.endswith(".pdf"):
         return "filing"
     if Path(low).suffix in _EXCEL_SUFFIXES:
         if any(m in filename for m in _OUTPUT_MARKERS):
             raise UploadError(f"'{filename}' looks like a generated workbook, not a model")
         return "model"
-    raise UploadError(f"'{filename}': only PDF filings, Excel models and "
-                      f"'{SUPPLEMENT_SUFFIX}' files are accepted")
+    raise UploadError(f"'{filename}': only PDF filings, Excel models, a mapping "
+                      f"(.json) and '{SUPPLEMENT_SUFFIX}' files are accepted")
 
 
 def save_uploads(root: Path, company: str, files: list[tuple[str, BinaryIO]],
@@ -133,6 +145,9 @@ def save_uploads(root: Path, company: str, files: list[tuple[str, BinaryIO]],
 
     saved = []
     for name, kind, stream in batch:
+        if kind == "mapping":
+            saved.append(_save_mapping(root, folder.name.lower(), name, stream, max_bytes))
+            continue
         target = folder / name
         written = 0
         with open(target, "wb") as out:
@@ -146,3 +161,28 @@ def save_uploads(root: Path, company: str, files: list[tuple[str, BinaryIO]],
         saved.append({"file": name, "kind": kind, "bytes": written})
     return {"company": folder.name.lower(), "saved": saved, "archived": archived,
             "status": describe(root, folder)}
+
+
+def _save_mapping(root: Path, key: str, name: str, stream: BinaryIO, max_bytes: int) -> dict:
+    """A reviewed mapping, checked to be one, saved where runs read it."""
+    import json
+
+    from finscan.mapping.schema import Mapping
+
+    data = stream.read(max_bytes + 1)
+    if len(data) > max_bytes:
+        raise UploadError(f"'{name}' is larger than {max_bytes // (1 << 20)} MB")
+    try:
+        mapping = Mapping.from_dict(json.loads(data.decode("utf-8")))
+    except (ValueError, KeyError, TypeError) as error:
+        raise UploadError(f"'{name}' is not a FinScan mapping: {error}")
+    if not mapping.rows:
+        raise UploadError(f"'{name}' has no rows")
+    target = mapping_dir(root) / f"{key}.json"
+    if target.exists():
+        past = target.parent / "past"
+        past.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(target), past / f"{key}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json")
+    mapping.company = key
+    mapping.save(target)
+    return {"file": name, "kind": "mapping", "bytes": len(data), "rows": len(mapping.rows)}

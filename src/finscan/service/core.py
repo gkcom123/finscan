@@ -14,7 +14,7 @@ from finscan.company import project_root
 from finscan.service import files, links
 from finscan.service.jobs import AzureJobLauncher, CompanyBusy, JobStore, LocalLauncher
 
-KINDS = ("workbook", "report")
+KINDS = ("workbook", "report", "mapping")
 
 
 class ServiceError(Exception):
@@ -84,12 +84,16 @@ class Service:
             raise ServiceError(400, str(error))
 
     # ---- jobs --------------------------------------------------------------
-    def start_job(self, company: str, dry_run: bool = True, period_end: str | None = None) -> dict:
+    def start_job(self, company: str, dry_run: bool = True, period_end: str | None = None,
+                  relearn: bool = False) -> dict:
+        """A company with no mapping is learned by this run — that is how a new
+        company is set up; `relearn` learns an existing one afresh."""
         info = self.company(company)
         if not info["ready"]:
             raise ServiceError(409, f"{info['company']} is not ready: " + "; ".join(info["problems"]))
         try:
-            job = self.jobs.start(info["company"], dry_run=dry_run, period_end=period_end)
+            job = self.jobs.start(info["company"], dry_run=dry_run, period_end=period_end,
+                                  relearn=relearn)
         except CompanyBusy as error:
             raise ServiceError(409, str(error))
         return self.jobs.view(job)
@@ -108,7 +112,7 @@ class Service:
         return [self.jobs.view(j) for j in jobs[:limit]]
 
     def job_file(self, job_id: str, kind: str) -> Path:
-        """The finished run's workbook or report, as a path to stream."""
+        """The finished run's workbook, report or mapping, as a path to stream."""
         if kind not in KINDS:
             raise ServiceError(400, f"kind must be one of {', '.join(KINDS)}")
         view = self.job_status(job_id)
@@ -119,6 +123,10 @@ class Service:
             if not result.get("output"):
                 raise ServiceError(409, "a dry run writes no workbook; run it without dry_run")
             path = Path(result["output"])
+        elif kind == "mapping":
+            if not result.get("mapping"):
+                raise ServiceError(409, "this run used no mapping")
+            path = Path(result["mapping"])
         else:
             path = next((Path(p) for p in result.get("artifacts", []) if p.endswith("_report.md")), None)
             if path is None:

@@ -115,6 +115,31 @@ curl -s -H "x-api-key: $K" -X POST "localhost:8000/jobs/<job id>/download-link?k
 A dry run saves no files, so it has nothing to download — its outcome is in the
 job status.
 
+## 4b. A new company
+
+No setup step: upload the company's **model workbook and latest filing**, then
+start a run. A company without a mapping shows `"mapping": "none"`, and its first
+run learns one — by matching each model row to the filing line whose printed
+comparatives equal the analyst's own figures — checks it against the model, and
+leaves any learned row whose figures differ blank.
+
+```bash
+curl -s -H "x-api-key: $K" -X POST localhost:8000/upload-links/NewCo | python3 -m json.tool
+# upload the model + PDF through the link, then:
+curl -s -H "x-api-key: $K" -H "content-type: application/json" \
+     -d '{"company": "NewCo", "dry_run": true}' localhost:8000/jobs | python3 -m json.tool
+```
+
+The job's `result` carries:
+
+- `mapping_status` — e.g. `learned (70 rows; 34 matched to the filing, 3 withheld, 33 with no match)`
+- `mapping_check` — `verified` / `differs` / `unchecked` counts and the rows not verified
+- `withheld` — learned rows written blank because their figures differ
+
+Get the learned mapping to review: `GET /jobs/<id>/download?kind=mapping`. Upload a
+corrected one (any `name.json`) through the same upload page; it replaces the
+learned one. `"relearn": true` in `POST /jobs` learns an existing company afresh.
+
 ## 5. MCP — what Copilot Studio will use
 
 List the tools an agent sees:

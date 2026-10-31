@@ -15,8 +15,13 @@ INSTRUCTIONS = (
     "Typical flow: list_companies → create_upload (the user uploads files through the "
     "link) → start_job with dry_run=true → show the preview → only after the user "
     "confirms, start_job with dry_run=false → get_job_status until finished → "
-    "get_download_link. Report figures, blank rows and warnings exactly as returned; "
-    "never calculate or estimate financial values."
+    "get_download_link. A NEW company needs no setup: upload its model workbook and "
+    "latest filing, and its first run learns the mapping (has_mapping=false until "
+    "then). Every result carries mapping_check — rows verified against the model's "
+    "own past figures, rows that differ, and learned rows withheld (left blank); "
+    "tell the user about any that differ or were withheld. Report figures, blank "
+    "rows and warnings exactly as returned; never calculate or estimate financial "
+    "values."
 )
 
 
@@ -43,10 +48,14 @@ def build_mcp(service: Service) -> MCPServer:
 
     @mcp.tool(description="Start a FinScan run for a company. dry_run=true (the default) "
                           "resolves and validates without writing; run with dry_run=false "
-                          "only after the user confirms. period_end (YYYY-MM-DD) is "
-                          "optional. Returns a job id; runs take minutes.")
-    def start_job(company: str, dry_run: bool = True, period_end: str | None = None) -> dict:
-        return call(service.start_job, company, dry_run, period_end)
+                          "only after the user confirms. A company with no mapping is "
+                          "learned by this run (a new company). relearn=true learns an "
+                          "existing company's mapping afresh — only when the user asks, "
+                          "e.g. after the filing changed its layout. period_end "
+                          "(YYYY-MM-DD) is optional. Returns a job id; runs take minutes.")
+    def start_job(company: str, dry_run: bool = True, period_end: str | None = None,
+                  relearn: bool = False) -> dict:
+        return call(service.start_job, company, dry_run, period_end, relearn)
 
     @mcp.tool(description="Check a run: state is queued, running, succeeded, refused "
                           "(nothing written by design, with the reason) or failed. When "
@@ -60,9 +69,11 @@ def build_mcp(service: Service) -> MCPServer:
         return {"jobs": call(service.list_jobs, company, limit)}
 
     @mcp.tool(description="Get a short-lived download link for a finished run's output: "
-                          "kind='workbook' (the updated Excel model) or 'report' (the "
-                          "audit report). A dry run saves neither; its outcome is in "
-                          "get_job_status.")
+                          "kind='workbook' (the updated Excel model), 'report' (the "
+                          "audit report, with the mapping check) or 'mapping' (the "
+                          "company's mapping, to review; a corrected one can be uploaded "
+                          "back through create_upload). A dry run saves no workbook or "
+                          "report; its outcome is in get_job_status.")
     def get_download_link(job_id: str, kind: str = "workbook") -> dict:
         return call(service.download_link, job_id, kind)
 

@@ -373,7 +373,7 @@ def duplicates(proposals: list[Proposal]) -> dict[tuple[str, str], list[Proposal
 def apply(model: ModelMap, proposals: list[Proposal]) -> dict[str, int]:
     """Write the proposals into the map and flag what needs a human."""
     by_row = {spec.row_hint: spec for spec in model.rows}
-    counts = {"exact": 0, "derived": 0, "restated": 0, "note": 0, "model": 0,
+    counts = {"value": 0, "exact": 0, "derived": 0, "restated": 0, "note": 0, "model": 0,
               "unmatched": 0}
 
     shared: dict[int, list[str]] = {}
@@ -404,6 +404,10 @@ def apply(model: ModelMap, proposals: list[Proposal]) -> dict[str, int]:
             # The filing prints this caption verbatim; nothing to look at beyond any
             # note about the workbook cell itself.
             _note(spec)
+        elif proposal.method == "value":
+            # Its printed comparatives equal the analyst's own figures — the
+            # strongest evidence available, and checked again before any write.
+            _note(spec, proposal.why)
         elif proposal.method == "derived":
             _note(spec, f"matched '{proposal.caption}' in the filing ({proposal.why}) "
                         f"— confirm it is the same line")
