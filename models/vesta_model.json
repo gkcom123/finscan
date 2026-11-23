@@ -56,7 +56,7 @@
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -67,10 +67,10 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "pdf:Rental Income",
+      "resolve": "pdf:Rental income",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "1Q26 check: 76,749,154"
     },
     {
       "key": {
@@ -80,10 +80,10 @@
       },
       "row_hint": 8,
       "kind": "input",
-      "resolve": "pdf:Management Fees",
+      "resolve": "sum:pdf:Management fees?",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "printed as '-' in 2026 (0); optional so a quarter that drops the line reads 0"
     },
     {
       "key": {
@@ -111,11 +111,10 @@
       },
       "row_hint": 11,
       "kind": "input",
-      "resolve": "pdf:COR - Related to Properties that generated rental income",
+      "resolve": "pdf:Property operating costs related to properties that generated rental income",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "1Q26 check: -6,170,651"
     },
     {
       "key": {
@@ -125,11 +124,10 @@
       },
       "row_hint": 12,
       "kind": "input",
-      "resolve": "pdf:COR - Related to Properties that did not generate rental income",
+      "resolve": "pdf:Property operating costs related to properties that did not generate rental income",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "1Q26 check: -1,257,801"
     },
     {
       "key": {
@@ -156,8 +154,7 @@
         "occurrence": 1
       },
       "row_hint": 15,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -167,11 +164,10 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "pdf:Administration Expenses",
+      "resolve": "sum:pdf:General and administrative expenses|pdf:Depreciation @ title:General and administrative expenses consist",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=(-9775131+471296)/1000000', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "analyst typed =(-9775131+471296)/1e6: G&A with its depreciation (G&A note) taken out, since depreciation has its own row"
     },
     {
       "key": {
@@ -181,11 +177,11 @@
       },
       "row_hint": 17,
       "kind": "input",
-      "resolve": "field:depreciation_amortisation",
-      "statement": "income_statement",
+      "resolve": "pdf:Depreciation",
+      "statement": "title:General and administrative expenses consist",
       "basis": "quarter",
       "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "the depreciation line of the G&A note (13.2), shown negative as in the model; 1Q26 check: -471,296"
     },
     {
       "key": {
@@ -221,8 +217,7 @@
         "occurrence": 1
       },
       "row_hint": 21,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -232,10 +227,10 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "field:interest_income",
+      "resolve": "pdf:Interest income",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "1Q26 check: 2,089,174"
     },
     {
       "key": {
@@ -245,10 +240,10 @@
       },
       "row_hint": 23,
       "kind": "input",
-      "resolve": "pdf:Other income - net",
+      "resolve": "sum:pdf:Other income|pdf:Other expenses",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=3.636548-1.590478', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "analyst typed =3.636548-1.590478: other income plus other expenses"
     },
     {
       "key": {
@@ -258,10 +253,10 @@
       },
       "row_hint": 24,
       "kind": "input",
-      "resolve": "pdf:Transaction costs on debt issuance",
+      "resolve": "sum:pdf:Transaction costs on debt issuance?",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "not printed on the income statement in 2025-26 (model holds 0); optional, so it reads 0 unless the line appears. Debt issuance costs paid are in 'Other financing activities'"
     },
     {
       "key": {
@@ -271,11 +266,10 @@
       },
       "row_hint": 25,
       "kind": "input",
-      "resolve": "field:finance_costs",
+      "resolve": "pdf:Finance cost",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "1Q26 check: -18,954,965"
     },
     {
       "key": {
@@ -285,10 +279,10 @@
       },
       "row_hint": 26,
       "kind": "input",
-      "resolve": "pdf:Exchange gain (loss)- net",
+      "resolve": "pdf:Exchange gain (loss) – Net",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "printed 'Exchange loss – Net' or 'Exchange gain – Net' depending on the quarter; 1Q26 check: -251,994"
     },
     {
       "key": {
@@ -298,10 +292,10 @@
       },
       "row_hint": 27,
       "kind": "input",
-      "resolve": "pdf:Gain on sale of investment property",
+      "resolve": "sum:pdf:Loss on sale and disposal of investment properties - net?",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "optional: printed only in quarters with a sale (2Q25 -409,946, 3Q25 +400,000)"
     },
     {
       "key": {
@@ -311,10 +305,10 @@
       },
       "row_hint": 28,
       "kind": "input",
-      "resolve": "field:share_of_associates",
+      "resolve": "pdf:Share of results of associates",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "1Q26 check: 37,692"
     },
     {
       "key": {
@@ -324,10 +318,10 @@
       },
       "row_hint": 29,
       "kind": "input",
-      "resolve": "pdf:Gain on revaluation of investment property",
+      "resolve": "pdf:Gain (loss) on revaluation of investment",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "printed '...investment property' (1Q/2Q) or '...investment properties' (3Q): matched on the shared start; 1Q26 check: 53,435,678"
     },
     {
       "key": {
@@ -346,10 +340,10 @@
       },
       "row_hint": 31,
       "kind": "input",
-      "resolve": "pdf:Current income tax expense",
+      "resolve": "pdf:Income tax benefit (expense)",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "the filing prints one tax line; the model books all of it here and 0 as deferred"
     },
     {
       "key": {
@@ -359,10 +353,10 @@
       },
       "row_hint": 32,
       "kind": "input",
-      "resolve": "pdf:Deferred income tax",
+      "resolve": "const:0.0",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "the filing prints a single combined tax line, booked as current; the model always holds 0 here"
     },
     {
       "key": {
@@ -389,8 +383,7 @@
         "occurrence": 1
       },
       "row_hint": 36,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -607,10 +600,10 @@
       },
       "row_hint": 63,
       "kind": "input",
-      "resolve": "field:ebitda",
+      "resolve": "absent:not in the financial statements and not derivable from them: it is Vesta's figure from its quarterly earnings release (1Q26 62,092,657). Analyst keys it",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, cash_flow)"
+      "review": "not in the financial statements and not derivable from them: it is Vesta's figure from its quarterly earnings release (1Q26 62,092,657). Analyst keys it"
     },
     {
       "key": {
@@ -674,11 +667,10 @@
       },
       "row_hint": 72,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
+      "resolve": "sum:pdf:Operating lease receivables – Net|pdf:Recoverable taxes|pdf:Guarantee deposits paid|pdf:Prepaid expenses and other receivables|pdf:Accounts payable and client advances|pdf:Accrued expenses and taxes|pdf:Guarantee deposits collected",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=(-153332+862104+1254003-6098901-22602432-2549205+1310497)/1000000', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Working Capital'"
+      "review": "the seven working-capital lines, as the analyst summed them for 1Q26 (3Q25 used only four)"
     },
     {
       "key": {
@@ -688,12 +680,10 @@
       },
       "row_hint": 73,
       "kind": "input",
-      "resolve": "field:tax_expense",
-      "pdf_caption": "Income Tax Paid",
+      "resolve": "pdf:Income taxes paid",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Income Tax Paid' from the filing's cash_flow (direct tax cash flow line) — CONFIRM before use"
+      "review": "1Q26 check: -18,335,347"
     },
     {
       "key": {
@@ -703,12 +693,10 @@
       },
       "row_hint": 74,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
-      "pdf_caption": "Interest paid",
-      "statement": "cash_flow",
+      "resolve": "pdf:Interest paid",
+      "statement": "title:Cash flows from financing activities || Statements of Cash Flows",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Interest paid' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "1Q26 check: -16,019,135"
     },
     {
       "key": {
@@ -727,11 +715,10 @@
       },
       "row_hint": 76,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
+      "resolve": "sum:pdf:Purchases of investment properties|pdf:Sale of investment property?|pdf:Purchases of office furniture and vehicles",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=(-15482581-255436)/1000000', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Net Capex'"
+      "review": "analyst typed =(-15482581-255436)/1e6; 3Q25 also added the sale of investment property"
     },
     {
       "key": {
@@ -741,10 +728,10 @@
       },
       "row_hint": 77,
       "kind": "input",
-      "resolve": "pdf:Purchase of intangible assets",
+      "resolve": "const:0.0",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Purchase of intangible assets'"
+      "review": "Vesta's cash flow has no such line; the model always holds 0"
     },
     {
       "key": {
@@ -754,10 +741,10 @@
       },
       "row_hint": 78,
       "kind": "input",
-      "resolve": "pdf:Disposals/ Acquistion, of subsidiaries, businesses",
+      "resolve": "const:0.0",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Disposals/ Acquistion, of subsidiaries, businesses'"
+      "review": "Vesta's cash flow has no such line; the model always holds 0"
     },
     {
       "key": {
@@ -776,11 +763,10 @@
       },
       "row_hint": 80,
       "kind": "input",
-      "resolve": "pdf:Other Investing",
-      "pdf_caption": "Investment in associates",
+      "resolve": "sum:pdf:Investment in associates?",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "a model chose 'Investment in associates' from the filing's cash_flow (specific investing item not otherwise mapped) — CONFIRM before use"
+      "review": "3Q25 formula used 'Investment in associates' (-3,442,268 YTD); not printed in 1Q26, so 0"
     },
     {
       "key": {
@@ -790,11 +776,10 @@
       },
       "row_hint": 81,
       "kind": "input",
-      "resolve": "pdf:Equity Issuance / Repurchase of treasury shares",
-      "pdf_caption": "Repurchase of treasury shares",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Equity issuance proceeds?|pdf:Equity issuance costs paid?|pdf:Repurchase of treasury shares?",
+      "statement": "title:Cash flows from financing activities || Statements of Cash Flows",
       "basis": "quarter",
-      "review": "matched 'Repurchase of treasury shares' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "share issues net of their costs, plus buybacks; each optional (2026 issued shares, 2025 bought back)"
     },
     {
       "key": {
@@ -804,12 +789,10 @@
       },
       "row_hint": 82,
       "kind": "input",
-      "resolve": "pdf:Dividends",
-      "pdf_caption": "Dividends paid",
-      "statement": "cash_flow",
+      "resolve": "pdf:Dividends paid",
+      "statement": "title:Cash flows from financing activities || Statements of Cash Flows",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Dividends paid' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "1Q26 check: -17,384,493"
     },
     {
       "key": {
@@ -819,11 +802,10 @@
       },
       "row_hint": 83,
       "kind": "input",
-      "resolve": "pdf:Net Change in debt",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Loans obtained?|pdf:Loans paid?|pdf:Payment of lease liabilities",
+      "statement": "title:Cash flows from financing activities || Statements of Cash Flows",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=(-100634841-189194)/1000000', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Net Change in debt'"
+      "review": "analyst typed =(-100634841-189194)/1e6; 2Q25/3Q25 also added loans obtained"
     },
     {
       "key": {
@@ -833,10 +815,10 @@
       },
       "row_hint": 84,
       "kind": "input",
-      "resolve": "pdf:Other financing activities",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Interest paid > Costs of debt issuance?",
+      "statement": "title:Cash flows from financing activities || Statements of Cash Flows",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Other financing activities'"
+      "review": "3Q25 formula used 'Costs of debt issuance' (-4,291,445); read only after 'Interest paid', i.e. in the financing section, never the operating 'Amortization of debt issuance costs'. Not printed in 1Q26, so 0"
     },
     {
       "key": {
@@ -981,11 +963,10 @@
       },
       "row_hint": 106,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
-      "pdf_caption": "Office equipment",
+      "resolve": "sum:pdf:Investment properties|pdf:Office furniture – Net|pdf:Right-of-use assets - Net of depreciation",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=(4228244698+2209903+1342007)/1000000', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · a model chose 'Office equipment' from the filing's balance_sheet (closest tangible non-current asset line) — CONFIRM before use"
+      "review": "analyst typed =(4228244698+2209903+1342007)/1e6"
     },
     {
       "key": {
@@ -995,10 +976,10 @@
       },
       "row_hint": 107,
       "kind": "input",
-      "resolve": "pdf:Prepaid expenses",
-      "pdf_caption": "Prepaid expenses",
+      "resolve": "pdf:Prepaid expenses and other current assets",
       "statement": "balance_sheet",
-      "basis": "point_in_time"
+      "basis": "point_in_time",
+      "review": "1Q26 check: 10,240,158"
     },
     {
       "key": {
@@ -1008,11 +989,10 @@
       },
       "row_hint": 108,
       "kind": "input",
-      "resolve": "pdf:Accounts payable and client advances",
-      "pdf_caption": "Accounts payable",
+      "resolve": "pdf:Accounts payable",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "matched 'Accounts payable' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "1Q26 check: 29,747,785"
     },
     {
       "key": {
@@ -1022,10 +1002,10 @@
       },
       "row_hint": 109,
       "kind": "input",
-      "resolve": "pdf:Accrued expenses",
-      "pdf_caption": "Accrued expenses",
+      "resolve": "pdf:Accrued expenses and taxes",
       "statement": "balance_sheet",
-      "basis": "point_in_time"
+      "basis": "point_in_time",
+      "review": "1Q26 check: 4,731,061"
     },
     {
       "key": {
@@ -1052,8 +1032,7 @@
         "occurrence": 1
       },
       "row_hint": 113,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1063,11 +1042,10 @@
       },
       "row_hint": 114,
       "kind": "input",
-      "resolve": "pdf:Short-term debt",
-      "pdf_caption": "Current portion of long-term debt",
+      "resolve": "pdf:Current portion of long-term debt",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Current portion of long-term debt' from the filing's balance_sheet (current debt line) — CONFIRM before use"
+      "review": "printed '-' (0) in 1Q26; 3Q25 held 166.3m"
     },
     {
       "key": {
@@ -1078,9 +1056,9 @@
       "row_hint": 115,
       "kind": "input",
       "resolve": "pdf:Long-term debt",
-      "pdf_caption": "Long-term debt",
       "statement": "balance_sheet",
-      "basis": "point_in_time"
+      "basis": "point_in_time",
+      "review": "1Q26 check: 1,175,684,483"
     },
     {
       "key": {
@@ -1098,8 +1076,7 @@
         "occurrence": 1
       },
       "row_hint": 118,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1109,11 +1086,10 @@
       },
       "row_hint": 119,
       "kind": "input",
-      "resolve": "pdf:Short-term",
-      "pdf_caption": "Financial leases payable-short term",
+      "resolve": "pdf:Lease liabilities – short-term",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "matched 'Financial leases payable-short term' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "1Q26 check: 650,378"
     },
     {
       "key": {
@@ -1123,10 +1099,10 @@
       },
       "row_hint": 120,
       "kind": "input",
-      "resolve": "pdf:Long-term",
+      "resolve": "pdf:Lease liabilities - long-term",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: the model chose 'Long-term debt', but 'Long-term debt' already reads that line — this row looks like a component of it, not the same line; left unmatched"
+      "review": "1Q26 check: 732,895"
     },
     {
       "key": {
@@ -1144,8 +1120,7 @@
         "occurrence": 1
       },
       "row_hint": 123,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1182,10 +1157,10 @@
       },
       "row_hint": 127,
       "kind": "input",
-      "resolve": "pdf:Cash and cash equivalents",
-      "pdf_caption": "Cash and cash equivalents",
+      "resolve": "pdf:Cash, cash equivalents and restricted cash",
       "statement": "balance_sheet",
-      "basis": "point_in_time"
+      "basis": "point_in_time",
+      "review": "1Q26 check: 206,144,514"
     },
     {
       "key": {
@@ -1213,11 +1188,10 @@
       },
       "row_hint": 131,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
-      "pdf_caption": "Total shareholders' equity",
+      "resolve": "pdf:Total stockholders’ equity",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Total shareholders' equity' from the filing's balance_sheet (balance sheet equity total) — CONFIRM before use"
+      "review": "1Q26 check: 2,858,672,196"
     },
     {
       "key": {
@@ -1397,8 +1371,7 @@
         "occurrence": 1
       },
       "row_hint": 160,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1723,10 +1696,10 @@
       },
       "row_hint": 210,
       "kind": "input",
-      "resolve": "pdf:FX rate average - USD/USD",
+      "resolve": "const:1.0",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX rate average - USD/USD'"
+      "review": "Vesta reports in US dollars: always 1"
     },
     {
       "key": {
@@ -1736,10 +1709,10 @@
       },
       "row_hint": 211,
       "kind": "input",
-      "resolve": "pdf:FX rate  - USD/USD (as at end of period)",
+      "resolve": "const:1.0",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX rate  - USD/USD (as at end of period)'"
+      "review": "Vesta reports in US dollars: always 1"
     },
     {
       "key": {
@@ -1749,8 +1722,8 @@
       },
       "row_hint": 212,
       "kind": "input",
-      "resolve": "pdf:LTM - USD/USD",
-      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "const:1.0",
+      "review": "Vesta reports in US dollars: always 1"
     },
     {
       "key": {
@@ -1840,8 +1813,7 @@
         "occurrence": 2
       },
       "row_hint": 224,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2102,8 +2074,7 @@
         "occurrence": 2
       },
       "row_hint": 262,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {

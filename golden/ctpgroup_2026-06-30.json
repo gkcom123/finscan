@@ -1,0 +1,227 @@
+{
+  "company": "ctpgroup",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Rental income",
+      "section": "income_statement",
+      "value": 208.20000000000002
+    },
+    {
+      "label": "Service charge income",
+      "section": "income_statement",
+      "value": 24.200000000000003
+    },
+    {
+      "label": "Property operating expenses",
+      "section": "income_statement",
+      "value": -27.299999999999997
+    },
+    {
+      "label": "Income from renewable energy",
+      "section": "income_statement",
+      "value": 5.000000000000001
+    },
+    {
+      "label": "Expenses from renewable energy",
+      "section": "income_statement",
+      "value": -2.7
+    },
+    {
+      "label": "Hotel operating revenue",
+      "section": "income_statement",
+      "value": 7.4
+    },
+    {
+      "label": "Hotel operating expenses",
+      "section": "income_statement",
+      "value": -5.499999999999999
+    },
+    {
+      "label": "Income from development activities",
+      "section": "income_statement",
+      "value": 14.8
+    },
+    {
+      "label": "Expenses from development activities",
+      "section": "income_statement",
+      "value": -10.999999999999998
+    },
+    {
+      "label": "Net valuation result on investment property",
+      "section": "income_statement",
+      "value": -247.1
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": 7.6
+    },
+    {
+      "label": "Amortization and depreciation",
+      "section": "income_statement",
+      "value": -3.8000000000000003
+    },
+    {
+      "label": "Employee benefits",
+      "section": "income_statement",
+      "value": -17.099999999999998
+    },
+    {
+      "label": "Impairment of goodwill",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Impairment of financial assets",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": -14.7
+    },
+    {
+      "label": "Interest income",
+      "section": "income_statement",
+      "value": 3.8
+    },
+    {
+      "label": "Interest expense",
+      "section": "income_statement",
+      "value": -71.0
+    },
+    {
+      "label": "Other financial expenses",
+      "section": "income_statement",
+      "value": -2.5999999999999996
+    },
+    {
+      "label": "Other financial gains/losses",
+      "section": "income_statement",
+      "value": -7.7
+    },
+    {
+      "label": "Income tax expense",
+      "section": "income_statement",
+      "value": 26.7
+    },
+    {
+      "label": "Profit attributable to:",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "– Non-controlling interests",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": 65.0
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -32.7
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -51.400000000000006
+    },
+    {
+      "label": "Interest received",
+      "section": "cash_flow",
+      "value": 3.2
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -357.69999999999993
+    },
+    {
+      "label": "Investment in subsidiaries, JVs",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": 27.3
+    },
+    {
+      "label": "Dividends / Equity movements",
+      "section": "cash_flow",
+      "value": -76.0
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": 35.5
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": -20.9
+    },
+    {
+      "label": "Investment property",
+      "section": "balance_sheet",
+      "value": 18944.7
+    },
+    {
+      "label": "Trade receivables",
+      "section": "balance_sheet",
+      "value": 345.8
+    },
+    {
+      "label": "Inventories",
+      "section": "balance_sheet",
+      "value": 44.9
+    },
+    {
+      "label": "Trade payables",
+      "section": "balance_sheet",
+      "value": 371.6
+    },
+    {
+      "label": "Total short term debt",
+      "section": "balance_sheet",
+      "value": 913.0999999999999
+    },
+    {
+      "label": "Total Long term",
+      "section": "balance_sheet",
+      "value": 8528.2
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 411.1
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 8480.7
+    },
+    {
+      "label": "Loan to value (LTV)",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "FX rate average - USD/EUR",
+      "section": "other",
+      "value": 0.8542627712284298
+    },
+    {
+      "label": "FX rate  - USD/EUR (as at end of period)",
+      "section": "other",
+      "value": 0.8655760408551891
+    }
+  ]
+}

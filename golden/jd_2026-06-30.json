@@ -1,0 +1,197 @@
+{
+  "company": "jd",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 346401.0
+    },
+    {
+      "label": "Cost of revenues",
+      "section": "income_statement",
+      "value": -287094.0
+    },
+    {
+      "label": "Fulfillment",
+      "section": "income_statement",
+      "value": -24451.0
+    },
+    {
+      "label": "Marketing",
+      "section": "income_statement",
+      "value": -20302.0
+    },
+    {
+      "label": "Research and development",
+      "section": "income_statement",
+      "value": -7299.0
+    },
+    {
+      "label": "General and administrative",
+      "section": "income_statement",
+      "value": -3112.0
+    },
+    {
+      "label": "Gain on sale of development properties",
+      "section": "income_statement",
+      "value": 404.0
+    },
+    {
+      "label": "Impairment of goodwill and impairment of long-lived assets",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Share of results of equity investees",
+      "section": "income_statement",
+      "value": 2551.0
+    },
+    {
+      "label": "Interest expense",
+      "section": "income_statement",
+      "value": -708.0
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Others, net",
+      "section": "income_statement",
+      "value": 4269.0
+    },
+    {
+      "label": "Income tax expenses",
+      "section": "income_statement",
+      "value": -1972.0
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": -1558.0
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": 2450.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 7933.0
+    },
+    {
+      "label": "Net cash from operations",
+      "section": "cash_flow",
+      "value": 37718.0
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -5520.0
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": -363.0
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Balancing figure",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Capex",
+      "section": "other",
+      "value": -17963.0
+    },
+    {
+      "label": "Free cash flow",
+      "section": "cash_flow",
+      "value": 31415.0
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 134648.0
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 114577.0
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": 28710.0
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": 228961.0
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 17089.0
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 52803.0
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": 10049.0
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": 25367.0
+    },
+    {
+      "label": "Debt  Including Lease obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 89068.0
+    },
+    {
+      "label": "Short term Investments",
+      "section": "balance_sheet",
+      "value": 132594.0
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 282375.0
+    },
+    {
+      "label": "FX rate average - RMB/USD",
+      "section": "cash_flow",
+      "value": 0.1444168447807752
+    },
+    {
+      "label": "FX rate  - RMB/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": 0.14494854326714016
+    }
+  ]
+}

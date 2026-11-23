@@ -86,11 +86,12 @@
       "75": "2025-06-30",
       "77": "2024-09-30",
       "78": "2025-09-30",
-      "80": "2024-12-31"
+      "80": "2024-12-31",
+      "81": "2025-12-31"
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -101,8 +102,7 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "field:revenue_from_operations",
-      "pdf_caption": "Revenue",
+      "resolve": "pdf:Revenue",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -123,11 +123,9 @@
       },
       "row_hint": 9,
       "kind": "input",
-      "resolve": "pdf:Depreciation, impairment and amortisation",
-      "pdf_caption": "depreciation, impairment and amortisation",
+      "resolve": "pdf:depreciation, impairment and amortisation",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -137,11 +135,9 @@
       },
       "row_hint": 10,
       "kind": "input",
-      "resolve": "pdf:Impairment of goodwill",
-      "pdf_caption": "RM'",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "'RM'' is also read by 'Impairment on receivables, net / provision for impairment on financial assets' — one filing line cannot fill two rows; decide which owns it"
+      "resolve": "pdf:RM'",
+      "statement": "cash_flow",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -151,11 +147,9 @@
       },
       "row_hint": 11,
       "kind": "input",
-      "resolve": "pdf:Foreign exchange gains / (losses)",
-      "pdf_caption": "foreign exchange gains/(losses)",
+      "resolve": "pdf:foreign exchange gains/(losses)",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · 'foreign exchange gains/(losses)' is also read by 'Finance cost excluding net foreign exchange gains / (losses) on financing activities', 'Net foreign exchange gains/ (losses) on financing activities' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -165,11 +159,10 @@
       },
       "row_hint": 12,
       "kind": "input",
-      "resolve": "pdf:Domestic interconnect and international outpayment",
+      "resolve": "absent:no row captioned like 'Domestic interconnect and international outpayment' · it is also printed in equity, equity, so w…",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's comprehensive_income matched this caption: no row captioned like 'Domestic interconnect and international outpayment' · it is also printed in equity, equity, so which statement is wanted cannot be decided here"
+      "review": "no row captioned like 'Domestic interconnect and international outpayment' · it is also printed in equity, equity, so w…"
     },
     {
       "key": {
@@ -179,11 +172,9 @@
       },
       "row_hint": 13,
       "kind": "input",
-      "resolve": "pdf:Marketing, Advertising and promotion",
-      "pdf_caption": "marketing, advertising and promotion",
+      "resolve": "pdf:marketing, advertising and promotion",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -193,11 +184,9 @@
       },
       "row_hint": 14,
       "kind": "input",
-      "resolve": "pdf:Other operating costs",
-      "pdf_caption": "other operating costs",
+      "resolve": "pdf:other operating costs",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -207,11 +196,9 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "pdf:Staff costs",
-      "pdf_caption": "staff costs",
+      "resolve": "pdf:staff costs",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -221,12 +208,9 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "pdf:Impairment on receivables, net / provision for impairment on financial assets",
-      "pdf_caption": "RM'",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "'RM'' is also read by 'Impairment of goodwill' — one filing line cannot fill two rows; decide which owns it"
+      "resolve": "pdf:RM'",
+      "statement": "cash_flow",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -236,11 +220,9 @@
       },
       "row_hint": 17,
       "kind": "input",
-      "resolve": "field:other_income",
-      "pdf_caption": "Other (expense)/income",
+      "resolve": "pdf:Other (expense)/income",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · matched 'Other (expense)/income' in the filing (caption matched on one direction of a two-direction caption) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -250,10 +232,10 @@
       },
       "row_hint": 18,
       "kind": "input",
-      "resolve": "pdf:Other operating income (expenses)- net",
+      "resolve": "absent:the model chose 'Other (expense)/income', but 'Other gains/(losses) - net' already reads that line — this row looks lik…",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's comprehensive_income matched this caption: the model chose 'Other (expense)/income', but 'Other gains/(losses) - net' already reads that line — this row looks like a component of it, not the same line; left unmatched"
+      "review": "the model chose 'Other (expense)/income', but 'Other gains/(losses) - net' already reads that line — this row looks lik…"
     },
     {
       "key": {
@@ -272,8 +254,7 @@
       },
       "row_hint": 20,
       "kind": "input",
-      "resolve": "field:interest_income",
-      "pdf_caption": "Finance income",
+      "resolve": "pdf:Finance income",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -285,11 +266,9 @@
       },
       "row_hint": 21,
       "kind": "input",
-      "resolve": "pdf:Finance cost excluding net foreign exchange gains / (losses) on financing activities",
-      "pdf_caption": "foreign exchange gains/(losses)",
+      "resolve": "pdf:foreign exchange gains/(losses)",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · 'foreign exchange gains/(losses)' is also read by 'Foreign exchange gains / (losses)', 'Net foreign exchange gains/ (losses) on financing activities' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -299,11 +278,9 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "pdf:Net foreign exchange gains/ (losses) on financing activities",
-      "pdf_caption": "foreign exchange gains/(losses)",
+      "resolve": "pdf:foreign exchange gains/(losses)",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · 'foreign exchange gains/(losses)' is also read by 'Foreign exchange gains / (losses)', 'Finance cost excluding net foreign exchange gains / (losses) on financing activities' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -313,12 +290,9 @@
       },
       "row_hint": 23,
       "kind": "input",
-      "resolve": "pdf:Joint ventures - share of tax (net taxes)",
-      "pdf_caption": "Joint ventures",
+      "resolve": "pdf:Joint ventures",
       "statement": "balance_sheet",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Joint ventures' in the balance_sheet (printed in the balance_sheet, not the comprehensive_income) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -328,11 +302,10 @@
       },
       "row_hint": 24,
       "kind": "input",
-      "resolve": "pdf:Associates - share of tax (net of tax)",
-      "pdf_caption": "share of results (net of tax)",
+      "resolve": "absent:no row captioned like 'Associates - share of tax (net of tax)' · it is also printed in balance_sheet, equity, equity, s…",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "a model chose 'share of results (net of tax)' from the filing's comprehensive_income (associate results reported net of tax) — CONFIRM before use"
+      "review": "no row captioned like 'Associates - share of tax (net of tax)' · it is also printed in balance_sheet, equity, equity, s…"
     },
     {
       "key": {
@@ -342,10 +315,10 @@
       },
       "row_hint": 25,
       "kind": "input",
-      "resolve": "pdf:Associates - gain/ (loss) on dilution of equity interest",
+      "resolve": "absent:no row captioned like 'Associates - gain/ (loss) on dilution of equity interest' · it is also printed in balance_sheet,…",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's comprehensive_income matched this caption: no row captioned like 'Associates - gain/ (loss) on dilution of equity interest' · it is also printed in balance_sheet, equity, equity, so which statement is wanted cannot be decided here"
+      "review": "no row captioned like 'Associates - gain/ (loss) on dilution of equity interest' · it is also printed in balance_sheet,…"
     },
     {
       "key": {
@@ -355,10 +328,10 @@
       },
       "row_hint": 26,
       "kind": "input",
-      "resolve": "pdf:Gain on early redemption of debt",
+      "resolve": "absent:no row captioned like 'Gain on early redemption of debt'",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's comprehensive_income matched this caption: no row captioned like 'Gain on early redemption of debt'"
+      "review": "no row captioned like 'Gain on early redemption of debt'"
     },
     {
       "key": {
@@ -377,11 +350,9 @@
       },
       "row_hint": 28,
       "kind": "input",
-      "resolve": "pdf:Income tax benefit/(expense)",
-      "pdf_caption": "Taxation",
+      "resolve": "pdf:Taxation",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'Taxation' from the filing's comprehensive_income (same income tax line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -400,10 +371,10 @@
       },
       "row_hint": 30,
       "kind": "input",
-      "resolve": "pdf:Gain on disposal of group of subsidiares - net",
+      "resolve": "absent:no row captioned like 'Gain on disposal of group of subsidiares - net'",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's comprehensive_income matched this caption: no row captioned like 'Gain on disposal of group of subsidiares - net'"
+      "review": "no row captioned like 'Gain on disposal of group of subsidiares - net'"
     },
     {
       "key": {
@@ -413,11 +384,9 @@
       },
       "row_hint": 31,
       "kind": "input",
-      "resolve": "pdf:Profit for the financial period from discontinued operations",
-      "pdf_caption": "Profit for the financial period from discontinued",
+      "resolve": "pdf:Profit for the financial period from discontinued",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "a model chose 'Profit for the financial period from discontinued' from the filing's comprehensive_income (exact same line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -435,8 +404,7 @@
         "occurrence": 1
       },
       "row_hint": 34,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -607,8 +575,7 @@
         "occurrence": 1
       },
       "row_hint": 56,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -617,8 +584,7 @@
         "occurrence": 2
       },
       "row_hint": 57,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -627,8 +593,7 @@
         "occurrence": 2
       },
       "row_hint": 58,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -638,10 +603,10 @@
       },
       "row_hint": 59,
       "kind": "input",
-      "resolve": "field:ebitda",
+      "resolve": "absent:no row captioned like 'ebitda' · it is also printed in equity, equity, so which statement is wanted cannot be decided h…",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's comprehensive_income matched this caption: no row captioned like 'ebitda' · it is also printed in equity, equity, so which statement is wanted cannot be decided here"
+      "review": "no row captioned like 'ebitda' · it is also printed in equity, equity, so which statement is wanted cannot be decided h…"
     },
     {
       "key": {
@@ -687,10 +652,10 @@
       },
       "row_hint": 65,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
+      "resolve": "sum:pdf:Receipts from customers and others|pdf:Payments to suppliers, employees and others",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=2508.788-1586.623', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Working Capital'"
+      "review": "learned from 1Q26: =2508.788-1586.623 (receipts less payments to suppliers; payments print negative)"
     },
     {
       "key": {
@@ -700,11 +665,10 @@
       },
       "row_hint": 66,
       "kind": "input",
-      "resolve": "pdf:Taxes, net",
+      "resolve": "absent:no row captioned like 'Taxes, net'",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Taxes, net'"
+      "review": "no row captioned like 'Taxes, net'"
     },
     {
       "key": {
@@ -714,12 +678,9 @@
       },
       "row_hint": 67,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
-      "pdf_caption": "Payments of finance costs",
+      "resolve": "pdf:Payments of finance costs",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Payments of finance costs' from the filing's cash_flow (finance costs paid corresponds to cash interest paid) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -738,11 +699,10 @@
       },
       "row_hint": 69,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
+      "resolve": "sum:pdf:Purchase of PPE|pdf:Proceeds from disposal of property, plant and equipment (“PPE”)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-477.051+1.513', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Net Capex'"
+      "review": "learned from 1Q26: =-477.051+1.513 (purchase of PPE + disposal proceeds)"
     },
     {
       "key": {
@@ -752,12 +712,9 @@
       },
       "row_hint": 70,
       "kind": "input",
-      "resolve": "pdf:Purchase and development of intangible assets",
-      "pdf_caption": "Intangible assets",
+      "resolve": "pdf:Intangible assets",
       "statement": "balance_sheet",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Intangible assets' in the balance_sheet (printed in the balance_sheet, not the cash_flow) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -767,11 +724,9 @@
       },
       "row_hint": 71,
       "kind": "input",
-      "resolve": "pdf:Disposals/ Acquistion of subsidiaries",
-      "pdf_caption": "Proceeds from disposal of group subsidiaries",
+      "resolve": "pdf:Proceeds from disposal of group subsidiaries",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "a model chose 'Proceeds from disposal of group subsidiaries' from the filing's cash_flow (matches disposal of subsidiaries line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -790,10 +745,10 @@
       },
       "row_hint": 73,
       "kind": "input",
-      "resolve": "pdf:Other investing activities",
+      "resolve": "sum:pdf:Placement of deposits maturing more than three (3) months|pdf:Withdrawal of deposits maturing more than three (3) months|pdf:(Purchase of)/Proceeds from disposal other investments || (Purchase of)/ Proceeds from disposal other investments|pdf:Payments for right-of-use (“ROU”) assets|pdf:Repayments from employees|pdf:Dividends received from an associate|pdf:Interests received",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=-222.367+63.342-7.683-0.8+0.07+139.793+32', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Other investing activities'"
+      "review": "learned from 1Q26: =-222.367+63.342-7.683-0.8+0.07+139.793+32. 2Q26 also prints 'Settlement to strategic partners' (-130.0), which 1Q26 never had and is not summed: confirm where the analyst books it"
     },
     {
       "key": {
@@ -803,10 +758,10 @@
       },
       "row_hint": 74,
       "kind": "input",
-      "resolve": "pdf:Equity Issuance/Buyback",
+      "resolve": "absent:no row captioned like 'Equity Issuance/Buyback'",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Equity Issuance/Buyback'"
+      "review": "no row captioned like 'Equity Issuance/Buyback'"
     },
     {
       "key": {
@@ -816,11 +771,10 @@
       },
       "row_hint": 75,
       "kind": "input",
-      "resolve": "pdf:Dividends Paid",
+      "resolve": "absent:caption 'Dividends Paid' matches 2 rows ('Dividends paid to shareholders', 'Dividends paid to NCI')",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's cash_flow matched this caption: caption 'Dividends Paid' matches 2 rows ('Dividends paid to shareholders', 'Dividends paid to NCI')"
+      "review": "caption 'Dividends Paid' matches 2 rows ('Dividends paid to shareholders', 'Dividends paid to NCI')"
     },
     {
       "key": {
@@ -830,10 +784,10 @@
       },
       "row_hint": 76,
       "kind": "input",
-      "resolve": "pdf:Change in debt",
+      "resolve": "sum:pdf:Proceeds from borrowings (net of transaction costs)|pdf:Repayments of borrowings|pdf:Repayments of lease liabilities",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=5015.726-2597.36-117.514', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Change in debt'"
+      "review": "learned from 1Q26: =5015.726-2597.36-117.514. 2Q26 also prints 'Repayment under supplier finance arrangement' (-77.7), not summed"
     },
     {
       "key": {
@@ -843,11 +797,10 @@
       },
       "row_hint": 77,
       "kind": "input",
-      "resolve": "pdf:Other financing activities",
+      "resolve": "sum:pdf:Repayments of Sukuk|pdf:Additional investments in subsidiaries by NCI",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-2066.271+20', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Other financing activities'"
+      "review": "learned from 1Q26: =-2066.271+20"
     },
     {
       "key": {
@@ -992,10 +945,10 @@
       },
       "row_hint": 98,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
+      "resolve": "sum:pdf:Property, plant and equipment|pdf:Right-of-use assets",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=14105.643+1908.663', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Tangible fixed assets'"
+      "review": "learned from 1Q26: =14105.643+1908.663 (PPE + right-of-use assets)"
     },
     {
       "key": {
@@ -1005,10 +958,10 @@
       },
       "row_hint": 99,
       "kind": "input",
-      "resolve": "pdf:Inventory",
+      "resolve": "absent:no row captioned like 'Inventory'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Inventory'"
+      "review": "no row captioned like 'Inventory'"
     },
     {
       "key": {
@@ -1018,10 +971,10 @@
       },
       "row_hint": 100,
       "kind": "input",
-      "resolve": "pdf:Trade accounts receivables, net",
+      "resolve": "absent:no row captioned like 'Trade accounts receivables, net'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade accounts receivables, net'"
+      "review": "no row captioned like 'Trade accounts receivables, net'"
     },
     {
       "key": {
@@ -1031,11 +984,9 @@
       },
       "row_hint": 101,
       "kind": "input",
-      "resolve": "pdf:Trade creditors /payables",
-      "pdf_caption": "Trade and other payables",
+      "resolve": "pdf:Trade and other payables",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Trade and other payables' from the filing's balance_sheet (same payable line) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1062,8 +1013,7 @@
         "occurrence": 1
       },
       "row_hint": 105,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1091,10 +1041,10 @@
       },
       "row_hint": 108,
       "kind": "input",
-      "resolve": "pdf:Secured",
+      "resolve": "absent:no row captioned like 'Secured'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Secured'"
+      "review": "no row captioned like 'Secured'"
     },
     {
       "key": {
@@ -1104,10 +1054,10 @@
       },
       "row_hint": 109,
       "kind": "input",
-      "resolve": "pdf:Unsecured",
+      "resolve": "absent:no row captioned like 'Unsecured'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Unsecured'"
+      "review": "no row captioned like 'Unsecured'"
     },
     {
       "key": {
@@ -1117,11 +1067,9 @@
       },
       "row_hint": 110,
       "kind": "input",
-      "resolve": "pdf:Lease Liabilities",
-      "pdf_caption": "Lease liabilities",
+      "resolve": "pdf:Lease liabilities",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "'Lease liabilities' is also read by 'Lease Liabilities' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1149,10 +1097,10 @@
       },
       "row_hint": 113,
       "kind": "input",
-      "resolve": "pdf:Secured",
+      "resolve": "absent:no row captioned like 'Secured'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Secured'"
+      "review": "no row captioned like 'Secured'"
     },
     {
       "key": {
@@ -1162,10 +1110,10 @@
       },
       "row_hint": 114,
       "kind": "input",
-      "resolve": "pdf:Unsecured",
+      "resolve": "absent:no row captioned like 'Unsecured'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Unsecured'"
+      "review": "no row captioned like 'Unsecured'"
     },
     {
       "key": {
@@ -1175,11 +1123,9 @@
       },
       "row_hint": 115,
       "kind": "input",
-      "resolve": "pdf:Lease Liabilities",
-      "pdf_caption": "Lease liabilities",
+      "resolve": "pdf:Lease liabilities",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "'Lease liabilities' is also read by 'Lease Liabilities' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1199,10 +1145,8 @@
       "row_hint": 118,
       "kind": "input",
       "resolve": "pdf:Total cash and cash equivalents",
-      "pdf_caption": "Total cash and cash equivalents",
       "statement": "cash_flow",
-      "basis": "point_in_time",
-      "review": "matched 'Total cash and cash equivalents' in the cash_flow (printed in the cash_flow, not the balance_sheet) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1212,10 +1156,10 @@
       },
       "row_hint": 119,
       "kind": "input",
-      "resolve": "pdf:Financial asset at FVTPL",
+      "resolve": "absent:no row captioned like 'Financial asset at FVTPL' · it is also printed in equity, equity, so which statement is wanted c…",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Financial asset at FVTPL' · it is also printed in equity, equity, so which statement is wanted cannot be decided here"
+      "review": "no row captioned like 'Financial asset at FVTPL' · it is also printed in equity, equity, so which statement is wanted c…"
     },
     {
       "key": {
@@ -1225,12 +1169,9 @@
       },
       "row_hint": 120,
       "kind": "input",
-      "resolve": "pdf:Deposits pledged",
-      "pdf_caption": "Deposits pledged and restricted cash",
+      "resolve": "pdf:Deposits pledged and restricted cash",
       "statement": "cash_flow",
-      "basis": "point_in_time",
-      "sign": "negative",
-      "review": "matched 'Deposits pledged and restricted cash' in the cash_flow (printed in the cash_flow, not the balance_sheet) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1240,11 +1181,10 @@
       },
       "row_hint": 121,
       "kind": "input",
-      "resolve": "pdf:Deposits maturing more than three (3) months",
+      "resolve": "absent:no row captioned like 'Deposits maturing more than three (3) months' · it is also printed in cash_flow, equity, equity,…",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "sign": "negative",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Deposits maturing more than three (3) months' · it is also printed in cash_flow, equity, equity, so which statement is wanted cannot be decided here"
+      "review": "no row captioned like 'Deposits maturing more than three (3) months' · it is also printed in cash_flow, equity, equity,…"
     },
     {
       "key": {
@@ -1255,11 +1195,8 @@
       "row_hint": 122,
       "kind": "input",
       "resolve": "pdf:Bank overdraft",
-      "pdf_caption": "Bank overdraft",
       "statement": "cash_flow",
-      "basis": "point_in_time",
-      "sign": "negative",
-      "review": "matched 'Bank overdraft' in the cash_flow (printed in the cash_flow, not the balance_sheet) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1314,11 +1251,9 @@
       },
       "row_hint": 131,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
-      "pdf_caption": "Total equity",
+      "resolve": "pdf:Total equity",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Total equity' from the filing's balance_sheet (same total equity line) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1516,8 +1451,7 @@
         "occurrence": 1
       },
       "row_hint": 160,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1851,10 +1785,10 @@
       },
       "row_hint": 215,
       "kind": "input",
-      "resolve": "pdf:FX rate average - MYR/USD",
+      "resolve": "absent:market rate (1Q26 = 1/3.966), not in the filing: type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1/3.966', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX rate average - MYR/USD' · it is also printed in equity, equity, so which statement is wanted cannot be decided here"
+      "review": "market rate (1Q26 = 1/3.966), not in the filing: type it by hand"
     },
     {
       "key": {
@@ -1864,10 +1798,10 @@
       },
       "row_hint": 216,
       "kind": "input",
-      "resolve": "pdf:FX rate  - MYR/USD (as at end of period)",
+      "resolve": "absent:market rate (1Q26 = 1/4.049), not in the filing: type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1/4.049', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX rate  - MYR/USD (as at end of period)' · it is also printed in equity, equity, so which statement is wanted cannot be decided here"
+      "review": "market rate (1Q26 = 1/4.049), not in the filing: type it by hand"
     },
     {
       "key": {
@@ -2002,8 +1936,7 @@
         "occurrence": 2
       },
       "row_hint": 233,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {

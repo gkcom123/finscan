@@ -11,8 +11,8 @@
     "header_row": 5,
     "first_data_row": 7,
     "reference_col": 30,
-    "write_col": 31,
-    "write_mode": "append",
+    "write_col": 180,
+    "write_mode": "fill_blank",
     "period_dates": {
       "3": "2021-12-01",
       "4": "2022-12-01",
@@ -44,7 +44,7 @@
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -55,11 +55,9 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "pdf:Revenues",
-      "pdf_caption": "Net Sales",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "a model chose 'Net Sales' from the filing's income_statement (Net Sales is a common term for Revenues.) — CONFIRM before use"
+      "resolve": "pdf:Revenue",
+      "statement": "title:[310000]",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -78,9 +76,8 @@
       },
       "row_hint": 9,
       "kind": "input",
-      "resolve": "field:cost_of_revenue",
-      "pdf_caption": "Cost Of Sales",
-      "statement": "income_statement",
+      "resolve": "pdf:Cost of sales",
+      "statement": "title:[310000]",
       "basis": "quarter"
     },
     {
@@ -109,12 +106,9 @@
       },
       "row_hint": 12,
       "kind": "input",
-      "resolve": "pdf:Selling and administrative expenses",
-      "pdf_caption": "Selling And Administrative Expenses",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-346.696-87.622', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b>"
+      "resolve": "sum:-pdf:Distribution costs|-pdf:Administrative expenses",
+      "statement": "title:[310000]",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -124,11 +118,9 @@
       },
       "row_hint": 13,
       "kind": "input",
-      "resolve": "pdf:Other income/ (expenses)",
-      "pdf_caption": "Other Expense (Income), Net",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'Other Expense (Income), Net' from the filing's income_statement (The terms are synonymous, just reversed.) — CONFIRM before use"
+      "resolve": "sum:pdf:Other income|-pdf:Other expense",
+      "statement": "title:[310000]",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -147,9 +139,8 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "field:interest_income",
-      "pdf_caption": "Interest Income",
-      "statement": "income_statement",
+      "resolve": "pdf:Finance income",
+      "statement": "title:[310000]",
       "basis": "quarter"
     },
     {
@@ -160,11 +151,9 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "field:finance_costs",
-      "pdf_caption": "Interest Expense",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "resolve": "sum:-pdf:Finance costs",
+      "statement": "title:[310000]",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -174,11 +163,10 @@
       },
       "row_hint": 17,
       "kind": "input",
-      "resolve": "pdf:Gain on net non-monetary position",
-      "pdf_caption": "Monetary Position (Gain) Loss",
+      "resolve": "absent:the BMV income statement prints no monetary-position line",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "a model chose 'Monetary Position (Gain) Loss' from the filing's income_statement (The terms are synonymous, just reversed.) — CONFIRM before use"
+      "review": "the BMV income statement prints no monetary-position line"
     },
     {
       "key": {
@@ -197,11 +185,9 @@
       },
       "row_hint": 19,
       "kind": "input",
-      "resolve": "pdf:Income tax benefit/(expense)",
-      "pdf_caption": "Income Taxes",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'Income Taxes' from the filing's income_statement (Income tax benefit/(expense) is the same as Income Taxes.) — CONFIRM before use"
+      "resolve": "sum:-pdf:Tax income (expense)",
+      "statement": "title:[310000]",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -220,10 +206,9 @@
       },
       "row_hint": 21,
       "kind": "input",
-      "resolve": "pdf:Loss  from discontinued  Operations",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Loss  from discontinued  Operations'"
+      "resolve": "pdf:Profit (loss) from discontinued operations",
+      "statement": "title:[310000]",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -241,8 +226,7 @@
         "occurrence": 1
       },
       "row_hint": 25,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -414,11 +398,9 @@
       },
       "row_hint": 47,
       "kind": "input",
-      "resolve": "field:ebitda",
-      "pdf_caption": "EBITDA",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "'EBITDA' is also read by 'Adj. EBITDA (Pre IFRS16)' — one filing line cannot fill two rows; decide which owns it"
+      "resolve": "pdf:EBITDA",
+      "statement": "title:Income Statement (USD millions)",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -445,8 +427,7 @@
         "occurrence": 1
       },
       "row_hint": 51,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -455,8 +436,7 @@
         "occurrence": 1
       },
       "row_hint": 52,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -465,8 +445,7 @@
         "occurrence": 1
       },
       "row_hint": 53,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -476,11 +455,9 @@
       },
       "row_hint": 55,
       "kind": "input",
-      "resolve": "pdf:Adj. EBITDA (Pre IFRS16)",
-      "pdf_caption": "EBITDA",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "review": "'EBITDA' is also read by 'Adj. EBITDA' — one filing line cannot fill two rows; decide which owns it"
+      "resolve": "pdf:EBITDA",
+      "statement": "title:Income Statement (USD millions)",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -489,8 +466,7 @@
         "occurrence": 3
       },
       "row_hint": 56,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -499,8 +475,7 @@
         "occurrence": 3
       },
       "row_hint": 57,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -510,9 +485,8 @@
       },
       "row_hint": 59,
       "kind": "input",
-      "resolve": "field:depreciation_amortisation",
-      "pdf_caption": "Depreciation And Amortization",
-      "statement": "income_statement",
+      "resolve": "pdf:Adjustments for depreciation and amortisation expense",
+      "statement": "cash_flow",
       "basis": "quarter"
     },
     {
@@ -523,10 +497,10 @@
       },
       "row_hint": 60,
       "kind": "input",
-      "resolve": "pdf:Amortisation",
+      "resolve": "absent:the model chose 'Depreciation And Amortization', but 'Depreciation' already reads that line — this row looks like a com…",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Amortisation'"
+      "review": "the model chose 'Depreciation And Amortization', but 'Depreciation' already reads that line — this row looks like a com…"
     },
     {
       "key": {
@@ -554,11 +528,9 @@
       },
       "row_hint": 64,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
+      "resolve": "sum:pdf:Adjustments for decrease (increase) in inventories|pdf:Adjustments for decrease (increase) in trade accounts receivable|pdf:Adjustments for decrease (increase) in other operating receivables|pdf:Adjustments for increase (decrease) in trade accounts payable|pdf:Adjustments for increase (decrease) in other operating payables",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-36.741-9.27+10.546-3.746-18.809', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -568,11 +540,9 @@
       },
       "row_hint": 65,
       "kind": "input",
-      "resolve": "pdf:Taxes/Other adjustments",
+      "resolve": "sum:-pdf:Income taxes refund (paid)",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -582,11 +552,9 @@
       },
       "row_hint": 66,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
+      "resolve": "sum:-pdf:Interest paid #2",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -605,11 +573,9 @@
       },
       "row_hint": 68,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
+      "resolve": "sum:-pdf:Purchase of property, plant and equipment|pdf:Proceeds from sales of property, plant and equipment",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-41.34+0.457', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -619,10 +585,9 @@
       },
       "row_hint": 69,
       "kind": "input",
-      "resolve": "pdf:Net Payment for acquisition  of intangible assets",
+      "resolve": "sum:-pdf:Purchase of intangible assets|pdf:Proceeds from sales of intangible assets",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -632,10 +597,9 @@
       },
       "row_hint": 70,
       "kind": "input",
-      "resolve": "pdf:Disposals/ Acquisition, of subsidiaries",
+      "resolve": "sum:pdf:Cash flows from losing control of subsidiaries or other businesses|-pdf:Cash flows used in obtaining control of subsidiaries or other businesses",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -654,10 +618,9 @@
       },
       "row_hint": 72,
       "kind": "input",
-      "resolve": "pdf:Deposits interest received in investing activities",
+      "resolve": "pdf:Interest received #2",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -667,10 +630,9 @@
       },
       "row_hint": 73,
       "kind": "input",
-      "resolve": "pdf:Disposed Cash from discontinued operations and Others in investing activitiesq",
+      "resolve": "pdf:Other inflows (outflows) of cash #2",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -680,11 +642,9 @@
       },
       "row_hint": 74,
       "kind": "input",
-      "resolve": "pdf:Equity Issuance/Buyback",
+      "resolve": "sum:pdf:Proceeds from issuing shares|-pdf:Payments to acquire or redeem entity's shares",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -694,11 +654,9 @@
       },
       "row_hint": 75,
       "kind": "input",
-      "resolve": "pdf:Dividends received  / Dividends Paid",
+      "resolve": "sum:-pdf:Dividends paid #2",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -708,10 +666,10 @@
       },
       "row_hint": 76,
       "kind": "input",
-      "resolve": "pdf:Acquisition of bonds",
+      "resolve": "absent:the filing has no cash_flow (found: balance_sheet, income_statement)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the filing has no cash_flow (found: balance_sheet, income_statement)"
     },
     {
       "key": {
@@ -721,11 +679,9 @@
       },
       "row_hint": 77,
       "kind": "input",
-      "resolve": "pdf:Change in debt /Finance Costs",
+      "resolve": "sum:pdf:Proceeds from borrowings|-pdf:Repayments of borrowings|-pdf:Payments of lease liabilities",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=229.655-227.947-22.636', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -735,10 +691,9 @@
       },
       "row_hint": 78,
       "kind": "input",
-      "resolve": "pdf:Other Finance",
+      "resolve": "pdf:Other inflows (outflows) of cash #3",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -846,8 +801,7 @@
         "occurrence": 1
       },
       "row_hint": 92,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -856,8 +810,7 @@
         "occurrence": 1
       },
       "row_hint": 93,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -921,10 +874,9 @@
       },
       "row_hint": 102,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
+      "resolve": "sum:pdf:Property, plant and equipment|pdf:Right-of-use assets that do not meet definition of investment property",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=2026.384+348.824', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Tangible fixed assets'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -934,10 +886,9 @@
       },
       "row_hint": 103,
       "kind": "input",
-      "resolve": "pdf:Net pension liability",
+      "resolve": "pdf:Non-current provisions for employee benefits",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Net pension liability'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -947,11 +898,9 @@
       },
       "row_hint": 104,
       "kind": "input",
-      "resolve": "pdf:Inventory",
-      "pdf_caption": "with inventory and cash balance growth and",
+      "resolve": "pdf:Current inventories",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "matched 'with inventory and cash balance growth and' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -961,10 +910,9 @@
       },
       "row_hint": 105,
       "kind": "input",
-      "resolve": "pdf:Trade debtors/receivables",
+      "resolve": "pdf:Trade and other current receivables",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade debtors/receivables'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -974,10 +922,9 @@
       },
       "row_hint": 106,
       "kind": "input",
-      "resolve": "pdf:Trade creditors /payables",
+      "resolve": "pdf:Trade and other current payables",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade creditors /payables'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1031,8 +978,7 @@
         "occurrence": 1
       },
       "row_hint": 114,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1042,10 +988,9 @@
       },
       "row_hint": 115,
       "kind": "input",
-      "resolve": "pdf:Bank loans",
+      "resolve": "sum:pdf:Other current financial liabilities|pdf:Other non-current financial liabilities",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=164.127+1155.859+121.037+18.027+3.287', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Bank loans'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1055,10 +1000,10 @@
       },
       "row_hint": 116,
       "kind": "input",
-      "resolve": "pdf:Finance Lease Obligations",
+      "resolve": "absent:no row captioned like 'Finance Lease Obligations'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Finance Lease Obligations'"
+      "review": "no row captioned like 'Finance Lease Obligations'"
     },
     {
       "key": {
@@ -1067,8 +1012,7 @@
         "occurrence": 1
       },
       "row_hint": 117,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1078,11 +1022,9 @@
       },
       "row_hint": 119,
       "kind": "input",
-      "resolve": "pdf:Cash and equivalents",
-      "pdf_caption": "Cash And Cash Equivalents",
-      "statement": "income_statement",
-      "basis": "point_in_time",
-      "review": "matched 'Cash And Cash Equivalents' in the income_statement (printed in the income_statement, not the balance_sheet) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "resolve": "pdf:Cash and cash equivalents",
+      "statement": "balance_sheet",
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1137,10 +1079,9 @@
       },
       "row_hint": 130,
       "kind": "input",
-      "resolve": "pdf:Capitalized operating leases (rent*8)",
+      "resolve": "sum:pdf:Current lease liabilities|pdf:Non-current lease liabilities",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=61.361+336.162', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Capitalized operating leases (rent*8)'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1149,8 +1090,7 @@
         "occurrence": 1
       },
       "row_hint": 131,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1196,10 +1136,10 @@
       },
       "row_hint": 140,
       "kind": "input",
-      "resolve": "pdf:Market Cap",
+      "resolve": "absent:no row captioned like 'Market Cap'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Market Cap'"
+      "review": "no row captioned like 'Market Cap'"
     },
     {
       "key": {
@@ -1209,10 +1149,9 @@
       },
       "row_hint": 141,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
+      "resolve": "pdf:Total equity",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Equity (as reported on balance sheet)'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1329,8 +1268,7 @@
         "occurrence": 1
       },
       "row_hint": 161,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1357,8 +1295,7 @@
         "occurrence": 1
       },
       "row_hint": 166,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1664,8 +1601,7 @@
         "occurrence": 1
       },
       "row_hint": 207,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1764,8 +1700,11 @@
         "occurrence": 1
       },
       "row_hint": 224,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "input",
+      "resolve": "carry:USD/USD is 1 by definition in this USD model and is not reported by the filing — carried forward unchanged from last quarter",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "review": "USD/USD is 1 by definition in this USD model and is not reported by the filing — carried forward unchanged from last quarter"
     },
     {
       "key": {
@@ -1774,8 +1713,11 @@
         "occurrence": 1
       },
       "row_hint": 225,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "input",
+      "resolve": "carry:USD/USD is 1 by definition in this USD model and is not reported by the filing — carried forward unchanged from last quarter",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "review": "USD/USD is 1 by definition in this USD model and is not reported by the filing — carried forward unchanged from last quarter"
     },
     {
       "key": {
@@ -1784,8 +1726,7 @@
         "occurrence": 1
       },
       "row_hint": 227,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1830,8 +1771,7 @@
         "occurrence": 1
       },
       "row_hint": 234,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1840,8 +1780,7 @@
         "occurrence": 1
       },
       "row_hint": 235,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2120,8 +2059,7 @@
         "occurrence": 2
       },
       "row_hint": 273,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2229,8 +2167,7 @@
         "occurrence": 3
       },
       "row_hint": 293,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2248,8 +2185,7 @@
         "occurrence": 3
       },
       "row_hint": 295,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2348,8 +2284,7 @@
         "occurrence": 1
       },
       "row_hint": 306,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2358,8 +2293,7 @@
         "occurrence": 1
       },
       "row_hint": 307,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2386,8 +2320,7 @@
         "occurrence": 1
       },
       "row_hint": 314,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2406,10 +2339,9 @@
       },
       "row_hint": 318,
       "kind": "input",
-      "resolve": "pdf:GRUMA USA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA USA > Sales Volume",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2419,10 +2351,9 @@
       },
       "row_hint": 319,
       "kind": "input",
-      "resolve": "pdf:GIMSA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GIMSA > Sales Volume",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2432,10 +2363,10 @@
       },
       "row_hint": 320,
       "kind": "input",
-      "resolve": "pdf:of which Bulk Corn Flour",
+      "resolve": "absent:the press release reports GIMSA's volume in total only, not split by corn flour type",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the press release reports GIMSA's volume in total only, not split by corn flour type"
     },
     {
       "key": {
@@ -2445,10 +2376,10 @@
       },
       "row_hint": 321,
       "kind": "input",
-      "resolve": "pdf:of which Retail Corn Flour",
+      "resolve": "absent:the press release reports GIMSA's volume in total only, not split by corn flour type",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the press release reports GIMSA's volume in total only, not split by corn flour type"
     },
     {
       "key": {
@@ -2458,10 +2389,10 @@
       },
       "row_hint": 322,
       "kind": "input",
-      "resolve": "pdf:of which Other",
+      "resolve": "absent:the press release reports GIMSA's volume in total only, not split by corn flour type",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the press release reports GIMSA's volume in total only, not split by corn flour type"
     },
     {
       "key": {
@@ -2471,10 +2402,9 @@
       },
       "row_hint": 323,
       "kind": "input",
-      "resolve": "pdf:GRUMA Europe",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA EUROPE > Sales Volume",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2484,10 +2414,9 @@
       },
       "row_hint": 324,
       "kind": "input",
-      "resolve": "pdf:GRUMA Centroamerica",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA CENTROAMERICA > Sales Volume",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2497,10 +2426,9 @@
       },
       "row_hint": 325,
       "kind": "input",
-      "resolve": "pdf:GRUMA ASIA & OCEANIA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA ASIA & OCEANIA > Sales Volume",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2510,11 +2438,9 @@
       },
       "row_hint": 326,
       "kind": "input",
-      "resolve": "pdf:Other subsidiaries & eliminations",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:OTHER SUBSIDIARIES > Sales Volume",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2551,10 +2477,9 @@
       },
       "row_hint": 331,
       "kind": "input",
-      "resolve": "pdf:GRUMA USA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA USA > Net Sales",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2564,10 +2489,9 @@
       },
       "row_hint": 332,
       "kind": "input",
-      "resolve": "pdf:GIMSA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GIMSA > Net Sales",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2577,10 +2501,9 @@
       },
       "row_hint": 333,
       "kind": "input",
-      "resolve": "pdf:GRUMA Europe",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA EUROPE > Net Sales",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2590,10 +2513,9 @@
       },
       "row_hint": 334,
       "kind": "input",
-      "resolve": "pdf:GRUMA Centroamerica",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA CENTROAMERICA > Net Sales",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2603,10 +2525,9 @@
       },
       "row_hint": 335,
       "kind": "input",
-      "resolve": "pdf:GRUMA ASIA & OCEANIA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA ASIA & OCEANIA > Net Sales",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2616,10 +2537,9 @@
       },
       "row_hint": 336,
       "kind": "input",
-      "resolve": "pdf:Other subsidiaries & eliminations",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:OTHER SUBSIDIARIES > Net Sales",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2655,8 +2575,7 @@
         "occurrence": 1
       },
       "row_hint": 341,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2728,8 +2647,7 @@
         "occurrence": 1
       },
       "row_hint": 350,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2811,10 +2729,9 @@
       },
       "row_hint": 361,
       "kind": "input",
-      "resolve": "pdf:GRUMA USA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA USA > Gross Profit",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2824,10 +2741,9 @@
       },
       "row_hint": 362,
       "kind": "input",
-      "resolve": "pdf:GIMSA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GIMSA > Gross Profit",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2837,10 +2753,9 @@
       },
       "row_hint": 363,
       "kind": "input",
-      "resolve": "pdf:GRUMA Europe",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA EUROPE > Gross Profit",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2850,10 +2765,9 @@
       },
       "row_hint": 364,
       "kind": "input",
-      "resolve": "pdf:GRUMA Centroamerica",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA CENTROAMERICA > Gross Profit",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2863,10 +2777,9 @@
       },
       "row_hint": 365,
       "kind": "input",
-      "resolve": "pdf:GRUMA ASIA & OCEANIA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA ASIA & OCEANIA > Gross Profit",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2876,10 +2789,9 @@
       },
       "row_hint": 366,
       "kind": "input",
-      "resolve": "pdf:Other subsidiaries & eliminations",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:OTHER SUBSIDIARIES > Gross Profit",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2925,10 +2837,9 @@
       },
       "row_hint": 372,
       "kind": "input",
-      "resolve": "pdf:GRUMA USA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA USA > Operating Income",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2938,10 +2849,9 @@
       },
       "row_hint": 373,
       "kind": "input",
-      "resolve": "pdf:GIMSA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GIMSA > Operating Income",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2951,10 +2861,9 @@
       },
       "row_hint": 374,
       "kind": "input",
-      "resolve": "pdf:GRUMA Europe",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA EUROPE > Operating Income",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2964,10 +2873,9 @@
       },
       "row_hint": 375,
       "kind": "input",
-      "resolve": "pdf:GRUMA Centroamerica",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA CENTROAMERICA > Operating Income",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2977,10 +2885,9 @@
       },
       "row_hint": 376,
       "kind": "input",
-      "resolve": "pdf:GRUMA ASIA & OCEANIA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA ASIA & OCEANIA > Operating Income",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -2990,10 +2897,9 @@
       },
       "row_hint": 377,
       "kind": "input",
-      "resolve": "pdf:Other subsidiaries & eliminations",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:OTHER SUBSIDIARIES > Operating Income",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -3039,10 +2945,9 @@
       },
       "row_hint": 383,
       "kind": "input",
-      "resolve": "pdf:GRUMA USA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA USA > EBITDA",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -3052,10 +2957,9 @@
       },
       "row_hint": 384,
       "kind": "input",
-      "resolve": "pdf:GIMSA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GIMSA > EBITDA",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -3065,10 +2969,9 @@
       },
       "row_hint": 385,
       "kind": "input",
-      "resolve": "pdf:GRUMA Europe",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA EUROPE > EBITDA",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -3078,10 +2981,9 @@
       },
       "row_hint": 386,
       "kind": "input",
-      "resolve": "pdf:GRUMA Centroamerica",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA CENTROAMERICA > EBITDA",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -3091,10 +2993,9 @@
       },
       "row_hint": 387,
       "kind": "input",
-      "resolve": "pdf:GRUMA ASIA & OCEANIA",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:GRUMA ASIA & OCEANIA > EBITDA",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -3104,10 +3005,9 @@
       },
       "row_hint": 388,
       "kind": "input",
-      "resolve": "pdf:Other subsidiaries & eliminations",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:OTHER SUBSIDIARIES > EBITDA",
+      "statement": "title:Selected Income Statement Items",
+      "basis": "quarter"
     },
     {
       "key": {

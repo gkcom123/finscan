@@ -55,7 +55,7 @@
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -66,11 +66,10 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "field:revenue_from_operations",
-      "pdf_caption": "Deferred revenues",
+      "resolve": "pdf:Deferred revenues",
       "statement": "balance_sheet",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=91038.906', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · matched 'Deferred revenues' in the balance_sheet (printed in the balance_sheet, not the income_statement) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "review": "the reference cell was the hand-typed expression '=91038.906' — name its components as a list to make this a sum"
     },
     {
       "key": {
@@ -89,11 +88,9 @@
       },
       "row_hint": 9,
       "kind": "input",
-      "resolve": "field:cost_of_revenue",
-      "pdf_caption": "Cost of revenues",
+      "resolve": "pdf:Cost of revenues",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -120,8 +117,7 @@
         "occurrence": 1
       },
       "row_hint": 12,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -131,11 +127,9 @@
       },
       "row_hint": 13,
       "kind": "input",
-      "resolve": "field:selling_marketing_expense",
-      "pdf_caption": "Selling and marketing expenses",
+      "resolve": "pdf:Selling and marketing expenses",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -146,10 +140,8 @@
       "row_hint": 14,
       "kind": "input",
       "resolve": "pdf:Research and development expenses",
-      "pdf_caption": "Research and development expenses",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -159,11 +151,9 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "field:general_admin_expense",
-      "pdf_caption": "General and administrative expenses",
+      "resolve": "pdf:General and administrative expenses",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -173,12 +163,9 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "pdf:Net provision for impairment losses on financial assets",
-      "pdf_caption": "contract assets",
+      "resolve": "pdf:contract assets",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'contract assets' from the filing's income_statement (closest impairment-related line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -188,11 +175,10 @@
       },
       "row_hint": 17,
       "kind": "input",
-      "resolve": "pdf:Fair value changes on other financial investments",
-      "pdf_caption": "value through profit or loss",
+      "resolve": "absent:no row captioned like 'Fair value changes on other financial investments'",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'value through profit or loss' from the filing's income_statement (fair value change line) — CONFIRM before use"
+      "review": "no row captioned like 'Fair value changes on other financial investments'"
     },
     {
       "key": {
@@ -202,11 +188,9 @@
       },
       "row_hint": 18,
       "kind": "input",
-      "resolve": "pdf:Other operating income/(loss), net",
-      "pdf_caption": "Other gains, net",
+      "resolve": "pdf:Other gains, net",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "a model chose 'Other gains, net' from the filing's income_statement (same other operating gains/losses concept) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -225,12 +209,9 @@
       },
       "row_hint": 20,
       "kind": "input",
-      "resolve": "pdf:Finance exps",
-      "pdf_caption": "Finance costs",
+      "resolve": "pdf:Finance costs",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Finance costs' from the filing's income_statement (same line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -240,8 +221,7 @@
       },
       "row_hint": 21,
       "kind": "input",
-      "resolve": "field:interest_income",
-      "pdf_caption": "Finance income",
+      "resolve": "pdf:Finance income",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -253,10 +233,10 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "pdf:Fair value changes of convertible redeemable preferred shares",
+      "resolve": "absent:no row captioned like 'Fair value changes of convertible redeemable preferred shares'",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'Fair value changes of convertible redeemable preferred shares'"
+      "review": "no row captioned like 'Fair value changes of convertible redeemable preferred shares'"
     },
     {
       "key": {
@@ -266,11 +246,9 @@
       },
       "row_hint": 23,
       "kind": "input",
-      "resolve": "pdf:Share of net profit /(loss) of associates",
-      "pdf_caption": "using the equity method",
+      "resolve": "pdf:using the equity method",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'using the equity method' from the filing's income_statement (share of results of associates) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -289,11 +267,9 @@
       },
       "row_hint": 25,
       "kind": "input",
-      "resolve": "pdf:Income tax credits/(expenses) / Current and deferred income tax and social contribution",
-      "pdf_caption": "Income tax credits/(expenses)",
+      "resolve": "pdf:Income tax credits/(expenses)",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · matched 'Income tax credits/(expenses)' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -321,11 +297,9 @@
       },
       "row_hint": 28,
       "kind": "input",
-      "resolve": "field:non_controlling_interest",
-      "pdf_caption": "Non-controlling interests",
+      "resolve": "pdf:Non-controlling interests",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -343,8 +317,7 @@
         "occurrence": 1
       },
       "row_hint": 31,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -480,10 +453,10 @@
       },
       "row_hint": 48,
       "kind": "input",
-      "resolve": "field:depreciation_amortisation",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:Depreciation of property, plant and equipment|pdf:Amortisation of software and others",
+      "statement": "title:Unaudited Three Months Ended",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=2786.713+17.788', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's income_statement matched this caption: no row captioned like 'depreciation amortisation'"
+      "review": "learned from 1Q26: =2786.713+17.788 (depreciation of PPE + amortisation of software and others); both lines are printed in the three-month adjusted-EBITDA reconciliation, and 1Q26 reproduces exactly"
     },
     {
       "key": {
@@ -529,11 +502,10 @@
       },
       "row_hint": 54,
       "kind": "input",
-      "resolve": "field:ebitda",
+      "resolve": "absent:no row captioned like 'ebitda'",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'ebitda'"
+      "review": "no row captioned like 'ebitda'"
     },
     {
       "key": {
@@ -560,8 +532,7 @@
         "occurrence": 2
       },
       "row_hint": 58,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -570,8 +541,7 @@
         "occurrence": 1
       },
       "row_hint": 59,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -589,8 +559,7 @@
         "occurrence": 1
       },
       "row_hint": 62,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -599,8 +568,7 @@
         "occurrence": 1
       },
       "row_hint": 63,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -609,8 +577,7 @@
         "occurrence": 1
       },
       "row_hint": 64,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -619,8 +586,7 @@
         "occurrence": 1
       },
       "row_hint": 65,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -629,8 +595,7 @@
         "occurrence": 1
       },
       "row_hint": 66,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -639,8 +604,7 @@
         "occurrence": 1
       },
       "row_hint": 67,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -649,8 +613,7 @@
         "occurrence": 1
       },
       "row_hint": 68,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -659,8 +622,7 @@
         "occurrence": 1
       },
       "row_hint": 69,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -669,8 +631,7 @@
         "occurrence": 1
       },
       "row_hint": 70,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -679,8 +640,7 @@
         "occurrence": 1
       },
       "row_hint": 71,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -689,8 +649,7 @@
         "occurrence": 1
       },
       "row_hint": 72,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -699,8 +658,7 @@
         "occurrence": 1
       },
       "row_hint": 73,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -709,8 +667,7 @@
         "occurrence": 1
       },
       "row_hint": 74,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -719,8 +676,7 @@
         "occurrence": 1
       },
       "row_hint": 75,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -729,8 +685,7 @@
         "occurrence": 1
       },
       "row_hint": 76,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -740,10 +695,10 @@
       },
       "row_hint": 77,
       "kind": "input",
-      "resolve": "pdf:Balancing figure",
+      "resolve": "absent:no row captioned like 'Balancing figure'",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Balancing figure'"
+      "review": "no row captioned like 'Balancing figure'"
     },
     {
       "key": {
@@ -752,8 +707,7 @@
         "occurrence": 1
       },
       "row_hint": 79,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -762,8 +716,7 @@
         "occurrence": 1
       },
       "row_hint": 80,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -772,8 +725,7 @@
         "occurrence": 1
       },
       "row_hint": 82,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -782,8 +734,7 @@
         "occurrence": 1
       },
       "row_hint": 83,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -837,8 +788,7 @@
         "occurrence": 1
       },
       "row_hint": 90,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -856,8 +806,7 @@
         "occurrence": 1
       },
       "row_hint": 92,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -866,8 +815,7 @@
         "occurrence": 2
       },
       "row_hint": 93,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -886,11 +834,9 @@
       },
       "row_hint": 97,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
-      "pdf_caption": "Property, plant and equipment",
+      "resolve": "pdf:Property, plant and equipment",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Property, plant and equipment' from the filing's balance_sheet (standard synonym for tangible fixed assets) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -900,11 +846,9 @@
       },
       "row_hint": 98,
       "kind": "input",
-      "resolve": "pdf:Inventory",
-      "pdf_caption": "Inventories",
+      "resolve": "pdf:Inventories",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Inventories' from the filing's balance_sheet (same current asset line) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -914,11 +858,9 @@
       },
       "row_hint": 99,
       "kind": "input",
-      "resolve": "pdf:Trade accounts receivable",
-      "pdf_caption": "Trade receivables",
+      "resolve": "pdf:Trade receivables",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Trade receivables' from the filing's balance_sheet (same receivables line) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -928,10 +870,10 @@
       },
       "row_hint": 100,
       "kind": "input",
-      "resolve": "pdf:Trade accounts payable",
+      "resolve": "sum:pdf:Trade payables|pdf:Payables to merchants",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=31613.146+25981.593', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade accounts payable'"
+      "review": "reference was typed =31613.146+25981.593; read as trade payables + payables to merchants (both current liabilities, same order of magnitude as the Dec-25 balances). Back-tested: reproduces the model's Dec-25 column exactly"
     },
     {
       "key": {
@@ -985,8 +927,7 @@
         "occurrence": 1
       },
       "row_hint": 108,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -996,10 +937,10 @@
       },
       "row_hint": 109,
       "kind": "input",
-      "resolve": "pdf:Short-term debt",
+      "resolve": "sum:pdf:Borrowings#2|pdf:Notes payable#2",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=11334.607+5380.92', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Short-term debt'"
+      "review": "reference was typed =11334.607+5380.92; read as current borrowings + current notes payable (#2 = the current-liabilities line; #1 is non-current). Back-tested: reproduces the model's Dec-25 column exactly"
     },
     {
       "key": {
@@ -1009,10 +950,10 @@
       },
       "row_hint": 110,
       "kind": "input",
-      "resolve": "pdf:Long-term debt",
+      "resolve": "sum:pdf:Borrowings#1|pdf:Notes payable#1",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=42686.825+46703.421', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Long-term debt'"
+      "review": "reference was typed =42686.825+46703.421; read as non-current borrowings + non-current notes payable (#1 = the non-current-liabilities line). Back-tested: reproduces the model's Dec-25 column exactly"
     },
     {
       "key": {
@@ -1031,10 +972,10 @@
       },
       "row_hint": 113,
       "kind": "input",
-      "resolve": "pdf:Lease Obligations",
+      "resolve": "absent:no row captioned like 'Lease Obligations'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Lease Obligations'"
+      "review": "no row captioned like 'Lease Obligations'"
     },
     {
       "key": {
@@ -1044,11 +985,9 @@
       },
       "row_hint": 114,
       "kind": "input",
-      "resolve": "pdf:Short-term",
-      "pdf_caption": "Short-term treasury investments",
+      "resolve": "pdf:Short-term treasury investments",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "'Short-term treasury investments' is also read by 'Short term Investments' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1058,11 +997,9 @@
       },
       "row_hint": 115,
       "kind": "input",
-      "resolve": "pdf:Long-term",
-      "pdf_caption": "Long-term treasury investments",
+      "resolve": "pdf:Long-term treasury investments",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "matched 'Long-term treasury investments' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1081,10 +1018,10 @@
       },
       "row_hint": 118,
       "kind": "input",
-      "resolve": "pdf:Debt  Including Lease obligations",
+      "resolve": "absent:no row captioned like 'Debt Including Lease obligations'",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Debt  Including Lease obligations'"
+      "review": "no row captioned like 'Debt Including Lease obligations'"
     },
     {
       "key": {
@@ -1122,7 +1059,6 @@
       "row_hint": 122,
       "kind": "input",
       "resolve": "pdf:Cash and cash equivalents",
-      "pdf_caption": "Cash and cash equivalents",
       "statement": "balance_sheet",
       "basis": "point_in_time"
     },
@@ -1134,11 +1070,9 @@
       },
       "row_hint": 123,
       "kind": "input",
-      "resolve": "pdf:Short term Investments",
-      "pdf_caption": "Short-term treasury investments",
+      "resolve": "pdf:Short-term treasury investments",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "'Short-term treasury investments' is also read by 'Short-term' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1157,11 +1091,9 @@
       },
       "row_hint": 126,
       "kind": "input",
-      "resolve": "pdf:Retricted Cash",
-      "pdf_caption": "Restricted cash",
+      "resolve": "pdf:Restricted cash",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Restricted cash' from the filing's balance_sheet (same line despite typo in workbook) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1180,11 +1112,9 @@
       },
       "row_hint": 128,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
-      "pdf_caption": "Total equity",
+      "resolve": "pdf:Total equity",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Total equity' from the filing's balance_sheet (same balance sheet equity total) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1256,8 +1186,7 @@
         "occurrence": 1
       },
       "row_hint": 141,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1266,8 +1195,7 @@
         "occurrence": 1
       },
       "row_hint": 142,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1366,8 +1294,7 @@
         "occurrence": 1
       },
       "row_hint": 157,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1430,8 +1357,7 @@
         "occurrence": 3
       },
       "row_hint": 168,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1440,8 +1366,7 @@
         "occurrence": 1
       },
       "row_hint": 169,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1450,8 +1375,7 @@
         "occurrence": 1
       },
       "row_hint": 170,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1460,8 +1384,7 @@
         "occurrence": 2
       },
       "row_hint": 171,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1470,8 +1393,7 @@
         "occurrence": 1
       },
       "row_hint": 172,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1480,8 +1402,7 @@
         "occurrence": 1
       },
       "row_hint": 173,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1490,8 +1411,7 @@
         "occurrence": 1
       },
       "row_hint": 174,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1500,8 +1420,7 @@
         "occurrence": 1
       },
       "row_hint": 175,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1510,8 +1429,7 @@
         "occurrence": 3
       },
       "row_hint": 176,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1520,8 +1438,7 @@
         "occurrence": 2
       },
       "row_hint": 177,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1530,8 +1447,7 @@
         "occurrence": 2
       },
       "row_hint": 178,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1540,8 +1456,7 @@
         "occurrence": 2
       },
       "row_hint": 179,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1550,8 +1465,7 @@
         "occurrence": 2
       },
       "row_hint": 180,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1560,8 +1474,7 @@
         "occurrence": 2
       },
       "row_hint": 181,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1570,8 +1483,7 @@
         "occurrence": 2
       },
       "row_hint": 182,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1580,8 +1492,7 @@
         "occurrence": 2
       },
       "row_hint": 183,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1590,8 +1501,7 @@
         "occurrence": 2
       },
       "row_hint": 185,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1690,8 +1600,7 @@
         "occurrence": 1
       },
       "row_hint": 203,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1700,8 +1609,7 @@
         "occurrence": 1
       },
       "row_hint": 204,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1720,10 +1628,10 @@
       },
       "row_hint": 209,
       "kind": "input",
-      "resolve": "pdf:FX rate average - RMB/USD",
+      "resolve": "absent:market rate (1Q26 = 1/6.9244), not in the filing: type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1/6.9244', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX rate average - RMB/USD'"
+      "review": "market rate (1Q26 = 1/6.9244), not in the filing: type it by hand"
     },
     {
       "key": {
@@ -1733,10 +1641,10 @@
       },
       "row_hint": 210,
       "kind": "input",
-      "resolve": "pdf:FX rate  - RMB/USD (as at end of period)",
+      "resolve": "absent:market rate (1Q26 = 1/6.899), not in the filing: type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1/6.899', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX rate  - RMB/USD (as at end of period)'"
+      "review": "market rate (1Q26 = 1/6.899), not in the filing: type it by hand"
     },
     {
       "key": {
@@ -1844,8 +1752,7 @@
         "occurrence": 2
       },
       "row_hint": 224,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1908,8 +1815,7 @@
         "occurrence": 6
       },
       "row_hint": 235,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1918,8 +1824,7 @@
         "occurrence": 2
       },
       "row_hint": 236,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1928,8 +1833,7 @@
         "occurrence": 2
       },
       "row_hint": 237,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1938,8 +1842,7 @@
         "occurrence": 3
       },
       "row_hint": 238,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1948,8 +1851,7 @@
         "occurrence": 2
       },
       "row_hint": 239,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1958,8 +1860,7 @@
         "occurrence": 2
       },
       "row_hint": 240,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1968,8 +1869,7 @@
         "occurrence": 2
       },
       "row_hint": 241,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1978,8 +1878,7 @@
         "occurrence": 2
       },
       "row_hint": 242,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1988,8 +1887,7 @@
         "occurrence": 4
       },
       "row_hint": 243,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1998,8 +1896,7 @@
         "occurrence": 3
       },
       "row_hint": 244,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2008,8 +1905,7 @@
         "occurrence": 3
       },
       "row_hint": 245,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2018,8 +1914,7 @@
         "occurrence": 3
       },
       "row_hint": 246,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2028,8 +1923,7 @@
         "occurrence": 3
       },
       "row_hint": 247,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2038,8 +1932,7 @@
         "occurrence": 3
       },
       "row_hint": 248,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2048,8 +1941,7 @@
         "occurrence": 3
       },
       "row_hint": 249,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2058,8 +1950,7 @@
         "occurrence": 3
       },
       "row_hint": 250,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2068,8 +1959,7 @@
         "occurrence": 3
       },
       "row_hint": 252,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2123,8 +2013,7 @@
         "occurrence": 2
       },
       "row_hint": 262,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2214,8 +2103,7 @@
         "occurrence": 2
       },
       "row_hint": 277,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2224,8 +2112,7 @@
         "occurrence": 2
       },
       "row_hint": 278,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {

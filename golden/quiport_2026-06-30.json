@@ -1,0 +1,167 @@
+{
+  "company": "quiport",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "International",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Domestic",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Core Revenues, US$M",
+      "section": "income_statement",
+      "value": 56.688
+    },
+    {
+      "label": "Regulated Revenues, US$M",
+      "section": "income_statement",
+      "value": 40.356
+    },
+    {
+      "label": "Passenger Revenues, US$M",
+      "section": "income_statement",
+      "value": 25.167
+    },
+    {
+      "label": "Quiport Participation",
+      "section": "income_statement",
+      "value": 0.89
+    },
+    {
+      "label": "Non-Regulated, US$M",
+      "section": "income_statement",
+      "value": 15.405
+    },
+    {
+      "label": "Aeronautical, US$M",
+      "section": "income_statement",
+      "value": 6.406
+    },
+    {
+      "label": "Non-Aeronautical, US$M",
+      "section": "income_statement",
+      "value": 9.095
+    },
+    {
+      "label": "Employee Benefits",
+      "section": "income_statement",
+      "value": 2.715
+    },
+    {
+      "label": "Services & Supplies",
+      "section": "income_statement",
+      "value": 2.422
+    },
+    {
+      "label": "Operations and Repairs",
+      "section": "income_statement",
+      "value": 2.528
+    },
+    {
+      "label": "Professional Fees",
+      "section": "income_statement",
+      "value": 0.682
+    },
+    {
+      "label": "Insurance Expenses",
+      "section": "income_statement",
+      "value": 0.738
+    },
+    {
+      "label": "Maintenance & Repairs",
+      "section": "income_statement",
+      "value": 0.6
+    },
+    {
+      "label": "Utilities",
+      "section": "income_statement",
+      "value": 0.687
+    },
+    {
+      "label": "Other Costs & Expenses",
+      "section": "income_statement",
+      "value": 0.254
+    },
+    {
+      "label": "Employee Profit Sharing, US$M",
+      "section": "income_statement",
+      "value": 3.444
+    },
+    {
+      "label": "D&A, US$M",
+      "section": "income_statement",
+      "value": 11.416
+    },
+    {
+      "label": "Assets, US$M",
+      "section": "income_statement",
+      "value": 690.511
+    },
+    {
+      "label": "Cash, US$M",
+      "section": "cash_flow",
+      "value": 112.737
+    },
+    {
+      "label": "Receivables, US$M",
+      "section": "cash_flow",
+      "value": 14.073
+    },
+    {
+      "label": "Payables, US$M",
+      "section": "cash_flow",
+      "value": 36.227
+    },
+    {
+      "label": "Debt, US$M",
+      "section": "cash_flow",
+      "value": 480.575
+    },
+    {
+      "label": "QUIPORT US$400M 12.0% due March 2033",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "QUIPORT US$300M 9.0% due Dec. 2037 and Ecuadorian Loans due 2035",
+      "section": "cash_flow",
+      "value": 478.448
+    },
+    {
+      "label": "Accrued Capex, US$M",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Cash Taxes, US$M",
+      "section": "other",
+      "value": -5.561
+    },
+    {
+      "label": "Net Interest, US$M",
+      "section": "other",
+      "value": 25.723
+    },
+    {
+      "label": "Debt Amortizations, US$M",
+      "section": "other",
+      "value": 0.451
+    },
+    {
+      "label": "New Debt, US$M",
+      "section": "other",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends, US$M",
+      "section": "other",
+      "value": -0.49
+    }
+  ]
+}

@@ -183,6 +183,7 @@ src/finscan/
   match/          caption lookup, sums, periods, value resolution
   write/          copy the workbook, write inputs, copy formulas, comments
 mappings/         one reviewed mapping per company (git-tracked)
+golden/           reference values from reviewed quarters, for evaluation
 docs/             architecture and running guide
 ```
 

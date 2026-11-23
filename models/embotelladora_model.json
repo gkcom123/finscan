@@ -2,96 +2,41 @@
   "map_version": "1.0",
   "company": "embotelladora",
   "sheet": "Model",
-  "fingerprint": "150b9214c574f944",
+  "fingerprint": "191dadbacafbead4",
   "units": "millions",
   "cadence_months": 3,
   "fiscal_year_start_month": 1,
   "layout": {
     "label_col": 2,
-    "header_row": 5,
-    "first_data_row": 6,
-    "reference_col": 50,
-    "write_col": 51,
-    "write_mode": "fill_blank",
-    "period_dates": {
-      "4": "2014-12-31",
-      "5": "2015-12-31",
-      "6": "2016-12-31",
-      "7": "2017-12-31",
-      "8": "2018-12-31",
-      "9": "2019-12-31",
-      "10": "2020-12-31",
-      "11": "2021-12-31",
-      "12": "2022-12-31",
-      "13": "2023-12-31",
-      "14": "2024-12-31",
-      "15": "2025-12-31",
-      "16": "2026-03-30",
-      "18": "2018-03-30",
-      "19": "2018-06-30",
-      "20": "2018-09-30",
-      "21": "2018-12-30",
-      "22": "2019-03-30",
-      "23": "2019-06-30",
-      "24": "2019-09-30",
-      "25": "2019-12-30",
-      "26": "2020-03-30",
-      "27": "2020-06-30",
-      "28": "2020-09-30",
-      "29": "2020-12-30",
-      "30": "2021-03-30",
-      "31": "2021-06-30",
-      "32": "2021-09-30",
-      "33": "2021-12-30",
-      "34": "2022-03-30",
-      "35": "2022-06-30",
-      "36": "2022-09-30",
-      "37": "2022-12-30",
-      "38": "2023-03-30",
-      "39": "2023-06-30",
-      "40": "2023-09-30",
-      "41": "2023-12-30",
-      "42": "2024-03-30",
-      "43": "2024-06-30",
-      "44": "2024-09-30",
-      "45": "2024-12-30",
-      "46": "2025-03-30",
-      "47": "2025-06-30",
-      "48": "2025-09-30",
-      "49": "2025-12-30",
-      "50": "2026-03-30",
-      "52": "2024-09-01",
-      "53": "2025-09-01",
-      "55": "2022-03-30",
-      "56": "2022-06-30",
-      "57": "2022-09-30",
-      "58": "2022-12-30",
-      "59": "2023-03-30",
-      "60": "2023-06-30",
-      "61": "2023-09-30",
-      "62": "2023-12-30",
-      "63": "2024-03-30",
-      "64": "2024-06-30",
-      "65": "2024-09-30",
-      "66": "2024-12-30",
-      "68": "2022-03-30",
-      "69": "2022-06-01",
-      "70": "2022-09-01",
-      "71": "2023-03-30",
-      "72": "2023-06-01",
-      "73": "2023-09-01",
-      "74": "2024-03-30",
-      "75": "2024-06-01",
-      "76": "2024-09-01",
-      "78": "2022-03-30",
-      "79": "2022-06-01",
-      "80": "2022-09-01"
-    },
-    "period_date_row": 3
+    "header_row": 1,
+    "first_data_row": 2,
+    "reference_col": 53,
+    "write_col": 87,
+    "write_mode": "append",
+    "period_dates": {},
+    "period_date_row": null
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
+    {
+      "key": {
+        "label": "Embotelladora Andina S.A.",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 2,
+      "kind": "skip"
+    },
+    {
+      "key": {
+        "label": "(chilean peso millions)",
+        "section": "income_statement",
+        "occurrence": 1
+      },
+      "row_hint": 3,
+      "kind": "skip"
+    },
     {
       "key": {
         "label": "INCOME STATEMENT",
@@ -99,8 +44,7 @@
         "occurrence": 1
       },
       "row_hint": 6,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -110,11 +54,9 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "field:revenue_from_operations",
-      "pdf_caption": "Ordinary revenue",
+      "resolve": "pdf:Ordinary revenue",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "matched 'Ordinary revenue' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -133,11 +75,9 @@
       },
       "row_hint": 9,
       "kind": "input",
-      "resolve": "field:cost_of_revenue",
-      "pdf_caption": "Cost of sales",
+      "resolve": "pdf:Cost of sales",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -165,8 +105,7 @@
       },
       "row_hint": 12,
       "kind": "input",
-      "resolve": "field:other_income",
-      "pdf_caption": "Other income",
+      "resolve": "pdf:Other income",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -179,10 +118,8 @@
       "row_hint": 13,
       "kind": "input",
       "resolve": "pdf:Distribution expenses",
-      "pdf_caption": "Distribution expenses",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -192,12 +129,9 @@
       },
       "row_hint": 14,
       "kind": "input",
-      "resolve": "field:other_expenses",
-      "pdf_caption": "Administrative expenses",
+      "resolve": "pdf:Administrative expenses",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "'Administrative expenses' is also read by 'Other expenses' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -207,12 +141,10 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "field:other_expenses",
-      "pdf_caption": "Administrative expenses",
+      "resolve": "pdf:Other expenses, by function",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "'Administrative expenses' is also read by 'Administrative expenses' — one filing line cannot fill two rows; decide which owns it"
+      "review": "the 'Other expenses, by function' line (Note 28), not 'Administrative expenses'"
     },
     {
       "key": {
@@ -222,10 +154,10 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "pdf:Other (expense) income, net",
+      "resolve": "sum:pdf:Other (losses) gains?",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'Other (expense) income, net'"
+      "review": "printed as '-' in 1Q26 and 2Q26, so optional: 0 when unprinted"
     },
     {
       "key": {
@@ -245,7 +177,6 @@
       "row_hint": 18,
       "kind": "input",
       "resolve": "pdf:Financial income",
-      "pdf_caption": "Financial income",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -257,12 +188,9 @@
       },
       "row_hint": 19,
       "kind": "input",
-      "resolve": "pdf:Financial expenses",
-      "pdf_caption": "Financial costs",
+      "resolve": "pdf:Financial costs",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Financial costs' from the filing's income_statement (same financial expense line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -272,11 +200,9 @@
       },
       "row_hint": 20,
       "kind": "input",
-      "resolve": "pdf:Share of (loss) profit of investments accounted for using the equity method",
-      "pdf_caption": "Share of profit (loss) of investments in associates and joint ventures accounted for using the equity method",
+      "resolve": "pdf:Share of profit (loss) of investments in associates and joint ventures accounted for using the equity method",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · matched 'Share of profit (loss) of investments in associates and joint ventures accounted for using the equity method' in the filing (caption matched on every word) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -287,10 +213,8 @@
       "row_hint": 21,
       "kind": "input",
       "resolve": "pdf:Foreign exchange differences",
-      "pdf_caption": "Foreign exchange differences",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -300,12 +224,9 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "pdf:Loss from differences in indexed financial assets and liabilities",
-      "pdf_caption": "Income by indexation units",
+      "resolve": "pdf:Income by indexation units",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Income by indexation units' from the filing's income_statement (same indexation gains/losses line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -324,11 +245,9 @@
       },
       "row_hint": 24,
       "kind": "input",
-      "resolve": "field:tax_expense",
-      "pdf_caption": "Income tax expense",
+      "resolve": "pdf:Income tax expense",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -347,10 +266,10 @@
       },
       "row_hint": 26,
       "kind": "input",
-      "resolve": "pdf:Discontinued Operations",
+      "resolve": "const:0",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Discontinued Operations'"
+      "review": "the filing has no discontinued operations line"
     },
     {
       "key": {
@@ -369,11 +288,9 @@
       },
       "row_hint": 29,
       "kind": "input",
-      "resolve": "pdf:Net income attributable to controlling shareholders",
-      "pdf_caption": "Owners of the controller",
+      "resolve": "pdf:Owners of the controller",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "a model chose 'Owners of the controller' from the filing's income_statement (same attributable-to-owners line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -383,11 +300,9 @@
       },
       "row_hint": 30,
       "kind": "input",
-      "resolve": "pdf:Net income attributable to noncontrolling shareholders",
-      "pdf_caption": "Non-controlling interests",
+      "resolve": "pdf:Non-controlling interests",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "a model chose 'Non-controlling interests' from the filing's income_statement (same attributable-to-NCI line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -405,8 +320,7 @@
         "occurrence": 1
       },
       "row_hint": 34,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -415,7 +329,7 @@
         "occurrence": 2
       },
       "row_hint": 35,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -424,7 +338,7 @@
         "occurrence": 2
       },
       "row_hint": 36,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -433,7 +347,7 @@
         "occurrence": 2
       },
       "row_hint": 37,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -442,7 +356,7 @@
         "occurrence": 2
       },
       "row_hint": 38,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -451,7 +365,7 @@
         "occurrence": 2
       },
       "row_hint": 39,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -460,7 +374,7 @@
         "occurrence": 2
       },
       "row_hint": 40,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -469,7 +383,7 @@
         "occurrence": 1
       },
       "row_hint": 41,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -478,7 +392,7 @@
         "occurrence": 1
       },
       "row_hint": 42,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -487,7 +401,7 @@
         "occurrence": 2
       },
       "row_hint": 43,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -496,7 +410,7 @@
         "occurrence": 1
       },
       "row_hint": 44,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -505,7 +419,7 @@
         "occurrence": 1
       },
       "row_hint": 46,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -514,7 +428,7 @@
         "occurrence": 1
       },
       "row_hint": 47,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -523,7 +437,7 @@
         "occurrence": 1
       },
       "row_hint": 49,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -532,7 +446,7 @@
         "occurrence": 3
       },
       "row_hint": 50,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -542,10 +456,11 @@
       },
       "row_hint": 51,
       "kind": "input",
-      "resolve": "pdf:Depreciation & amortisation",
-      "statement": "income_statement",
+      "resolve": "pdf:Depreciation and amortization",
+      "statement": "title:EXPENSES BY NATURE",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Depreciation & amortisation'"
+      "sign": "positive",
+      "review": "Note 26 'Expenses by nature', printed negative; the model holds it positive. 1Q26 = 45043.823"
     },
     {
       "key": {
@@ -554,7 +469,7 @@
         "occurrence": 2
       },
       "row_hint": 52,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -563,7 +478,7 @@
         "occurrence": 1
       },
       "row_hint": 53,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -572,7 +487,7 @@
         "occurrence": 1
       },
       "row_hint": 54,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -581,7 +496,7 @@
         "occurrence": 1
       },
       "row_hint": 56,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -591,11 +506,10 @@
       },
       "row_hint": 57,
       "kind": "input",
-      "resolve": "field:ebitda",
-      "pdf_caption": "Profit",
-      "statement": "comprehensive_income",
+      "resolve": "absent:the company's own press-release figure (1Q26 = 194015); the 6-K does not state it, so enter it by hand",
+      "statement": "income_statement",
       "basis": "quarter",
-      "review": "matched 'Profit' in the comprehensive_income (printed in the comprehensive_income, not the income_statement) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "review": "the company's own press-release figure (1Q26 = 194015); the 6-K does not state it, so enter it by hand"
     },
     {
       "key": {
@@ -604,7 +518,7 @@
         "occurrence": 2
       },
       "row_hint": 58,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -613,7 +527,7 @@
         "occurrence": 2
       },
       "row_hint": 59,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -622,7 +536,7 @@
         "occurrence": 1
       },
       "row_hint": 61,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -631,7 +545,7 @@
         "occurrence": 1
       },
       "row_hint": 62,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -641,10 +555,10 @@
       },
       "row_hint": 63,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
+      "resolve": "sum:pdf:Receipts from the sale of goods and the rendering of services (including taxes)|pdf:Payments to suppliers for goods and services (including taxes)|pdf:Payments to and on behalf of employees|pdf:Other payments for operating activities (value-added taxes on purchases, sales and others)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1291776.326-899794.637-110869.022-145379.737', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Working Capital'"
+      "review": "1Q26 = 1291776.326-899794.637-110869.022-145379.737; captions are printed signed"
     },
     {
       "key": {
@@ -654,12 +568,9 @@
       },
       "row_hint": 64,
       "kind": "input",
-      "resolve": "pdf:Taxes, net",
-      "pdf_caption": "Net income before income taxes",
-      "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Net income before income taxes' in the income_statement (printed in the income_statement, not the cash_flow) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "resolve": "pdf:Income tax payments",
+      "statement": "cash_flow",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -669,11 +580,9 @@
       },
       "row_hint": 65,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
+      "resolve": "pdf:Interest payments",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Cash interest paid'"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -682,7 +591,7 @@
         "occurrence": 1
       },
       "row_hint": 66,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -692,11 +601,10 @@
       },
       "row_hint": 67,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
+      "resolve": "sum:pdf:Purchase of Property, plant and equipment|pdf:Proceeds from sale of Property, plant and equipment",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-53962.895+9.15', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Net Capex'"
+      "review": "1Q26 = -53962.895+9.15"
     },
     {
       "key": {
@@ -706,10 +614,10 @@
       },
       "row_hint": 68,
       "kind": "input",
-      "resolve": "pdf:Purchase and development of intangible assets",
+      "resolve": "const:0",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Purchase and development of intangible assets'"
+      "review": "the filing's cash flow has no intangibles line"
     },
     {
       "key": {
@@ -718,7 +626,7 @@
         "occurrence": 1
       },
       "row_hint": 69,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -728,12 +636,10 @@
       },
       "row_hint": 70,
       "kind": "input",
-      "resolve": "pdf:Other investing activities",
-      "pdf_caption": "activities",
+      "resolve": "sum:pdf:Other (payments) redemptions for (purchases) of financial instruments|pdf:Payment on forward, term option and financial exchange agreements?|pdf:Collection on forward, term, option and financial exchange agreements?",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "'activities' is also read by 'Other financing activities' — one filing line cannot fill two rows; decide which owns it"
+      "review": "forward-contract lines are printed '-' in 2Q26 but carried 72.8bn in 1H25, so optional"
     },
     {
       "key": {
@@ -743,10 +649,10 @@
       },
       "row_hint": 71,
       "kind": "input",
-      "resolve": "pdf:Equity Issuance/Buyback",
+      "resolve": "sum:pdf:Proceeds from changes in ownership interests in subsidiaries?",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Equity Issuance/Buyback'"
+      "review": "printed '-' in 2Q26, so optional: 0 when unprinted"
     },
     {
       "key": {
@@ -756,11 +662,9 @@
       },
       "row_hint": 72,
       "kind": "input",
-      "resolve": "pdf:Dividends Paid",
-      "pdf_caption": "Dividends",
-      "statement": "equity",
-      "basis": "quarter",
-      "review": "matched 'Dividends' in the equity (printed in the equity, not the cash_flow) — confirm the sign convention matches the workbook's, since statements differ on it"
+      "resolve": "pdf:Dividend payments by the reporting entity",
+      "statement": "cash_flow",
+      "basis": "quarter"
     },
     {
       "key": {
@@ -770,11 +674,10 @@
       },
       "row_hint": 73,
       "kind": "input",
-      "resolve": "pdf:Change in debt",
+      "resolve": "sum:pdf:Lease liability payments|pdf:Payment of principal installments on bonds|pdf:Proceeds (payments) from short term loans?|pdf:Loan payments?|pdf:Amounts from the issuance of bonds?",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-4125.475-2708.36', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's cash_flow matched this caption: no row captioned like 'Change in debt'"
+      "review": "1Q26 = -4125.475-2708.36; the loan and bond-issue lines are printed '-' in 2Q26 but are real debt flows, so optional"
     },
     {
       "key": {
@@ -784,12 +687,9 @@
       },
       "row_hint": 74,
       "kind": "input",
-      "resolve": "pdf:Other financing activities",
-      "pdf_caption": "activities",
+      "resolve": "pdf:Collections (payments) on derivative instruments related to bonds",
       "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "'activities' is also read by 'Other investing activities' — one filing line cannot fill two rows; decide which owns it"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -798,7 +698,7 @@
         "occurrence": 1
       },
       "row_hint": 75,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -808,10 +708,10 @@
       },
       "row_hint": 76,
       "kind": "input",
-      "resolve": "pdf:FX and effects of inflation",
+      "resolve": "sum:pdf:Effects of exchange differences on cash and cash equivalents|pdf:Effects of inflation in cash and cash equivalents in Argentina",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=8345.097-1138.528', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's cash_flow matched this caption: no row captioned like 'FX and effects of inflation'"
+      "review": "1Q26 = 8345.097-1138.528"
     },
     {
       "key": {
@@ -820,7 +720,11 @@
         "occurrence": 1
       },
       "row_hint": 77,
-      "kind": "formula"
+      "kind": "input",
+      "resolve": "absent:a plug the analyst derives in the model, not a filing line: type it by hand",
+      "statement": "cash_flow",
+      "basis": "quarter",
+      "review": "a plug the analyst derives in the model, not a filing line: type it by hand"
     },
     {
       "key": {
@@ -829,7 +733,7 @@
         "occurrence": 1
       },
       "row_hint": 78,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -838,7 +742,7 @@
         "occurrence": 1
       },
       "row_hint": 79,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -847,7 +751,7 @@
         "occurrence": 1
       },
       "row_hint": 81,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -856,7 +760,7 @@
         "occurrence": 1
       },
       "row_hint": 83,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -865,7 +769,7 @@
         "occurrence": 1
       },
       "row_hint": 84,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -874,7 +778,7 @@
         "occurrence": 1
       },
       "row_hint": 85,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -883,7 +787,7 @@
         "occurrence": 1
       },
       "row_hint": 86,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -892,7 +796,7 @@
         "occurrence": 1
       },
       "row_hint": 87,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -901,7 +805,7 @@
         "occurrence": 1
       },
       "row_hint": 88,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -910,7 +814,7 @@
         "occurrence": 1
       },
       "row_hint": 89,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -919,7 +823,7 @@
         "occurrence": 1
       },
       "row_hint": 90,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -928,7 +832,7 @@
         "occurrence": 2
       },
       "row_hint": 91,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -937,7 +841,7 @@
         "occurrence": 1
       },
       "row_hint": 93,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -947,11 +851,9 @@
       },
       "row_hint": 95,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
-      "pdf_caption": "Property, plant, and equipment",
+      "resolve": "pdf:Property, plant, and equipment",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "a model chose 'Property, plant, and equipment' from the filing's balance_sheet (standard synonym for tangible fixed assets) — CONFIRM before use"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -962,7 +864,6 @@
       "row_hint": 96,
       "kind": "input",
       "resolve": "pdf:Inventory",
-      "pdf_caption": "Inventory",
       "statement": "balance_sheet",
       "basis": "point_in_time"
     },
@@ -974,11 +875,10 @@
       },
       "row_hint": 97,
       "kind": "input",
-      "resolve": "pdf:Trade accounts receivables, net",
-      "pdf_caption": "Trade and other accounts receivable",
+      "resolve": "pdf:Trade and other accounts receivable",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Trade and other accounts receivable' from the filing's balance_sheet (closest receivables line includes trade receivables) — CONFIRM before use"
+      "review": "#1 is the current line; the non-current line (a few ThCh$) is ignored"
     },
     {
       "key": {
@@ -988,10 +888,10 @@
       },
       "row_hint": 98,
       "kind": "input",
-      "resolve": "pdf:Trade creditors /payables",
+      "resolve": "pdf:Trade and other accounts payable",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade creditors /payables'"
+      "review": "current liabilities line (#1); the non-current line is #2 and is ignored"
     },
     {
       "key": {
@@ -1000,7 +900,7 @@
         "occurrence": 1
       },
       "row_hint": 99,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1009,7 +909,7 @@
         "occurrence": 1
       },
       "row_hint": 100,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1018,7 +918,7 @@
         "occurrence": 1
       },
       "row_hint": 102,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1027,7 +927,7 @@
         "occurrence": 1
       },
       "row_hint": 103,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1036,7 +936,7 @@
         "occurrence": 1
       },
       "row_hint": 104,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1045,8 +945,7 @@
         "occurrence": 1
       },
       "row_hint": 106,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1056,10 +955,11 @@
       },
       "row_hint": 107,
       "kind": "input",
-      "resolve": "pdf:Short-term debt",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Bank loans|pdf:Bonds payable, net|pdf:Lease liabilities",
+      "statement": "title:OTHER CURRENT AND NON-CURRENT FINANCIAL LIABILITIES",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=10331.611+18125.143+9855.642', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Short-term debt'"
+      "column": "Current",
+      "review": "Note 17 current column: bank loans + bonds + leases. 1Q26 = 10331.611+18125.143+9855.642"
     },
     {
       "key": {
@@ -1069,10 +969,11 @@
       },
       "row_hint": 108,
       "kind": "input",
-      "resolve": "pdf:Long-term debt",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Bank loans|pdf:Bonds payable, net|pdf:Lease liabilities",
+      "statement": "title:OTHER CURRENT AND NON-CURRENT FINANCIAL LIABILITIES",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=105292.199+998624.718+18572.425', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Long-term debt'"
+      "column": "Non-current",
+      "review": "Note 17 non-current column. 1Q26 = 105292.199+998624.718+18572.425"
     },
     {
       "key": {
@@ -1081,7 +982,7 @@
         "occurrence": 1
       },
       "row_hint": 109,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1091,11 +992,9 @@
       },
       "row_hint": 111,
       "kind": "input",
-      "resolve": "pdf:Cash and equivalents",
-      "pdf_caption": "Cash and cash equivalents",
+      "resolve": "pdf:Cash and cash equivalents",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "matched 'Cash and cash equivalents' in the filing (caption matched on every word) — confirm it is the same line"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1104,7 +1003,7 @@
         "occurrence": 1
       },
       "row_hint": 113,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1113,7 +1012,7 @@
         "occurrence": 1
       },
       "row_hint": 114,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1122,7 +1021,11 @@
         "occurrence": 1
       },
       "row_hint": 116,
-      "kind": "formula"
+      "kind": "input",
+      "resolve": "absent:the company's own net debt figure is not in the financial statements (it is in the earnings release): type it by hand",
+      "statement": "balance_sheet",
+      "basis": "point_in_time",
+      "review": "the company's own net debt figure is not in the financial statements (it is in the earnings release): type it by hand"
     },
     {
       "key": {
@@ -1132,10 +1035,9 @@
       },
       "row_hint": 118,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
+      "resolve": "pdf:Total Equity",
       "statement": "balance_sheet",
-      "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Equity (as reported on balance sheet)'"
+      "basis": "point_in_time"
     },
     {
       "key": {
@@ -1144,7 +1046,7 @@
         "occurrence": 1
       },
       "row_hint": 119,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1153,7 +1055,7 @@
         "occurrence": 1
       },
       "row_hint": 121,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1162,7 +1064,7 @@
         "occurrence": 1
       },
       "row_hint": 123,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1171,7 +1073,7 @@
         "occurrence": 1
       },
       "row_hint": 124,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1180,7 +1082,7 @@
         "occurrence": 1
       },
       "row_hint": 126,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1189,7 +1091,7 @@
         "occurrence": 1
       },
       "row_hint": 128,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1198,7 +1100,7 @@
         "occurrence": 1
       },
       "row_hint": 129,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1207,7 +1109,7 @@
         "occurrence": 1
       },
       "row_hint": 131,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1216,7 +1118,7 @@
         "occurrence": 1
       },
       "row_hint": 133,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1225,7 +1127,7 @@
         "occurrence": 2
       },
       "row_hint": 134,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1234,7 +1136,7 @@
         "occurrence": 2
       },
       "row_hint": 135,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1243,7 +1145,7 @@
         "occurrence": 1
       },
       "row_hint": 136,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1252,7 +1154,7 @@
         "occurrence": 2
       },
       "row_hint": 137,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1261,7 +1163,7 @@
         "occurrence": 2
       },
       "row_hint": 138,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1270,7 +1172,7 @@
         "occurrence": 3
       },
       "row_hint": 139,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1279,7 +1181,7 @@
         "occurrence": 1
       },
       "row_hint": 140,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1288,7 +1190,7 @@
         "occurrence": 1
       },
       "row_hint": 141,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1297,7 +1199,7 @@
         "occurrence": 1
       },
       "row_hint": 142,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1306,7 +1208,7 @@
         "occurrence": 1
       },
       "row_hint": 143,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1315,7 +1217,7 @@
         "occurrence": 1
       },
       "row_hint": 144,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1324,8 +1226,7 @@
         "occurrence": 1
       },
       "row_hint": 146,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1334,7 +1235,7 @@
         "occurrence": 1
       },
       "row_hint": 150,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1343,7 +1244,7 @@
         "occurrence": 1
       },
       "row_hint": 151,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1352,7 +1253,7 @@
         "occurrence": 1
       },
       "row_hint": 153,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1361,7 +1262,7 @@
         "occurrence": 1
       },
       "row_hint": 154,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1370,7 +1271,7 @@
         "occurrence": 1
       },
       "row_hint": 155,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1379,7 +1280,7 @@
         "occurrence": 2
       },
       "row_hint": 157,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1388,7 +1289,7 @@
         "occurrence": 2
       },
       "row_hint": 158,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1397,7 +1298,7 @@
         "occurrence": 2
       },
       "row_hint": 159,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1406,7 +1307,7 @@
         "occurrence": 2
       },
       "row_hint": 160,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1415,7 +1316,7 @@
         "occurrence": 2
       },
       "row_hint": 161,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1424,7 +1325,7 @@
         "occurrence": 2
       },
       "row_hint": 162,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1433,7 +1334,7 @@
         "occurrence": 2
       },
       "row_hint": 163,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1442,7 +1343,7 @@
         "occurrence": 4
       },
       "row_hint": 164,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1451,7 +1352,7 @@
         "occurrence": 2
       },
       "row_hint": 165,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1460,7 +1361,7 @@
         "occurrence": 2
       },
       "row_hint": 166,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1469,7 +1370,7 @@
         "occurrence": 2
       },
       "row_hint": 167,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1478,7 +1379,7 @@
         "occurrence": 2
       },
       "row_hint": 168,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1487,7 +1388,7 @@
         "occurrence": 2
       },
       "row_hint": 169,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1496,7 +1397,7 @@
         "occurrence": 2
       },
       "row_hint": 170,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1505,7 +1406,7 @@
         "occurrence": 2
       },
       "row_hint": 171,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1514,7 +1415,7 @@
         "occurrence": 2
       },
       "row_hint": 172,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1523,7 +1424,7 @@
         "occurrence": 2
       },
       "row_hint": 173,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1532,7 +1433,7 @@
         "occurrence": 1
       },
       "row_hint": 175,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1541,7 +1442,7 @@
         "occurrence": 2
       },
       "row_hint": 177,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1550,7 +1451,7 @@
         "occurrence": 1
       },
       "row_hint": 178,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1559,7 +1460,7 @@
         "occurrence": 1
       },
       "row_hint": 180,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1568,7 +1469,7 @@
         "occurrence": 1
       },
       "row_hint": 182,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1577,7 +1478,7 @@
         "occurrence": 2
       },
       "row_hint": 184,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1586,7 +1487,7 @@
         "occurrence": 2
       },
       "row_hint": 185,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1595,7 +1496,7 @@
         "occurrence": 2
       },
       "row_hint": 187,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1604,7 +1505,7 @@
         "occurrence": 2
       },
       "row_hint": 188,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1613,7 +1514,7 @@
         "occurrence": 2
       },
       "row_hint": 190,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1623,8 +1524,8 @@
       },
       "row_hint": 192,
       "kind": "input",
-      "resolve": "pdf:FX rate average - Ch$/USD",
-      "review": "the reference cell is a hand-typed expression '=1/886.57', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "carry:the model holds 1/rate (1Q26 = 1/886.57) and the mapping cannot invert; Note 2.5.3 prints 892.56 for 2Q26. Carried forward: type =1/rate by hand",
+      "review": "the model holds 1/rate (1Q26 = 1/886.57) and the mapping cannot invert; Note 2.5.3 prints 892.56 for 2Q26. Carried forward: type =1/rate by hand"
     },
     {
       "key": {
@@ -1634,8 +1535,8 @@
       },
       "row_hint": 193,
       "kind": "input",
-      "resolve": "pdf:FX rate end of period - Ch$/USD",
-      "review": "the reference cell is a hand-typed expression '=1/926.27', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "carry:the model holds 1/rate (1Q26 = 1/926.27) and the mapping cannot invert; Note 2.5.3 prints 922.21 at 06.30.2026. Carried forward: type =1/rate by hand",
+      "review": "the model holds 1/rate (1Q26 = 1/926.27) and the mapping cannot invert; Note 2.5.3 prints 922.21 at 06.30.2026. Carried forward: type =1/rate by hand"
     },
     {
       "key": {
@@ -1644,7 +1545,7 @@
         "occurrence": 1
       },
       "row_hint": 194,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1653,7 +1554,7 @@
         "occurrence": 1
       },
       "row_hint": 196,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1662,7 +1563,7 @@
         "occurrence": 3
       },
       "row_hint": 197,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1671,7 +1572,7 @@
         "occurrence": 3
       },
       "row_hint": 198,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1680,7 +1581,7 @@
         "occurrence": 2
       },
       "row_hint": 199,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1689,7 +1590,7 @@
         "occurrence": 3
       },
       "row_hint": 200,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1698,7 +1599,7 @@
         "occurrence": 3
       },
       "row_hint": 201,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1707,7 +1608,7 @@
         "occurrence": 5
       },
       "row_hint": 202,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1716,7 +1617,7 @@
         "occurrence": 2
       },
       "row_hint": 203,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1725,7 +1626,7 @@
         "occurrence": 2
       },
       "row_hint": 204,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1734,7 +1635,7 @@
         "occurrence": 3
       },
       "row_hint": 205,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1743,7 +1644,7 @@
         "occurrence": 2
       },
       "row_hint": 206,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1752,7 +1653,7 @@
         "occurrence": 2
       },
       "row_hint": 207,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1762,10 +1663,10 @@
       },
       "row_hint": 208,
       "kind": "input",
-      "resolve": "pdf:Company Reported Leverage",
+      "resolve": "absent:the company's press-release figure; not in the 6-K",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's cash_flow matched this caption: no row captioned like 'Company Reported Leverage'"
+      "review": "the company's press-release figure; not in the 6-K"
     },
     {
       "key": {
@@ -1774,8 +1675,7 @@
         "occurrence": 2
       },
       "row_hint": 212,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1784,7 +1684,7 @@
         "occurrence": 1
       },
       "row_hint": 213,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1793,7 +1693,7 @@
         "occurrence": 2
       },
       "row_hint": 216,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1802,7 +1702,7 @@
         "occurrence": 2
       },
       "row_hint": 217,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1811,7 +1711,7 @@
         "occurrence": 2
       },
       "row_hint": 219,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1820,7 +1720,7 @@
         "occurrence": 2
       },
       "row_hint": 220,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1829,7 +1729,7 @@
         "occurrence": 2
       },
       "row_hint": 221,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1838,7 +1738,7 @@
         "occurrence": 3
       },
       "row_hint": 223,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1847,7 +1747,7 @@
         "occurrence": 3
       },
       "row_hint": 224,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1856,7 +1756,7 @@
         "occurrence": 3
       },
       "row_hint": 225,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1865,7 +1765,7 @@
         "occurrence": 3
       },
       "row_hint": 226,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1874,7 +1774,7 @@
         "occurrence": 3
       },
       "row_hint": 227,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1883,7 +1783,7 @@
         "occurrence": 3
       },
       "row_hint": 228,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1892,7 +1792,7 @@
         "occurrence": 3
       },
       "row_hint": 229,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1901,7 +1801,7 @@
         "occurrence": 6
       },
       "row_hint": 230,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1910,7 +1810,7 @@
         "occurrence": 3
       },
       "row_hint": 231,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1919,7 +1819,7 @@
         "occurrence": 3
       },
       "row_hint": 232,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1928,7 +1828,7 @@
         "occurrence": 3
       },
       "row_hint": 233,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1937,7 +1837,7 @@
         "occurrence": 3
       },
       "row_hint": 234,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1946,7 +1846,7 @@
         "occurrence": 3
       },
       "row_hint": 235,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1955,7 +1855,7 @@
         "occurrence": 3
       },
       "row_hint": 236,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1964,7 +1864,7 @@
         "occurrence": 3
       },
       "row_hint": 237,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1973,7 +1873,7 @@
         "occurrence": 3
       },
       "row_hint": 238,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1982,7 +1882,7 @@
         "occurrence": 3
       },
       "row_hint": 239,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1991,7 +1891,7 @@
         "occurrence": 1
       },
       "row_hint": 241,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2000,7 +1900,7 @@
         "occurrence": 2
       },
       "row_hint": 243,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2009,7 +1909,7 @@
         "occurrence": 4
       },
       "row_hint": 245,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2018,7 +1918,7 @@
         "occurrence": 2
       },
       "row_hint": 246,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2027,7 +1927,7 @@
         "occurrence": 2
       },
       "row_hint": 248,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2036,7 +1936,7 @@
         "occurrence": 2
       },
       "row_hint": 250,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2045,7 +1945,7 @@
         "occurrence": 3
       },
       "row_hint": 252,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2054,7 +1954,7 @@
         "occurrence": 3
       },
       "row_hint": 253,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2063,7 +1963,7 @@
         "occurrence": 2
       },
       "row_hint": 255,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2072,7 +1972,7 @@
         "occurrence": 3
       },
       "row_hint": 257,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2081,7 +1981,7 @@
         "occurrence": 3
       },
       "row_hint": 258,
-      "kind": "formula"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2090,7 +1990,7 @@
         "occurrence": 3
       },
       "row_hint": 260,
-      "kind": "formula"
+      "kind": "skip"
     }
   ]
 }

@@ -1,0 +1,197 @@
+{
+  "company": "almarai",
+  "period_end": "2026-09-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 6187.398
+    },
+    {
+      "label": "Cost of Sales",
+      "section": "income_statement",
+      "value": -4350.365
+    },
+    {
+      "label": "Selling and Distribution Expenses",
+      "section": "income_statement",
+      "value": -896.319
+    },
+    {
+      "label": "General and Administration Expenses",
+      "section": "income_statement",
+      "value": -130.824
+    },
+    {
+      "label": "Other Expenses, net",
+      "section": "income_statement",
+      "value": -30.89
+    },
+    {
+      "label": "Impairment (Loss) / Reversal on Financial Assets",
+      "section": "income_statement",
+      "value": -0.424
+    },
+    {
+      "label": "Exchange Gain, net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Financial Cost, net",
+      "section": "income_statement",
+      "value": -136.837
+    },
+    {
+      "label": "Share of Results of Associates",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Zakat and Income Tax",
+      "section": "income_statement",
+      "value": -23.915
+    },
+    {
+      "label": "Profit (loss) attributable to non-controlling interests",
+      "section": "income_statement",
+      "value": 0.035
+    },
+    {
+      "label": "Profit (loss) attributable to shareholders",
+      "section": "income_statement",
+      "value": 617.789
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": 666.3230000000001
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": -440.40099999999995
+    },
+    {
+      "label": "Taxes, net",
+      "section": "cash_flow",
+      "value": -5.408999999999992
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -196.60100000000006
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -1010.9140000000002
+    },
+    {
+      "label": "Purchase and development of intangible assets",
+      "section": "cash_flow",
+      "value": -9.11
+    },
+    {
+      "label": "Disposals/ Acquisition, of subsidiaries",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends Paid",
+      "section": "cash_flow",
+      "value": -1.5900000000001455
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": 162.231
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": 0.001000000000000334
+    },
+    {
+      "label": "FX impact",
+      "section": "cash_flow",
+      "value": -1.0849999999999995
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 29941.73
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 6584.585
+    },
+    {
+      "label": "Trade accounts receivables, net",
+      "section": "balance_sheet",
+      "value": 4129.33
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 5464.202
+    },
+    {
+      "label": "Bank Overdrafts",
+      "section": "balance_sheet",
+      "value": 4.228
+    },
+    {
+      "label": "Loans and Borrowings",
+      "section": "balance_sheet",
+      "value": 14013.975
+    },
+    {
+      "label": "Lease Liabilities",
+      "section": "balance_sheet",
+      "value": 606.544
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 548.197
+    },
+    {
+      "label": "Time Deposits",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Company Reported Net Debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 21328.086
+    },
+    {
+      "label": "FX rate end of period - SAR/USD",
+      "section": "other",
+      "value": 0.2664535038635758
+    },
+    {
+      "label": "FX rate average - SAR/USD",
+      "section": "other",
+      "value": 0.2665742542585237
+    }
+  ]
+}

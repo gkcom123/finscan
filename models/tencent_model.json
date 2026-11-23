@@ -47,7 +47,7 @@
     },
     "period_date_row": 2
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -58,11 +58,10 @@
       },
       "row_hint": 6,
       "kind": "input",
-      "resolve": "field:revenue_from_operations",
-      "pdf_caption": "Revenues",
+      "resolve": "pdf:Revenues",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "a model chose 'Revenues' from the filing's income_statement (same line label) — CONFIRM before use"
+      "review": "2Q25 check: 184,504"
     },
     {
       "key": {
@@ -81,11 +80,10 @@
       },
       "row_hint": 8,
       "kind": "input",
-      "resolve": "field:cost_of_revenue",
-      "pdf_caption": "Cost of revenues",
+      "resolve": "pdf:Cost of revenues",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative"
+      "review": "2Q25 check: -79,491"
     },
     {
       "key": {
@@ -112,8 +110,7 @@
         "occurrence": 1
       },
       "row_hint": 11,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -123,10 +120,10 @@
       },
       "row_hint": 12,
       "kind": "input",
-      "resolve": "field:interest_income",
-      "pdf_caption": "Interest income",
+      "resolve": "pdf:Interest income",
       "statement": "income_statement",
-      "basis": "quarter"
+      "basis": "quarter",
+      "review": "2Q25 check: 4,121"
     },
     {
       "key": {
@@ -136,12 +133,10 @@
       },
       "row_hint": 13,
       "kind": "input",
-      "resolve": "field:other_income",
-      "pdf_caption": "Other gains/(losses), net",
+      "resolve": "sum:pdf:Net gains/(losses) from investments and others|pdf:Other gains/(losses), net",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=2638-3578', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b>"
+      "review": "analyst typed =2638-3578: investment gains below operating profit plus other gains/(losses) above it"
     },
     {
       "key": {
@@ -151,11 +146,10 @@
       },
       "row_hint": 14,
       "kind": "input",
-      "resolve": "field:selling_marketing_expense",
-      "pdf_caption": "Selling and marketing expenses",
+      "resolve": "pdf:Selling and marketing expenses",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative"
+      "review": "2Q25 check: -9,410"
     },
     {
       "key": {
@@ -165,11 +159,10 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "field:general_admin_expense",
-      "pdf_caption": "General and administrative expenses",
+      "resolve": "pdf:General and administrative expenses",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative"
+      "review": "2Q25 check: -31,921"
     },
     {
       "key": {
@@ -188,12 +181,10 @@
       },
       "row_hint": 17,
       "kind": "input",
-      "resolve": "pdf:Finance costs, net",
-      "pdf_caption": "Finance costs",
+      "resolve": "pdf:Finance costs",
       "statement": "income_statement",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Finance costs' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "2Q25 check: -3,941"
     },
     {
       "key": {
@@ -203,11 +194,10 @@
       },
       "row_hint": 18,
       "kind": "input",
-      "resolve": "field:share_of_associates",
-      "pdf_caption": "joint ventures, net",
+      "resolve": "pdf:Share of profit/(loss) of associates and joint ventures, net",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'joint ventures, net' from the filing's income_statement (matches share of results from associates and joint ventures) — CONFIRM before use"
+      "review": "2Q25 check: 4,473"
     },
     {
       "key": {
@@ -226,11 +216,10 @@
       },
       "row_hint": 20,
       "kind": "input",
-      "resolve": "field:tax_expense",
-      "pdf_caption": "Income tax expense",
+      "resolve": "pdf:Income tax expense",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept"
+      "review": "2Q25 check: -11,351"
     },
     {
       "key": {
@@ -258,10 +247,10 @@
       },
       "row_hint": 23,
       "kind": "input",
-      "resolve": "field:non_controlling_interest",
-      "pdf_caption": "Non-controlling interests",
+      "resolve": "pdf:Non-controlling interests",
       "statement": "income_statement",
-      "basis": "quarter"
+      "basis": "quarter",
+      "review": "2Q25 check: 416"
     },
     {
       "key": {
@@ -279,8 +268,7 @@
         "occurrence": 1
       },
       "row_hint": 26,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -389,10 +377,10 @@
       },
       "row_hint": 39,
       "kind": "input",
-      "resolve": "field:depreciation_amortisation",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:EBITDA (a)|-pdf:Operating profit @ income_statement|pdf:Other gains/(losses), net @ income_statement",
+      "statement": "title:OTHER FINANCIAL INFORMATION",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=6076+1575+8134', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's income_statement matched this caption: no row captioned like 'depreciation amortisation'"
+      "review": "D&A is not printed; footnote (a) defines EBITDA = operating profit - other gains/(losses) + D&A, so D&A = EBITDA - operating profit + other gains/(losses). 2Q25: 79,467-60,104-3,578 = 15,785 = analyst's 6076+1575+8134; 1Q25 also matches (14,854)"
     },
     {
       "key": {
@@ -438,11 +426,10 @@
       },
       "row_hint": 45,
       "kind": "input",
-      "resolve": "field:ebitda",
-      "pdf_caption": "Operating profit",
-      "statement": "income_statement",
+      "resolve": "pdf:Adjusted EBITDA (a)",
+      "statement": "title:OTHER FINANCIAL INFORMATION",
       "basis": "quarter",
-      "review": "matched 'Operating profit' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "2Q25 check: 85,122. Was mapped to Operating profit (60,104), which was wrong"
     },
     {
       "key": {
@@ -506,10 +493,10 @@
       },
       "row_hint": 54,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
+      "resolve": "absent:not in any Tencent quarterly document; the model fills it only in FY columns (4Q is a formula: FY minus 1Q-3Q). Analyst keys it from the Annual Report",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document; the model fills it only in FY columns (4Q is a formula: FY minus 1Q-3Q). Analyst keys it from the Annual Report"
     },
     {
       "key": {
@@ -519,11 +506,10 @@
       },
       "row_hint": 55,
       "kind": "input",
-      "resolve": "field:tax_expense",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -533,11 +519,10 @@
       },
       "row_hint": 56,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -556,11 +541,10 @@
       },
       "row_hint": 58,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports. Not the announcement's 'Capital expenditures' line (19,107 in 2Q25)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-12552+100', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports. Not the announcement's 'Capital expenditures' line (19,107 in 2Q25)"
     },
     {
       "key": {
@@ -570,11 +554,10 @@
       },
       "row_hint": 59,
       "kind": "input",
-      "resolve": "pdf:Purchase of intangible assets",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -584,11 +567,10 @@
       },
       "row_hint": 60,
       "kind": "input",
-      "resolve": "pdf:Disposals/ Acquistion, of subsidiaries, businesses",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -616,11 +598,10 @@
       },
       "row_hint": 63,
       "kind": "input",
-      "resolve": "pdf:Equity Issuance",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-47715+1119+113', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -630,11 +611,10 @@
       },
       "row_hint": 64,
       "kind": "input",
-      "resolve": "pdf:Dividends",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-28859-1554+2285', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -644,11 +624,10 @@
       },
       "row_hint": 65,
       "kind": "input",
-      "resolve": "pdf:Net Change in debt",
+      "resolve": "absent:not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=31192-27228+16684-13522-14213-2777', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in any Tencent quarterly document: the line-item cash flow statement is only in the Interim Report (H1) and Annual Report (FY). The model fills this in 2Q (six-month) and FY columns only; 1Q/3Q stay blank. Analyst keys it from those reports"
     },
     {
       "key": {
@@ -802,11 +781,10 @@
       },
       "row_hint": 88,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
-      "pdf_caption": "Property, plant and equipment",
+      "resolve": "sum:pdf:Property, plant and equipment|pdf:Right-of-use assets",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=118565+16952', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · a model chose 'Property, plant and equipment' from the filing's balance_sheet (closest exact asset line) — CONFIRM before use"
+      "review": "analyst typed =118565+16952: PP&E plus right-of-use assets"
     },
     {
       "key": {
@@ -816,11 +794,10 @@
       },
       "row_hint": 89,
       "kind": "input",
-      "resolve": "pdf:Inventory",
-      "pdf_caption": "Inventories",
+      "resolve": "pdf:Inventories",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Inventories' from the filing's balance_sheet (same line item) — CONFIRM before use"
+      "review": "2Q25 check: 435"
     },
     {
       "key": {
@@ -830,11 +807,10 @@
       },
       "row_hint": 90,
       "kind": "input",
-      "resolve": "pdf:Trade accounts receivable",
-      "pdf_caption": "Accounts receivable",
+      "resolve": "pdf:Accounts receivable",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "matched 'Accounts receivable' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "2Q25 check: 51,315"
     },
     {
       "key": {
@@ -844,10 +820,10 @@
       },
       "row_hint": 91,
       "kind": "input",
-      "resolve": "pdf:Trade accounts payable",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Accounts payable",
+      "statement": "title:STATEMENT OF FINANCIAL POSITION (continued)",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade accounts payable'"
+      "review": "2Q25 check: 130,501; liabilities are on the balance sheet's continuation page"
     },
     {
       "key": {
@@ -902,10 +878,10 @@
       },
       "row_hint": 99,
       "kind": "input",
-      "resolve": "pdf:Debt  Breakdown",
+      "resolve": "absent:heading row: empty in every column of the model",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Debt  Breakdown'"
+      "review": "heading row: empty in every column of the model"
     },
     {
       "key": {
@@ -915,10 +891,10 @@
       },
       "row_hint": 100,
       "kind": "input",
-      "resolve": "pdf:Short-term debt",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Borrowings #2|pdf:Notes payable #2",
+      "statement": "title:STATEMENT OF FINANCIAL POSITION (continued)",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=58631+12880', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Short-term debt'"
+      "review": "analyst typed =58631+12880: current borrowings + current notes payable (#2 = the current-liabilities line)"
     },
     {
       "key": {
@@ -928,10 +904,10 @@
       },
       "row_hint": 101,
       "kind": "input",
-      "resolve": "pdf:Long-term debt",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Borrowings #1|pdf:Notes payable #1",
+      "statement": "title:STATEMENT OF FINANCIAL POSITION (continued)",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=202966+119338', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Long-term debt'"
+      "review": "analyst typed =202966+119338: non-current borrowings + notes payable (#1 = the non-current line)"
     },
     {
       "key": {
@@ -950,10 +926,10 @@
       },
       "row_hint": 104,
       "kind": "input",
-      "resolve": "pdf:Lease Obligations",
+      "resolve": "absent:heading row: empty in every column of the model",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Lease Obligations'"
+      "review": "heading row: empty in every column of the model"
     },
     {
       "key": {
@@ -963,10 +939,10 @@
       },
       "row_hint": 105,
       "kind": "input",
-      "resolve": "pdf:Short-term",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Lease liabilities #2",
+      "statement": "title:STATEMENT OF FINANCIAL POSITION (continued)",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Short-term'"
+      "review": "current lease liabilities; 2Q25 check: 5,343"
     },
     {
       "key": {
@@ -976,10 +952,10 @@
       },
       "row_hint": 106,
       "kind": "input",
-      "resolve": "pdf:Long-term",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Lease liabilities #1",
+      "statement": "title:STATEMENT OF FINANCIAL POSITION (continued)",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Long-term'"
+      "review": "non-current lease liabilities; 2Q25 check: 13,328"
     },
     {
       "key": {
@@ -998,10 +974,10 @@
       },
       "row_hint": 109,
       "kind": "input",
-      "resolve": "pdf:Debt  Including Lease obligations",
+      "resolve": "absent:heading row: empty in every column of the model",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Debt  Including Lease obligations'"
+      "review": "heading row: empty in every column of the model"
     },
     {
       "key": {
@@ -1039,9 +1015,9 @@
       "row_hint": 113,
       "kind": "input",
       "resolve": "pdf:Cash and cash equivalents",
-      "pdf_caption": "Cash and cash equivalents",
       "statement": "balance_sheet",
-      "basis": "point_in_time"
+      "basis": "point_in_time",
+      "review": "2Q25 check: 182,057"
     },
     {
       "key": {
@@ -1051,10 +1027,10 @@
       },
       "row_hint": 114,
       "kind": "input",
-      "resolve": "pdf:Investments",
+      "resolve": "sum:pdf:Other financial assets #2|pdf:Financial assets at fair value through profit or loss #2|pdf:Term deposits #2",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=4125+18235+169423', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: caption 'Investments' matches 2 rows ('Investments in associates', 'Investments in joint ventures')"
+      "review": "analyst typed =4125+18235+169423: the CURRENT-asset lines (#2) of other financial assets, FVTPL and term deposits"
     },
     {
       "key": {
@@ -1082,10 +1058,10 @@
       },
       "row_hint": 118,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Total equity",
+      "statement": "title:STATEMENT OF FINANCIAL POSITION (continued)",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Equity (as reported on balance sheet)'"
+      "review": "2Q25 check: 1,202,849"
     },
     {
       "key": {
@@ -1265,8 +1241,7 @@
         "occurrence": 1
       },
       "row_hint": 147,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1590,11 +1565,9 @@
         "occurrence": 1
       },
       "row_hint": 197,
-      "kind": "input",
-      "resolve": "pdf:FX rate average - RMB/USD",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "kind": "formula",
+      "resolve": "formula:latest",
+      "review": "not in the filing; follows the model's own pattern: copies this row's latest formula, =AVERAGE(prior period-end rate, this period-end rate)"
     },
     {
       "key": {
@@ -1604,10 +1577,10 @@
       },
       "row_hint": 198,
       "kind": "input",
-      "resolve": "pdf:FX rate  - RMB/USD (as at end of period)",
+      "resolve": "absent:not in the filing; the analyst types the period-end RMB/USD rate, which the average-rate formula then reads",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, comprehensive_income, income_statement)"
+      "review": "not in the filing; the analyst types the period-end RMB/USD rate, which the average-rate formula then reads"
     },
     {
       "key": {
@@ -1706,8 +1679,7 @@
         "occurrence": 2
       },
       "row_hint": 211,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {

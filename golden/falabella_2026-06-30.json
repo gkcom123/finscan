@@ -1,0 +1,527 @@
+{
+  "company": "falabella",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenues",
+      "section": "income_statement",
+      "value": 2874629.668
+    },
+    {
+      "label": "COGS",
+      "section": "income_statement",
+      "value": -1878786.713
+    },
+    {
+      "label": "Distribution costs",
+      "section": "income_statement",
+      "value": -63354.367
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -653669.474
+    },
+    {
+      "label": "Other gains (losses)",
+      "section": "income_statement",
+      "value": 206705.901
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": -48232.586
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": 24945.302
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": -72971.334
+    },
+    {
+      "label": "Gain on net non-monetary position",
+      "section": "income_statement",
+      "value": -18340.824
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": -88109.582
+    },
+    {
+      "label": "Interest and indexation income.",
+      "section": "income_statement",
+      "value": 436977.434
+    },
+    {
+      "label": "Interest and indexation expense.",
+      "section": "income_statement",
+      "value": -87005.382
+    },
+    {
+      "label": "Commission income",
+      "section": "income_statement",
+      "value": 172736.368
+    },
+    {
+      "label": "Commission expense",
+      "section": "income_statement",
+      "value": -74216.642
+    },
+    {
+      "label": "Net income (loss) on financial transactions",
+      "section": "income_statement",
+      "value": 8512.583
+    },
+    {
+      "label": "Net income (loss) on currency exchange",
+      "section": "income_statement",
+      "value": -1674.676
+    },
+    {
+      "label": "Other operating income (expenses)",
+      "section": "income_statement",
+      "value": 2152.45
+    },
+    {
+      "label": "Credit risk provisions",
+      "section": "income_statement",
+      "value": -116846.463
+    },
+    {
+      "label": "Remuneration and personnel costs",
+      "section": "income_statement",
+      "value": -45986.858
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -110642.943
+    },
+    {
+      "label": "Depreciation and amortization",
+      "section": "income_statement",
+      "value": -11073.478
+    },
+    {
+      "label": "Other operating expenses",
+      "section": "income_statement",
+      "value": -13124.063
+    },
+    {
+      "label": "Income from investments in companies",
+      "section": "income_statement",
+      "value": 273.11
+    },
+    {
+      "label": "Income tax expense",
+      "section": "income_statement",
+      "value": -36030.543
+    },
+    {
+      "label": "Net Financial Income / (Cost)",
+      "section": "income_statement",
+      "value": -84981.073
+    },
+    {
+      "label": "Profit / (Loss) in Associates",
+      "section": "income_statement",
+      "value": 9975.195
+    },
+    {
+      "label": "Exchange Rate Differences",
+      "section": "income_statement",
+      "value": 8912.132
+    },
+    {
+      "label": "Minority interest",
+      "section": "income_statement",
+      "value": -102551.922
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Rent",
+      "section": "income_statement",
+      "value": 23052.203
+    },
+    {
+      "label": "Adjustment",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Total Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -53000.793999999994
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -26353.761
+    },
+    {
+      "label": "Gross Capex",
+      "section": "cash_flow",
+      "value": -84928.397
+    },
+    {
+      "label": "Net Payment for acquisition  of intangible assets",
+      "section": "cash_flow",
+      "value": -3805.7700000000004
+    },
+    {
+      "label": "Disposals/ Acquisition, of subsidiaries",
+      "section": "cash_flow",
+      "value": 908.8069999999998
+    },
+    {
+      "label": "Deposits interest received",
+      "section": "cash_flow",
+      "value": 22003.13
+    },
+    {
+      "label": "Disposed Cash from discontinued operations",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends received  / Dividends Paid",
+      "section": "cash_flow",
+      "value": -234630.341
+    },
+    {
+      "label": "Acquisition of bonds",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Change in debt /Finance Costs",
+      "section": "cash_flow",
+      "value": -76190.82999999999
+    },
+    {
+      "label": "Other items",
+      "section": "cash_flow",
+      "value": -5630.709000000003
+    },
+    {
+      "label": "Cash and cash equivalents - Non Banking Business",
+      "section": "cash_flow",
+      "value": 1727100.783
+    },
+    {
+      "label": "Charges (credits) to income that do not involve cash movements:",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Depreciation and amortization",
+      "section": "cash_flow",
+      "value": 11073.478000000001
+    },
+    {
+      "label": "Credit risk provision",
+      "section": "cash_flow",
+      "value": 142568.476
+    },
+    {
+      "label": "Profit losses from equity method investments",
+      "section": "cash_flow",
+      "value": -273.11
+    },
+    {
+      "label": "Other charges (credits) that do not involve significant cash flow movements",
+      "section": "cash_flow",
+      "value": 36030.543
+    },
+    {
+      "label": "Net change in interest, indexations and fees accrued on assets and liabilities",
+      "section": "cash_flow",
+      "value": -7434.3009999999995
+    },
+    {
+      "label": "Changes in assets and liabilities affecting cash flow:",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Increase in investments under resale agreements and obligations under repurchase agreements",
+      "section": "cash_flow",
+      "value": -20501.003
+    },
+    {
+      "label": "Increase in contracts for repurchase and securities loans",
+      "section": "cash_flow",
+      "value": 304614.325
+    },
+    {
+      "label": "Net (Increase) decrease due from banks",
+      "section": "cash_flow",
+      "value": -252.5139999999992
+    },
+    {
+      "label": "(Increase) net decrease in debt from banks",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net increase in loans and accounts receivable from clients",
+      "section": "cash_flow",
+      "value": -377453.96699999995
+    },
+    {
+      "label": "Net decrease in instruments held for trading",
+      "section": "cash_flow",
+      "value": -473893.836
+    },
+    {
+      "label": "Increase in deposits and other demand obligations",
+      "section": "cash_flow",
+      "value": 20520.989
+    },
+    {
+      "label": "Increase in deposits and other time deposits",
+      "section": "cash_flow",
+      "value": 324426.914
+    },
+    {
+      "label": "Increase in obligations with banks",
+      "section": "cash_flow",
+      "value": 8203.269
+    },
+    {
+      "label": "Other use of cash",
+      "section": "cash_flow",
+      "value": 7453.767999999996
+    },
+    {
+      "label": "Net (Increase) decrease in investment securities available for sale",
+      "section": "cash_flow",
+      "value": 9751.025000000001
+    },
+    {
+      "label": "Additions to property, plant and equipment",
+      "section": "cash_flow",
+      "value": -5316.213
+    },
+    {
+      "label": "Cash flows to affiliated companies",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends received from investments in societies/companies",
+      "section": "cash_flow",
+      "value": 197.28799999999998
+    },
+    {
+      "label": "Other sources of cash",
+      "section": "cash_flow",
+      "value": 256.345
+    },
+    {
+      "label": "(Redemption) Letters of credit issuance",
+      "section": "cash_flow",
+      "value": -2272.4739999999997
+    },
+    {
+      "label": "Bond issuance",
+      "section": "cash_flow",
+      "value": 59833.194
+    },
+    {
+      "label": "Bond payments and other long term loans",
+      "section": "cash_flow",
+      "value": -6993.762999999999
+    },
+    {
+      "label": "Other",
+      "section": "cash_flow",
+      "value": -2593.256
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 3930254.651
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": 279768.225
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 1788322.949
+    },
+    {
+      "label": "Trade debtors/receivables",
+      "section": "balance_sheet",
+      "value": 440199.156
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 1420526.705
+    },
+    {
+      "label": "Customer loans and receivables",
+      "section": "balance_sheet",
+      "value": 7171225.981
+    },
+    {
+      "label": "Total assets - banking business",
+      "section": "balance_sheet",
+      "value": 11398616.383
+    },
+    {
+      "label": "Deposits and other demand obligations",
+      "section": "balance_sheet",
+      "value": 2677290.609
+    },
+    {
+      "label": "Deposits and other time deposits.",
+      "section": "balance_sheet",
+      "value": 4197447.073
+    },
+    {
+      "label": "Debt Obligations",
+      "section": "balance_sheet",
+      "value": 3576816.489
+    },
+    {
+      "label": "Finance Lease  Obligations",
+      "section": "balance_sheet",
+      "value": 1487145.961
+    },
+    {
+      "label": "Operating Lease obligations",
+      "section": "balance_sheet",
+      "value": 1582102.814
+    },
+    {
+      "label": "Finance Leases",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Hard Currency FX debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "LC debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Due to banks",
+      "section": "balance_sheet",
+      "value": 216761.679
+    },
+    {
+      "label": "Debt instruments issued",
+      "section": "balance_sheet",
+      "value": 393679.138
+    },
+    {
+      "label": "Leasing liabilities",
+      "section": "balance_sheet",
+      "value": 27437.425
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 981365.087
+    },
+    {
+      "label": "Market Cap",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 10775764.583
+    },
+    {
+      "label": "Hedge assets",
+      "section": "balance_sheet",
+      "value": 201864.149
+    },
+    {
+      "label": "Average Exchange rate",
+      "section": "other",
+      "value": 886.57
+    },
+    {
+      "label": "Exchange Rate at the end",
+      "section": "other",
+      "value": 926.27
+    },
+    {
+      "label": "Numbers of stores",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Total selling space (sq. m)",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Chile",
+      "section": "cash_flow",
+      "value": -1005254.896
+    },
+    {
+      "label": "Peru",
+      "section": "cash_flow",
+      "value": -668928.3619999998
+    },
+    {
+      "label": "Argentina",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Colombia",
+      "section": "cash_flow",
+      "value": -122552.14599999998
+    },
+    {
+      "label": "Brazil",
+      "section": "cash_flow",
+      "value": -40315.032
+    },
+    {
+      "label": "Mallplaza",
+      "section": "cash_flow",
+      "value": -19014.7
+    },
+    {
+      "label": "Other Eliminitions",
+      "section": "cash_flow",
+      "value": -27176.590999999993
+    }
+  ]
+}

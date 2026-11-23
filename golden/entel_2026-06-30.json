@@ -1,0 +1,232 @@
+{
+  "company": "entel",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenues",
+      "section": "income_statement",
+      "value": 757296.688
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": 23624.862
+    },
+    {
+      "label": "Salaries and Expenses / Employee Benefits Expenses",
+      "section": "income_statement",
+      "value": -86131.621
+    },
+    {
+      "label": "Depreciation and amortization expenses",
+      "section": "income_statement",
+      "value": -147237.147
+    },
+    {
+      "label": "Impairment losses (reversals), Net",
+      "section": "income_statement",
+      "value": -22795.356
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": -455707.438
+    },
+    {
+      "label": "Other gains (losses)",
+      "section": "income_statement",
+      "value": -390.415
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": 2424.987
+    },
+    {
+      "label": "Financial expenses",
+      "section": "income_statement",
+      "value": -26975.183
+    },
+    {
+      "label": "Foreign currency translation differences",
+      "section": "income_statement",
+      "value": -526.362
+    },
+    {
+      "label": "Results from inflation-adjusted units",
+      "section": "income_statement",
+      "value": -18252.084
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": 563.769
+    },
+    {
+      "label": "Discontinued Operations",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": 150988.671
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 219648.244
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes, net",
+      "section": "cash_flow",
+      "value": -5230.444999999998
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -22438.522
+    },
+    {
+      "label": "Cash interest received",
+      "section": "cash_flow",
+      "value": 1759.1039999999998
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -151699.39500000002
+    },
+    {
+      "label": "Purchase and development of intangible assets",
+      "section": "cash_flow",
+      "value": -1562.529
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": 8.20299999999952
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends Paid",
+      "section": "cash_flow",
+      "value": -42266.059
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": -49468.824
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": -2271.2690000000002
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 1168869.358
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 80186.36
+    },
+    {
+      "label": "Trade accounts receivables, net",
+      "section": "balance_sheet",
+      "value": 10100.459
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 804893.949
+    },
+    {
+      "label": "Interest bearing borrowings (Loans)",
+      "section": "balance_sheet",
+      "value": 9149.055
+    },
+    {
+      "label": "Liabilities with bondholders",
+      "section": "balance_sheet",
+      "value": 9475.373
+    },
+    {
+      "label": "Finance Lease Liabilities",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Liabilities for leases current",
+      "section": "balance_sheet",
+      "value": 149101.592
+    },
+    {
+      "label": "Interest bearing borrowings (Loans)",
+      "section": "balance_sheet",
+      "value": 169589.286
+    },
+    {
+      "label": "Liabilities with bondholders",
+      "section": "balance_sheet",
+      "value": 1417291.187
+    },
+    {
+      "label": "Finance Lease Liabilities",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Liabilities for leases non-current",
+      "section": "balance_sheet",
+      "value": 512588.574
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 1310.161
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 1979557.849
+    },
+    {
+      "label": "FX rate average - Ch$/USD",
+      "section": "cash_flow",
+      "value": 0.0011279425200491783
+    },
+    {
+      "label": "FX rate  - Ch$/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": 0.0010795988210780874
+    }
+  ]
+}

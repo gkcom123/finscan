@@ -1,0 +1,237 @@
+{
+  "company": "upl",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue from Operations",
+      "section": "income_statement",
+      "value": 101810.0
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": 2170.0
+    },
+    {
+      "label": "Cost of revenue",
+      "section": "income_statement",
+      "value": -43150.0
+    },
+    {
+      "label": "Employee benefit expense",
+      "section": "income_statement",
+      "value": -15270.0
+    },
+    {
+      "label": "Impairment loss/(writeback) on trade receivables",
+      "section": "income_statement",
+      "value": -1060.0
+    },
+    {
+      "label": "Depreciation and Amortisation expense",
+      "section": "income_statement",
+      "value": -8320.0
+    },
+    {
+      "label": "Exchange difference on trade receivables and trade payables",
+      "section": "income_statement",
+      "value": -500.0
+    },
+    {
+      "label": "Finance cost",
+      "section": "income_statement",
+      "value": -8520.0
+    },
+    {
+      "label": "Other Expenses",
+      "section": "income_statement",
+      "value": -27330.0
+    },
+    {
+      "label": "Share of profit/loss from Associates/ JV",
+      "section": "income_statement",
+      "value": -830.0
+    },
+    {
+      "label": "Exceptional items",
+      "section": "income_statement",
+      "value": -90.0
+    },
+    {
+      "label": "Tax expenses",
+      "section": "income_statement",
+      "value": 360.0
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other Investing",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory days",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Receivable days",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Payable days",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Net working capital days",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Receivable factoring",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Investments",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Receivable factoring + receivables as % of sales",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Hybrid debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - INR/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate  - INR/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

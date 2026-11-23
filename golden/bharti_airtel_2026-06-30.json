@@ -1,0 +1,212 @@
+{
+  "company": "bharti_airtel",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue from operations",
+      "section": "income_statement",
+      "value": 585391.0
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Network operating expenses",
+      "section": "income_statement",
+      "value": 108097.0
+    },
+    {
+      "label": "Access Charges",
+      "section": "income_statement",
+      "value": 15887.0
+    },
+    {
+      "label": "License fee / spectrum charges (revenue share)",
+      "section": "income_statement",
+      "value": 41720.0
+    },
+    {
+      "label": "Employee benefits",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Sales and marketing expenses",
+      "section": "income_statement",
+      "value": 36929.0
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": 27954.0
+    },
+    {
+      "label": "Share of results of joint ventures and associates",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation and amortisation",
+      "section": "income_statement",
+      "value": 142350.0
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": 59564.0
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Net foreign exchange and derivative (gain)/loss",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Non-operating income / expenses, (net)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Exceptional items",
+      "section": "income_statement",
+      "value": 3534.0
+    },
+    {
+      "label": "Income  Tax Expense",
+      "section": "income_statement",
+      "value": -37612.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Comparable revenue",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Comparable EBITDA",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Acquisitions / (Asset Sales)",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends / Equity movements",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Principal Repayments",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade debtors",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade creditors",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Obligation",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Unsecured debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Unrestricted cash",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Other Liquidity sources",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Market Cap",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - USD/INR",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "FX rate  - USD/INR (as at end of period)",
+      "section": "other",
+      "value": null
+    }
+  ]
+}

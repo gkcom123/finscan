@@ -1,0 +1,272 @@
+{
+  "company": "funo",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Investment property income",
+      "section": "income_statement",
+      "value": 6976.202
+    },
+    {
+      "label": "Reserve for Covid relieves",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Reserve for ITIS discounts",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Maintenance revenues",
+      "section": "income_statement",
+      "value": 760.413
+    },
+    {
+      "label": "Dividends / fiduciary rights' leases",
+      "section": "income_statement",
+      "value": 122.436
+    },
+    {
+      "label": "Income from property financial assets",
+      "section": "income_statement",
+      "value": 62.445
+    },
+    {
+      "label": "Mangement fees, income",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Management fees, expenses",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -562.577
+    },
+    {
+      "label": "Operating expenses",
+      "section": "income_statement",
+      "value": -1116.541
+    },
+    {
+      "label": "Property taxes",
+      "section": "income_statement",
+      "value": -209.86
+    },
+    {
+      "label": "Insurance",
+      "section": "income_statement",
+      "value": -129.933
+    },
+    {
+      "label": "Finance cost",
+      "section": "income_statement",
+      "value": -2899.889
+    },
+    {
+      "label": "Expenses for early termination of financial instruments",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 226.993
+    },
+    {
+      "label": "Net income on sale of investment properties",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Foreign exchange gain (loss), Net",
+      "section": "income_statement",
+      "value": 2490.415
+    },
+    {
+      "label": "Valuation effect on financial instruments",
+      "section": "income_statement",
+      "value": -3.18
+    },
+    {
+      "label": "Fair value adjustment to investment properties and affiliates",
+      "section": "income_statement",
+      "value": -23.407
+    },
+    {
+      "label": "Investment Valuation Effect",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Profit on purchase of investment property",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Profit on sale of investment property",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Administrative platform amortization",
+      "section": "income_statement",
+      "value": -25.546
+    },
+    {
+      "label": "Amortization of bank and other financial commissions and expenses",
+      "section": "income_statement",
+      "value": -45.286
+    },
+    {
+      "label": "Liquidation of commissions and other financial expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Taxes on the sale of properties investment",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other income (expenses)",
+      "section": "income_statement",
+      "value": -23.435
+    },
+    {
+      "label": "Executive bonus",
+      "section": "income_statement",
+      "value": -139.066
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Change in Working Capital",
+      "section": "cash_flow",
+      "value": -118.701
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -2157.322
+    },
+    {
+      "label": "Cash interest income",
+      "section": "cash_flow",
+      "value": 226.993
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -3114.494
+    },
+    {
+      "label": "Acquisition of investment properties",
+      "section": "cash_flow",
+      "value": -2470.604
+    },
+    {
+      "label": "Purchase and development of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquisition, of subsidiaries",
+      "section": "cash_flow",
+      "value": -249.068
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": -6.827
+    },
+    {
+      "label": "Equity Issuance/Buyback/ Trustor's contributions",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Distributions to trustors/ beneficiaries",
+      "section": "cash_flow",
+      "value": -2998.128
+    },
+    {
+      "label": "Trust certificates repurchase",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": -68.444
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": -290.803
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 367546.117
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease receivables from tenants",
+      "section": "balance_sheet",
+      "value": 2667.173
+    },
+    {
+      "label": "Trade accounts receivables, net",
+      "section": "balance_sheet",
+      "value": 761.485
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 4166.113
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 25722.332
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 136577.757
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 7868.913
+    },
+    {
+      "label": "Net assets/ Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 240728.641
+    },
+    {
+      "label": "FX rate average - MXN/USD",
+      "section": "other",
+      "value": 0.05692783258662994
+    },
+    {
+      "label": "FX rate end of period - MXN/USD",
+      "section": "other",
+      "value": 0.05535045138293102
+    }
+  ]
+}

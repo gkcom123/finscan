@@ -50,7 +50,7 @@
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -61,10 +61,10 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "field:revenue_from_operations",
-      "statement": "income_statement",
+      "resolve": "pdf:Total net revenues",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -83,11 +83,10 @@
       },
       "row_hint": 9,
       "kind": "input",
-      "resolve": "field:cost_of_revenue",
-      "statement": "income_statement",
+      "resolve": "pdf:Cost of revenues",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -114,8 +113,7 @@
         "occurrence": 1
       },
       "row_hint": 12,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -126,10 +124,9 @@
       "row_hint": 13,
       "kind": "input",
       "resolve": "pdf:Fulfillment",
-      "statement": "income_statement",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -140,10 +137,9 @@
       "row_hint": 14,
       "kind": "input",
       "resolve": "pdf:Marketing",
-      "statement": "income_statement",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -154,10 +150,9 @@
       "row_hint": 15,
       "kind": "input",
       "resolve": "pdf:Research and development",
-      "statement": "income_statement",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -168,10 +163,9 @@
       "row_hint": 16,
       "kind": "input",
       "resolve": "pdf:General and administrative",
-      "statement": "income_statement",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -181,10 +175,11 @@
       },
       "row_hint": 17,
       "kind": "input",
-      "resolve": "pdf:Gain on sale of development properties",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:Gain on sale of development properties?",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "printed only in quarters with a sale (absent 1Q26, 404 in 2Q26); 0 when not printed"
     },
     {
       "key": {
@@ -194,10 +189,11 @@
       },
       "row_hint": 18,
       "kind": "input",
-      "resolve": "pdf:Impairment of goodwill and impairment of long-lived assets",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:Impairment of goodwill and long-lived assets?",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "never a line in the quarterly operations statement (the model types 0 in 1Q-3Q; 4Q is FY - 9M); the reconciliation's 'Impairment of goodwill, long-lived assets and investments' sits inside Others, net and is NOT this row"
     },
     {
       "key": {
@@ -217,9 +213,9 @@
       "row_hint": 20,
       "kind": "input",
       "resolve": "pdf:Share of results of equity investees",
-      "statement": "income_statement",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -229,11 +225,10 @@
       },
       "row_hint": 21,
       "kind": "input",
-      "resolve": "field:finance_costs",
-      "statement": "income_statement",
+      "resolve": "pdf:Interest expense",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -243,10 +238,10 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "field:interest_income",
+      "resolve": "const:0",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "review": "JD reports interest income inside 'Others, net' (footnote 4); the model keeps this row at 0 every quarter"
     },
     {
       "key": {
@@ -257,9 +252,9 @@
       "row_hint": 23,
       "kind": "input",
       "resolve": "pdf:Others, net",
-      "statement": "income_statement",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -278,10 +273,11 @@
       },
       "row_hint": 25,
       "kind": "input",
-      "resolve": "field:tax_expense",
-      "statement": "income_statement",
+      "resolve": "pdf:Income tax",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "caption varies with direction: 'Income tax expenses' (1Q26), 'Income tax benefits/(expenses)' (2Q26)"
     },
     {
       "key": {
@@ -309,11 +305,11 @@
       },
       "row_hint": 28,
       "kind": "input",
-      "resolve": "field:non_controlling_interest",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Net income attributable to non-controlling interests shareholders",
+      "statement": "title:Unaudited Interim Condensed Consolidated Statements of Operations",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "printed as a positive share of income; the model holds it negated (728 printed -> -728)"
     },
     {
       "key": {
@@ -331,8 +327,7 @@
         "occurrence": 1
       },
       "row_hint": 31,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -450,10 +445,10 @@
       },
       "row_hint": 46,
       "kind": "input",
-      "resolve": "field:depreciation_amortisation",
-      "statement": "income_statement",
+      "resolve": "pdf:Add: Depreciation and other amortization",
+      "statement": "title:Unaudited Reconciliation of GAAP and Non-GAAP Results",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -499,10 +494,10 @@
       },
       "row_hint": 52,
       "kind": "input",
-      "resolve": "field:ebitda",
-      "statement": "income_statement",
+      "resolve": "pdf:Non-GAAP EBITDA",
+      "statement": "title:Unaudited Reconciliation of GAAP and Non-GAAP Results",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no income_statement (found: balance_sheet, summary)"
+      "column": "RMB"
     },
     {
       "key": {
@@ -538,8 +533,7 @@
         "occurrence": 1
       },
       "row_hint": 57,
-      "kind": "skip",
-      "review": "reference cell is 'formula', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -557,8 +551,7 @@
         "occurrence": 1
       },
       "row_hint": 60,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -567,8 +560,7 @@
         "occurrence": 1
       },
       "row_hint": 61,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -577,8 +569,7 @@
         "occurrence": 1
       },
       "row_hint": 62,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -587,8 +578,7 @@
         "occurrence": 1
       },
       "row_hint": 63,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -598,10 +588,11 @@
       },
       "row_hint": 64,
       "kind": "input",
-      "resolve": "field:net_cash_from_operating_activities",
-      "statement": "cash_flow",
+      "resolve": "pdf:Net cash provided by operating activities",
+      "statement": "title:Statements of Cash Flows and Free Cash Flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "caption varies with direction: 'Net cash (used in)/provided by operating activities' in 1Q26"
     },
     {
       "key": {
@@ -611,11 +602,11 @@
       },
       "row_hint": 65,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Capital expenditures for development properties|pdf:Other capital expenditures",
+      "statement": "title:Statements of Cash Flows and Free Cash Flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-5063-3498', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "quarterly capex = development properties + other (AG..AJ follow this; 1Q26 cell AK '=-5063-3498' double-counts development properties - should be -5063)"
     },
     {
       "key": {
@@ -625,11 +616,11 @@
       },
       "row_hint": 66,
       "kind": "input",
-      "resolve": "pdf:Purchase of intangible assets",
-      "statement": "cash_flow",
+      "resolve": "pdf:Impact from consumer financing receivables included in the operating cash flow",
+      "statement": "title:Statements of Cash Flows and Free Cash Flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "column": "RMB",
+      "review": "the model uses this row for the free-cash-flow consumer-financing adjustment, not intangibles (1Q26 -1,973; 1Q25 -1,018)"
     },
     {
       "key": {
@@ -639,10 +630,10 @@
       },
       "row_hint": 67,
       "kind": "input",
-      "resolve": "pdf:Disposals/ Acquistion, of subsidiaries, businesses",
+      "resolve": "absent:left blank in the model every quarter; the press release prints no investing-activity breakdown",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "review": "left blank in the model every quarter; the press release prints no investing-activity breakdown"
     },
     {
       "key": {
@@ -660,8 +651,7 @@
         "occurrence": 1
       },
       "row_hint": 69,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -670,8 +660,7 @@
         "occurrence": 1
       },
       "row_hint": 70,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -680,8 +669,7 @@
         "occurrence": 1
       },
       "row_hint": 71,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -690,8 +678,7 @@
         "occurrence": 1
       },
       "row_hint": 72,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -700,8 +687,7 @@
         "occurrence": 1
       },
       "row_hint": 73,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -710,8 +696,7 @@
         "occurrence": 1
       },
       "row_hint": 74,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -721,10 +706,10 @@
       },
       "row_hint": 75,
       "kind": "input",
-      "resolve": "pdf:Balancing figure",
+      "resolve": "absent:left blank in the model every quarter; not a filing line",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "review": "left blank in the model every quarter; not a filing line"
     },
     {
       "key": {
@@ -733,8 +718,7 @@
         "occurrence": 1
       },
       "row_hint": 77,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -743,8 +727,7 @@
         "occurrence": 1
       },
       "row_hint": 78,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -753,8 +736,7 @@
         "occurrence": 1
       },
       "row_hint": 80,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -763,8 +745,7 @@
         "occurrence": 1
       },
       "row_hint": 81,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -818,8 +799,7 @@
         "occurrence": 1
       },
       "row_hint": 88,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -838,9 +818,11 @@
       },
       "row_hint": 90,
       "kind": "input",
-      "resolve": "pdf:Capex",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-6681-8794', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "sum:pdf:Capital expenditures for development properties|pdf:Other capital expenditures",
+      "statement": "title:twelve months ended",
+      "basis": "point_in_time",
+      "column": "RMB",
+      "review": "trailing twelve months, from the TTM free-cash-flow table (1Q26 -6,681 + -8,794 = -15,475)"
     },
     {
       "key": {
@@ -851,9 +833,10 @@
       "row_hint": 91,
       "kind": "input",
       "resolve": "pdf:Free cash flow",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "statement": "title:twelve months ended",
+      "basis": "point_in_time",
+      "column": "RMB",
+      "review": "trailing twelve months, from the TTM free-cash-flow table (1Q26 21,598); basis point_in_time so the 12-month figure is read as printed, not de-cumulated"
     },
     {
       "key": {
@@ -872,10 +855,11 @@
       },
       "row_hint": 95,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Property, equipment and software, net|pdf:Land use rights, net",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=93920+36817', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's balance_sheet matched this caption: no row captioned like 'Tangible fixed assets'"
+      "column": "RMB",
+      "review": "PP&E + land use rights (1Q26 93,920 + 36,817); construction in progress is NOT included"
     },
     {
       "key": {
@@ -885,10 +869,10 @@
       },
       "row_hint": 96,
       "kind": "input",
-      "resolve": "pdf:Inventory",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Inventories, net",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Inventory'"
+      "column": "RMB"
     },
     {
       "key": {
@@ -898,10 +882,10 @@
       },
       "row_hint": 97,
       "kind": "input",
-      "resolve": "pdf:Trade accounts receivable",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Accounts receivable, net",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Trade accounts receivable'"
+      "column": "RMB"
     },
     {
       "key": {
@@ -911,11 +895,10 @@
       },
       "row_hint": 98,
       "kind": "input",
-      "resolve": "pdf:Trade accounts payable",
-      "pdf_caption": "Accounts payable",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Accounts payable",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "matched 'Accounts payable' in the filing (caption matched by containment) — confirm it is the same line"
+      "column": "RMB"
     },
     {
       "key": {
@@ -969,8 +952,7 @@
         "occurrence": 1
       },
       "row_hint": 106,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -980,11 +962,11 @@
       },
       "row_hint": 107,
       "kind": "input",
-      "resolve": "pdf:Short-term debt",
-      "pdf_caption": "Short-term debts",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Short-term debts|pdf:Unsecured senior notes #1",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=8274+3459', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · 'Short-term debts' is also read by 'Short-term' — one filing line cannot fill two rows; decide which owns it"
+      "column": "RMB",
+      "review": "current debt: short-term debts + current senior notes (#1 is the current-liabilities line)"
     },
     {
       "key": {
@@ -994,11 +976,11 @@
       },
       "row_hint": 108,
       "kind": "input",
-      "resolve": "pdf:Long-term debt",
-      "pdf_caption": "Long-term debts",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Unsecured senior notes #2|pdf:Long-term debts",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=20494+42162', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · 'Long-term debts' is also read by 'Long-term' — one filing line cannot fill two rows; decide which owns it"
+      "column": "RMB",
+      "review": "non-current debt: non-current senior notes (#2) + long-term debts"
     },
     {
       "key": {
@@ -1017,11 +999,10 @@
       },
       "row_hint": 111,
       "kind": "input",
-      "resolve": "pdf:Lease Obligations",
-      "pdf_caption": "Operating lease liabilities",
+      "resolve": "absent:a heading row in the model, blank every quarter; its parts are 'Short-term' and 'Long-term' below",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Operating lease liabilities' from the filing's balance_sheet (same liability line) — CONFIRM before use"
+      "review": "a heading row in the model, blank every quarter; its parts are 'Short-term' and 'Long-term' below"
     },
     {
       "key": {
@@ -1031,11 +1012,11 @@
       },
       "row_hint": 112,
       "kind": "input",
-      "resolve": "pdf:Short-term",
-      "pdf_caption": "Short-term debts",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Operating lease liabilities #1",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "'Short-term debts' is also read by 'Short-term debt' — one filing line cannot fill two rows; decide which owns it"
+      "column": "RMB",
+      "review": "current operating lease liabilities"
     },
     {
       "key": {
@@ -1045,11 +1026,11 @@
       },
       "row_hint": 113,
       "kind": "input",
-      "resolve": "pdf:Long-term",
-      "pdf_caption": "Long-term debts",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Operating lease liabilities #2",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "'Long-term debts' is also read by 'Long-term debt' — one filing line cannot fill two rows; decide which owns it"
+      "column": "RMB",
+      "review": "non-current operating lease liabilities"
     },
     {
       "key": {
@@ -1068,10 +1049,10 @@
       },
       "row_hint": 116,
       "kind": "input",
-      "resolve": "pdf:Debt  Including Lease obligations",
+      "resolve": "absent:left blank in the model every quarter; not a filing line",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Debt  Including Lease obligations'"
+      "review": "left blank in the model every quarter; not a filing line"
     },
     {
       "key": {
@@ -1118,9 +1099,9 @@
       "row_hint": 121,
       "kind": "input",
       "resolve": "pdf:Cash and cash equivalents",
-      "statement": "balance_sheet",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Cash and cash equivalents'"
+      "column": "RMB"
     },
     {
       "key": {
@@ -1130,10 +1111,10 @@
       },
       "row_hint": 122,
       "kind": "input",
-      "resolve": "pdf:Short term Investments",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Short-term investments",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Short term Investments'"
+      "column": "RMB"
     },
     {
       "key": {
@@ -1161,11 +1142,10 @@
       },
       "row_hint": 126,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
-      "pdf_caption": "Total shareholders’ equity",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Total shareholders’ equity",
+      "statement": "title:Unaudited Interim Condensed Consolidated Balance Sheets",
       "basis": "point_in_time",
-      "review": "a model chose 'Total shareholders’ equity' from the filing's balance_sheet (same balance sheet equity total) — CONFIRM before use"
+      "column": "RMB"
     },
     {
       "key": {
@@ -1237,8 +1217,7 @@
         "occurrence": 1
       },
       "row_hint": 139,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1247,8 +1226,7 @@
         "occurrence": 1
       },
       "row_hint": 140,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1347,8 +1325,7 @@
         "occurrence": 1
       },
       "row_hint": 155,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1411,8 +1388,7 @@
         "occurrence": 3
       },
       "row_hint": 166,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1421,8 +1397,7 @@
         "occurrence": 1
       },
       "row_hint": 167,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1431,8 +1406,7 @@
         "occurrence": 1
       },
       "row_hint": 168,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1441,8 +1415,7 @@
         "occurrence": 2
       },
       "row_hint": 169,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1496,8 +1469,7 @@
         "occurrence": 2
       },
       "row_hint": 175,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1506,8 +1478,7 @@
         "occurrence": 2
       },
       "row_hint": 176,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1516,8 +1487,7 @@
         "occurrence": 2
       },
       "row_hint": 177,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1526,8 +1496,7 @@
         "occurrence": 2
       },
       "row_hint": 178,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1536,8 +1505,7 @@
         "occurrence": 2
       },
       "row_hint": 179,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1546,8 +1514,7 @@
         "occurrence": 2
       },
       "row_hint": 180,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1556,8 +1523,7 @@
         "occurrence": 2
       },
       "row_hint": 181,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1566,8 +1532,7 @@
         "occurrence": 2
       },
       "row_hint": 183,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1657,8 +1622,7 @@
         "occurrence": 1
       },
       "row_hint": 199,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1667,8 +1631,7 @@
         "occurrence": 1
       },
       "row_hint": 200,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1687,10 +1650,10 @@
       },
       "row_hint": 205,
       "kind": "input",
-      "resolve": "pdf:FX rate average - RMB/USD",
+      "resolve": "carry:a model-maintained RMB/USD rate, not reported by the filing",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1/6.9244', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "review": "a model-maintained RMB/USD rate, not reported by the filing"
     },
     {
       "key": {
@@ -1700,10 +1663,10 @@
       },
       "row_hint": 206,
       "kind": "input",
-      "resolve": "pdf:FX rate  - RMB/USD (as at end of period)",
+      "resolve": "carry:a model-maintained RMB/USD rate, not reported by the filing",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=1/6.899', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, summary)"
+      "review": "a model-maintained RMB/USD rate, not reported by the filing"
     },
     {
       "key": {
@@ -1811,8 +1774,7 @@
         "occurrence": 2
       },
       "row_hint": 220,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1875,8 +1837,7 @@
         "occurrence": 6
       },
       "row_hint": 231,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1885,8 +1846,7 @@
         "occurrence": 2
       },
       "row_hint": 232,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1895,8 +1855,7 @@
         "occurrence": 2
       },
       "row_hint": 233,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1905,8 +1864,7 @@
         "occurrence": 3
       },
       "row_hint": 234,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1960,8 +1918,7 @@
         "occurrence": 3
       },
       "row_hint": 240,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1970,8 +1927,7 @@
         "occurrence": 3
       },
       "row_hint": 241,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1980,8 +1936,7 @@
         "occurrence": 3
       },
       "row_hint": 242,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1990,8 +1945,7 @@
         "occurrence": 3
       },
       "row_hint": 243,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2000,8 +1954,7 @@
         "occurrence": 3
       },
       "row_hint": 244,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2010,8 +1963,7 @@
         "occurrence": 3
       },
       "row_hint": 245,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2020,8 +1972,7 @@
         "occurrence": 3
       },
       "row_hint": 246,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2030,8 +1981,7 @@
         "occurrence": 3
       },
       "row_hint": 248,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2076,8 +2026,7 @@
         "occurrence": 1
       },
       "row_hint": 256,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2176,8 +2125,7 @@
         "occurrence": 2
       },
       "row_hint": 273,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2186,8 +2134,7 @@
         "occurrence": 2
       },
       "row_hint": 274,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {

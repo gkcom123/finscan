@@ -1,0 +1,212 @@
+{
+  "company": "ccu",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 607801.276
+    },
+    {
+      "label": "Cost of sales",
+      "section": "income_statement",
+      "value": -354971.019
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": 2054.604
+    },
+    {
+      "label": "Distribution costs",
+      "section": "income_statement",
+      "value": -129897.848
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -49294.939
+    },
+    {
+      "label": "Other expenses by function",
+      "section": "income_statement",
+      "value": -85139.315
+    },
+    {
+      "label": "Other gains (losses)",
+      "section": "income_statement",
+      "value": -10941.371
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 4864.66
+    },
+    {
+      "label": "Finance exps",
+      "section": "income_statement",
+      "value": -16359.101
+    },
+    {
+      "label": "Share of profit of equity-accounted investees",
+      "section": "income_statement",
+      "value": -3111.441
+    },
+    {
+      "label": "Gains (losses) on exchange differences",
+      "section": "income_statement",
+      "value": 3560.114
+    },
+    {
+      "label": "Result as per adjustment units",
+      "section": "income_statement",
+      "value": -11445.69
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Income tax (expense)/benefit",
+      "section": "income_statement",
+      "value": 22398.968
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": 231.375
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": 220608.4140000001
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -17508.718
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -14077.059999999998
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -36088.024999999994
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": -3191.967
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": -171793.548
+    },
+    {
+      "label": "Other Investing",
+      "section": "cash_flow",
+      "value": 231.86899999999997
+    },
+    {
+      "label": "Equity Issuance",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": -41259.967
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": 882.185000000005
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 1589314.546
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 439521.094
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": 351523.091
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 150811.279
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 1036466.435
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": 14713.282
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": 52116.512
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 346974.162
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - CLP/USD",
+      "section": "cash_flow",
+      "value": 0.0010949540210980844
+    },
+    {
+      "label": "FX rate  - CLP/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": 0.0010795988210780874
+    }
+  ]
+}

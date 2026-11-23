@@ -1,0 +1,262 @@
+{
+  "company": "axiata_issue",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Operating revenue",
+      "section": "income_statement",
+      "value": 2870.302
+    },
+    {
+      "label": "Depreciation, impairment and amortisation",
+      "section": "income_statement",
+      "value": -807.73
+    },
+    {
+      "label": "Impairment of goodwill",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Foreign exchange gains / (losses)",
+      "section": "income_statement",
+      "value": 11.402
+    },
+    {
+      "label": "Domestic interconnect and international outpayment",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Marketing, Advertising and promotion",
+      "section": "income_statement",
+      "value": -220.034
+    },
+    {
+      "label": "Other operating costs",
+      "section": "income_statement",
+      "value": -658.078
+    },
+    {
+      "label": "Staff costs",
+      "section": "income_statement",
+      "value": -286.051
+    },
+    {
+      "label": "Impairment on receivables, net / provision for impairment on financial assets",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other gains/(losses) - net",
+      "section": "income_statement",
+      "value": -10.805
+    },
+    {
+      "label": "Other operating income (expenses)- net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": 35.574
+    },
+    {
+      "label": "Finance cost excluding net foreign exchange gains / (losses) on financing activities",
+      "section": "income_statement",
+      "value": 11.402
+    },
+    {
+      "label": "Net foreign exchange gains/ (losses) on financing activities",
+      "section": "income_statement",
+      "value": 11.402
+    },
+    {
+      "label": "Joint ventures - share of tax (net taxes)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Associates - share of tax (net of tax)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Associates - gain/ (loss) on dilution of equity interest",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on early redemption of debt",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": -211.339
+    },
+    {
+      "label": "Gain on disposal of group of subsidiares - net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Profit for the financial period from discontinued operations",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": 1042.3220000000001
+    },
+    {
+      "label": "Taxes, net",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -148.834
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -509.58399999999995
+    },
+    {
+      "label": "Purchase and development of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquistion of subsidiaries",
+      "section": "cash_flow",
+      "value": 296.588
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": 237.08599999999998
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends Paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": 484.3990000000008
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": 9.320000000000164
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 16028.403
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts receivables, net",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 921.274
+    },
+    {
+      "label": "Secured",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Unsecured",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Liabilities",
+      "section": "balance_sheet",
+      "value": 1535.712
+    },
+    {
+      "label": "Secured",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Unsecured",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Liabilities",
+      "section": "balance_sheet",
+      "value": 1535.712
+    },
+    {
+      "label": "Total cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 2599.65
+    },
+    {
+      "label": "Financial asset at FVTPL",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Deposits pledged",
+      "section": "balance_sheet",
+      "value": -170.488
+    },
+    {
+      "label": "Deposits maturing more than three (3) months",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Bank overdraft",
+      "section": "balance_sheet",
+      "value": -137.525
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 23422.912
+    },
+    {
+      "label": "FX rate average - MYR/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate  - MYR/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

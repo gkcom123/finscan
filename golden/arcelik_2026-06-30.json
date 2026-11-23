@@ -1,0 +1,362 @@
+{
+  "company": "arcelik",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenues",
+      "section": "income_statement",
+      "value": 141323.537
+    },
+    {
+      "label": "COGS",
+      "section": "income_statement",
+      "value": -99847.765
+    },
+    {
+      "label": "General administrative expenses",
+      "section": "income_statement",
+      "value": -8500.11
+    },
+    {
+      "label": "Marketing expenses",
+      "section": "income_statement",
+      "value": -30512.254
+    },
+    {
+      "label": "Research and development expenses",
+      "section": "income_statement",
+      "value": -1454.121
+    },
+    {
+      "label": "Other income from operating activities",
+      "section": "income_statement",
+      "value": 10023.106
+    },
+    {
+      "label": "Other expenses from operating activities",
+      "section": "income_statement",
+      "value": -5239.589
+    },
+    {
+      "label": "Income from investment activities",
+      "section": "income_statement",
+      "value": 9.57
+    },
+    {
+      "label": "Expenses from investment activities",
+      "section": "income_statement",
+      "value": -3.785
+    },
+    {
+      "label": "Income from associates (net)",
+      "section": "income_statement",
+      "value": 15.008
+    },
+    {
+      "label": "FX Income/Loss",
+      "section": "income_statement",
+      "value": -127.1
+    },
+    {
+      "label": "Derivative Income Loss",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": 3916.083
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": -10956.63
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": -382.853
+    },
+    {
+      "label": "Deferred Tax Expense",
+      "section": "income_statement",
+      "value": -151.396
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": 5248.339000000001
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 7415.0
+    },
+    {
+      "label": "Rent",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": 11887.903000000002
+    },
+    {
+      "label": "Taxes, net",
+      "section": "cash_flow",
+      "value": -174.466
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -6487.821
+    },
+    {
+      "label": "Net Capex (Purchase of PPE and intangible assets)",
+      "section": "cash_flow",
+      "value": -3392.599
+    },
+    {
+      "label": "Acquisition",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposal",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": -15.489999999999952
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": 2029.907
+    },
+    {
+      "label": "Dividends received  / Dividends Paid",
+      "section": "cash_flow",
+      "value": -534.202
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": -3049.186999999998
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": -1105.5430000000001
+    },
+    {
+      "label": "Inflation Impact on cash and cash equivalents",
+      "section": "cash_flow",
+      "value": -2935.4410000000007
+    },
+    {
+      "label": "Effect of currency translation differences",
+      "section": "cash_flow",
+      "value": -608.3409999999994
+    },
+    {
+      "label": "Capex - Company reported",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 120035.633
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": 9543.593
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 104592.713
+    },
+    {
+      "label": "Trade debtors/receivables",
+      "section": "balance_sheet",
+      "value": 143507.723
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 154550.693
+    },
+    {
+      "label": "Lease Liabilities",
+      "section": "other",
+      "value": 12292.685
+    },
+    {
+      "label": "TRY Loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "EUR Loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "USD Loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "GBP Loans",
+      "section": "other",
+      "value": 1013.0
+    },
+    {
+      "label": "ZAR Loans",
+      "section": "other",
+      "value": 4258.0
+    },
+    {
+      "label": "RUB Loans",
+      "section": "other",
+      "value": 2410.0
+    },
+    {
+      "label": "CNY Loans",
+      "section": "other",
+      "value": 8092.0
+    },
+    {
+      "label": "NOK Loans",
+      "section": "other",
+      "value": 847.0
+    },
+    {
+      "label": "AUD Loans",
+      "section": "other",
+      "value": 1309.0
+    },
+    {
+      "label": "RON Loans",
+      "section": "other",
+      "value": 2727.0
+    },
+    {
+      "label": "SEK Loans",
+      "section": "other",
+      "value": 172.0
+    },
+    {
+      "label": "PKR Loans",
+      "section": "other",
+      "value": 3945.0
+    },
+    {
+      "label": "BDT Loans",
+      "section": "other",
+      "value": 7437.0
+    },
+    {
+      "label": "IDR Loans",
+      "section": "other",
+      "value": 237.0
+    },
+    {
+      "label": "MYR Loans",
+      "section": "other",
+      "value": 353.0
+    },
+    {
+      "label": "THB Loans",
+      "section": "other",
+      "value": 96.0
+    },
+    {
+      "label": "PLN Loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "VND Loans",
+      "section": "other",
+      "value": 0.0
+    },
+    {
+      "label": "CZK Loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "MAD loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Other Loans",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "USD bonds",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "EUR bonds",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "TRY bonds",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "other",
+      "value": 64288.017
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Market cap",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Reported Net Leverage (excluding IFRS-16 adjusments)",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "FX rate average - TRY/USD",
+      "section": "cash_flow",
+      "value": 0.02761141897843272
+    },
+    {
+      "label": "FX rate  - TRY/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": 0.026356225472237673
+    }
+  ]
+}

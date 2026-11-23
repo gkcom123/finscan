@@ -88,11 +88,16 @@
       "76": "2025-09-30",
       "77": "2025-12-30",
       "78": "2026-03-31",
-      "80": "2019-06-30"
+      "80": "2019-06-30",
+      "81": "2019-12-31",
+      "82": "2020-03-31",
+      "83": "2020-06-30",
+      "84": "2020-09-30",
+      "86": "2020-03-31"
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -103,8 +108,7 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "field:revenue_from_operations",
-      "pdf_caption": "Revenue from operations",
+      "resolve": "pdf:Revenue from operations",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -125,8 +129,7 @@
       },
       "row_hint": 9,
       "kind": "input",
-      "resolve": "field:other_income",
-      "pdf_caption": "Other income",
+      "resolve": "pdf:Other income",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -155,8 +158,7 @@
         "occurrence": 1
       },
       "row_hint": 12,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -167,7 +169,6 @@
       "row_hint": 13,
       "kind": "input",
       "resolve": "pdf:Network operating expenses",
-      "pdf_caption": "Network operating expenses",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -179,8 +180,7 @@
       },
       "row_hint": 14,
       "kind": "input",
-      "resolve": "pdf:Access Charges",
-      "pdf_caption": "Access charges",
+      "resolve": "pdf:Access charges",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -192,11 +192,9 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "pdf:License fee / spectrum charges (revenue share)",
-      "pdf_caption": "License fee / Spectrum charges",
+      "resolve": "pdf:License fee / Spectrum charges",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "matched 'License fee / Spectrum charges' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -206,11 +204,9 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "pdf:Employee benefits",
-      "pdf_caption": "Employee benefits expense",
+      "resolve": "pdf:Employee benefits expense",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "matched 'Employee benefits expense' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -221,7 +217,6 @@
       "row_hint": 17,
       "kind": "input",
       "resolve": "pdf:Sales and marketing expenses",
-      "pdf_caption": "Sales and marketing expenses",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -233,8 +228,7 @@
       },
       "row_hint": 18,
       "kind": "input",
-      "resolve": "field:other_expenses",
-      "pdf_caption": "Other expenses",
+      "resolve": "pdf:Other expenses",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -264,12 +258,9 @@
       },
       "row_hint": 21,
       "kind": "input",
-      "resolve": "pdf:Share of results of joint ventures and associates",
-      "pdf_caption": "Share of profit of associates and joint ventures (net)",
+      "resolve": "pdf:Share of profit of associates and joint ventures (net)",
       "statement": "income_statement",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Share of profit of associates and joint ventures (net)' from the filing's income_statement (same associates/joint ventures line) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -279,11 +270,9 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "pdf:Depreciation and amortisation",
-      "pdf_caption": "Depreciation and amortisation expenses",
+      "resolve": "pdf:Depreciation and amortisation expenses",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "matched 'Depreciation and amortisation expenses' in the filing (caption matched by containment) — confirm it is the same line"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -293,8 +282,7 @@
       },
       "row_hint": 23,
       "kind": "input",
-      "resolve": "field:finance_costs",
-      "pdf_caption": "Finance costs",
+      "resolve": "pdf:Finance costs",
       "statement": "income_statement",
       "basis": "quarter"
     },
@@ -306,10 +294,10 @@
       },
       "row_hint": 24,
       "kind": "input",
-      "resolve": "field:interest_income",
+      "resolve": "absent:no row captioned like 'interest income'",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'interest income'"
+      "review": "no row captioned like 'interest income'"
     },
     {
       "key": {
@@ -319,10 +307,10 @@
       },
       "row_hint": 25,
       "kind": "input",
-      "resolve": "pdf:Net foreign exchange and derivative (gain)/loss",
+      "resolve": "absent:no row captioned like 'Net foreign exchange and derivative (gain)/loss'",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'Net foreign exchange and derivative (gain)/loss'"
+      "review": "no row captioned like 'Net foreign exchange and derivative (gain)/loss'"
     },
     {
       "key": {
@@ -332,10 +320,10 @@
       },
       "row_hint": 26,
       "kind": "input",
-      "resolve": "pdf:Non-operating income / expenses, (net)",
+      "resolve": "absent:the model chose 'Other income', but 'Other income' already reads that line — this row looks like a component of it, not…",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: the model chose 'Other income', but 'Other income' already reads that line — this row looks like a component of it, not the same line; left unmatched"
+      "review": "the model chose 'Other income', but 'Other income' already reads that line — this row looks like a component of it, not…"
     },
     {
       "key": {
@@ -345,11 +333,9 @@
       },
       "row_hint": 27,
       "kind": "input",
-      "resolve": "field:exceptional_items",
-      "pdf_caption": "Exceptional items (net)",
+      "resolve": "pdf:Exceptional items (net)",
       "statement": "income_statement",
-      "basis": "quarter",
-      "review": "a model chose 'Exceptional items (net)' from the filing's income_statement (same line with net wording) — CONFIRM before use"
+      "basis": "quarter"
     },
     {
       "key": {
@@ -368,10 +354,10 @@
       },
       "row_hint": 29,
       "kind": "input",
-      "resolve": "field:tax_expense",
+      "resolve": "sum:pdf:Profit for the quarter / year|-pdf:Profit before tax",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=-20153-17832', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'tax expense'"
+      "review": "reference was typed =-20153-17832 = -(current + deferred tax). Read as profit after tax less profit before tax, which is the same total: the 'Deferred tax' line is garbled in the filing's text layer and cannot be confirmed, so the two verified lines are used"
     },
     {
       "key": {
@@ -389,8 +375,7 @@
         "occurrence": 1
       },
       "row_hint": 31,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -399,8 +384,7 @@
         "occurrence": 1
       },
       "row_hint": 32,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -409,8 +393,7 @@
         "occurrence": 1
       },
       "row_hint": 33,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -437,8 +420,7 @@
         "occurrence": 1
       },
       "row_hint": 37,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -555,8 +537,7 @@
         "occurrence": 1
       },
       "row_hint": 51,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -611,8 +592,8 @@
       },
       "row_hint": 59,
       "kind": "input",
-      "resolve": "field:ebitda",
-      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "absent:the map does not say which statement this row comes from",
+      "review": "the map does not say which statement this row comes from"
     },
     {
       "key": {
@@ -639,8 +620,7 @@
         "occurrence": 1
       },
       "row_hint": 62,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -649,8 +629,7 @@
         "occurrence": 1
       },
       "row_hint": 63,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -659,8 +638,7 @@
         "occurrence": 1
       },
       "row_hint": 64,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -669,8 +647,7 @@
         "occurrence": 1
       },
       "row_hint": 65,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -679,8 +656,7 @@
         "occurrence": 1
       },
       "row_hint": 66,
-      "kind": "skip",
-      "review": "reference cell is 'external', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -690,8 +666,8 @@
       },
       "row_hint": 68,
       "kind": "input",
-      "resolve": "pdf:Comparable revenue",
-      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "absent:the map does not say which statement this row comes from",
+      "review": "the map does not say which statement this row comes from"
     },
     {
       "key": {
@@ -700,8 +676,7 @@
         "occurrence": 3
       },
       "row_hint": 69,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -711,8 +686,8 @@
       },
       "row_hint": 70,
       "kind": "input",
-      "resolve": "pdf:Comparable EBITDA",
-      "review": "no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "absent:the map does not say which statement this row comes from",
+      "review": "the map does not say which statement this row comes from"
     },
     {
       "key": {
@@ -721,8 +696,7 @@
         "occurrence": 4
       },
       "row_hint": 71,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -731,8 +705,7 @@
         "occurrence": 1
       },
       "row_hint": 74,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -751,10 +724,10 @@
       },
       "row_hint": 76,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
+      "resolve": "absent:the results announcement carries no cash flow statement (1Q reference was typed =4346+3805+25663): type it by hand from the quarterly report",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=4346+3805+25663', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the results announcement carries no cash flow statement (1Q reference was typed =4346+3805+25663): type it by hand from the quarterly report"
     },
     {
       "key": {
@@ -764,11 +737,10 @@
       },
       "row_hint": 77,
       "kind": "input",
-      "resolve": "field:tax_expense",
+      "resolve": "absent:the filing has no cash_flow (found: income_statement)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the filing has no cash_flow (found: income_statement)"
     },
     {
       "key": {
@@ -778,11 +750,10 @@
       },
       "row_hint": 78,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
+      "resolve": "absent:the filing has no cash_flow (found: income_statement)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the filing has no cash_flow (found: income_statement)"
     },
     {
       "key": {
@@ -801,11 +772,10 @@
       },
       "row_hint": 80,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
+      "resolve": "absent:the results announcement carries no cash flow statement (reference was typed =-107797-4542): type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-107797-4542', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the results announcement carries no cash flow statement (reference was typed =-107797-4542): type it by hand"
     },
     {
       "key": {
@@ -815,10 +785,10 @@
       },
       "row_hint": 81,
       "kind": "input",
-      "resolve": "pdf:Acquisitions / (Asset Sales)",
+      "resolve": "absent:the filing has no cash_flow (found: income_statement)",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the filing has no cash_flow (found: income_statement)"
     },
     {
       "key": {
@@ -837,11 +807,10 @@
       },
       "row_hint": 83,
       "kind": "input",
-      "resolve": "pdf:Other investing activities",
+      "resolve": "absent:the results announcement carries no cash flow statement (reference was typed =-19719-354+634+2223): type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-19719-354+634+2223', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the results announcement carries no cash flow statement (reference was typed =-19719-354+634+2223): type it by hand"
     },
     {
       "key": {
@@ -851,11 +820,10 @@
       },
       "row_hint": 84,
       "kind": "input",
-      "resolve": "pdf:Dividends / Equity movements",
+      "resolve": "absent:the results announcement carries no cash flow statement (reference was typed =-129-6460+75): type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-129-6460+75', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the results announcement carries no cash flow statement (reference was typed =-129-6460+75): type it by hand"
     },
     {
       "key": {
@@ -865,11 +833,10 @@
       },
       "row_hint": 85,
       "kind": "input",
-      "resolve": "pdf:Principal Repayments",
+      "resolve": "absent:the results announcement carries no cash flow statement (reference was typed =-48076-76992-16139): type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-48076-76992-16139', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the results announcement carries no cash flow statement (reference was typed =-48076-76992-16139): type it by hand"
     },
     {
       "key": {
@@ -879,11 +846,10 @@
       },
       "row_hint": 86,
       "kind": "input",
-      "resolve": "pdf:Other financing activities",
+      "resolve": "absent:the results announcement carries no cash flow statement (reference was typed =-1414-449): type it by hand",
       "statement": "cash_flow",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-1414-449', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: income_statement)"
+      "review": "the results announcement carries no cash flow statement (reference was typed =-1414-449): type it by hand"
     },
     {
       "key": {
@@ -937,8 +903,7 @@
         "occurrence": 1
       },
       "row_hint": 95,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1019,8 +984,7 @@
         "occurrence": 1
       },
       "row_hint": 106,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1030,10 +994,10 @@
       },
       "row_hint": 108,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1043,10 +1007,10 @@
       },
       "row_hint": 109,
       "kind": "input",
-      "resolve": "pdf:Net pension liability",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1056,10 +1020,10 @@
       },
       "row_hint": 110,
       "kind": "input",
-      "resolve": "pdf:Inventory",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1069,10 +1033,10 @@
       },
       "row_hint": 111,
       "kind": "input",
-      "resolve": "pdf:Trade debtors",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1082,10 +1046,10 @@
       },
       "row_hint": 112,
       "kind": "input",
-      "resolve": "pdf:Trade creditors",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1112,8 +1076,7 @@
         "occurrence": 1
       },
       "row_hint": 116,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1132,10 +1095,10 @@
       },
       "row_hint": 118,
       "kind": "input",
-      "resolve": "pdf:Lease Obligation",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1154,10 +1117,10 @@
       },
       "row_hint": 121,
       "kind": "input",
-      "resolve": "pdf:Unsecured debt",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1185,10 +1148,10 @@
       },
       "row_hint": 126,
       "kind": "input",
-      "resolve": "pdf:Unrestricted cash",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1198,10 +1161,10 @@
       },
       "row_hint": 127,
       "kind": "input",
-      "resolve": "pdf:Other Liquidity sources",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1229,10 +1192,10 @@
       },
       "row_hint": 132,
       "kind": "input",
-      "resolve": "pdf:Market Cap",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1242,10 +1205,10 @@
       },
       "row_hint": 133,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
+      "resolve": "absent:the filing has no balance_sheet (found: income_statement)",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's statements matched this caption: the filing has no balance_sheet (found: income_statement)"
+      "review": "the filing has no balance_sheet (found: income_statement)"
     },
     {
       "key": {
@@ -1272,8 +1235,7 @@
         "occurrence": 1
       },
       "row_hint": 137,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1435,8 +1397,7 @@
         "occurrence": 1
       },
       "row_hint": 163,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1445,8 +1406,7 @@
         "occurrence": 1
       },
       "row_hint": 164,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1744,8 +1704,8 @@
       },
       "row_hint": 207,
       "kind": "input",
-      "resolve": "pdf:FX rate average - USD/INR",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "absent:the map does not say which statement this row comes from",
+      "review": "the map does not say which statement this row comes from"
     },
     {
       "key": {
@@ -1755,8 +1715,8 @@
       },
       "row_hint": 208,
       "kind": "input",
-      "resolve": "pdf:FX rate  - USD/INR (as at end of period)",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "absent:the map does not say which statement this row comes from",
+      "review": "the map does not say which statement this row comes from"
     },
     {
       "key": {
@@ -1846,8 +1806,7 @@
         "occurrence": 2
       },
       "row_hint": 222,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1856,8 +1815,7 @@
         "occurrence": 1
       },
       "row_hint": 223,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {

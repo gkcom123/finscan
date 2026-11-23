@@ -1,0 +1,357 @@
+{
+  "company": "cocacola",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenues",
+      "section": "income_statement",
+      "value": 76318.44
+    },
+    {
+      "label": "COGS",
+      "section": "income_statement",
+      "value": -40380.499
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -3953.612
+    },
+    {
+      "label": "Selling expenses",
+      "section": "income_statement",
+      "value": -21905.489
+    },
+    {
+      "label": "Other operating expenses, net",
+      "section": "income_statement",
+      "value": 448.0
+    },
+    {
+      "label": "Operative equity method gain/loss in associates",
+      "section": "income_statement",
+      "value": 126.0
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": 683.864
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": -2272.873
+    },
+    {
+      "label": "Other non-operating expenses, net",
+      "section": "income_statement",
+      "value": -132.0
+    },
+    {
+      "label": "Share of profit (loss) of associates and joint ventures accounted for using equity method",
+      "section": "income_statement",
+      "value": 55.0
+    },
+    {
+      "label": "Foreign exchange (loss) gain, net",
+      "section": "income_statement",
+      "value": 95.831
+    },
+    {
+      "label": "Gain (loss) on monetary position for subsidiaries in hyperinflationary economies",
+      "section": "income_statement",
+      "value": 74.397
+    },
+    {
+      "label": "Market value gain on financial instruments",
+      "section": "income_statement",
+      "value": 88.236
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": -2741.069
+    },
+    {
+      "label": "Result from discontinued operations",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": 4354.9
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 15008.9
+    },
+    {
+      "label": "Rent",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Amortisation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": 1568.199
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -3175.241
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -1500.8770000000002
+    },
+    {
+      "label": "Deposits interest received",
+      "section": "cash_flow",
+      "value": 683.113
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -3310.5170000000003
+    },
+    {
+      "label": "Net Payment for acquistion  of intangible assets",
+      "section": "cash_flow",
+      "value": -339.541
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries",
+      "section": "cash_flow",
+      "value": -1409.182
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": 5.384999999999991
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends received  / Dividends Paid",
+      "section": "cash_flow",
+      "value": -4071.97
+    },
+    {
+      "label": "Change in debt /Finance Costs",
+      "section": "cash_flow",
+      "value": -176.9350000000004
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": -379.23199999999997
+    },
+    {
+      "label": "Hyperinflation effect",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 114806.348
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": 5513.042
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 14636.923
+    },
+    {
+      "label": "Trade debtors/receivables",
+      "section": "balance_sheet",
+      "value": 18178.662
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 28655.69
+    },
+    {
+      "label": "Debt Obligations",
+      "section": "balance_sheet",
+      "value": 89464.586
+    },
+    {
+      "label": "Uruguayan Pesos",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 43032.311
+    },
+    {
+      "label": "Market cap",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 151317.208
+    },
+    {
+      "label": "FX rate average - MXN/USD",
+      "section": "other",
+      "value": 0.05692783258662994
+    },
+    {
+      "label": "FX rate  - MXN/USD (as at end of period)",
+      "section": "other",
+      "value": 0.05574446736161436
+    },
+    {
+      "label": "Reported  Revenue by segment",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Mexico & Central America",
+      "section": "cash_flow",
+      "value": 45450.0
+    },
+    {
+      "label": "South America",
+      "section": "cash_flow",
+      "value": 30868.0
+    },
+    {
+      "label": "Venezuela",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Asia",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Reported  Operating Income (Loss) by segment",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Mexico & Central America",
+      "section": "cash_flow",
+      "value": 6351.0
+    },
+    {
+      "label": "South America",
+      "section": "cash_flow",
+      "value": 4303.0
+    },
+    {
+      "label": "Venezuela",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Asia",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Mexico & Central America",
+      "section": "cash_flow",
+      "value": 0.003
+    },
+    {
+      "label": "South America (Including Venezuela)",
+      "section": "cash_flow",
+      "value": 0.11800000000000001
+    },
+    {
+      "label": "Venezuela",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Asia",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Total",
+      "section": "cash_flow",
+      "value": 0.047
+    },
+    {
+      "label": "Mexico & Central America",
+      "section": "cash_flow",
+      "value": 0.02
+    },
+    {
+      "label": "South America (Including Venezuela)",
+      "section": "cash_flow",
+      "value": 0.141
+    },
+    {
+      "label": "Venezuela",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Asia",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Total",
+      "section": "cash_flow",
+      "value": 0.066
+    },
+    {
+      "label": "Mexico & Central America",
+      "section": "cash_flow",
+      "value": 0.013999999999999999
+    },
+    {
+      "label": "South America (Including Venezuela)",
+      "section": "cash_flow",
+      "value": 0.069
+    },
+    {
+      "label": "Venezuela",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Asia",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Total",
+      "section": "cash_flow",
+      "value": 0.035
+    }
+  ]
+}

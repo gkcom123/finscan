@@ -1,0 +1,172 @@
+{
+  "company": "meituan",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Cost of revenues",
+      "section": "income_statement",
+      "value": -69548.247
+    },
+    {
+      "label": "Selling and marketing expenses",
+      "section": "income_statement",
+      "value": -24723.345
+    },
+    {
+      "label": "Research and development expenses",
+      "section": "income_statement",
+      "value": -7670.045
+    },
+    {
+      "label": "General and administrative expenses",
+      "section": "income_statement",
+      "value": -3238.0699999999997
+    },
+    {
+      "label": "Net provision for impairment losses on financial assets",
+      "section": "income_statement",
+      "value": -320.931
+    },
+    {
+      "label": "Fair value changes on other financial investments",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other operating income/(loss), net",
+      "section": "income_statement",
+      "value": 3493.946
+    },
+    {
+      "label": "Finance exps",
+      "section": "income_statement",
+      "value": -806.3650000000001
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 505.91900000000004
+    },
+    {
+      "label": "Fair value changes of convertible redeemable preferred shares",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Share of net profit /(loss) of associates",
+      "section": "income_statement",
+      "value": -86.57299999999998
+    },
+    {
+      "label": "Income tax credits/(expenses) / Current and deferred income tax and social contribution",
+      "section": "income_statement",
+      "value": -148.925
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": 0.607
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Balancing figure",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 43294.685
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 4155.077
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": 3908.524
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": 66189.295
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 7336.717
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 81364.538
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": 63597.373
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": 128.672
+    },
+    {
+      "label": "Debt  Including Lease obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 104716.797
+    },
+    {
+      "label": "Short term Investments",
+      "section": "balance_sheet",
+      "value": 63597.373
+    },
+    {
+      "label": "Retricted Cash",
+      "section": "balance_sheet",
+      "value": 21947.198
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 169148.85
+    },
+    {
+      "label": "FX rate average - RMB/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate  - RMB/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

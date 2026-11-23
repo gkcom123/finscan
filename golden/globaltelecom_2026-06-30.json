@@ -1,0 +1,217 @@
+{
+  "company": "globaltelecom",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Service revenues",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Non-service revenues",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Equity in net losses of associates and joint ventures",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on sale of controlling interest on data center business",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on sale and leaseback of telecom towers - net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Interest income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on disposal of property and equipment – net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other income – net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Cost of inventories sold",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "General, selling and administrative expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Interconnect costs",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation and amortisation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Impairment and other losses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Current tax",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Deferred tax",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": 45111.63799999999
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -1958.8089999999997
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Acquisitions / sales of subsidiaries, JVs",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends / Equity movements",
+      "section": "cash_flow",
+      "value": -19533.295
+    },
+    {
+      "label": "Principal Repayments",
+      "section": "cash_flow",
+      "value": -6765.311999999998
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 472862.859
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade debtors",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade creditors",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Debt  Including Lease and perpetuals",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Perpetuals",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash & cash equivalents",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - USD/PHP",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "FX rate  - USD/PHP (as at end of period)",
+      "section": "other",
+      "value": null
+    }
+  ]
+}

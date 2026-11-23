@@ -1,0 +1,187 @@
+{
+  "company": "tencent",
+  "period_end": "2025-09-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 192869.0
+    },
+    {
+      "label": "Cost of revenues",
+      "section": "income_statement",
+      "value": -84071.0
+    },
+    {
+      "label": "Interest income",
+      "section": "income_statement",
+      "value": 4256.0
+    },
+    {
+      "label": "Other gains, net",
+      "section": "income_statement",
+      "value": 3303.0
+    },
+    {
+      "label": "Selling and marketing expenses",
+      "section": "income_statement",
+      "value": -11468.0
+    },
+    {
+      "label": "General and administrative expenses",
+      "section": "income_statement",
+      "value": -34259.0
+    },
+    {
+      "label": "Finance costs, net",
+      "section": "income_statement",
+      "value": -3756.0
+    },
+    {
+      "label": "Share of (loss)/profit of associates and joint ventures",
+      "section": "income_statement",
+      "value": 7854.0
+    },
+    {
+      "label": "Income tax expenses",
+      "section": "income_statement",
+      "value": -9785.0
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": 1810.0
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": 17286.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 86698.0
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 157143.0
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 550.0
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": 52357.0
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": 128749.0
+    },
+    {
+      "label": "Debt  Breakdown",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 62848.0
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 328078.0
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": 5300.0
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": 13069.0
+    },
+    {
+      "label": "Debt  Including Lease obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 159982.0
+    },
+    {
+      "label": "Investments",
+      "section": "balance_sheet",
+      "value": 254413.0
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 1260515.0
+    },
+    {
+      "label": "FX rate  - RMB/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

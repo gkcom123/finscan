@@ -1,0 +1,202 @@
+{
+  "company": "grupotelevisa",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Net Sales (LFL)",
+      "section": "income_statement",
+      "value": 14288.9
+    },
+    {
+      "label": "Non-Recurring Licensing revenues",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "COGS",
+      "section": "income_statement",
+      "value": -8751.7
+    },
+    {
+      "label": "Distribution costs",
+      "section": "income_statement",
+      "value": -1863.0
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -2002.7
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other expense",
+      "section": "income_statement",
+      "value": -99.2
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 613.0
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": -1942.0
+    },
+    {
+      "label": "Share of profit (loss) of associates and joint ventures accounted for using equity method",
+      "section": "income_statement",
+      "value": 74.8
+    },
+    {
+      "label": "Tax income (expenses)",
+      "section": "income_statement",
+      "value": -480.2
+    },
+    {
+      "label": "Discontinued Operations",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Depreciation & amortisation",
+      "section": "income_statement",
+      "value": 4214.2
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": -42.17699999999991
+    },
+    {
+      "label": "Taxes, net",
+      "section": "cash_flow",
+      "value": -256.0060000000001
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -1342.0
+    },
+    {
+      "label": "Cash interest received",
+      "section": "cash_flow",
+      "value": -47.695
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -3515.6240000000003
+    },
+    {
+      "label": "Purchase and development of intangible assets",
+      "section": "cash_flow",
+      "value": -344.462
+    },
+    {
+      "label": "Disposals/ Acquisition, of subsidiaries",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": -2201.044
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends Paid",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": -688.4280000000008
+    },
+    {
+      "label": "Net Cash from discontinued operations",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 65959.7
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": 959.1
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 546.7
+    },
+    {
+      "label": "Trade accounts receivables, net",
+      "section": "balance_sheet",
+      "value": 5612.3
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": 15178.2
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 0.0
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 80649.6
+    },
+    {
+      "label": "Lease obligations",
+      "section": "balance_sheet",
+      "value": 7162.0
+    },
+    {
+      "label": "Notes Payable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 29651.6
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "balance_sheet",
+      "value": 41932.100000000006
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 111655.7
+    },
+    {
+      "label": "FX rate average - MXN/USD",
+      "section": "other",
+      "value": null
+    },
+    {
+      "label": "FX rate  - MXN/USD (as at end of period)",
+      "section": "other",
+      "value": null
+    }
+  ]
+}

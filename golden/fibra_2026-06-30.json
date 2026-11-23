@@ -1,0 +1,302 @@
+{
+  "company": "fibra",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Rental income",
+      "section": "income_statement",
+      "value": 157.045
+    },
+    {
+      "label": "Rental recoveries",
+      "section": "income_statement",
+      "value": 15.44
+    },
+    {
+      "label": "Other property income",
+      "section": "income_statement",
+      "value": 4.477
+    },
+    {
+      "label": "Operating expenses, other income and expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Operating and maintenance utilities",
+      "section": "income_statement",
+      "value": -11.65
+    },
+    {
+      "label": "Utilities",
+      "section": "income_statement",
+      "value": -1.353
+    },
+    {
+      "label": "Property management fee",
+      "section": "income_statement",
+      "value": -4.963
+    },
+    {
+      "label": "Real estate taxes",
+      "section": "income_statement",
+      "value": -4.404
+    },
+    {
+      "label": "Non-recoverable operating expenses",
+      "section": "income_statement",
+      "value": -2.711
+    },
+    {
+      "label": "(Loss) gain on valuation of investment properties and other investment properties",
+      "section": "income_statement",
+      "value": -23.675
+    },
+    {
+      "label": "Asset management fee",
+      "section": "income_statement",
+      "value": -14.666
+    },
+    {
+      "label": "Incentive fee",
+      "section": "income_statement",
+      "value": -115.52
+    },
+    {
+      "label": "Professional fees",
+      "section": "income_statement",
+      "value": -2.053
+    },
+    {
+      "label": "Interest income",
+      "section": "income_statement",
+      "value": 0.736
+    },
+    {
+      "label": "Interest expense",
+      "section": "income_statement",
+      "value": -30.61
+    },
+    {
+      "label": "Amortization of debt premium (discount)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Amortization of debt premium, net",
+      "section": "income_statement",
+      "value": 0.046
+    },
+    {
+      "label": "Amortization of deferred financing cost",
+      "section": "income_statement",
+      "value": -1.448
+    },
+    {
+      "label": "Losses on early extinguishment of debt, net",
+      "section": "income_statement",
+      "value": -0.78
+    },
+    {
+      "label": "Unused credit facility fee",
+      "section": "income_statement",
+      "value": -0.313
+    },
+    {
+      "label": "Unrealized gain (loss) on exchange rate hedge instruments",
+      "section": "income_statement",
+      "value": -0.871
+    },
+    {
+      "label": "Unrealized loss on exchange rate forwards",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Realized losses on exchange rate hedge instruments",
+      "section": "income_statement",
+      "value": -0.522
+    },
+    {
+      "label": "Unrealized exchange gain (loss), net",
+      "section": "income_statement",
+      "value": 1.167
+    },
+    {
+      "label": "Realized exchange gain (loss), net",
+      "section": "income_statement",
+      "value": 0.354
+    },
+    {
+      "label": "Taxes recovered",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Non-recoverable withholding tax related to interest income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other general and administrative expenses",
+      "section": "income_statement",
+      "value": -1.342
+    },
+    {
+      "label": "Share of profit from equity accounted investments",
+      "section": "income_statement",
+      "value": -9.943
+    },
+    {
+      "label": "Profit for the period attributable to FIBRA Prologis CBFIs holders",
+      "section": "income_statement",
+      "value": -47.617
+    },
+    {
+      "label": "Profit for the period attributable to noncontrolling interests",
+      "section": "income_statement",
+      "value": 0.058
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -4.404
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -50.641000000000005
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other Investing",
+      "section": "cash_flow",
+      "value": -7.88
+    },
+    {
+      "label": "Equity Issuance / Buyback",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": -1.0149999999999864
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": -0.855
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 9541.598
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": 22.264
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": 29.162
+    },
+    {
+      "label": "Current portion of debt",
+      "section": "balance_sheet",
+      "value": 203.61
+    },
+    {
+      "label": "Debt",
+      "section": "balance_sheet",
+      "value": 2328.624
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Debt including lease obligations",
+      "section": "balance_sheet",
+      "value": 2532.234
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 145.605
+    },
+    {
+      "label": "Financial investments",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "balance_sheet",
+      "value": 2386.629
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 7205.352
+    },
+    {
+      "label": "Company reported - Adjusted EBITDA annualized",
+      "section": "balance_sheet",
+      "value": null
+    }
+  ]
+}

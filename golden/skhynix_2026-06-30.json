@@ -1,0 +1,207 @@
+{
+  "company": "skhynix",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 79319000.0
+    },
+    {
+      "label": "Cost of sales",
+      "section": "income_statement",
+      "value": 79319000.0
+    },
+    {
+      "label": "Selling and administrative expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Share of profit of equity-accounted investees",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Income tax expense (benefit)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": 4030000.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 64563000.0
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": -32243000.0
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -10671000.0
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": -1594000.0
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": -3171000.0
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": 99000.0
+    },
+    {
+      "label": "Classification as held for sale",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Debt  Including Lease obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term financial instruments",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term investment assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Company reported net debt",
+      "section": "balance_sheet",
+      "value": -69371000.0
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - KRW/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate  - KRW/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

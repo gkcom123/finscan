@@ -1,0 +1,142 @@
+{
+  "company": "xiomi",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 108921.609
+    },
+    {
+      "label": "Cost of revenues",
+      "section": "income_statement",
+      "value": -87312.691
+    },
+    {
+      "label": "Selling and marketing expenses",
+      "section": "income_statement",
+      "value": -8648.495
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -1481.686
+    },
+    {
+      "label": "Research and development expenses",
+      "section": "income_statement",
+      "value": -9231.284
+    },
+    {
+      "label": "Fair value changes on investments",
+      "section": "income_statement",
+      "value": 6457.659
+    },
+    {
+      "label": "Share of net profit /(loss) of investments",
+      "section": "income_statement",
+      "value": 42.431
+    },
+    {
+      "label": "Other operating income/(loss), net",
+      "section": "income_statement",
+      "value": 2122.625
+    },
+    {
+      "label": "Finance exps",
+      "section": "income_statement",
+      "value": -592.935
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 1288.098
+    },
+    {
+      "label": "Current and deferred income tax and social contribution",
+      "section": "income_statement",
+      "value": -2101.955
+    },
+    {
+      "label": "Non-controlling interest",
+      "section": "income_statement",
+      "value": 0.971
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": 2574.802
+    },
+    {
+      "label": "Balancing figure",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": 500.0
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": 16008.606
+    },
+    {
+      "label": "Debt  Including Lease obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 37252.369
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - USD/RMB",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate  - USD/RMB (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

@@ -1,0 +1,367 @@
+{
+  "company": "gruma",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenues",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "COGS",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Selling and administrative expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other income/ (expenses)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on net non-monetary position",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Loss  from discontinued  Operations",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Adj. EBITDA (Pre IFRS16)",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Amortisation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes/Other adjustments",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Payment for acquisition  of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquisition, of subsidiaries",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Deposits interest received in investing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposed Cash from discontinued operations and Others in investing activitiesq",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends received  / Dividends Paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Acquisition of bonds",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Change in debt /Finance Costs",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other Finance",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 1243.0
+    },
+    {
+      "label": "Trade debtors/receivables",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Bank loans",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Finance Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 484.0
+    },
+    {
+      "label": "Capitalized operating leases (rent*8)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Market Cap",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 1.4
+    },
+    {
+      "label": "FX rate at the end of period - USD/USD",
+      "section": "cash_flow",
+      "value": 1
+    },
+    {
+      "label": "FX rate average - USD/USD",
+      "section": "cash_flow",
+      "value": 1
+    },
+    {
+      "label": "GRUMA USA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GIMSA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "of which Bulk Corn Flour",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "of which Retail Corn Flour",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "of which Other",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Europe",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Centroamerica",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA ASIA & OCEANIA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other subsidiaries & eliminations",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA USA",
+      "section": "cash_flow",
+      "value": 850.3
+    },
+    {
+      "label": "GIMSA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Europe",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Centroamerica",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA ASIA & OCEANIA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other subsidiaries & eliminations",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA USA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GIMSA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Europe",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Centroamerica",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA ASIA & OCEANIA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other subsidiaries & eliminations",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA USA",
+      "section": "cash_flow",
+      "value": 124.0
+    },
+    {
+      "label": "GIMSA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Europe",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Centroamerica",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA ASIA & OCEANIA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other subsidiaries & eliminations",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA USA",
+      "section": "cash_flow",
+      "value": 165.0
+    },
+    {
+      "label": "GIMSA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Europe",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA Centroamerica",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GRUMA ASIA & OCEANIA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other subsidiaries & eliminations",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

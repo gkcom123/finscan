@@ -22,3 +22,4 @@ samples/profiles/
 azure-vars.sh
 job.yaml
 api.yaml
+models/*

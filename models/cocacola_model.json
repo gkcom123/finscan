@@ -77,7 +77,7 @@
     },
     "period_date_row": 3
   },
-  "confirmed_by": "",
+  "confirmed_by": "mapping",
   "confirmed_at": "",
   "rows": [
     {
@@ -88,11 +88,10 @@
       },
       "row_hint": 7,
       "kind": "input",
-      "resolve": "pdf:Revenues",
-      "pdf_caption": "Total revenues",
-      "statement": "income_statement",
+      "resolve": "pdf:Ingresos",
+      "statement": "title:[310000]",
       "basis": "quarter",
-      "review": "a model chose 'Total revenues' from the filing's income_statement (generic revenues best matches total revenues) — CONFIRM before use"
+      "review": "Learned against Q1 BMV and BI7: 70,925,377,000 pesos = 70,925.377 million. Use the standalone quarter column, not the accumulated column."
     },
     {
       "key": {
@@ -110,8 +109,7 @@
         "occurrence": 1
       },
       "row_hint": 9,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -121,11 +119,10 @@
       },
       "row_hint": 10,
       "kind": "input",
-      "resolve": "field:cost_of_revenue",
-      "pdf_caption": "Cost of goods sold",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Costo de ventas",
+      "statement": "title:[310000]",
       "basis": "quarter",
-      "sign": "negative"
+      "review": "Q1 BMV 37,670,059,000 pesos -> -37,670.059 million (BI10). Negate the printed cost; do not infer the sign from history."
     },
     {
       "key": {
@@ -153,11 +150,10 @@
       },
       "row_hint": 13,
       "kind": "input",
-      "resolve": "field:other_expenses",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Gastos de administración",
+      "statement": "title:[310000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's income_statement matched this caption: caption 'other expenses' matches 2 rows ('Operating expenses', 'Operating expenses')"
+      "review": "1Q26 3,968,343,000 -> -3,968.343 = BI13. The release prints only the combined 'Operating expenses'; the BMV income statement splits it."
     },
     {
       "key": {
@@ -167,11 +163,10 @@
       },
       "row_hint": 14,
       "kind": "input",
-      "resolve": "field:selling_marketing_expense",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Gastos de venta",
+      "statement": "title:[310000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'selling marketing expense'"
+      "review": "1Q26 20,176,578,000 -> -20,176.578 = BI14."
     },
     {
       "key": {
@@ -181,12 +176,10 @@
       },
       "row_hint": 15,
       "kind": "input",
-      "resolve": "pdf:Other operating expenses, net",
-      "pdf_caption": "Other operative expenses, net",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Other operative expenses, net",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "a model chose 'Other operative expenses, net' from the filing's income_statement (same line despite spelling variation) — CONFIRM before use"
+      "review": "1Q26 176 -> -176.01 (BI15); 2Q26 prints (448), an income, which the negation turns positive. the release prints costs and losses as positives and the model stores them negative, so the caption is negated (a leading '-'), which also reverses correctly in a quarter when the line turns into a gain"
     },
     {
       "key": {
@@ -196,11 +189,10 @@
       },
       "row_hint": 16,
       "kind": "input",
-      "resolve": "pdf:Operative equity method gain/loss in associates",
-      "pdf_caption": "Operative equity method (gain) loss in associates",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Operative equity method (gain) loss in associates (3)",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept"
+      "review": "1Q26 printed (97) = a gain -> +97.13 (BI16). Footnote marker (3) kept on purpose: it keeps this caption from also matching 'Non Operative equity method ...', whether or not the reader keeps the marker (stable in 1Q26 and 2Q26). the release prints costs and losses as positives and the model stores them negative, so the caption is negated (a leading '-'), which also reverses correctly in a quarter when the line turns into a gain"
     },
     {
       "key": {
@@ -219,10 +211,10 @@
       },
       "row_hint": 18,
       "kind": "input",
-      "resolve": "field:interest_income",
-      "pdf_caption": "Interest income",
-      "statement": "income_statement",
-      "basis": "quarter"
+      "resolve": "pdf:Intereses ganados",
+      "statement": "title:[800200]",
+      "basis": "quarter",
+      "review": "Q1 BMV 514,509,000 pesos = 514.509 million (BI18). Use interest only, not total financial income, which includes FX and valuation."
     },
     {
       "key": {
@@ -232,11 +224,10 @@
       },
       "row_hint": 19,
       "kind": "input",
-      "resolve": "field:finance_costs",
-      "pdf_caption": "Interest expense",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Intereses devengados a cargo",
+      "statement": "title:[800200]",
       "basis": "quarter",
-      "sign": "negative"
+      "review": "Q1 BMV 2,086,963,000 pesos -> -2,086.963 million (BI19). Use interest only, not total financial expenses."
     },
     {
       "key": {
@@ -246,11 +237,10 @@
       },
       "row_hint": 20,
       "kind": "input",
-      "resolve": "pdf:Other non-operating expenses, net",
-      "pdf_caption": "Other non operative expenses, net",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Other non operative expenses, net",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "a model chose 'Other non operative expenses, net' from the filing's income_statement (same line despite hyphen variation) — CONFIRM before use"
+      "review": "1Q26 printed (162) -> +161.72 (BI20). the release prints costs and losses as positives and the model stores them negative, so the caption is negated (a leading '-'), which also reverses correctly in a quarter when the line turns into a gain"
     },
     {
       "key": {
@@ -260,10 +250,10 @@
       },
       "row_hint": 21,
       "kind": "input",
-      "resolve": "pdf:Share of profit (loss) of associates and joint ventures accounted for using equity method",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Non Operative equity method (gain) loss in associates",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's income_statement matched this caption: no row captioned like 'Share of profit (loss) of associates and joint ventures accounted for using equity method'"
+      "review": "the release's non-operative equity-method line (PIASA, IEQSA, Beta San Miguel, IMER, KSP): 1Q26 printed 18, a loss -> -18.37 (BI21). the release prints costs and losses as positives and the model stores them negative, so the caption is negated (a leading '-'), which also reverses correctly in a quarter when the line turns into a gain"
     },
     {
       "key": {
@@ -273,11 +263,10 @@
       },
       "row_hint": 22,
       "kind": "input",
-      "resolve": "pdf:Foreign exchange (loss) gain, net",
-      "pdf_caption": "Foreign exchange loss (gain)",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:Utilidad por fluctuación cambiaria|-pdf:Pérdida por fluctuación cambiaria",
+      "statement": "title:[800200]",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · matched 'Foreign exchange loss (gain)' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "Q1 BMV 0 - 116,543,000 pesos = -116.543 million (BI22). Sum gains less losses so a future gain keeps its sign."
     },
     {
       "key": {
@@ -287,11 +276,10 @@
       },
       "row_hint": 23,
       "kind": "input",
-      "resolve": "pdf:Gain (loss) on monetary position for subsidiaries in hyperinflationary economies",
-      "pdf_caption": "subsidiaries",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:Otros ingresos financieros|-pdf:Otros gastos financieros",
+      "statement": "title:[800200]",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · matched 'subsidiaries' in the filing (caption matched by containment) — confirm it is the same line"
+      "review": "from the BMV report (always present): 'Otros ingresos financieros' is the monetary-position gain (1Q26 103,959,000 = BI23; 2Q26 74,397,000 = the release's (74)), less 'Otros gastos financieros' for a quarter with a monetary loss"
     },
     {
       "key": {
@@ -301,12 +289,10 @@
       },
       "row_hint": 24,
       "kind": "input",
-      "resolve": "pdf:Market value gain on financial instruments",
-      "pdf_caption": "Market value (gain) loss on financial instruments",
-      "statement": "income_statement",
+      "resolve": "sum:pdf:Utilidad por cambios en el valor razonable de derivados|pdf:Utilidad por cambios en valor razonable de instrumentos financieros|-pdf:Pérdidas por cambio en el valor razonable de derivados|-pdf:Pérdida por cambios en valor razonable de instrumentos financieros",
+      "statement": "title:[800200]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "matched 'Market value (gain) loss on financial instruments' in the filing (caption matched on one direction of a two-direction caption) — confirm it is the same line"
+      "review": "Q1 BMV gains less losses = -167.403 million (BI24). Includes derivatives and other financial instruments; never force the prior sign."
     },
     {
       "key": {
@@ -325,11 +311,10 @@
       },
       "row_hint": 26,
       "kind": "input",
-      "resolve": "pdf:Income tax benefit/(expense)",
-      "pdf_caption": "Income taxes",
-      "statement": "income_statement",
+      "resolve": "sum:-pdf:Impuestos a la utilidad",
+      "statement": "title:[310000]",
       "basis": "quarter",
-      "review": "caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · a model chose 'Income taxes' from the filing's income_statement (same income tax line) — CONFIRM before use"
+      "review": "Q1 BMV 2,687,887,000 pesos -> -2,687.887 million (BI26)."
     },
     {
       "key": {
@@ -339,10 +324,10 @@
       },
       "row_hint": 27,
       "kind": "input",
-      "resolve": "pdf:Result from discontinued operations",
-      "statement": "income_statement",
+      "resolve": "pdf:Utilidad (pérdida) de operaciones discontinuadas",
+      "statement": "title:[310000]",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Result from discontinued operations'"
+      "review": "Q1 BMV prints 0, matching BI27. Read the current quarter's printed value, including a future nonzero amount."
     },
     {
       "key": {
@@ -360,8 +345,7 @@
         "occurrence": 1
       },
       "row_hint": 31,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -488,11 +472,10 @@
       },
       "row_hint": 47,
       "kind": "input",
-      "resolve": "pdf:Depreciation & amortisation",
-      "pdf_caption": "Depreciation",
-      "statement": "income_statement",
+      "resolve": "pdf:Depreciación y amortización operativa",
+      "statement": "title:[700002]",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=3405.98741761751+936.301965545308', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · 'Depreciation' is also read by 'Depreciation' — one filing line cannot fill two rows; decide which owns it"
+      "review": "from the BMV report's [700002] (always present): 1Q26 4,342,289,000 = BI47 exactly (= the release's depreciation 3,406 + amortization 936); 2Q26 4,354.9"
     },
     {
       "key": {
@@ -538,10 +521,10 @@
       },
       "row_hint": 53,
       "kind": "input",
-      "resolve": "field:ebitda",
-      "pdf_caption": "Adj. EBITDA",
-      "statement": "income_statement",
-      "basis": "quarter"
+      "resolve": "sum:pdf:Operating income|pdf:Depreciación y amortización operativa @ title:[700002]",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
+      "basis": "quarter",
+      "review": "the release's operating income plus BMV D&A: 1Q26 9,031.523 + 4,342.289 = 13,373.812 = BI53 exactly; 2Q26 10,654 + 4,354.9 = 15,008.9 (release prints 15,008). Read this way because the release's 'Adj. EBITDA & CAPEX' table heads its columns with bare years, so quarter and six months cannot be told apart. Needs the English results release in the folder"
     },
     {
       "key": {
@@ -569,10 +552,10 @@
       },
       "row_hint": 56,
       "kind": "input",
-      "resolve": "pdf:Rent",
+      "resolve": "absent:no rent line in the release, and the row is blank in every quarterly column of the model. Left blank: a 0 would claim there is no rent.",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Rent'"
+      "review": "no rent line in the release, and the row is blank in every quarterly column of the model. Left blank: a 0 would claim there is no rent."
     },
     {
       "key": {
@@ -581,8 +564,7 @@
         "occurrence": 1
       },
       "row_hint": 57,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -591,8 +573,7 @@
         "occurrence": 1
       },
       "row_hint": 58,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -602,11 +583,10 @@
       },
       "row_hint": 59,
       "kind": "input",
-      "resolve": "field:depreciation_amortisation",
-      "pdf_caption": "Depreciation",
+      "resolve": "absent:blank in every column of the model: the analyst books D&A as one row ('Depreciation & amortisation'). Left blank to match",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "'Depreciation' is also read by 'Depreciation & amortisation' — one filing line cannot fill two rows; decide which owns it"
+      "review": "blank in every column of the model: the analyst books D&A as one row ('Depreciation & amortisation'). Left blank to match"
     },
     {
       "key": {
@@ -616,10 +596,10 @@
       },
       "row_hint": 60,
       "kind": "input",
-      "resolve": "pdf:Amortisation",
+      "resolve": "absent:blank in every column of the model: the analyst books D&A as one row ('Depreciation & amortisation'). Left blank to match",
       "statement": "income_statement",
       "basis": "quarter",
-      "review": "no line in the filing's income_statement matched this caption: no row captioned like 'Amortisation'"
+      "review": "blank in every column of the model: the analyst books D&A as one row ('Depreciation & amortisation'). Left blank to match"
     },
     {
       "key": {
@@ -647,10 +627,10 @@
       },
       "row_hint": 64,
       "kind": "input",
-      "resolve": "pdf:Working Capital",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Disminuciones (incrementos) en los inventarios|pdf:Disminución (incremento) de clientes|pdf:Disminuciones (incrementos) en otras cuentas por cobrar derivadas de las actividades de operación|pdf:Incremento (disminución) de proveedores|pdf:Incrementos (disminuciones) en otras cuentas por pagar derivadas de las actividades de operación",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=-435.986+4979.539-1516.192-1117.381-382.843', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the model's '=-435.986+4979.539-1516.192-1117.381-382.843' (1Q26) and the same five lines in 2Q25's formula. From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -660,11 +640,10 @@
       },
       "row_hint": 65,
       "kind": "input",
-      "resolve": "field:tax_expense",
-      "statement": "cash_flow",
+      "resolve": "sum:-pdf:Impuestos a las utilidades reembolsados (pagados)",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "1Q26 printed 3,065,072,000 -> -3,065.072 = BI65 (2Q25: -7,263.504 six months). From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -674,11 +653,10 @@
       },
       "row_hint": 66,
       "kind": "input",
-      "resolve": "pdf:Cash interest paid",
-      "statement": "cash_flow",
+      "resolve": "sum:-pdf:Intereses pagados#3",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the FINANCING 'Intereses pagados' (#3: the caption is printed under operating, investing and financing). 1Q26 1,230,956,000 -> -1,230.956 = BI66; 2Q25 -2,656.015. From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -688,10 +666,10 @@
       },
       "row_hint": 67,
       "kind": "input",
-      "resolve": "pdf:Deposits interest received",
-      "statement": "cash_flow",
+      "resolve": "pdf:Intereses cobrados",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "investing 'Intereses cobrados': 1Q26 514,509,000 = BI67; 2Q25 1,214.133."
     },
     {
       "key": {
@@ -710,11 +688,10 @@
       },
       "row_hint": 69,
       "kind": "input",
-      "resolve": "pdf:Net Capex",
-      "statement": "cash_flow",
+      "resolve": "sum:-pdf:Compras de propiedades, planta y equipo|pdf:Importes procedentes de la venta de propiedades, planta y equipo",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-3716.728+30.917', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the model's '=-3716.728+30.917' (1Q26) and '=-9442.136+119.293' (2Q25). From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -724,11 +701,10 @@
       },
       "row_hint": 70,
       "kind": "input",
-      "resolve": "pdf:Net Payment for acquistion  of intangible assets",
-      "statement": "cash_flow",
+      "resolve": "sum:-pdf:Compras de activos intangibles|pdf:Importes procedentes de ventas de activos intangibles",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "1Q26 497,675,000 -> -497.675 = BI70; 2Q25 -661.793. From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -738,10 +714,10 @@
       },
       "row_hint": 71,
       "kind": "input",
-      "resolve": "pdf:Disposals/ Acquistion, of subsidiaries",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Flujos de efectivo procedentes de la pérdida de control de subsidiarias u otros negocios|-pdf:Flujos de efectivo utilizados para obtener el control de subsidiarias u otros negocios|pdf:Otros cobros por la venta de participaciones en negocios conjuntos|-pdf:Otros pagos para adquirir participaciones en negocios conjuntos",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "subsidiary and joint-venture acquisitions and disposals. 1Q26 JV line printed (150,286,000) -> +150.286 = BI71; 2Q25 371,468,000 -> -371.468. From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -760,10 +736,10 @@
       },
       "row_hint": 73,
       "kind": "input",
-      "resolve": "pdf:Other investing activities",
-      "statement": "cash_flow",
+      "resolve": "pdf:Otras entradas (salidas) de efectivo#2",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the INVESTING 'Otras entradas (salidas) de efectivo' (#2: also printed under operating and financing). 1Q26 72,325,000 = BI73; 2Q25 -19.655."
     },
     {
       "key": {
@@ -773,10 +749,10 @@
       },
       "row_hint": 74,
       "kind": "input",
-      "resolve": "pdf:Equity Issuance/Buyback",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Importes procedentes de la emisión de acciones|pdf:Importes procedentes de la emisión de otros instrumentos de capital|-pdf:Pagos por adquirir o rescatar las acciones de la entidad",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "share issues less buybacks; 0 in 1Q26 and 2Q25, matching the model. From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -786,10 +762,10 @@
       },
       "row_hint": 75,
       "kind": "input",
-      "resolve": "pdf:Dividends received  / Dividends Paid",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Dividendos recibidos#1|pdf:Dividendos recibidos#2|-pdf:Dividendos pagados#1|-pdf:Dividendos pagados#2",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "dividends received (operating #1, investing #2) less dividends paid (operating #1, financing #2). 1Q26 0 = BI75; 2Q25 financing 4,053,217,000 -> -4,053.217. From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -799,10 +775,10 @@
       },
       "row_hint": 76,
       "kind": "input",
-      "resolve": "pdf:Change in debt /Finance Costs",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Importes procedentes de préstamos|-pdf:Reembolsos de préstamos|-pdf:Pagos de pasivos por arrendamientos financieros|-pdf:Pagos de pasivos por arrendamientos",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "the reference cell is a hand-typed expression '=6808.56-202.954', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the model's '=6808.56-202.954' (1Q26) and '=11040.139-463.538' (2Q25): loan proceeds less lease payments; repayments included (0 in both). From the BMV quarterly report (Información Financiera Trimestral, Spanish, whole pesos). BMV prints '-' lines (payments) as positive amounts: those captions are negated here, '+' lines are taken as printed - the same rule reproduces the report's investing total. 2Q prints six months only; the pipeline de-cumulates against the 1Q column."
     },
     {
       "key": {
@@ -812,11 +788,10 @@
       },
       "row_hint": 77,
       "kind": "input",
-      "resolve": "pdf:Other financing activities",
-      "statement": "cash_flow",
+      "resolve": "pdf:Otras entradas (salidas) de efectivo#3",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "sign": "negative",
-      "review": "the reference cell is a hand-typed expression '=-1013.04', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "the FINANCING 'Otras entradas (salidas) de efectivo' (#3). 1Q26 (1,013,040,000) = BI77; 2Q25 -773.398."
     },
     {
       "key": {
@@ -835,10 +810,10 @@
       },
       "row_hint": 80,
       "kind": "input",
-      "resolve": "pdf:Hyperinflation effect",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Efecto por hiperinflación?",
+      "statement": "title:[520000]",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional: the BMV cash flow has no hyperinflation line -> 0, matching the model's 0 in every quarter."
     },
     {
       "key": {
@@ -883,8 +858,7 @@
         "occurrence": 1
       },
       "row_hint": 86,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -938,8 +912,7 @@
         "occurrence": 1
       },
       "row_hint": 93,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -948,8 +921,7 @@
         "occurrence": 1
       },
       "row_hint": 94,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1004,11 +976,10 @@
       },
       "row_hint": 102,
       "kind": "input",
-      "resolve": "pdf:Tangible fixed assets",
-      "pdf_caption": "Property, plant and equipment",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Propiedades, planta y equipo|pdf:Activos por derechos de uso",
+      "statement": "title:[210000]",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=111725.454254199+3461.24115522688', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · a model chose 'Property, plant and equipment' from the filing's balance_sheet (closest direct asset line) — CONFIRM before use"
+      "review": "Q1 BMV net PPE plus right-of-use assets = 115,186.695 million (BI102). Both are closing balances, never de-cumulated."
     },
     {
       "key": {
@@ -1018,10 +989,10 @@
       },
       "row_hint": 103,
       "kind": "input",
-      "resolve": "pdf:Net pension liability",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Provisiones por beneficios a los empleados a Largo plazo",
+      "statement": "title:[210000]",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Net pension liability'"
+      "review": "1Q26 5,495,205,000 = BI103 (on the balance sheet's second page)."
     },
     {
       "key": {
@@ -1031,11 +1002,10 @@
       },
       "row_hint": 104,
       "kind": "input",
-      "resolve": "pdf:Inventory",
-      "pdf_caption": "Inventories",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Inventarios",
+      "statement": "title:[210000]",
       "basis": "point_in_time",
-      "review": "a model chose 'Inventories' from the filing's balance_sheet (same line wording) — CONFIRM before use"
+      "review": "Q1 BMV 14,813.643 million matches BI104."
     },
     {
       "key": {
@@ -1045,11 +1015,10 @@
       },
       "row_hint": 105,
       "kind": "input",
-      "resolve": "pdf:Trade debtors/receivables",
-      "pdf_caption": "Total accounts receivable",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Clientes y otras cuentas por cobrar",
+      "statement": "title:[210000]",
       "basis": "point_in_time",
-      "review": "a model chose 'Total accounts receivable' from the filing's balance_sheet (same receivables line) — CONFIRM before use"
+      "review": "Q1 BMV current receivables 17,748.824 million matches BI105."
     },
     {
       "key": {
@@ -1059,11 +1028,10 @@
       },
       "row_hint": 106,
       "kind": "input",
-      "resolve": "pdf:Trade creditors /payables",
-      "pdf_caption": "Suppliers",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Proveedores circulantes|pdf:Cuentas por pagar circulantes a partes relacionadas",
+      "statement": "title:[800100]",
       "basis": "point_in_time",
-      "review": "a model chose 'Suppliers' from the filing's balance_sheet (trade payables to suppliers) — CONFIRM before use"
+      "review": "Q1 BMV 29,097.249 + 288.000 = 29,385.249 million (BI106). Exclude other payables; the balance-sheet aggregate is not the model's supplier row."
     },
     {
       "key": {
@@ -1117,8 +1085,7 @@
         "occurrence": 1
       },
       "row_hint": 114,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1128,11 +1095,10 @@
       },
       "row_hint": 115,
       "kind": "input",
-      "resolve": "pdf:Debt Obligations",
-      "pdf_caption": "Total Debt",
-      "statement": "balance_sheet",
+      "resolve": "sum:pdf:Créditos Bancarios a corto plazo|pdf:Créditos Bursátiles a corto plazo|pdf:Otros créditos con costo a corto plazo|pdf:Créditos Bancarios a largo plazo|pdf:Créditos Bursátiles a largo plazo|pdf:Otros créditos con costo a largo plazo|pdf:Pasivos por arrendamientos a corto plazo @ title:[210000]|pdf:Pasivos por arrendamientos a largo plazo @ title:[210000]",
+      "statement": "title:[800100]",
       "basis": "point_in_time",
-      "review": "the reference cell is a hand-typed expression '=4875.07339197277+952.168700415713+82233.1144863269+2857.31359231044', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · a model chose 'Total Debt' from the filing's balance_sheet (closest debt obligations total) — CONFIRM before use"
+      "review": "Q1 BMV interest-bearing bank and securities debt plus current and noncurrent leases = 90,917.669 million (BI115, rounded source components). Exclude other credits without interest and derivative liabilities."
     },
     {
       "key": {
@@ -1141,8 +1107,7 @@
         "occurrence": 1
       },
       "row_hint": 117,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1188,10 +1153,10 @@
       },
       "row_hint": 122,
       "kind": "input",
-      "resolve": "pdf:Uruguayan Pesos",
+      "resolve": "absent:this row is a currency share x total debt; its siblings are formulas ('=0.6%*BI$115'). The release prints only the % share and has no Uruguayan line, so mapping a caption would write a percentage into an amount row. Make it a formula like its siblings ('=0%*BJ$115').",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Uruguayan Pesos'"
+      "review": "this row is a currency share x total debt; its siblings are formulas ('=0.6%*BI$115'). The release prints only the % share and has no Uruguayan line, so mapping a caption would write a percentage into an amount row. Make it a formula like its siblings ('=0%*BJ$115')."
     },
     {
       "key": {
@@ -1219,11 +1184,10 @@
       },
       "row_hint": 127,
       "kind": "input",
-      "resolve": "pdf:Cash and equivalents",
-      "pdf_caption": "Cash, cash equivalents and marketable Short-term bank loans and notes payable",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Efectivo y equivalentes de efectivo",
+      "statement": "title:[210000]",
       "basis": "point_in_time",
-      "review": "matched 'Cash, cash equivalents and marketable Short-term bank loans and notes payable' in the filing (caption matched on every word) — confirm it is the same line"
+      "review": "Q1 BMV closing cash 41,346.219 million matches BI127."
     },
     {
       "key": {
@@ -1250,8 +1214,7 @@
         "occurrence": 1
       },
       "row_hint": 132,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1260,8 +1223,7 @@
         "occurrence": 1
       },
       "row_hint": 134,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1270,8 +1232,7 @@
         "occurrence": 1
       },
       "row_hint": 135,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1281,11 +1242,10 @@
       },
       "row_hint": 137,
       "kind": "input",
-      "resolve": "pdf:Market cap",
-      "pdf_caption": "Capitalization",
+      "resolve": "absent:not in the release (1Q26 model 372,545 is share price x shares). Was 'Capitalization', which is the release's debt/(debt+equity) ratio (38.0%) - a wrong figure.",
       "statement": "balance_sheet",
       "basis": "point_in_time",
-      "review": "a model chose 'Capitalization' from the filing's balance_sheet (same concept label) — CONFIRM before use"
+      "review": "not in the release (1Q26 model 372,545 is share price x shares). Was 'Capitalization', which is the release's debt/(debt+equity) ratio (38.0%) - a wrong figure."
     },
     {
       "key": {
@@ -1295,10 +1255,10 @@
       },
       "row_hint": 138,
       "kind": "input",
-      "resolve": "pdf:Equity (as reported on balance sheet)",
-      "statement": "balance_sheet",
+      "resolve": "pdf:Total de capital contable",
+      "statement": "title:[210000]",
       "basis": "point_in_time",
-      "review": "no line in the filing's balance_sheet matched this caption: no row captioned like 'Equity (as reported on balance sheet)'"
+      "review": "Q1 BMV 146,869.904 million matches BI138; includes noncontrolling interests."
     },
     {
       "key": {
@@ -1370,8 +1330,7 @@
         "occurrence": 1
       },
       "row_hint": 150,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1380,8 +1339,7 @@
         "occurrence": 1
       },
       "row_hint": 151,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1418,8 +1376,8 @@
       },
       "row_hint": 159,
       "kind": "input",
-      "resolve": "pdf:FX rate average - MXN/USD",
-      "review": "the reference cell is a hand-typed expression '=1/17.5661', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "carry:carried forward - update by hand. The model stores USD per MXN ('=1/17.5661'); the release's macro page prints the average as MXN per USD to 2 decimals (1Q26: Mexico 17.56), and a mapping cannot take a reciprocal.",
+      "review": "carried forward - update by hand. The model stores USD per MXN ('=1/17.5661'); the release's macro page prints the average as MXN per USD to 2 decimals (1Q26: Mexico 17.56), and a mapping cannot take a reciprocal."
     },
     {
       "key": {
@@ -1429,8 +1387,8 @@
       },
       "row_hint": 160,
       "kind": "input",
-      "resolve": "pdf:FX rate  - MXN/USD (as at end of period)",
-      "review": "the reference cell is a hand-typed expression '=1/17.939', not a calculation: it is an input whose parts were added in place — consider sum:<a>|<b> · caption is bidirectional, so no sign convention was inferred; the filing's own sign is kept · no line in the filing's statements matched this caption: the map does not say which statement this row comes from"
+      "resolve": "carry:carried forward - update by hand. Model '=1/17.939' for 1Q26 differs from the release's Mar-26 closing rate (18.07), so the analyst uses another source.",
+      "review": "carried forward - update by hand. Model '=1/17.939' for 1Q26 differs from the release's Mar-26 closing rate (18.07), so the analyst uses another source."
     },
     {
       "key": {
@@ -1448,8 +1406,7 @@
         "occurrence": 1
       },
       "row_hint": 163,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1485,8 +1442,7 @@
         "occurrence": 1
       },
       "row_hint": 169,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1720,8 +1676,7 @@
         "occurrence": 1
       },
       "row_hint": 200,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1730,8 +1685,7 @@
         "occurrence": 1
       },
       "row_hint": 201,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1749,8 +1703,7 @@
         "occurrence": 1
       },
       "row_hint": 204,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1777,8 +1730,7 @@
         "occurrence": 1
       },
       "row_hint": 209,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1787,8 +1739,7 @@
         "occurrence": 1
       },
       "row_hint": 210,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1824,8 +1775,7 @@
         "occurrence": 1
       },
       "row_hint": 219,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -1861,8 +1811,7 @@
         "occurrence": 1
       },
       "row_hint": 225,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2096,8 +2045,7 @@
         "occurrence": 2
       },
       "row_hint": 259,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2106,8 +2054,7 @@
         "occurrence": 2
       },
       "row_hint": 260,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2125,8 +2072,7 @@
         "occurrence": 2
       },
       "row_hint": 263,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2153,8 +2099,7 @@
         "occurrence": 2
       },
       "row_hint": 268,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2163,8 +2108,7 @@
         "occurrence": 2
       },
       "row_hint": 269,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2218,8 +2162,7 @@
         "occurrence": 3
       },
       "row_hint": 280,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2237,8 +2180,7 @@
         "occurrence": 2
       },
       "row_hint": 282,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2292,8 +2234,7 @@
         "occurrence": 1
       },
       "row_hint": 288,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2311,8 +2252,7 @@
         "occurrence": 1
       },
       "row_hint": 290,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2339,8 +2279,7 @@
         "occurrence": 1
       },
       "row_hint": 293,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2349,8 +2288,7 @@
         "occurrence": 1
       },
       "row_hint": 294,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2386,8 +2324,7 @@
         "occurrence": 4
       },
       "row_hint": 299,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2405,8 +2342,7 @@
         "occurrence": 3
       },
       "row_hint": 301,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2460,8 +2396,7 @@
         "occurrence": 2
       },
       "row_hint": 307,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2479,8 +2414,7 @@
         "occurrence": 2
       },
       "row_hint": 309,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2507,8 +2441,7 @@
         "occurrence": 2
       },
       "row_hint": 312,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2517,8 +2450,7 @@
         "occurrence": 2
       },
       "row_hint": 313,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2527,8 +2459,7 @@
         "occurrence": 1
       },
       "row_hint": 316,
-      "kind": "skip",
-      "review": "reference cell is 'empty', not a writable input"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2538,10 +2469,10 @@
       },
       "row_hint": 319,
       "kind": "input",
-      "resolve": "pdf:Reported  Revenue by segment",
+      "resolve": "absent:section heading, not a value row.",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "section heading, not a value row."
     },
     {
       "key": {
@@ -2551,10 +2482,10 @@
       },
       "row_hint": 320,
       "kind": "input",
-      "resolve": "pdf:Mexico & Central America",
-      "statement": "cash_flow",
+      "resolve": "pdf:Total revenues",
+      "statement": "title:MEXICO & CENTRAL AMERICA DIVISION",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "division total revenues: 1Q26 39,117 = BI320."
     },
     {
       "key": {
@@ -2564,10 +2495,10 @@
       },
       "row_hint": 321,
       "kind": "input",
-      "resolve": "pdf:South America",
-      "statement": "cash_flow",
+      "resolve": "pdf:Total revenues",
+      "statement": "title:SOUTH AMERICA DIVISION",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "division total revenues: 1Q26 31,809 = BI321."
     },
     {
       "key": {
@@ -2577,10 +2508,10 @@
       },
       "row_hint": 322,
       "kind": "input",
-      "resolve": "pdf:Venezuela",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Venezuela?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional: KOF reports no Venezuela operation -> 0 (model 0); read if the release ever prints one."
     },
     {
       "key": {
@@ -2590,10 +2521,10 @@
       },
       "row_hint": 323,
       "kind": "input",
-      "resolve": "pdf:Asia",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Asia?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional: no Asia operation -> 0 (model 0)."
     },
     {
       "key": {
@@ -2612,10 +2543,10 @@
       },
       "row_hint": 326,
       "kind": "input",
-      "resolve": "pdf:Reported  Operating Income (Loss) by segment",
+      "resolve": "absent:section heading, not a value row.",
       "statement": "cash_flow",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "section heading, not a value row."
     },
     {
       "key": {
@@ -2625,10 +2556,10 @@
       },
       "row_hint": 327,
       "kind": "input",
-      "resolve": "pdf:Mexico & Central America",
-      "statement": "cash_flow",
+      "resolve": "pdf:Operating income",
+      "statement": "title:MEXICO & CENTRAL AMERICA DIVISION",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "division operating income: 1Q26 4,461 = BI327."
     },
     {
       "key": {
@@ -2638,10 +2569,10 @@
       },
       "row_hint": 328,
       "kind": "input",
-      "resolve": "pdf:South America",
-      "statement": "cash_flow",
+      "resolve": "pdf:Operating income",
+      "statement": "title:SOUTH AMERICA DIVISION",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "division operating income: 1Q26 4,571 = BI328."
     },
     {
       "key": {
@@ -2651,10 +2582,10 @@
       },
       "row_hint": 329,
       "kind": "input",
-      "resolve": "pdf:Venezuela",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Venezuela?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional: no Venezuela operation -> 0."
     },
     {
       "key": {
@@ -2664,10 +2595,10 @@
       },
       "row_hint": 330,
       "kind": "input",
-      "resolve": "pdf:Asia",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Asia?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional: no Asia operation -> 0."
     },
     {
       "key": {
@@ -2685,8 +2616,7 @@
         "occurrence": 1
       },
       "row_hint": 334,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2696,11 +2626,12 @@
       },
       "row_hint": 335,
       "kind": "input",
-      "resolve": "pdf:Mexico & Central America",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Total Revenues",
+      "statement": "title:MEXICO & CENTRAL AMERICA DIVISION RESULTS OF OPERATIONS",
+      "basis": "point_in_time",
+      "column": "Reported#1",
+      "scale": "percent",
+      "review": "reported revenue growth: 1Q26 (1.4%) -> -0.014 = BI335. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2710,10 +2641,12 @@
       },
       "row_hint": 336,
       "kind": "input",
-      "resolve": "pdf:South America (Including Venezuela)",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Total Revenues",
+      "statement": "title:SOUTH AMERICA DIVISION RESULTS OF OPERATIONS",
+      "basis": "point_in_time",
+      "column": "Reported#1",
+      "scale": "percent",
+      "review": "reported revenue growth: 1Q26 4.3% -> 0.043 = BI336. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2723,10 +2656,10 @@
       },
       "row_hint": 337,
       "kind": "input",
-      "resolve": "pdf:Venezuela",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Venezuela?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional (reported growth block): KOF reports no Venezuela operation -> 0, like the Venezuela revenue and operating-income rows."
     },
     {
       "key": {
@@ -2736,10 +2669,10 @@
       },
       "row_hint": 338,
       "kind": "input",
-      "resolve": "pdf:Asia",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Asia?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional (reported growth block): KOF reports no Asia operation -> 0, like the Asia revenue and operating-income rows."
     },
     {
       "key": {
@@ -2749,10 +2682,12 @@
       },
       "row_hint": 339,
       "kind": "input",
-      "resolve": "pdf:Total",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Total revenues",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
+      "basis": "point_in_time",
+      "column": "Reported#1",
+      "scale": "percent",
+      "review": "consolidated reported revenue growth: 1Q26 1.1% -> 0.011 = BI339. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2761,8 +2696,7 @@
         "occurrence": 1
       },
       "row_hint": 341,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2772,10 +2706,12 @@
       },
       "row_hint": 342,
       "kind": "input",
-      "resolve": "pdf:Mexico & Central America",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Total Revenues",
+      "statement": "title:MEXICO & CENTRAL AMERICA DIVISION RESULTS OF OPERATIONS",
+      "basis": "point_in_time",
+      "column": "Comparable#1",
+      "scale": "percent",
+      "review": "comparable (organic) revenue growth: 1Q26 1.4% -> 0.014 = BI342. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2785,10 +2721,12 @@
       },
       "row_hint": 343,
       "kind": "input",
-      "resolve": "pdf:South America (Including Venezuela)",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Total Revenues",
+      "statement": "title:SOUTH AMERICA DIVISION RESULTS OF OPERATIONS",
+      "basis": "point_in_time",
+      "column": "Comparable#1",
+      "scale": "percent",
+      "review": "comparable revenue growth: 1Q26 12.3% -> 0.123 = BI343. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2798,10 +2736,10 @@
       },
       "row_hint": 344,
       "kind": "input",
-      "resolve": "pdf:Venezuela",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Venezuela?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional (comparable growth block): KOF reports no Venezuela operation -> 0, like the Venezuela revenue and operating-income rows."
     },
     {
       "key": {
@@ -2811,10 +2749,10 @@
       },
       "row_hint": 345,
       "kind": "input",
-      "resolve": "pdf:Asia",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Asia?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional (comparable growth block): KOF reports no Asia operation -> 0, like the Asia revenue and operating-income rows."
     },
     {
       "key": {
@@ -2824,10 +2762,12 @@
       },
       "row_hint": 346,
       "kind": "input",
-      "resolve": "pdf:Total",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Total revenues",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
+      "basis": "point_in_time",
+      "column": "Comparable#1",
+      "scale": "percent",
+      "review": "consolidated comparable revenue growth: 1Q26 6.0% -> 0.06 = BI346. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2836,8 +2776,7 @@
         "occurrence": 1
       },
       "row_hint": 348,
-      "kind": "skip",
-      "review": "looks like a heading or a derived ratio"
+      "kind": "skip"
     },
     {
       "key": {
@@ -2847,11 +2786,12 @@
       },
       "row_hint": 349,
       "kind": "input",
-      "resolve": "pdf:Mexico & Central America",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "sign": "negative",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Volume (million unit cases)",
+      "statement": "title:MEXICO & CENTRAL AMERICA DIVISION RESULTS OF OPERATIONS",
+      "basis": "point_in_time",
+      "column": "Reported#1",
+      "scale": "percent",
+      "review": "unit-case volume growth: 1Q26 -1.6% -> -0.016 = BI349. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2861,10 +2801,12 @@
       },
       "row_hint": 350,
       "kind": "input",
-      "resolve": "pdf:South America (Including Venezuela)",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Volume (million unit cases)",
+      "statement": "title:SOUTH AMERICA DIVISION RESULTS OF OPERATIONS",
+      "basis": "point_in_time",
+      "column": "Reported#1",
+      "scale": "percent",
+      "review": "unit-case volume growth: 1Q26 4.8% -> 0.048 = BI350. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     },
     {
       "key": {
@@ -2874,10 +2816,10 @@
       },
       "row_hint": 351,
       "kind": "input",
-      "resolve": "pdf:Venezuela",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Venezuela?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional (volume growth block): KOF reports no Venezuela operation -> 0, like the Venezuela revenue and operating-income rows."
     },
     {
       "key": {
@@ -2887,10 +2829,10 @@
       },
       "row_hint": 352,
       "kind": "input",
-      "resolve": "pdf:Asia",
-      "statement": "cash_flow",
+      "resolve": "sum:pdf:Asia?",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
       "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "review": "optional (volume growth block): KOF reports no Asia operation -> 0, like the Asia revenue and operating-income rows."
     },
     {
       "key": {
@@ -2900,10 +2842,12 @@
       },
       "row_hint": 353,
       "kind": "input",
-      "resolve": "pdf:Total",
-      "statement": "cash_flow",
-      "basis": "quarter",
-      "review": "no line in the filing's statements matched this caption: the filing has no cash_flow (found: balance_sheet, income_statement)"
+      "resolve": "pdf:Volume (million unit cases)",
+      "statement": "title:CONSOLIDATED INCOME STATEMENT",
+      "basis": "point_in_time",
+      "column": "Reported#1",
+      "scale": "percent",
+      "review": "consolidated volume growth: 1Q26 1.2% -> 0.012 = BI353. percent row: the release prints a percentage in its undated 'Δ%' columns; scale 'percent' writes it as the model's fraction. '#1' = the quarter's column (2Q releases add six-month Δ% columns to the right). The division's full results-of-operations table is named in full so a South America row can never read the Mexico table."
     }
   ]
 }

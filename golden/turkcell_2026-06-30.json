@@ -1,0 +1,582 @@
+{
+  "company": "turkcell",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Turkcell Turkey",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Consumer",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Corporate",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Turkcell International",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Techfin",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Total cost of revenues",
+      "section": "income_statement",
+      "value": -53569.5
+    },
+    {
+      "label": "Depreciation and amortization",
+      "section": "income_statement",
+      "value": -20561.4
+    },
+    {
+      "label": "Administrative expenses",
+      "section": "income_statement",
+      "value": -2917.3
+    },
+    {
+      "label": "Selling & marketing  expenses",
+      "section": "income_statement",
+      "value": -5458.1
+    },
+    {
+      "label": "Net impairment losses on financial and contract assets`",
+      "section": "income_statement",
+      "value": -378.7
+    },
+    {
+      "label": "Other income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Finance costs",
+      "section": "income_statement",
+      "value": -11678.7
+    },
+    {
+      "label": "Finance income",
+      "section": "income_statement",
+      "value": 4700.0
+    },
+    {
+      "label": "Monetary gain/(loss)",
+      "section": "income_statement",
+      "value": 4864.5
+    },
+    {
+      "label": "Share of profit of equity accounted investees",
+      "section": "income_statement",
+      "value": -408.4
+    },
+    {
+      "label": "Income tax expense",
+      "section": "income_statement",
+      "value": -1149.6
+    },
+    {
+      "label": "Discontinued operations",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Non-controlling interests",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Non-controlling interests",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Net Income /share",
+      "section": "income_statement",
+      "value": 2.41
+    },
+    {
+      "label": "Net Income /share (Continuing operations)",
+      "section": "income_statement",
+      "value": 2.41
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 30012.8
+    },
+    {
+      "label": "Rent Expense",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Gross Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Payment for acquisition  of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Deposits interest received",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other investing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance/Buyback",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Dividends received  / Dividends Paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Acquisition/Repayments of bonds",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Change in debt /Finance Costs",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other Finance",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Net pension liability",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade debtors/receivables",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Secured Bank Loans",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Unsecured Bank Loans",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Debt securities",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Other debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease liabilities",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 89275.0
+    },
+    {
+      "label": "Short term debt (excl finance leases)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Finance Lease  Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "LC debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Market Cap",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 309560.0
+    },
+    {
+      "label": "Number of total subscribers (million)",
+      "section": "cash_flow",
+      "value": 44.8
+    },
+    {
+      "label": "Mobile postpaid subscribers (million)",
+      "section": "cash_flow",
+      "value": 32.5
+    },
+    {
+      "label": "Mobile M2M (million)",
+      "section": "cash_flow",
+      "value": 6.1
+    },
+    {
+      "label": "Mobile prepaid subscribers (million)",
+      "section": "cash_flow",
+      "value": 7.5
+    },
+    {
+      "label": "Fiber (thousand)",
+      "section": "cash_flow",
+      "value": 2625.7
+    },
+    {
+      "label": "ADSL (thousand)",
+      "section": "cash_flow",
+      "value": 657.7
+    },
+    {
+      "label": "Superbox (thousand)1",
+      "section": "cash_flow",
+      "value": 532.6
+    },
+    {
+      "label": "Cable (thousand)",
+      "section": "cash_flow",
+      "value": 21.1
+    },
+    {
+      "label": "IPTV (thousand)",
+      "section": "cash_flow",
+      "value": 1429.9
+    },
+    {
+      "label": "Mobile churn (%)1",
+      "section": "cash_flow",
+      "value": 0.016
+    },
+    {
+      "label": "Fixed churn (%)",
+      "section": "cash_flow",
+      "value": 0.016
+    },
+    {
+      "label": "Mobile ARPU, blended (TRY)",
+      "section": "cash_flow",
+      "value": 382.7
+    },
+    {
+      "label": "Mobile ARPU, blended (TRY) (excluding M2M)",
+      "section": "cash_flow",
+      "value": 447.6
+    },
+    {
+      "label": "Postpaid (TRY)",
+      "section": "cash_flow",
+      "value": 428.4
+    },
+    {
+      "label": "Postpaid (excluding M2M)",
+      "section": "cash_flow",
+      "value": 522.5
+    },
+    {
+      "label": "Prepaid (TRY)",
+      "section": "cash_flow",
+      "value": 186.9
+    },
+    {
+      "label": "Fixed Residential ARPU, blended (TRY)",
+      "section": "cash_flow",
+      "value": 579.6
+    },
+    {
+      "label": "Residential Fiber ARPU4",
+      "section": "cash_flow",
+      "value": 570.2
+    },
+    {
+      "label": "Average mobile data usage per user (GB/user)",
+      "section": "cash_flow",
+      "value": 26.3
+    },
+    {
+      "label": "Turkcell Turkey",
+      "section": "cash_flow",
+      "value": 44.8
+    },
+    {
+      "label": "Ukraine",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Belarus3",
+      "section": "cash_flow",
+      "value": 1.5
+    },
+    {
+      "label": "Turkish Republic of Northern Cyprus4",
+      "section": "cash_flow",
+      "value": 0.8
+    },
+    {
+      "label": "Turkcell Europe5",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "GDP growth",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Consumer price index",
+      "section": "cash_flow",
+      "value": 0.321
+    },
+    {
+      "label": "Closing rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Average rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Closing rate",
+      "section": "cash_flow",
+      "value": 53.095
+    },
+    {
+      "label": "Average rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Closing rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Average rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Closing rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Average rate",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Operational Capex",
+      "section": "cash_flow",
+      "value": 17945.0
+    },
+    {
+      "label": "License and Related Costs",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Non-operational Capex (Including IFRS15 & IFRS16)",
+      "section": "cash_flow",
+      "value": 7004.0
+    },
+    {
+      "label": "Turkcell Türkiye",
+      "section": "cash_flow",
+      "value": 64702.0
+    },
+    {
+      "label": "Consumer Revenues",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Corporate Revenues",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Wholesale",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Turkcell International",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "BeST",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Kuzey Kıbrıs Turkcell",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Techfin Business",
+      "section": "cash_flow",
+      "value": 4123.0
+    },
+    {
+      "label": "Finance Business - Financell3",
+      "section": "cash_flow",
+      "value": 1550.3
+    },
+    {
+      "label": "Paycell",
+      "section": "cash_flow",
+      "value": 2373.9
+    },
+    {
+      "label": "Other",
+      "section": "cash_flow",
+      "value": 198.79999999999995
+    },
+    {
+      "label": "Other Segment",
+      "section": "cash_flow",
+      "value": 2950.0
+    },
+    {
+      "label": "Turkcell Satış Other5",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Turkcell Enerji (non-group)6",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other7",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Standalone Digital Revenues",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Digital Business Solutions Revenues",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Techfin Business",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Turkcell Türkiye",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Turkcell International",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Techfin",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

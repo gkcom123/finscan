@@ -1,0 +1,287 @@
+{
+  "company": "mbrf",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenues",
+      "section": "income_statement",
+      "value": 40720.032
+    },
+    {
+      "label": "COGS",
+      "section": "income_statement",
+      "value": -35852.076
+    },
+    {
+      "label": "Selling Expenses",
+      "section": "income_statement",
+      "value": -2992.958
+    },
+    {
+      "label": "General and Administrative expenses",
+      "section": "income_statement",
+      "value": -582.043
+    },
+    {
+      "label": "Equity in earnings (losses) of subsidiaries",
+      "section": "income_statement",
+      "value": -1.025
+    },
+    {
+      "label": "Other operating income (expense)",
+      "section": "income_statement",
+      "value": 101.723
+    },
+    {
+      "label": "Finance Income",
+      "section": "income_statement",
+      "value": 2870.954
+    },
+    {
+      "label": "Finance expenses",
+      "section": "income_statement",
+      "value": -4646.921
+    },
+    {
+      "label": "Income tax benefit/(expense)",
+      "section": "income_statement",
+      "value": 423.086
+    },
+    {
+      "label": "Loss  from discontinued  Operations",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 3203.0
+    },
+    {
+      "label": "Depreciation and Amortization",
+      "section": "income_statement",
+      "value": 1651.9219999999998
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": -454.4809999999998
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": -429.429
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -1622.0069999999998
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": -1219.9910000000002
+    },
+    {
+      "label": "Net Payment for acquisition  of intangible assets",
+      "section": "cash_flow",
+      "value": -90.36700000000002
+    },
+    {
+      "label": "Disposals/ Acquisition, of subsidiaries",
+      "section": "cash_flow",
+      "value": -100.126
+    },
+    {
+      "label": "Other Investing activities",
+      "section": "cash_flow",
+      "value": 1672.8600000000001
+    },
+    {
+      "label": "Equity Issuance / Buyback",
+      "section": "cash_flow",
+      "value": -139.98199999999997
+    },
+    {
+      "label": "Dividends received  / Dividends Paid",
+      "section": "cash_flow",
+      "value": 0.009
+    },
+    {
+      "label": "Change in debt",
+      "section": "cash_flow",
+      "value": -430.61799999999994
+    },
+    {
+      "label": "Other Financing activities",
+      "section": "cash_flow",
+      "value": -61.987999999999985
+    },
+    {
+      "label": "Discontinued operations net of cash",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "PF Combined EBITDA",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 45281.555
+    },
+    {
+      "label": "Biological Assets -Non current",
+      "section": "balance_sheet",
+      "value": 3605.026
+    },
+    {
+      "label": "Biological Assets - Current",
+      "section": "balance_sheet",
+      "value": 4030.947
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 13431.856
+    },
+    {
+      "label": "Trade debtors/receivables",
+      "section": "balance_sheet",
+      "value": 5160.71
+    },
+    {
+      "label": "Trade creditors /payables",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 16315.478
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 58009.133
+    },
+    {
+      "label": "FINAME/FINEP",
+      "section": "balance_sheet",
+      "value": 50.046
+    },
+    {
+      "label": "NCE/Working Capital/CDCAS/Credit note",
+      "section": "balance_sheet",
+      "value": 7490.373
+    },
+    {
+      "label": "Non-convertible debentures",
+      "section": "balance_sheet",
+      "value": 25923.706
+    },
+    {
+      "label": "Share rental",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Prepayment/NCE / ACC (US$)",
+      "section": "balance_sheet",
+      "value": 10728.749
+    },
+    {
+      "label": "Bonds (US$)",
+      "section": "balance_sheet",
+      "value": 15763.294
+    },
+    {
+      "label": "Bank loan (US$)",
+      "section": "balance_sheet",
+      "value": 2889.853
+    },
+    {
+      "label": "Revolving credit facility",
+      "section": "balance_sheet",
+      "value": 2997.107
+    },
+    {
+      "label": "PAE (US$)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Tradable liabilities",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Bank loan (EUR)",
+      "section": "balance_sheet",
+      "value": 1768.684
+    },
+    {
+      "label": "CRA",
+      "section": "balance_sheet",
+      "value": 508.684
+    },
+    {
+      "label": "Notes payables",
+      "section": "balance_sheet",
+      "value": 538.358
+    },
+    {
+      "label": "Leases",
+      "section": "balance_sheet",
+      "value": 5665.757
+    },
+    {
+      "label": "Cash and equivalents",
+      "section": "balance_sheet",
+      "value": 5505.329
+    },
+    {
+      "label": "Marketable securities",
+      "section": "balance_sheet",
+      "value": 17607.512
+    },
+    {
+      "label": "Reported Net debt",
+      "section": "balance_sheet",
+      "value": 45007.655
+    },
+    {
+      "label": "Reported adjusted net debt (effect of FX variation)",
+      "section": "balance_sheet",
+      "value": 43745.99
+    },
+    {
+      "label": "Market Cap",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": 13786.34
+    },
+    {
+      "label": "FX rate average - BRL/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate end - BRL/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "LTM (BRL / USD)",
+      "section": "other",
+      "value": null
+    }
+  ]
+}

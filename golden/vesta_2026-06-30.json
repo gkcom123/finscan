@@ -1,0 +1,212 @@
+{
+  "company": "vesta",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Rental Income",
+      "section": "income_statement",
+      "value": 72.4
+    },
+    {
+      "label": "Management Fees",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "COR - Related to Properties that generated rental income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "COR - Related to Properties that did not generate rental income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Administration Expenses",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Depreciation",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Interest income",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Other income - net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Transaction costs on debt issuance",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Interest expense",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Exchange gain (loss)- net",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on sale of investment property",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Share of results of associates",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Gain on revaluation of investment property",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Current income tax expense",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Deferred income tax",
+      "section": "income_statement",
+      "value": 0.0
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": null
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": -11.780865000000002
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Other Investing",
+      "section": "cash_flow",
+      "value": -2.3
+    },
+    {
+      "label": "Equity Issuance / Repurchase of treasury shares",
+      "section": "cash_flow",
+      "value": 262.4
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": -18.715507000000002
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": -0.17596500000000503
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Prepaid expenses",
+      "section": "balance_sheet",
+      "value": 9.0
+    },
+    {
+      "label": "Accounts payable and client advances",
+      "section": "balance_sheet",
+      "value": 30.8
+    },
+    {
+      "label": "Accrued expenses",
+      "section": "balance_sheet",
+      "value": 5.6
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": 0.0
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": 1176.4
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - USD/USD",
+      "section": "cash_flow",
+      "value": 1.0
+    },
+    {
+      "label": "FX rate  - USD/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": 1.0
+    },
+    {
+      "label": "LTM - USD/USD",
+      "section": "other",
+      "value": 1.0
+    }
+  ]
+}

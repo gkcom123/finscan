@@ -1,0 +1,232 @@
+{
+  "company": "ulker",
+  "period_end": "2026-06-30",
+  "units": "millions",
+  "values": [
+    {
+      "label": "Revenue",
+      "section": "income_statement",
+      "value": 26992.766
+    },
+    {
+      "label": "Cost of sales",
+      "section": "income_statement",
+      "value": -20364.232
+    },
+    {
+      "label": "General Administrative Expenses",
+      "section": "income_statement",
+      "value": -917.065
+    },
+    {
+      "label": "Marketing, Sales and Distribution Expenses",
+      "section": "income_statement",
+      "value": -3590.696
+    },
+    {
+      "label": "Research and Development Expenses",
+      "section": "income_statement",
+      "value": -176.18
+    },
+    {
+      "label": "Other Operating Income",
+      "section": "income_statement",
+      "value": 545.542
+    },
+    {
+      "label": "Other Operating Expenses",
+      "section": "income_statement",
+      "value": -344.22
+    },
+    {
+      "label": "Income from Investment Activities",
+      "section": "income_statement",
+      "value": 2100.725
+    },
+    {
+      "label": "Expenses from Investment Activities",
+      "section": "income_statement",
+      "value": -391.628
+    },
+    {
+      "label": "Financial expenses",
+      "section": "income_statement",
+      "value": -3551.755
+    },
+    {
+      "label": "Financial income",
+      "section": "income_statement",
+      "value": 0.07
+    },
+    {
+      "label": "Net monetary gain",
+      "section": "income_statement",
+      "value": 1314.455
+    },
+    {
+      "label": "Current Tax (Expense)/Income",
+      "section": "income_statement",
+      "value": 268.997
+    },
+    {
+      "label": "Deferred Tax Income/(Expenses)",
+      "section": "income_statement",
+      "value": -555.123
+    },
+    {
+      "label": "Controlling interests",
+      "section": "income_statement",
+      "value": 1386.913
+    },
+    {
+      "label": "Non-controlling interests",
+      "section": "income_statement",
+      "value": -55.257
+    },
+    {
+      "label": "Depreciation, depletion & amortization",
+      "section": "income_statement",
+      "value": 918.2190000000002
+    },
+    {
+      "label": "Adj. EBITDA",
+      "section": "income_statement",
+      "value": 3160.616
+    },
+    {
+      "label": "Working Capital",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Taxes",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Cash interest paid",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Net Capex",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Purchase of intangible assets",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Disposals/ Acquistion, of subsidiaries, businesses",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Other Investing",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Equity Issuance",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Dividends",
+      "section": "cash_flow",
+      "value": 0.0
+    },
+    {
+      "label": "Net Change in debt",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Other financing activities",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Inflation effect on cash and cash equivalents",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "Tangible fixed assets",
+      "section": "balance_sheet",
+      "value": 35450.646
+    },
+    {
+      "label": "Employee benefit plans",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Inventory",
+      "section": "balance_sheet",
+      "value": 31480.13
+    },
+    {
+      "label": "Trade accounts receivable",
+      "section": "balance_sheet",
+      "value": 32026.965
+    },
+    {
+      "label": "Trade accounts payable",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Long-term debt",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Lease Obligations",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "Short-term",
+      "section": "balance_sheet",
+      "value": 0.0
+    },
+    {
+      "label": "Long-term",
+      "section": "balance_sheet",
+      "value": 0.0
+    },
+    {
+      "label": "Cash and cash equivalents",
+      "section": "balance_sheet",
+      "value": 22361.336
+    },
+    {
+      "label": "Short term financial investments",
+      "section": "balance_sheet",
+      "value": 6.892
+    },
+    {
+      "label": "Equity (as reported on balance sheet)",
+      "section": "balance_sheet",
+      "value": null
+    },
+    {
+      "label": "FX rate average - TRY/USD",
+      "section": "cash_flow",
+      "value": null
+    },
+    {
+      "label": "FX rate  - TRY/USD (as at end of period)",
+      "section": "cash_flow",
+      "value": null
+    }
+  ]
+}

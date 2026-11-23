@@ -1,5 +1,9 @@
 {
     "chat.tools.terminal.autoApprove": {
-        "&": true
+        "&": true,
+        "/^python -c \"import json; d=json\\.load\\(open\\('_work/almarai_2026-09-30_values\\.json', encoding='utf-8'\\)\\); print\\(list\\(d\\.keys\\(\\)\\)\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }
