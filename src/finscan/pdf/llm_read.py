@@ -11,7 +11,7 @@ indentation. Its weakness is the one that matters most — a misread digit looks
 exactly like a right one — so two rules stay non-negotiable:
 
 * every figure must be printed on its page — checked against the PDF's own text
-  layer, and marked unverified (never written by stage 3) when it is not;
+  layer, and marked unverified (written by stage 3 with a warning) when it is not;
 * each page is read once and cached by the PDF's hash, so the same PDF always
   yields the same pdf.json, however often the pipeline runs.
 """
@@ -668,7 +668,7 @@ def doc_from_tables(path: str, sha: str, pages_json: dict[int, dict],
         issues.append(Issue(
             code="llm_figure_not_printed", severity="warning",
             message="Figures the model returned that the page's text layer does not "
-                    "print, which stage 3 will not write: "
+                    "print; they are written but need checking: "
                     + ", ".join(f"page {p}: {n}" for p, n in sorted(unprinted.items()))))
     if unchecked:
         issues.append(Issue(

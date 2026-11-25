@@ -589,6 +589,27 @@ def test_a_sum_term_can_be_subtracted():
     assert "- Income Tax" in value.adjustments[0].detail
 
 
+def test_an_unconfirmed_vision_figure_is_written_with_a_warning():
+    """A figure the scan's text layer and the table's arithmetic cannot confirm is
+    still written — for a single caption and inside a sum — and flagged for review."""
+    from finscan.match.resolve import resolve_values
+
+    for resolve, expected in (("pdf:Zakat", -26.573),
+                              ("sum:pdf:Zakat|pdf:Income Tax", -37.151)):
+        doc, resolved_map, path = _tiny_model(
+            resolve=resolve,
+            extra_rows=[("Zakat", [-26.573] * 4), ("Income Tax", [-10.578] * 4)])
+        for row in doc.statements[0].rows:
+            if row.caption == "Zakat":
+                row.unverified = [0, 1, 2, 3]
+        values = resolve_values(doc, resolved_map, path, "2026-06-30")
+        value = values.values[0]
+        assert value.ok and round(value.value, 3) == round(_scaled(expected), 3)
+        flagged = [i for i in values.issues if i.code == "unverified_figure"]
+        assert len(flagged) == 1 and flagged[0].severity == "warning"
+        assert "Zakat" in flagged[0].message
+
+
 def test_one_missing_term_fails_the_whole_sum():
     """A caption that cannot be found at all is a mapping problem, not a printed
     zero, so it still fails the whole sum: plausible, and short by exactly one

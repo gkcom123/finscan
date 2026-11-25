@@ -284,7 +284,7 @@ def _add_supplement(doc: PdfDoc, path: str | Path, extra: Path) -> None:
     doc.issues.append(Issue(
         code="supplement_added", severity="info" if not unverified else "warning",
         message=f"{len(added.statements)} table(s) added from {extra.name} ({source}); "
-                f"{unverified} figure(s) not printed on their page and so never written."))
+                f"{unverified} figure(s) not printed on their page; written, but check them."))
 
 
 def _read_pdf(
@@ -394,7 +394,7 @@ def _read_pdf(
                         message=f"{sum(len(r.unverified) for r in flagged)} figure(s) on "
                                 f"page {index} were read by the vision model but "
                                 f"confirmed neither by the scan's text layer nor the "
-                                f"table's arithmetic, and will not be written: "
+                                f"table's arithmetic; they are written but need checking: "
                                 + "; ".join(f"'{r.caption[:40]}'" for r in flagged[:8])
                                 + ("…" if len(flagged) > 8 else "")))
             if statement is not None:

@@ -18,8 +18,8 @@ number on that same line which makes the subtotal hold, the text layer's number
 replaces the transcription's — two independent sources agreeing beats one model.
 Every replacement is reported.
 
-A figure confirmed by neither is marked unverified, and stage 3 leaves that cell
-blank with the reason rather than write a number nothing corroborates.
+A figure confirmed by neither is marked unverified; stage 3 still writes it, with
+an `unverified_figure` warning so a reviewer checks it against the filing.
 """
 from __future__ import annotations
 

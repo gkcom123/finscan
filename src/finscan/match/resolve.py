@@ -351,11 +351,13 @@ class _Term:
     """One resolved term of a sum: enough to explain the arithmetic afterwards."""
 
     def __init__(self, sign: float, caption: str, printed: float, assumed_zero: bool = False,
-                 not_printed: bool = False):
+                 not_printed: bool = False, unverified: bool = False):
         self.sign, self.caption, self.printed = sign, caption, printed
         self.assumed_zero = assumed_zero
         #: An optional term whose caption the filing does not print at all.
         self.not_printed = not_printed
+        #: Read by the vision model and not confirmed by the page (see pdf/verify.py).
+        self.unverified = unverified
 
     def signed(self) -> float:
         return self.sign * self.printed
@@ -474,13 +476,11 @@ def _lookup_sum(spec, statement, column, scope=None):
             return None, (f"the sum term '{instruction}' matched '{row.caption}', which "
                           f"has only {len(row.values)} value(s) — the wanted column is "
                           f"number {term_column.index + 1}")
-        if term_column.index in getattr(row, "unverified", []):
-            return None, (f"the sum term '{instruction}' ('{row.caption}') was read by "
-                          f"the vision model but not confirmed (see pdf/verify.py)")
         if row.values[term_column.index] is None:
             terms.append(_Term(sign, row.caption, 0.0, assumed_zero=True))
             continue
-        terms.append(_Term(sign, row.caption, row.values[term_column.index] * factor))
+        terms.append(_Term(sign, row.caption, row.values[term_column.index] * factor,
+                           unverified=term_column.index in getattr(row, "unverified", [])))
     if not terms:
         return None, "the sum has no terms"
     return terms, ""
@@ -794,6 +794,15 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
                     message=f"row {bound.row} '{spec.key.label}': this filing does not "
                             f"print {', '.join(repr(c) for c in absent)}; counted as 0. "
                             f"If the filing renamed the line, update the mapping."))
+            unconfirmed = [t for t in terms if t.unverified]
+            if unconfirmed:
+                out.issues.append(Issue(
+                    code="unverified_figure", severity="warning",
+                    message=f"row {bound.row} '{spec.key.label}': written, but the vision "
+                            f"model's reading of "
+                            + ", ".join(f"'{t.caption}' ({t.printed:,})" for t in unconfirmed)
+                            + " is not confirmed by the scan's text layer or the table's "
+                              "arithmetic — check it against the filing"))
             total = sum(term.signed() for term in terms)
             value.source = Source(
                 statement=statement.kind, page=statement.page,
@@ -824,15 +833,13 @@ def resolve_values(doc: PdfDoc, resolved_map: ResolvedMap, workbook_path: str,
             continue
 
         if column.index in getattr(printed_row, "unverified", []):
-            why = (f"'{printed_row.caption}' was read from a scanned page by the vision "
-                   f"model ({printed_row.values[column.index]:,}), but neither the "
-                   f"scan's text layer, a second read, nor the table's arithmetic "
-                   f"confirms it — enter it by hand after checking the filing")
-            value.unresolved = why
-            out.values.append(value)
-            out.issues.append(Issue(code="unverified_figure", severity="error",
-                                    message=f"row {bound.row} '{spec.key.label}': {why}"))
-            continue
+            out.issues.append(Issue(
+                code="unverified_figure", severity="warning",
+                message=f"row {bound.row} '{spec.key.label}': written, but "
+                        f"'{printed_row.caption}' was read by the vision model "
+                        f"({printed_row.values[column.index]:,}) and neither the scan's "
+                        f"text layer nor the table's arithmetic confirms it — check it "
+                        f"against the filing"))
 
         printed = printed_row.values[column.index]
         # A dash IS the filing's own answer — "nothing happened here" — not a gap
